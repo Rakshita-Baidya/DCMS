@@ -22,12 +22,10 @@
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700">{{ form.username.label_tag }}</label>
                     {{ form.username|add_class:"mt-1 block w-full px-4 py-2 border rounded-md text-gray-900 focus:outline-none focus:ring focus:ring-blue-500" }}
-                    {% if form.username.errors %}<div class="text-red-500 text-sm">{{ form.username.errors }}</div>{% endif %}
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700">{{ form.password.label_tag }}</label>
                     {{ form.password|add_class:"mt-1 block w-full px-4 py-2 border rounded-md text-gray-900 focus:outline-none focus:ring focus:ring-blue-500" }}
-                    {% if form.password.errors %}<div class="text-red-500 text-sm">{{ form.password.errors }}</div>{% endif %}
                 </div>
                 <button type="submit"
                         class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-500">
@@ -42,26 +40,24 @@
         <!-- SweetAlert2 Toast Notifications -->
         {% if messages %}
             <script>
-            {% for message in messages %}
-             console.log("Message:", "{{ message }}");  // Log message in console
-                
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: '{{ message.tags }}',
-                    title: '{{ message }}',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    background: '#f8f9fa',
-                    iconColor: '#28a745',
-                    showClass: {
-                        popup: 'animate__animated animate__fadeInRight'
-                    },
-                    hideClass: {
-                        popup: 'animate__animated animate__fadeOutRight'
-                    }
-                });
-            {% endfor %}
+                {% for message in messages %}
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: '{{ message.tags }}',
+                        title: '{{ message }}',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        background: '#f8f9fa',
+                        iconColor: '{% if "success" in message.tags %}#28a745{% elif "error" in message.tags %}#dc3545{% else %}#ffc107{% endif %}',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInRight'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutRight'
+                        }
+                    });
+                {% endfor %}
             </script>
         {% endif %}
     </body>

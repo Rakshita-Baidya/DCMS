@@ -61,7 +61,7 @@
                         showConfirmButton: false,
                         timer: 3000,
                         background: '#f8f9fa',
-                        iconColor: '#28a745',
+                        iconColor: '{% if "success" in message.tags %}#28a745{% elif "error" in message.tags %}#dc3545{% else %}#ffc107{% endif %}',
                         showClass: {
                             popup: 'animate__animated animate__fadeInRight'
                         },

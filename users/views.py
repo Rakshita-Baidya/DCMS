@@ -84,21 +84,18 @@ def user_register(request):
 def user_login(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
+
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
 
-            if user is not None:
-                # Check if the user is approved
+            if user:
                 if user.is_active:
                     login(request, user)
                     messages.success(request, "Login successful!")
-                    # Redirect to a dashboard or home page
-                    return redirect('core:home')
-                else:
-                    messages.error(
-                        request, "Your account has not been approved yet.")
+                    # Update to your redirect path
+                    return redirect('list')
             else:
                 messages.error(request, "Invalid username or password.")
         else:
@@ -114,25 +111,59 @@ def user_logout(request):
     return redirect('login')
 
 
+@login_required
+def list_users(request):
+    # Allow only superusers and admins
+    if not request.user.is_superuser and request.user.role != 'admin':
+        messages.error(request, "Access denied.")
+        return redirect('login')
+
+    # Fetch all users
+    all_users = User.objects.all()
+
+    return render(request, 'all_users.html', {'users': all_users})
+
 # Approval View
+
+
 @login_required
 def approve_users(request):
-    if not request.user.is_superuser:
+    if not request.user.is_superuser and request.user.role != 'admin':
         messages.error(request, "Access denied.")
         return redirect('login')
 
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         role = request.POST.get('role')
-        user = User.objects.get(id=user_id)
-        if user and not user.is_superuser:
-            user.is_active = True
-            user.role = role
-            user.save()
-            messages.success(
-                request, f"{user.username} approved successfully.")
-        else:
-            messages.error(request, "Invalid user.")
+        action = request.POST.get('action')
 
+        try:
+
+            user = User.objects.get(id=user_id)
+            if action == 'approve':
+                if user and not user.is_superuser:
+                    user.is_active = True
+                    user.role = role
+                    user.save()
+                    messages.success(
+                        request, f"{user.username} approved successfully.")
+                else:
+                    messages.error(
+                        request, "Invalid user or cannot approve superuser.")
+
+            elif action == 'deny':
+                if user and not user.is_superuser:
+                    user.delete()
+                    messages.success(
+                        request, f"{user.username} denied and removed successfully.")
+                else:
+                    messages.error(
+                        request, "Invalid user or cannot remove superuser.")
+
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+
+    # Fetch pending users (those with is_active=False)
     pending_users = User.objects.filter(is_active=False)
+
     return render(request, 'approve_users.html', {'users': pending_users})
