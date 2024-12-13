@@ -1,0 +1,59 @@
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Approve Users</title>
+        <meta name="description" content="approve page" />
+        <meta name="keywords" content="user, DCMS" />
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-blue-400 flex justify-center items-center h-screen">
+        <div class="bg-white p-8 rounded-lg shadow-md w-3/4">
+            <p class="text-5xl font-bold text-center mb-8">Approve Users</p>
+            <table class="min-w-full table-auto">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 text-left">Username</th>
+                        <th class="px-4 py-2 text-left">Email</th>
+                        <th class="px-4 py-2 text-left">Role</th>
+                        <th class="px-4 py-2 text-left">Status</th>
+                        <th class="px-4 py-2 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td class="border px-4 py-2">{{ user.username }}</td>
+                            <td class="border px-4 py-2">{{ user.email }}</td>
+                            <td class="border px-4 py-2">
+                                <form method="post" class="inline">
+                                    {% csrf_token %}
+                                    <select name="role" class="border px-2 py-1 rounded-md">
+                                        <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                                        <option value="receptionist"
+                                                {% if user.role == 'receptionist' %}selected{% endif %}>
+                                            Receptionist
+                                        </option>
+                                        <option value="doctor" {% if user.role == 'doctor' %}selected{% endif %}>Doctor</option>
+                                    </select>
+                                    <button type="submit"
+                                            name="action"
+                                            value="approve"
+                                            class="ml-2 bg-green-500 text-white px-4 py-2 rounded-md">Approve</button>
+                                    <button type="submit"
+                                            name="action"
+                                            value="deny"
+                                            class="ml-2 bg-red-500 text-white px-4 py-2 rounded-md">Deny</button>
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                </form>
+                            </td>
+                            <td class="border px-4 py-2">{{ user.is_approved|yesno:"Approved,Denied" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

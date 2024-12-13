@@ -8,3 +8,5 @@ PyJWT
 asgiref
 sqlparse
 pytz
+django-widget-tweaks
+djlint
