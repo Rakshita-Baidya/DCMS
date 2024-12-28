@@ -149,16 +149,15 @@ def approve_users(request):
                         request, f"{user.username} approved successfully.")
                 else:
                     messages.error(
-                        request, "Invalid user or cannot approve superuser.")
+                        request, "Invalid user.")
 
             elif action == 'deny':
                 if user and not user.is_superuser:
-                    user.delete()
                     messages.success(
-                        request, f"{user.username} denied and removed successfully.")
+                        request, f"{user.username} denied successfully.")
                 else:
                     messages.error(
-                        request, "Invalid user or cannot remove superuser.")
+                        request, "Invalid user.")
 
         except User.DoesNotExist:
             messages.error(request, "User not found.")
