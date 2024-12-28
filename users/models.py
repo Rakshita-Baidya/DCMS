@@ -20,6 +20,7 @@ class User(AbstractUser):
         max_length=20, choices=ROLE_CHOICES, blank=True, null=True)
     # is_approved = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
+    is_approved = models.CharField(default="Pending")
 
     def __str__(self):
         return super().__str__()

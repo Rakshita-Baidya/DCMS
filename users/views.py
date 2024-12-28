@@ -143,6 +143,7 @@ def approve_users(request):
             if action == 'approve':
                 if user and not user.is_superuser:
                     user.is_active = True
+                    user.is_approved = "Approved"
                     user.role = role
                     user.save()
                     messages.success(
@@ -153,6 +154,9 @@ def approve_users(request):
 
             elif action == 'deny':
                 if user and not user.is_superuser:
+                    user.is_active = False
+                    user.is_approved = "Denied"
+                    user.save()
                     messages.success(
                         request, f"{user.username} denied successfully.")
                 else:
@@ -162,7 +166,7 @@ def approve_users(request):
         except User.DoesNotExist:
             messages.error(request, "User not found.")
 
-    # Fetch pending users (those with is_active=False)
-    pending_users = User.objects.filter(is_active=False)
+    # Fetch pending users
+    pending_users = User.objects.filter(is_approved="Pending")
 
     return render(request, 'approve_users.html', {'users': pending_users})
