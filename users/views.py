@@ -95,7 +95,7 @@ def user_login(request):
                     login(request, user)
                     messages.success(request, "Login successful!")
                     # Update to your redirect path
-                    return redirect('list')
+                    return redirect('core:home')
             else:
                 messages.error(request, "Invalid username or password.")
         else:
