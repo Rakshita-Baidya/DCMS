@@ -12,37 +12,36 @@
   </head>
   <body class="bg-[#ECF4F4] min-h-screen">
     {% include "./sidebar.html" %}
-    <div class="ml-56">
+    <div class="ml-48">
       {% include "./header.html" %}
       <main>
         {% block content %}
         {% endblock content %}
       </main>
     </div>
-    <script>
-        {% comment %} Function to show toast {% endcomment %}
-        function showToast(type, message) {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-
-            Toast.fire({
-                icon: type,
-                title: message
-            });
-        }
-
-    </script>
+    <!-- SweetAlert2 Toast Notifications -->
     {% if messages %}
-      <script>{% for message in messages %}showToast('{{ message.tags }}', '{{ message.message }}');{% endfor %}</script>
+      <script>
+    {% for message in messages %}
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: '{{ message.tags }}',
+            title: '{{ message }}',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            background: '#F5F5F5',
+            iconColor: '{% if "success" in message.tags %}green{% elif "error" in message.tags %}red{% else %}yellow{% endif %}',
+            showClass: {
+                popup: 'animate__animated animate__fadeInRight'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutRight'
+            }
+        });
+    {% endfor %}
+      </script>
     {% endif %}
   </body>
 </html>

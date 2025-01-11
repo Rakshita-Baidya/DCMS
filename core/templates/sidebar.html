@@ -1,38 +1,93 @@
 {% load static %}
-<aside class="fixed top-0 left-0 h-screen w-56 bg-[#00b2b2] border-r-2 border-[#00B2B2]">
-    <div class="px-4">
-        <div class="flex text-center justify-center">
-            <img src="{% static 'images/logo/logo.png' %}"
-                 alt="Logo"
-                 width="full"
-                 height="full"
-                 class="h-40 object-contain mx-auto">
-        </div>
-        <nav class="space-y-1">
-            <a href="{% url 'core:dashboard' %}"
-               class="flex items-center space-x-3 px-4 py-2.5 rounded-lg {% if active_page == 'dashboard' %}bg-white text-[#00b2b2]{% else %}text-white{% endif %}">
-                <span>Dashboard</span>
-            </a>
-            <a href="{% url 'core:doctor' %}"
-               class="flex items-center space-x-3 px-4 py-2.5 rounded-lg {% if active_page == 'doctor' %}bg-white text-[#00b2b2]{% else %}text-white{% endif %}">
-                <span>Doctors</span>
-            </a>
-            <a href="{% url 'core:staff' %}"
-               class="flex items-center space-x-3 px-4 py-2.5 rounded-lg {% if active_page == 'staff' %}bg-white text-[#00b2b2]{% else %}text-white{% endif %}">
-                <span>Staff</span>
-            </a>
-            <a href="{% url 'core:patient' %}"
-               class="flex items-center space-x-3 px-4 py-2.5 rounded-lg {% if active_page == 'patient' %}bg-white text-[#00b2b2]{% else %}text-white{% endif %}">
-                <span>Patients</span>
-            </a>
-            <a href="{% url 'core:appointment' %}"
-               class="flex items-center space-x-3 px-4 py-2.5 rounded-lg {% if active_page == 'appointment' %}bg-white text-[#00b2b2]{% else %}text-white{% endif %}">
-                <span>Appointment</span>
-            </a>
-            <a href="{% url 'core:schedule' %}"
-               class="flex items-center space-x-3 px-4 py-2.5 rounded-lg {% if active_page == 'schedule' %}bg-white text-[#00b2b2]{% else %}text-white{% endif %}">
-                <span>Schedule</span>
-            </a>
-        </nav>
-    </div>
+<aside class="fixed top-0 left-0 h-screen w-48 text-white font-bold bg-[#00b2b2] z-10 flex flex-col">
+     <div class="h-32 w-full overflow-hidden flex items-center">
+          <img src="{% static 'images/logo/logo.png' %}"
+               alt="Logo"
+               width="full"
+               height="full"
+               class="object-contain">
+     </div>
+     <nav class="space-y-1 px-4 flex-1">
+          <a href="{% url 'core:dashboard' %}"
+             class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'dashboard' %}bg-darkerPrimary{% endif %}">
+               <img src="{% static 'images/sidebar/Dashboard.svg' %}"
+                    alt="dashboard"
+                    width="20px"
+                    height="20px">
+               <span>Dashboard</span>
+          </a>
+          <a href="{% url 'core:doctor' %}"
+             class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'doctor' %}bg-darkerPrimary{% endif %}">
+               <img src="{% static 'images/sidebar/Doctor.svg' %}"
+                    alt="doctor"
+                    width="20px"
+                    height="20px">
+               <span>Doctors</span>
+          </a>
+          <a href="{% url 'core:staff' %}"
+             class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'staff' %}bg-darkerPrimary{% endif %}">
+               <img src="{% static 'images/sidebar/staff.svg' %}"
+                    alt="staff"
+                    width="20px"
+                    height="20px">
+               <span>Staff</span>
+          </a>
+          <a href="{% url 'core:patient' %}"
+             class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'patient' %}bg-darkerPrimary{% endif %}">
+               <img src="{% static 'images/sidebar/Patients.svg' %}"
+                    alt="patient"
+                    width="20px"
+                    height="20px">
+               <span>Patients</span>
+          </a>
+          <a href="{% url 'core:appointment' %}"
+             class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'appointment' %}bg-darkerPrimary{% endif %}">
+               <img src="{% static 'images/sidebar/Appointment.svg' %}"
+                    alt="appointment"
+                    width="20px"
+                    height="20px">
+               <span>Appointment</span>
+          </a>
+          <a href="{% url 'core:schedule' %}"
+             class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'schedule' %}bg-darkerPrimary{% endif %}">
+               <img src="{% static 'images/sidebar/Schedule.svg' %}"
+                    alt="schedule"
+                    width="20px"
+                    height="20px">
+               <span>Schedule</span>
+          </a>
+          {% if user_role == 'admin' or request.user.is_superuser %}
+               <a href="{% url 'list' %}"
+                  class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'users' %}bg-darkerPrimary{% endif %}">
+                    <img src="{% static 'images/sidebar/user.svg' %}"
+                         alt="schedule"
+                         width="20px"
+                         height="20px">
+                    <span>Users</span>
+               </a>
+               <a href="{% url 'core:finance' %}"
+                  class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'finance' %}bg-darkerPrimary{% endif %}">
+                    <img src="{% static 'images/sidebar/Stat.svg' %}"
+                         alt="wallet"
+                         width="20px"
+                         height="20px">
+                    <span>Finance</span>
+               </a>
+               <a href="{% url 'core:statistics' %}"
+                  class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'statistics' %}bg-darkerPrimary{% endif %}">
+                    <img src="{% static 'images/sidebar/Stat.svg' %}"
+                         alt="statistics"
+                         width="20px"
+                         height="20px">
+                    <span>Statistics</span>
+               </a>
+          {% endif %}
+     </nav>
+     <form action="{% url 'logout' %}" method="post" class="mt-auto p-4">
+          {% csrf_token %}
+          <button type="submit"
+                  class="flex mx-auto w-full bg-red-500 p-2 rounded-md  justify-center">
+               <span>Logout</span>
+          </button>
+     </form>
 </aside>

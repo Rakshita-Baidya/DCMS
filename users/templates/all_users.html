@@ -1,81 +1,46 @@
-{% load widget_tweaks %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>All Users</title>
-        <meta name="description" content="approve page" />
-        <meta name="keywords" content="user, DCMS" />
-        <script src="https://cdn.tailwindcss.com"></script>
-        <!-- Include SweetAlert2 CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.css"
-              rel="stylesheet" />
-        <!-- Include SweetAlert2 JS -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.js"></script>
-    </head>
-    <body class="bg-gray-100 p-8">
-        <div class="bg-white p-8 rounded-lg shadow-md">
-            <p class="text-4xl font-bold text-center mb-8">All Registered Users</p>
-            <p class="mt-4 text-right text-gray-600">
-                <a href="{% url 'approve' %}"
-                   class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-500">Approve Users</a>
-            </p>
-            <table class="min-w-full table-auto">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-2 text-left">Username</th>
-                        <th class="px-4 py-2 text-left">Email</th>
-                        <th class="px-4 py-2 text-left">Role</th>
-                        <th class="px-4 py-2 text-left">Status</th>
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+    {% load widget_tweaks %}
+    <div class="bg-white p-8 rounded-lg shadow-md">
+        <p class="text-4xl font-bold text-center mb-8">All Registered Users</p>
+        <p class="mt-4 text-right text-gray-600">
+            <button id="approveUsers"
+                    class="bg-primary text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-500">
+                Approve Users
+            </button>
+        </p>
+        <table class="min-w-full table-auto">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2 text-left">Username</th>
+                    <th class="px-4 py-2 text-left">Email</th>
+                    <th class="px-4 py-2 text-left">Role</th>
+                    <th class="px-4 py-2 text-left">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr class="border-t">
+                        <td class="px-4 py-2">{{ user.username }}</td>
+                        <td class="px-4 py-2">{{ user.email }}</td>
+                        <td class="px-4 py-2 capitalize">{{ user.role|default:"N/A" }}</td>
+                        <td class="px-4 py-2">
+                            {% if user.is_approved == "Approved" %}
+                                <span class="text-green-600 font-semibold">Approved</span>
+                            {% elif user.is_approved == "Denied" %}
+                                <span class="text-red-600 font-semibold">Denied</span>
+                            {% else %}
+                                <span class="text-yellow-600 font-semibold">Pending</span>
+                            {% endif %}
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                        <tr class="border-t">
-                            <td class="px-4 py-2">{{ user.username }}</td>
-                            <td class="px-4 py-2">{{ user.email }}</td>
-                            <td class="px-4 py-2 capitalize">{{ user.role|default:"N/A" }}</td>
-                            <td class="px-4 py-2">
-                                {% if user.is_approved == "Approved" %}
-                                    <span class="text-green-600 font-semibold">Approved</span>
-                                {% elif user.is_approved == "Denied" %}
-                                    <span class="text-red-600 font-semibold">Denied</span>
-                                {% else %}
-                                    <span class="text-yellow-600 font-semibold">Pending</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="4" class="text-center text-gray-500 py-4">No registered users found.</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <!-- SweetAlert2 Toast Notifications -->
-        {% if messages %}
-            <script>
-                {% for message in messages %}
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: '{{ message.tags}}',
-                        title: '{{ message }}',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        background: '#f8f9fa',
-                        iconColor: '{% if "success" in message.tags %}#28a745{% elif "error" in message.tags %}#dc3545{% else %}#ffc107{% endif %}',
-                        showClass: {
-                            popup: 'animate__animated animate__fadeInRight'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOutRight'
-                        }
-                    });
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-gray-500 py-4">No registered users found.</td>
+                    </tr>
                 {% endfor %}
-            </script>
-        {% endif %}
-    </body>
-</html>
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

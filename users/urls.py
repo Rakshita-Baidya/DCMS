@@ -3,6 +3,8 @@ from . import views
 from .views import user_login, user_logout, user_register, list_users, approve_users
 from django.contrib.auth import views as auth_views
 
+# app_name = 'users'
+
 urlpatterns = [
     # backend urls
     path('login/', user_login, name='login'),

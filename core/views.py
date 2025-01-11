@@ -17,7 +17,7 @@ def dashboard(request):
 
 def doctor(request):
     context = {
-        'page_title': 'Doctor',
+        'page_title': 'Doctor Management',
         'active_page': 'doctor',
     }
     return render(request, 'doctor.html', context)
@@ -25,7 +25,7 @@ def doctor(request):
 
 def staff(request):
     context = {
-        'page_title': 'Staff',
+        'page_title': 'Staff Management',
         'active_page': 'staff',
     }
     return render(request, 'staff.html', context)
@@ -33,7 +33,7 @@ def staff(request):
 
 def patient(request):
     context = {
-        'page_title': 'Patient',
+        'page_title': 'Patient Management',
         'active_page': 'patient',
     }
     return render(request, 'patient.html', context)
@@ -41,7 +41,7 @@ def patient(request):
 
 def appointment(request):
     context = {
-        'page_title': 'Appointment',
+        'page_title': 'Appointment Management',
         'active_page': 'appointment',
     }
     return render(request, 'appointment.html', context)
@@ -49,7 +49,23 @@ def appointment(request):
 
 def schedule(request):
     context = {
-        'page_title': 'Schedule',
+        'page_title': 'Schedule Management',
         'active_page': 'schedule',
     }
     return render(request, 'schedule.html', context)
+
+
+def finance(request):
+    context = {
+        'page_title': 'Finance Management',
+        'active_page': 'finance',
+    }
+    return render(request, 'finance.html', context)
+
+
+def statistics(request):
+    context = {
+        'page_title': 'Statistics',
+        'active_page': 'statistics',
+    }
+    return render(request, 'statistics.html', context)

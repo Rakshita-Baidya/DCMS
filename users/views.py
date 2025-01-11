@@ -113,15 +113,19 @@ def user_logout(request):
 
 @login_required
 def list_users(request):
+    context = {
+        'page_title': 'User Management',
+        'active_page': 'users',
+    }
     # Allow only superusers and admins
     if not request.user.is_superuser and request.user.role != 'admin':
         messages.error(request, "Access denied.")
         return redirect('login')
+    else:
+        # Fetch all users
+        all_users = User.objects.all()
 
-    # Fetch all users
-    all_users = User.objects.all()
-
-    return render(request, 'all_users.html', {'users': all_users})
+    return render(request, 'all_users.html', {'users': all_users, **context})
 
 # Approval View
 
