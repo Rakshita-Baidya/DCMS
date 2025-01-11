@@ -1,0 +1,84 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+    <main class="max-w-7xl mx-auto px-4 sm:px-2 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 h-full">
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-[#00B2B2] h-full">
+                <div>
+                    <h3 class="text-xl font-semibold">Today's Appointments</h3>
+                </div>
+                <table class="w-full bg-white text-left text-sm text-gray-700">
+                    <thead class=" text-gray-600 text-xs">
+                        <tr>
+                            <th class="px-2 py-3 border-b">Appointment ID</th>
+                            <th class="px-2 py-3 border-b">Patient Name</th>
+                            <th class="px-2 py-3 border-b">Contact</th>
+                            <th class="px-2 py-3 border-b">Time</th>
+                            <th class="px-2 py-3 border-b">Status</th>
+                            <th class="px-2 py-3 border-b">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tbody>
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-2 py-4">1</td>
+                                <td class="px-2 py-4 font-medium text-gray-900">John Doe</td>
+                                <td class="px-2 py-4">9874564418</td>
+                                <td class="px-2 py-4">10:00 A.M.</td>
+                                <td class="px-2 py-4 text-green-500">Completed</td>
+                                <td class="px-2 py-4 flex space-x-2">
+                                    <p class="text-[#00b2b2]">Edit</p>
+                                    <p class="text-red-600">Delete</p>
+                                </td>
+                            </tr>
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-2 py-4">2</td>
+                                <td class="px-2 py-4 font-medium text-gray-900">John Doe</td>
+                                <td class="px-2 py-4">9874564418</td>
+                                <td class="px-2 py-4">12:00 P.M.</td>
+                                <td class="px-2 py-4 text-yellow-500">Pending</td>
+                                <td class="px-2 py-4 flex space-x-2">
+                                    <p class="text-[#00b2b2]">Edit</p>
+                                    <p class="text-red-600">Delete</p>
+                                </td>
+                            </tr>
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-2 py-4">3</td>
+                                <td class="px-2 py-4 font-medium text-gray-900">Jane Doe</td>
+                                <td class="px-2 py-4">9874564418</td>
+                                <td class="px-2 py-4">2:00 P.M.</td>
+                                <td class="px-2 py-4 text-yellow-500">Pending</td>
+                                <td class="px-2 py-4 flex space-x-2">
+                                    <p class="text-[#00b2b2]">Edit</p>
+                                    <p class="text-red-600">Delete</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                        {% comment %} {% for appointment in appointments %}
+              <tr class="border-b hover:bg-gray-50">
+                <td class="px-2 py-4">{{ appointment.id }}</td>
+                <td class="px-2 py-4 font-medium text-gray-900">{{ appointment.patient_name }}</td>
+                <td class="px-2 py-4">{{ appointment.contact }}</td>
+                <td class="px-2 py-4">{{ appointment.time }}</td>
+                <td class="px-2 py-4">
+                  <span class="{% if appointment.status == 'Completed' %}text-green-500{% else %}text-yellow-500{% endif %}">
+                    {{ appointment.status }}
+                  </span>
+                </td>
+                <td class="px-2 py-4 flex space-x-2">
+                  <p class="text-[#00b2b2]">Edit</p>
+                  <p class="text-red-600">Delete</p>
+                </td>
+              </tr>
+                        {% endfor %} {% endcomment %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-[#00B2B2] h-full">
+                <div class="text-center">
+                    <h3 class="text-xl font-semibold">Patient Summary</h3>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock content %}

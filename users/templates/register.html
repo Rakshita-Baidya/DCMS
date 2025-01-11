@@ -1,4 +1,5 @@
 {% load widget_tweaks %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -7,7 +8,7 @@
         <title>Register Your Account</title>
         <meta name="description" content="Temporary register page" />
         <meta name="keywords" content="register, DCMS" />
-        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="{% static '/css/output.css' %}" rel="stylesheet">
         <!-- Include SweetAlert2 CSS -->
         <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.css"
               rel="stylesheet" />

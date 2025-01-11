@@ -1,0 +1,17 @@
+{
+  "name": "dcms",
+  "version": "1.0.0",
+  "description": "DCMS",
+  "main": "tailwind.config.js",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

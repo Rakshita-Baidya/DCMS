@@ -1,7 +1,12 @@
 module.exports = {
-  content: ["./templates/**/*.html", "./clinic/**/*.html"],
+  content: ["./users/templates/**/*.html", "./core/templates/**/*.html"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#00B2B2",
+        secondary: "#7C7C7C",
+      },
+    },
   },
   plugins: [],
 };
