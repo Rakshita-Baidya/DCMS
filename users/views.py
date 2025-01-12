@@ -132,6 +132,10 @@ def list_users(request):
 
 @login_required
 def approve_users(request):
+    context = {
+        'page_title': 'User Management',
+        'active_page': 'users',
+    }
     if not request.user.is_superuser and request.user.role != 'admin':
         messages.error(request, "Access denied.")
         return redirect('login')
@@ -173,4 +177,4 @@ def approve_users(request):
     # Fetch pending users
     pending_users = User.objects.filter(is_approved="Pending")
 
-    return render(request, 'approve_users.html', {'users': pending_users})
+    return render(request, 'approve_users.html', {'users': pending_users, **context})

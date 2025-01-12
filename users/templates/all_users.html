@@ -5,10 +5,10 @@
     <div class="bg-white p-8 rounded-lg shadow-md">
         <p class="text-4xl font-bold text-center mb-8">All Registered Users</p>
         <p class="mt-4 text-right text-gray-600">
-            <button id="approveUsers"
-                    class="bg-primary text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-500">
+            <a href="{% url 'approve' %}"
+               class="bg-primaryLogo text-white py-2 px-4 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo">
                 Approve Users
-            </button>
+            </a>
         </p>
         <table class="min-w-full table-auto">
             <thead>
