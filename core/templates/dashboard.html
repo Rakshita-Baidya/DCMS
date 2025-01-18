@@ -61,7 +61,7 @@
                     <h3 class="text-xl font-semibold">Today's Appointments</h3>
                 </div>
                 <table class="w-full bg-white text-left text-sm text-gray-700">
-                    <thead class=" text-gray-600 text-xs">
+                    <thead class=" text-gray-600 text-xs text-center">
                         <tr>
                             <th class="px-2 py-3 border-b">Appointment ID</th>
                             <th class="px-2 py-3 border-b">Patient Name</th>
@@ -73,7 +73,7 @@
                     </thead>
                     <tbody>
                         <tbody>
-                            <tr class="border-b hover:bg-gray-50">
+                            <tr class="border-b hover:bg-gray-50 text-center">
                                 <td class="px-2 py-4">1</td>
                                 <td class="px-2 py-4 font-medium text-gray-900">John Doe</td>
                                 <td class="px-2 py-4">9874564418</td>
@@ -84,7 +84,7 @@
                                     <p class="text-red-600">Delete</p>
                                 </td>
                             </tr>
-                            <tr class="border-b hover:bg-gray-50">
+                            <tr class="border-b hover:bg-gray-50 text-center">
                                 <td class="px-2 py-4">2</td>
                                 <td class="px-2 py-4 font-medium text-gray-900">John Doe</td>
                                 <td class="px-2 py-4">9874564418</td>
@@ -95,11 +95,22 @@
                                     <p class="text-red-600">Delete</p>
                                 </td>
                             </tr>
-                            <tr class="border-b hover:bg-gray-50">
+                            <tr class="border-b hover:bg-gray-50 text-center">
                                 <td class="px-2 py-4">3</td>
                                 <td class="px-2 py-4 font-medium text-gray-900">Jane Doe</td>
                                 <td class="px-2 py-4">9874564418</td>
                                 <td class="px-2 py-4">2:00 P.M.</td>
+                                <td class="px-2 py-4 text-yellow-500">Pending</td>
+                                <td class="px-2 py-4 flex space-x-2">
+                                    <p class="text-[#00b2b2]">Edit</p>
+                                    <p class="text-red-600">Delete</p>
+                                </td>
+                            </tr>
+                            <tr class="border-b hover:bg-gray-50 text-center">
+                                <td class="px-2 py-4">4</td>
+                                <td class="px-2 py-4 font-medium text-gray-900">Jane Doe</td>
+                                <td class="px-2 py-4">9874564418</td>
+                                <td class="px-2 py-4">3:00 P.M.</td>
                                 <td class="px-2 py-4 text-yellow-500">Pending</td>
                                 <td class="px-2 py-4 flex space-x-2">
                                     <p class="text-[#00b2b2]">Edit</p>
@@ -130,6 +141,7 @@
             <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-[#00B2B2] h-full">
                 <div class="text-center">
                     <h3 class="text-xl font-semibold">Patient Summary</h3>
+                    <canvas id="patientSummary"></canvas>
                 </div>
             </div>
         </div>

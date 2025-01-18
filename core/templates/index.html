@@ -11,8 +11,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body class="bg-[#ECF4F4] min-h-screen">
+    {% comment %} sidebar section {% endcomment %}
     {% include "./sidebar.html" %}
     <div class="ml-48">
+      {% comment %} header section {% endcomment %}
       {% include "./header.html" %}
       <main>
         {% block content %}

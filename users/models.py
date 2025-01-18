@@ -4,18 +4,16 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 ROLE_CHOICES = [
     ('admin', 'Administrator'),
-    ('receptionist', 'Receptionist'),
+    ('staff', 'Staff'),
     ('doctor', 'Doctor'),
 ]
 
-# STATUS_CHOICES = [
-#     ('Pending', 'Pending'),
-#     ('Approved', 'Approved'),
-#     ('Denied', 'Denied'),
-# ]
-
 
 class User(AbstractUser):
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    address = models.CharField(max_length=200, blank=True, null=True)
+    contact = models.CharField(max_length=10, blank=True, null=True)
     role = models.CharField(
         max_length=20, choices=ROLE_CHOICES, blank=True, null=True)
     # is_approved = models.BooleanField(default=False)

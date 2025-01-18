@@ -25,7 +25,7 @@ def notify_user_on_status_change(sender, instance, created, **kwargs):
                     subject="Account Approved",
                     message=(
                         f"Dear {
-                            instance.username},\n\nYour account for DCMS has been approved. "
+                            instance.username},\n \n Your account for DCMS has been approved. "
                         f"You can now log in and access the system as a {
                             instance.role.capitalize()}."
                     ),
@@ -39,7 +39,7 @@ def notify_user_on_status_change(sender, instance, created, **kwargs):
                     subject="Account Denied",
                     message=(
                         f"Dear {
-                            instance.username},\n\nWe regret to inform you that your account request "
+                            instance.username},\n \n We regret to inform you that your account request "
                         f"for DCMS has been denied."
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
