@@ -1,64 +1,7 @@
-# from django.shortcuts import render, redirect, get_object_or_404
-
-
-# from rest_framework import generics, status
-# from rest_framework.permissions import AllowAny, IsAuthenticated
-# from rest_framework.response import Response
-# from rest_framework_simplejwt.authentication import JWTAuthentication
-
-# from .models import User, RegistrationRequest
-# from .serializers import RegistrationRequestSerializer, ApproveRequestSerializer
-
-# # Create your views here.
-
-
-# class register_view(generics.CreateAPIView):
-#     queryset = RegistrationRequest.objects.all()
-#     serializer_class = RegistrationRequestSerializer
-#     permission_classes = [AllowAny]
-
-#     def perform_create(self, serializer):
-#         user = serializer.save()
-#         RegistrationRequest.objects.create(user=user, status='Pending')
-
-#     def post(self, request, *args, **kwargs):
-#         response = super().post(request, *args, **kwargs)
-#         return Response({'message': 'Registration submitted!'})
-
-# # Approve or Deny User
-
-
-# class ApproveRequestView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request, pk):
-#         try:
-#             reg_request = RegistrationRequest.objects.get(pk=pk)
-#             action = request.data.get('action')
-
-#             if action == 'approve':
-#                 reg_request.status = 'Approved'
-
-#                 role = request.data.get('role')
-#                 reg_request.user.role = role
-
-#                 reg_request.user.is_active = True
-#                 reg_request.user.save()
-
-#             elif action == 'deny':
-#                 reg_request.status = 'Denied'
-
-#             reg_request.save()
-#             return Response({'message': f'Request {action}d!'})
-
-#         except RegistrationRequest.DoesNotExist:
-#             return Response({'error': 'Request not found.'})
-
-
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, StaffForm, DoctorForm
 from .models import User
 from django.contrib.auth.decorators import login_required
 
@@ -91,10 +34,23 @@ def user_login(request):
             user = authenticate(request, username=username, password=password)
 
             if user:
-                if user.is_active:
+                # Check if the user has already completed their first login setup
+                if user.last_login is None:
+                    # Store user ID temporarily in session
+                    request.session['temp_user_id'] = user.id
+
+                    # Redirect based on role to the corresponding form
+                    if user.role == 'staff':
+                        return redirect('staff_form')
+                    elif user.role == 'doctor':
+                        return redirect('doctor_form')
+                    elif user.role == 'admin':
+                        login(request, user)  # Directly log in admins
+                        return redirect('core:dashboard')
+                else:
+                    # Directly log the user in if it's not their first login
                     login(request, user)
                     messages.success(request, "Login successful!")
-                    # Update to your redirect path
                     return redirect('core:dashboard')
             else:
                 messages.error(request, "Invalid username or password.")
@@ -106,6 +62,63 @@ def user_login(request):
     return render(request, 'login.html', {'form': form})
 
 
+def staff_form(request):
+    temp_user_id = request.session.get('temp_user_id')
+
+    # Ensure temp_user_id exists in session
+    if not temp_user_id:
+        messages.error(request, "No user session found. Please log in again.")
+        return redirect('login')
+
+    temp_user = User.objects.get(id=temp_user_id)
+
+    if request.method == 'POST':
+        form = StaffForm(request.POST)
+        if form.is_valid():
+            staff_profile = form.save(commit=False)
+            staff_profile.user = temp_user
+            staff_profile.save()
+
+            # Log the user in after completing the form
+            login(request, temp_user)
+            del request.session['temp_user_id']  # Clear session
+            messages.success(request, "Welcome! Your details have been saved.")
+            return redirect('core:dashboard')
+    else:
+        form = StaffForm()
+
+    return render(request, 'staff_form.html', {'form': form})
+
+
+def doctor_form(request):
+    temp_user_id = request.session.get('temp_user_id')
+
+    # Ensure temp_user_id exists in session
+    if not temp_user_id:
+        messages.error(request, "No user session found. Please log in again.")
+        return redirect('login')
+
+    temp_user = User.objects.get(id=temp_user_id)
+
+    if request.method == 'POST':
+        form = DoctorForm(request.POST)
+        if form.is_valid():
+            doctor_profile = form.save(commit=False)
+            doctor_profile.user = temp_user
+            doctor_profile.save()
+
+            # Log the user in after completing the form
+            login(request, temp_user)
+            del request.session['temp_user_id']  # Clear session
+            messages.success(request, "Welcome! Your details have been saved.")
+            return redirect('core:dashboard')
+    else:
+        form = DoctorForm()
+
+    return render(request, 'doctor_form.html', {'form': form})
+
+
+@login_required
 def user_logout(request):
     logout(request)
     return redirect('login')

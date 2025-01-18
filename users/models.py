@@ -16,7 +16,6 @@ class User(AbstractUser):
     contact = models.CharField(max_length=10, blank=True, null=True)
     role = models.CharField(
         max_length=20, choices=ROLE_CHOICES, blank=True, null=True)
-    # is_approved = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_approved = models.CharField(default="Pending")
 
@@ -24,11 +23,21 @@ class User(AbstractUser):
         return super().__str__()
 
 
-# class RegistrationRequest(models.Model):
+class Staff(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='staff_profile')
+    position = models.CharField(max_length=100)
 
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     status = models.CharField(
-#         max_length=20, choices=STATUS_CHOICES, default='Pending')
+    def __str__(self):
+        return super().__str__()
 
-#     def __str__(self):
-#         return super().__str__()
+
+class Doctor(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='doctor_profile')
+    specialization = models.CharField(max_length=100)
+    qualification = models.CharField(max_length=100)
+    nmc_no = models.CharField(max_length=5)
+
+    def __str__(self):
+        return super().__str__()
