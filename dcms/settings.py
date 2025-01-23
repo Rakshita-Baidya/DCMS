@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'widget_tweaks',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -74,9 +75,17 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # 'DEFAULT_AUTHENTICATION_CLASSES': (
     #     'users.authentication.CustomJWTAuthentication',
     # ),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'DCMS API',
+    'DESCRIPTION': 'DCMS API documentation',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': True,
 }
 
 SIMPLE_JWT = {
@@ -191,7 +200,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'core/static/images/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'core:home'
+LOGIN_REDIRECT_URL = 'core:dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
 

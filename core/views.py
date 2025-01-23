@@ -12,7 +12,7 @@ def dashboard(request):
         'page_title': 'Dashboard',
         'active_page': 'dashboard',
     }
-    return render(request, 'dashboard.html', context)
+    return render(request, 'dashboard/dashboard.html', context)
 
 
 def doctor(request):
@@ -20,7 +20,7 @@ def doctor(request):
         'page_title': 'Doctor Management',
         'active_page': 'doctor',
     }
-    return render(request, 'doctor.html', context)
+    return render(request, 'doctor/doctor.html', context)
 
 
 def staff(request):
@@ -28,7 +28,7 @@ def staff(request):
         'page_title': 'Staff Management',
         'active_page': 'staff',
     }
-    return render(request, 'staff.html', context)
+    return render(request, 'staff/staff.html', context)
 
 
 def patient(request):
@@ -36,7 +36,7 @@ def patient(request):
         'page_title': 'Patient Management',
         'active_page': 'patient',
     }
-    return render(request, 'patient.html', context)
+    return render(request, 'patient/patient.html', context)
 
 
 def appointment(request):
@@ -44,7 +44,7 @@ def appointment(request):
         'page_title': 'Appointment Management',
         'active_page': 'appointment',
     }
-    return render(request, 'appointment.html', context)
+    return render(request, 'appointment/appointment.html', context)
 
 
 def schedule(request):
@@ -52,7 +52,7 @@ def schedule(request):
         'page_title': 'Schedule Management',
         'active_page': 'schedule',
     }
-    return render(request, 'schedule.html', context)
+    return render(request, 'schedule/schedule.html', context)
 
 
 def finance(request):
@@ -60,7 +60,7 @@ def finance(request):
         'page_title': 'Finance Management',
         'active_page': 'finance',
     }
-    return render(request, 'finance.html', context)
+    return render(request, 'finance/finance.html', context)
 
 
 def statistics(request):
@@ -68,4 +68,4 @@ def statistics(request):
         'page_title': 'Statistics',
         'active_page': 'statistics',
     }
-    return render(request, 'statistics.html', context)
+    return render(request, 'statistics/statistics.html', context)
