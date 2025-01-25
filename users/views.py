@@ -4,6 +4,8 @@ from django.contrib import messages
 from .forms import RegistrationForm, LoginForm, StaffForm, DoctorForm
 from .models import User
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q
 
 
 def user_register(request):
@@ -126,29 +128,52 @@ def user_logout(request):
 
 @login_required
 def list_users(request):
-    context = {
-        'page_title': 'User Management',
-        'active_page': 'users',
-    }
+
     # Allow only superusers and admins
     if not request.user.is_superuser and request.user.role != 'admin':
         messages.error(request, "Access denied.")
         return redirect('login')
     else:
-        # Fetch all users
-        all_users = User.objects.all()
+        user_queryset = User.objects.all()
 
-    return render(request, 'all_users.html', {'users': all_users, **context})
+        # user needs to be deleted
+        if request.method == 'POST' and 'delete_user_id' in request.POST:
+            user_id_to_delete = request.POST['delete_user_id']
+            user_to_delete = User.objects.get(id=user_id_to_delete)
+            user_to_delete.delete()
+            messages.success(request, f"User {
+                             user_to_delete.username} has been deleted.")
+
+        # Add search functionality
+        search_query = request.GET.get('search', '')
+        if search_query:
+            user_queryset = user_queryset.filter(
+                Q(first_name__icontains=search_query) |
+                Q(last_name__icontains=search_query) |
+                Q(username__icontains=search_query) |
+                Q(email__icontains=search_query)
+            )
+
+        # Pagination
+        paginator = Paginator(user_queryset, 8)
+        page = request.GET.get('page', 1)
+        user_list = paginator.get_page(page)
+
+        context = {
+            'page_title': 'User Management',
+            'active_page': 'users',
+            'users': user_list,
+            'total_user': user_queryset.count(),
+            'search_query': search_query,
+        }
+
+    return render(request, 'all_users.html', context)
 
 # Approval View
 
 
 @login_required
 def approve_users(request):
-    context = {
-        'page_title': 'User Management',
-        'active_page': 'users',
-    }
     if not request.user.is_superuser and request.user.role != 'admin':
         messages.error(request, "Access denied.")
         return redirect('login')
@@ -188,6 +213,27 @@ def approve_users(request):
             messages.error(request, "User not found.")
 
     # Fetch pending users
-    pending_users = User.objects.filter(is_approved="Pending")
+    user_queryset = User.objects.filter(is_approved="Pending")
 
-    return render(request, 'approve_users.html', {'users': pending_users, **context})
+    # Add search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        user_queryset = user_queryset.filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
+        )
+
+    # Pagination
+    paginator = Paginator(user_queryset, 8)
+    page = request.GET.get('page', 1)
+    user_list = paginator.get_page(page)
+
+    context = {
+        'page_title': 'User Management',
+        'active_page': 'users',
+        'users': user_list,
+        'total_user': user_queryset.count(),
+        'search_query': search_query,
+    }
+
+    return render(request, 'approve_users.html', context)

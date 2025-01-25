@@ -3,7 +3,7 @@
 {% block content %}
     <div class="p-6">
         {% comment %} Header Section {% endcomment %}
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex justify-between items-center mb-6 ">
             <div>
                 <p class="text-gray-700 text-2xl font-medium">{{ total_staff }} Total Staff Members</p>
             </div>
@@ -30,7 +30,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {% for staff_member in staff %}
                 <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-primaryLogo">
-                    <div class="flex flex-col items-center">
+                    <div class="flex flex-col items-center text-center">
                         <div class="w-36 h-36 rounded-full border-2 border-primaryLogo overflow-hidden flex items-center mb-4">
                             <img src="{{ staff_member.user.profile_image.url }}"
                                  alt="{{ staff_member.user.get_full_name }}"
@@ -39,8 +39,8 @@
                                  height="full" />
                         </div>
                         <!-- Staff Info -->
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ staff_member.user.get_full_name }}</h3>
-                        <p class="text-gray-600 mb-4">{{ staff_member.position }}</p>
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-2">{{ staff_member.user.get_full_name }}</h3>
+                        <p class="text-md text-gray-600 mb-4">{{ staff_member.position }}</p>
                         <div class="flex items-center justify-between w-full px-8">
                             <img src="{% static 'images/general/edit.svg' %}"
                                  alt="edit"

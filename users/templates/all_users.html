@@ -2,49 +2,140 @@
 {% load static %}
 {% block content %}
     {% load widget_tweaks %}
-    <main class="mx-auto px-4 sm:px-2 lg:px-6 py-8">
-        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2]">
-            <p class="text-4xl font-bold text-center mb-4">All Registered Users</p>
-            <p class="text-right text-gray-600">
-                <a href="{% url 'approve' %}"
-                   class="bg-primaryLogo text-white py-2 px-4 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo">
-                    Approve Users
-                </a>
-            </p>
-            <table class="min-w-full table-auto mt-4">
-                <thead>
-                    <tr class="border-b-2 border-primaryLogo px-4 py-2 text-center">
-                        <th>User ID</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                        <tr class="border-b text-center">
-                            <td class="px-4 py-2">{{ user.id }}</td>
-                            <td class="px-4 py-2">{{ user.username }}</td>
-                            <td class="px-4 py-2">{{ user.email }}</td>
-                            <td class="px-4 py-2 capitalize">{{ user.role|default:"N/A" }}</td>
-                            <td class="px-4 py-2">
-                                {% if user.is_approved == "Approved" %}
-                                    <span class="text-green-600 font-semibold">Approved</span>
-                                {% elif user.is_approved == "Denied" %}
-                                    <span class="text-red-600 font-semibold">Denied</span>
-                                {% else %}
-                                    <span class="text-yellow-600 font-semibold">Pending</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="4" class="text-center text-gray-500 py-4">No registered users found.</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="p-6">
+        {% comment %} Header Section {% endcomment %}
+        <div class="flex justify-between items-center mb-6 ">
+            <div>
+                <p class="text-gray-700 text-2xl font-medium">{{ total_user }} Total Users</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                {% comment %} Search Bar {% endcomment %}
+                <form method="get">
+                    <input type="text"
+                           name="search"
+                           value="{{ search_query }}"
+                           placeholder="Search..."
+                           class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                    <button type="submit" class="hidden"></button>
+                </form>
+                {% comment %} Add User Button {% endcomment %}
+                <div>
+                    <a href="#"
+                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                        + Add User
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'approve' %}"
+                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                        Approve Users
+                    </a>
+                </div>
+            </div>
         </div>
-    </main>
+        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2]">
+            {% if users %}
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr class="border-b-2 border-primaryLogo text-center pb-4">
+                            <th class="pb-2">User ID</th>
+                            <th class="pb-2">Username</th>
+                            <th class="pb-2">Full Name</th>
+                            <th class="pb-2">Email</th>
+                            <th class="pb-2">Role</th>
+                            <th class="pb-2">Status</th>
+                            <th class="pb-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr class="border-b text-center py-4">
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td class="py-4 capitalize">{{ user.role|default:"N/A" }}</td>
+                                <td>
+                                    {% if user.is_approved == "Approved" %}
+                                        <span class="text-green-600 font-semibold">Approved</span>
+                                    {% elif user.is_approved == "Denied" %}
+                                        <span class="text-red-600 font-semibold">Denied</span>
+                                    {% else %}
+                                        <span class="text-yellow-600 font-semibold">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="flex items-center justify-center space-x-3">
+                                        <img src="{% static 'images/general/edit.svg' %}"
+                                             alt="edit"
+                                             width="20"
+                                             height="20"
+                                             class="cursor-pointer" />
+                                        <img src="{% static 'images/general/trash.svg' %}"
+                                             alt="delete"
+                                             width="20"
+                                             height="20"
+                                             class="cursor-pointer"
+                                             onclick="confirmDelete({{ user.id }}, '{{ user.username }}')" />
+                                    </div>
+                                    <form id="delete-form-{{ user.id }}" method="post" class="hidden">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="delete_user_id" value="{{ user.id }}">
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Pagination -->
+                {% if user.has_other_pages %}
+                    <div class="flex justify-center mt-8">
+                        <div class="flex items-center space-x-2">
+                            {% if user.has_previous %}
+                                <a href="?page={{ user.previous_page_number }}&search={{ search_query }}">
+                                    <img src="{% static 'images/general/previous.svg' %}"
+                                         alt="previous"
+                                         width="20"
+                                         height="20"
+                                         class="cursor-pointer" />
+                                </a>
+                            {% endif %}
+                            <p class="px-3 py-2">Page {{ user.number }} of {{ user.paginator.num_pages }}</p>
+                            {% if user.has_next %}
+                                <a href="?page={{ user.next_page_number }}&search={{ search_query }}">
+                                    <img src="{% static 'images/general/next.svg' %}"
+                                         alt="next"
+                                         width="20"
+                                         height="20"
+                                         class="cursor-pointer" />
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <p class="text-center text-gray-500 py-4">No registered users found.</p>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        function confirmDelete(userId, userName) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action will permanently delete the user "+ userName +".",
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'bg-red-500 text-white hover:bg-red-600 py-2 w-32',
+                    cancelButton: 'bg-gray-300 text-gray-800 hover:bg-gray-400 py-2 w-32',
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If confirmed, send a POST request to delete the user
+                    document.getElementById('delete-form-' + userId).submit();
+                }
+            });
+        }
+    </script>
 {% endblock content %}

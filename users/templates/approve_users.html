@@ -2,45 +2,113 @@
 {% load static %}
 {% block content %}
     {% load widget_tweaks %}
-    <main class="mx-auto px-4 sm:px-2 lg:px-6 py-8">
-        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2]">
-            <p class="text-5xl font-bold text-center mb-8">Approve Users</p>
-            <table class="min-w-full table-auto">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-2 text-left">Username</th>
-                        <th class="px-4 py-2 text-left">Email</th>
-                        <th class="px-4 py-2 text-left">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                        <tr>
-                            <td class="border px-4 py-2">{{ user.username }}</td>
-                            <td class="border px-4 py-2">{{ user.email }}</td>
-                            <td class="border px-4 py-2">
-                                <form method="post" class="inline">
-                                    {% csrf_token %}
-                                    <select name="role" class="border px-2 py-1 rounded-md">
-                                        <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
-                                        <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Staff</option>
-                                        <option value="doctor" {% if user.role == 'doctor' %}selected{% endif %}>Doctor</option>
-                                    </select>
-                                    <button type="submit"
-                                            name="action"
-                                            value="approve"
-                                            class="ml-2 bg-green-500 text-white px-2 py-1 rounded-md">Approve</button>
-                                    <button type="submit"
-                                            name="action"
-                                            value="deny"
-                                            class="ml-2 bg-red-500 text-white px-2 py-1 rounded-md">Deny</button>
-                                    <input type="hidden" name="user_id" value="{{ user.id }}">
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="p-6">
+        {% comment %} Header Section {% endcomment %}
+        <div class="flex justify-between items-center mb-6 ">
+            <div class="space-x-1 flex items-center">
+                <button onclick="history.back()">
+                    <img src="{% static 'images/general/previous.svg' %}"
+                         alt="back"
+                         width="26"
+                         height="26"
+                         class="cursor-pointer" />
+                </button>
+                <p class="text-gray-700 text-2xl font-medium">{{ total_user }} Total Pending Users</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                {% comment %} Search Bar {% endcomment %}
+                <form method="get">
+                    <input type="text"
+                           name="search"
+                           value="{{ search_query }}"
+                           placeholder="Search..."
+                           class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                    <button type="submit" class="hidden"></button>
+                </form>
+            </div>
         </div>
-    </main>
+        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2]">
+            <p class="text-3xl font-bold text-center mb-8">Approve Users</p>
+            {% if users %}
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr class="border-b-2 border-primaryLogo text-center">
+                            <th class="pb-2">User ID</th>
+                            <th class="pb-2">Username</th>
+                            <th class="pb-2">Full Name</th>
+                            <th class="pb-2">Email</th>
+                            <th class="pb-2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr class="border-b text-center">
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <form method="post" class="flex items-center justify-center space-x-2 py-2">
+                                        {% csrf_token %}
+                                        <select name="role" class="border px-2 py-1 rounded-sm">
+                                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                                            <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Staff</option>
+                                            <option value="doctor" {% if user.role == 'doctor' %}selected{% endif %}>Doctor</option>
+                                        </select>
+                                        <button type="submit" name="action" value="approve">
+                                            <img src="{% static 'images/general/tick.svg' %}"
+                                                 alt="approve"
+                                                 width="26"
+                                                 height="26"
+                                                 class="cursor-pointer" />
+                                        </button>
+                                        <button type="submit" name="action" value="deny">
+                                            <img src="{% static 'images/general/cross.svg' %}"
+                                                 alt="deny"
+                                                 width="26"
+                                                 height="26"
+                                                 class="cursor-pointer" />
+                                        </button>
+                                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    </form>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-gray-500 py-4">No registered users found.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Pagination -->
+                {% if user.has_other_pages %}
+                    <div class="flex justify-center mt-8">
+                        <div class="flex items-center space-x-2">
+                            {% if user.has_previous %}
+                                <a href="?page={{ user.previous_page_number }}&search={{ search_query }}">
+                                    <img src="{% static 'images/general/previous.svg' %}"
+                                         alt="previous"
+                                         width="20"
+                                         height="20"
+                                         class="cursor-pointer" />
+                                </a>
+                            {% endif %}
+                            <p class="px-3 py-2">Page {{ user.number }} of {{ user.paginator.num_pages }}</p>
+                            {% if user.has_next %}
+                                <a href="?page={{ user.next_page_number }}&search={{ search_query }}">
+                                    <img src="{% static 'images/general/next.svg' %}"
+                                         alt="next"
+                                         width="20"
+                                         height="20"
+                                         class="cursor-pointer" />
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <p class="text-center text-gray-500 py-4">No registered users found.</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock content %}
