@@ -8,6 +8,12 @@ ROLE_CHOICES = [
     ('doctor', 'Doctor'),
 ]
 
+APPROVAL_STATUS = [
+    ('Pending', 'Pending'),
+    ('Approved', 'Approved'),
+    ('Rejected', 'Rejected'),
+]
+
 
 class User(AbstractUser):
     first_name = models.CharField(max_length=150)
@@ -17,7 +23,15 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=20, choices=ROLE_CHOICES, blank=True, null=True)
     is_active = models.BooleanField(default=False)
-    is_approved = models.CharField(default="Pending")
+    is_approved = models.CharField(
+        choices=APPROVAL_STATUS, default="Pending"
+    )
+    profile_image = models.ImageField(
+        upload_to='images/profile/',
+        default='images/profile/default.jpg',
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return super().__str__()

@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.db.models import Q
+from users.models import Staff
 
 # Create your views here.
 
@@ -24,10 +27,30 @@ def doctor(request):
 
 
 def staff(request):
+    staff_queryset = Staff.objects.all()
+
+    # Add search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        staff_queryset = staff_queryset.filter(
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query) |
+            Q(position__icontains=search_query)
+        )
+
+    # Pagination
+    paginator = Paginator(staff_queryset, 10)
+    page = request.GET.get('page', 1)
+    staff_list = paginator.get_page(page)
+
     context = {
         'page_title': 'Staff Management',
         'active_page': 'staff',
+        'staff': staff_list,
+        'total_staff': staff_queryset.count(),
+        'search_query': search_query,
     }
+    
     return render(request, 'staff/staff.html', context)
 
 

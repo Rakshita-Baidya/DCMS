@@ -19,28 +19,43 @@ def notify_user_on_status_change(sender, instance, created, **kwargs):
     # Ensure email is sent only for updates
     if not created:
         if instance._is_approved_changed:  # Only if is_approved was updated
-            if instance.is_active:
+            if instance.is_approved == "Approved":
                 # User approved
                 send_mail(
                     subject="Account Approved",
                     message=(
-                        f"Dear {
-                            instance.username},\n \n Your account for DCMS has been approved. "
+                        f"Dear {instance.username},\n\n"
+                        f"Your account for DCMS has been approved. "
                         f"You can now log in and access the system as a {
-                            instance.role.capitalize()}."
+                            instance.role.capitalize()}.\n\n"
+                        "Thank you,\nDCMS Team"
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[instance.email],
                     fail_silently=False,
                 )
-            else:
+            elif instance.is_approved == "Pending":
+                # Status changed to Pending
+                send_mail(
+                    subject="Account Status Pending",
+                    message=(
+                        f"Dear {instance.username},\n\n"
+                        f"Your account status has been updated to 'Pending'. "
+                        f"Please wait while we review your account.\n\n"
+                        "Thank you,\nDCMS Team"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[instance.email],
+                    fail_silently=False,
+                )
+            elif instance.is_approved == "Rejected":
                 # User denied
                 send_mail(
                     subject="Account Denied",
                     message=(
-                        f"Dear {
-                            instance.username},\n \n We regret to inform you that your account request "
-                        f"for DCMS has been denied."
+                        f"Dear {instance.username},\n\n"
+                        f"We regret to inform you that your account request for DCMS has been denied.\n\n"
+                        "Thank you,\nDCMS Team"
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[instance.email],

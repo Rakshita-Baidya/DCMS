@@ -1,5 +1,72 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-    <div>Staff</div>
+    <div class="p-6">
+        {% comment %} Header Section {% endcomment %}
+        <div class="flex justify-between items-center">
+            <div>
+                <p class="text-gray-700 text-2xl font-medium">{{ total_staff }} Total Staff Members</p>
+            </div>
+            <div class="flex items-center space-x-4 gap-4">
+                {% comment %} Search Bar {% endcomment %}
+                <form method="get">
+                    <input type="text"
+                           name="search"
+                           value="{{ search_query }}"
+                           placeholder="Search..."
+                           class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                    <button type="submit" class="hidden"></button>
+                </form>
+                {% comment %} Add Staff Button {% endcomment %}
+                <div>
+                    <a href="#"
+                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                        + Add Staff
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% comment %} Staff Grid {% endcomment %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for staff_member in staff %}
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full ">
+                            <img src="{{ staff_member.user.profile_image.url }}"
+                                 alt="{{ staff_member.user.get_full_name }}"
+                                 class="object-fill"
+                                 width=""
+                                 height="" />
+                        </div>
+                        <!-- Staff Info -->
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ staff_member.user.get_full_name }}</h3>
+                        <p class="text-gray-600 mb-1">Position: {{ staff_member.position }}</p>
+                        <p class="text-gray-600 mb-1">Contact: {{ staff_member.user.contact }}</p>
+                        <p class="text-gray-600 mb-1">Address: {{ staff_member.user.address }}</p>
+                        <p class="text-gray-600 mb-1">Contact: {{ staff_member.user.contact }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-span-full text-center py-12">
+                    <p class="text-gray-500 text-lg">No staff members found.</p>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Pagination -->
+        {% if staff.has_other_pages %}
+            <div class="flex justify-center mt-8">
+                <div class="flex items-center space-x-2">
+                    {% if staff.has_previous %}
+                        <a href="?page={{ staff.previous_page_number }}&search={{ search_query }}"
+                           class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">Previous</a>
+                    {% endif %}
+                    <span class="px-3 py-2">Page {{ staff.number }} of {{ staff.paginator.num_pages }}</span>
+                    {% if staff.has_next %}
+                        <a href="?page={{ staff.next_page_number }}&search={{ search_query }}"
+                           class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">Next</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
 {% endblock content %}
