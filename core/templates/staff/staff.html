@@ -3,11 +3,11 @@
 {% block content %}
     <div class="p-6">
         {% comment %} Header Section {% endcomment %}
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center mb-6">
             <div>
                 <p class="text-gray-700 text-2xl font-medium">{{ total_staff }} Total Staff Members</p>
             </div>
-            <div class="flex items-center space-x-4 gap-4">
+            <div class="flex items-center space-x-4">
                 {% comment %} Search Bar {% endcomment %}
                 <form method="get">
                     <input type="text"
@@ -27,23 +27,40 @@
             </div>
         </div>
         {% comment %} Staff Grid {% endcomment %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {% for staff_member in staff %}
-                <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-primaryLogo">
                     <div class="flex flex-col items-center">
-                        <div class="w-16 h-16 rounded-full ">
+                        <div class="w-36 h-36 rounded-full border-2 border-primaryLogo overflow-hidden flex items-center mb-4">
                             <img src="{{ staff_member.user.profile_image.url }}"
                                  alt="{{ staff_member.user.get_full_name }}"
                                  class="object-fill"
-                                 width=""
-                                 height="" />
+                                 width="full"
+                                 height="full" />
                         </div>
                         <!-- Staff Info -->
                         <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ staff_member.user.get_full_name }}</h3>
-                        <p class="text-gray-600 mb-1">Position: {{ staff_member.position }}</p>
-                        <p class="text-gray-600 mb-1">Contact: {{ staff_member.user.contact }}</p>
+                        <p class="text-gray-600 mb-4">{{ staff_member.position }}</p>
+                        <div class="flex items-center justify-between w-full px-8">
+                            <img src="{% static 'images/general/edit.svg' %}"
+                                 alt="edit"
+                                 width="20"
+                                 height="20"
+                                 class="cursor-pointer" />
+                            <img src="{% static 'images/general/eye.svg' %}"
+                                 alt="view"
+                                 width="20"
+                                 height="20"
+                                 class="cursor-pointer" />
+                            <img src="{% static 'images/general/trash.svg' %}"
+                                 alt="delete"
+                                 width="20"
+                                 height="20"
+                                 class="cursor-pointer" />
+                        </div>
+                        {% comment %} <p class="text-gray-600 mb-1">Contact: {{ staff_member.user.contact }}</p>
                         <p class="text-gray-600 mb-1">Address: {{ staff_member.user.address }}</p>
-                        <p class="text-gray-600 mb-1">Contact: {{ staff_member.user.contact }}</p>
+                        <p class="text-gray-600 mb-1">Contact: {{ staff_member.user.contact }}</p> {% endcomment %}
                     </div>
                 </div>
             {% empty %}
@@ -58,12 +75,24 @@
                 <div class="flex items-center space-x-2">
                     {% if staff.has_previous %}
                         <a href="?page={{ staff.previous_page_number }}&search={{ search_query }}"
-                           class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">Previous</a>
+                           class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                            <img src="{% static 'images/general/previous.svg' %}"
+                                 alt="previous"
+                                 width="20"
+                                 height="20"
+                                 class="cursor-pointer" />
+                        </a>
                     {% endif %}
                     <span class="px-3 py-2">Page {{ staff.number }} of {{ staff.paginator.num_pages }}</span>
                     {% if staff.has_next %}
                         <a href="?page={{ staff.next_page_number }}&search={{ search_query }}"
-                           class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">Next</a>
+                           class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                            <img src="{% static 'images/general/next.svg' %}"
+                                 alt="next"
+                                 width="20"
+                                 height="20"
+                                 class="cursor-pointer" />
+                        </a>
                     {% endif %}
                 </div>
             </div>

@@ -39,7 +39,7 @@ def staff(request):
         )
 
     # Pagination
-    paginator = Paginator(staff_queryset, 10)
+    paginator = Paginator(staff_queryset, 8)
     page = request.GET.get('page', 1)
     staff_list = paginator.get_page(page)
 
@@ -50,7 +50,7 @@ def staff(request):
         'total_staff': staff_queryset.count(),
         'search_query': search_query,
     }
-    
+
     return render(request, 'staff/staff.html', context)
 
 
