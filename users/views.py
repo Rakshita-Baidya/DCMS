@@ -127,7 +127,7 @@ def user_logout(request):
 
 
 @login_required
-def list_users(request):
+def users_list(request):
 
     # Allow only superusers and admins
     if not request.user.is_superuser and request.user.role != 'admin':
@@ -167,13 +167,13 @@ def list_users(request):
             'search_query': search_query,
         }
 
-    return render(request, 'all_users.html', context)
+    return render(request, 'users_list.html', context)
 
 # Approval View
 
 
 @login_required
-def approve_users(request):
+def user_approve(request):
     if not request.user.is_superuser and request.user.role != 'admin':
         messages.error(request, "Access denied.")
         return redirect('login')
@@ -236,4 +236,25 @@ def approve_users(request):
         'search_query': search_query,
     }
 
-    return render(request, 'approve_users.html', context)
+    return render(request, 'user_approve.html', context)
+
+
+@login_required
+def user_profile(request):
+    user_queryset = User.objects.get(pk=request.user.id)
+
+    # user needs to be deleted
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        user_id_to_delete = request.POST['delete_user_id']
+        user_to_delete = User.objects.get(id=user_id_to_delete)
+        user_to_delete.delete()
+        messages.success(request, f"User {
+            user_to_delete.username} has been deleted.")
+
+    context = {
+        'page_title': 'User Profile',
+        'active_page': 'profile',
+        'user': user_queryset,
+    }
+
+    return render(request, 'user_profile.html', context)

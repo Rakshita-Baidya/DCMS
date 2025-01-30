@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import user_login, user_logout, user_register, list_users, approve_users, staff_form, doctor_form
+from .views import user_login, user_logout, user_register, users_list, user_approve, user_profile, staff_form, doctor_form
 from django.contrib.auth import views as auth_views
 
 # app_name = 'users'
@@ -11,6 +11,7 @@ urlpatterns = [
     path('register/', user_register, name='register'),
     path('staff_form/', staff_form, name='staff_form'),
     path('doctor_form/', doctor_form, name='doctor_form'),
+    path('logout/', user_logout, name='logout'),
 
     path('reset_password/', auth_views.PasswordResetView.as_view(template_name='password_reset.html'),
          name='reset_password'),
@@ -21,9 +22,7 @@ urlpatterns = [
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_done.html'),
          name='password_reset_complete'),
 
-    path('logout/', user_logout, name='logout'),
-
-
-    path('list/', list_users, name='list'),
-    path('approve/', approve_users, name='approve'),
+    path('list/', users_list, name='list'),
+    path('approve/', user_approve, name='approve'),
+    path('profile/', user_profile, name='profile'),
 ]

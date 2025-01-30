@@ -1,0 +1,69 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+    {% load widget_tweaks %}
+    <div class="p-6">
+        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 items-center">
+            <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
+                <img src="{{ user.profile_image.url }}"
+                     alt="{{ user.get_full_name }}"
+                     class="object-fill absolute scale-110"
+                     width="full"
+                     height="full" />
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 my-6">
+                <div class="text-xl font-semibold text-gray-800 space-y-6">
+                    <p>Identification Number</p>
+                    <p>Username</p>
+                    <p>Full Name</p>
+                    <p>Email Address</p>
+                    <p>Address</p>
+                    <p>Contact Number</p>
+                    <p>Role</p>
+                </div>
+                <div class="text-lg space-y-6">
+                    <p>{{ user.id }}</p>
+                    <p>{{ user.username }}</p>
+                    <p>{{ user.get_full_name }}</p>
+                    <p>{{ user.email }}</p>
+                    <p>{{ user.address }}</p>
+                    <p>{{ user.contact }}</p>
+                    <p>{{ user.role|capfirst }}</p>
+                    {% comment %} <form method="post" class="flex items-center justify-center space-x-2 py-2">
+                        {% csrf_token %}
+                        <select name="role" class="border px-2 py-1 rounded-sm">
+                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                            <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Staff</option>
+                            <option value="doctor" {% if user.role == 'doctor' %}selected{% endif %}>Doctor</option>
+                        </select>
+                        <button type="submit" name="action" value="approve">
+                            <img src="{% static 'images/general/tick.svg' %}" alt="approve" width="26" height="26" class="cursor-pointer" />
+                        </button>
+                        <button type="submit" name="action" value="deny">
+                            <img src="{% static 'images/general/cross.svg' %}" alt="deny" width="26" height="26" class="cursor-pointer" />
+                        </button>
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                    </form> {% endcomment %}
+                </div>
+            </div>
+            <div class="flex col-span-2 justify-end items-center w-full">
+                <div>
+                    <img src="{% static 'images/general/edit.svg' %}"
+                         alt="edit"
+                         width="20"
+                         height="20"
+                         class="cursor-pointer" />
+                    Edit
+                </div>
+                <div class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                    <img src="{% static 'images/general/trash.svg' %}"
+                         alt="delete"
+                         width="20"
+                         height="20"
+                         class="cursor-pointer " />
+                    Delete
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

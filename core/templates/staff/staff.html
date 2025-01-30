@@ -31,7 +31,7 @@
             {% for staff_member in staff %}
                 <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-primaryLogo">
                     <div class="flex flex-col items-center text-center">
-                        <div class="w-36 h-36 rounded-full border-2 border-primaryLogo overflow-hidden flex items-center mb-4">
+                        <div class="w-36 h-36 rounded-full border-2 border-primaryLogo overflow-hidden flex items-center justify-center  mb-4">
                             <img src="{{ staff_member.user.profile_image.url }}"
                                  alt="{{ staff_member.user.get_full_name }}"
                                  class="object-fill"
