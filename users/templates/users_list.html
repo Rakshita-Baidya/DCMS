@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
     {% load widget_tweaks %}
-    <div class="p-6">
+    <div class="p-8">
         {% comment %} Header Section {% endcomment %}
         <div class="flex justify-between items-center mb-6 ">
             <div>
@@ -66,17 +66,22 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">
-                                        <img src="{% static 'images/general/edit.svg' %}"
-                                             alt="edit"
+                                        <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
-                                             class="cursor-pointer" />
-                                        <img src="{% static 'images/general/trash.svg' %}"
-                                             alt="delete"
+                                             fill="none"
+                                             viewBox="0 0 20 20"
+                                             class="cursor-pointer">
+                                            <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M13.2603 3.60022 5.05034 12.2902c-.31.33-.61.98-.67 1.43l-.37 3.24c-.13 1.17.71 1.97 1.87 1.77l3.22-.55c.45-.08 1.07996-.41 1.38996-.75l8.21-8.68998c1.42-1.5 2.06-3.21-.15-5.3-2.2-2.07-3.87-1.34-5.29.16Z" />
+                                            <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M11.8896 5.0498c.43 2.76 2.67 4.87 5.45 5.15M3 22h18" />
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
                                              class="cursor-pointer"
-                                             onclick="confirmDelete({{ user.id }}, '{{ user.username }}')" />
+                                             onclick="confirmDelete({{ user.id }}, '{{ user.username }}')">
+                                            <path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.249995" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
+                                        </svg>
                                     </div>
                                     <form id="delete-form-{{ user.id }}" method="post" class="hidden">
                                         {% csrf_token %}
@@ -93,21 +98,31 @@
                         <div class="flex items-center space-x-2">
                             {% if user.has_previous %}
                                 <a href="?page={{ user.previous_page_number }}&search={{ search_query }}">
-                                    <img src="{% static 'images/general/previous.svg' %}"
-                                         alt="previous"
+                                    <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
                                          height="20"
-                                         class="cursor-pointer" />
+                                         viewBox="0 0 20 20"
+                                         class="cursor-pointer">
+                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                        <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
+                                        </g>
+                                    </svg>
                                 </a>
                             {% endif %}
                             <p class="px-3 py-2">Page {{ user.number }} of {{ user.paginator.num_pages }}</p>
                             {% if user.has_next %}
                                 <a href="?page={{ user.next_page_number }}&search={{ search_query }}">
-                                    <img src="{% static 'images/general/next.svg' %}"
-                                         alt="next"
+                                    <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
                                          height="20"
-                                         class="cursor-pointer" />
+                                         viewBox="0 0 20 20"
+                                         class="cursor-pointer">
+                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                        <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
+                                        </g>
+                                    </svg>
                                 </a>
                             {% endif %}
                         </div>

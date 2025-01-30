@@ -7,11 +7,16 @@
         <div class="flex justify-between items-center mb-6 ">
             <div class="space-x-1 flex items-center">
                 <button onclick="history.back()">
-                    <img src="{% static 'images/general/previous.svg' %}"
-                         alt="back"
-                         width="26"
-                         height="26"
-                         class="cursor-pointer" />
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="20"
+                         height="20"
+                         viewBox="0 0 20 20"
+                         class="cursor-pointer">
+                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                        <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                        <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
+                        </g>
+                    </svg>
                 </button>
                 <p class="text-gray-700 text-2xl font-medium">{{ total_user }} Total Pending Users</p>
             </div>
@@ -56,18 +61,25 @@
                                             <option value="doctor" {% if user.role == 'doctor' %}selected{% endif %}>Doctor</option>
                                         </select>
                                         <button type="submit" name="action" value="approve">
-                                            <img src="{% static 'images/general/tick.svg' %}"
-                                                 alt="approve"
+                                            <svg xmlns="http://www.w3.org/2000/svg"
                                                  width="26"
                                                  height="26"
-                                                 class="cursor-pointer" />
+                                                 viewBox="0 0 20 20"
+                                                 class="cursor-pointer">
+                                                <g fill="none" stroke="#00b2b2" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                                <path d="M9.999996 18.3320235c4.582029 0 8.3320275-3.7499985 8.3320275-8.3320275 0-4.58202983-3.7499985-8.33202833-8.3320275-8.33202833-4.58202983 0-8.33202833 3.7499985-8.33202833 8.33202833 0 4.582029 3.7499985 8.3320275 8.33202833 8.3320275Zm0 0" />
+                                                <path d="m6.45702825 9.999996 2.35937489 2.35937406 4.72655978-4.71874812" />
+                                                </g>
+                                            </svg>
                                         </button>
                                         <button type="submit" name="action" value="deny">
-                                            <img src="{% static 'images/general/cross.svg' %}"
-                                                 alt="deny"
+                                            <svg xmlns="http://www.w3.org/2000/svg"
                                                  width="26"
                                                  height="26"
-                                                 class="cursor-pointer" />
+                                                 viewBox="0 0 20 20"
+                                                 class="cursor-pointer">
+                                                <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.999996 18.3320235c4.582029 0 8.3320275-3.7499985 8.3320275-8.3320275 0-4.58202983-3.7499985-8.33202833-8.3320275-8.33202833-4.58202983 0-8.33202833 3.7499985-8.33202833 8.33202833 0 4.582029 3.7499985 8.3320275 8.33202833 8.3320275Zm-2.35937406-5.97265344 4.71874812-4.71874812m0 4.71874812L7.64062194 7.64062194" />
+                                            </svg>
                                         </button>
                                         <input type="hidden" name="user_id" value="{{ user.id }}">
                                     </form>
@@ -86,21 +98,31 @@
                         <div class="flex items-center space-x-2">
                             {% if user.has_previous %}
                                 <a href="?page={{ user.previous_page_number }}&search={{ search_query }}">
-                                    <img src="{% static 'images/general/previous.svg' %}"
-                                         alt="previous"
+                                    <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
                                          height="20"
-                                         class="cursor-pointer" />
+                                         viewBox="0 0 20 20"
+                                         class="cursor-pointer">
+                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                        <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
+                                        </g>
+                                    </svg>
                                 </a>
                             {% endif %}
                             <p class="px-3 py-2">Page {{ user.number }} of {{ user.paginator.num_pages }}</p>
                             {% if user.has_next %}
                                 <a href="?page={{ user.next_page_number }}&search={{ search_query }}">
-                                    <img src="{% static 'images/general/next.svg' %}"
-                                         alt="next"
+                                    <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
                                          height="20"
-                                         class="cursor-pointer" />
+                                         viewBox="0 0 20 20"
+                                         class="cursor-pointer">
+                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                        <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
+                                        </g>
+                                    </svg>
                                 </a>
                             {% endif %}
                         </div>

@@ -1,9 +1,9 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-    <div class="p-6">
+    <div class="p-8">
         {% comment %} Header Section {% endcomment %}
-        <div class="flex justify-between items-center mb-6 ">
+        <div class="flex justify-between items-center mb-8">
             <div>
                 <p class="text-gray-700 text-2xl font-medium">{{ total_staff }} Total Staff Members</p>
             </div>
@@ -27,7 +27,7 @@
             </div>
         </div>
         {% comment %} Staff Grid {% endcomment %}
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {% for staff_member in staff %}
                 <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-primaryLogo">
                     <div class="flex flex-col items-center text-center">
@@ -42,21 +42,33 @@
                         <h3 class="text-2xl font-semibold text-gray-800 mb-2">{{ staff_member.user.get_full_name }}</h3>
                         <p class="text-md text-gray-600 mb-4">{{ staff_member.position }}</p>
                         <div class="flex items-center justify-between w-full px-8">
-                            <img src="{% static 'images/general/edit.svg' %}"
-                                 alt="edit"
+                            <!-- edit -->
+                            <svg xmlns="http://www.w3.org/2000/svg"
                                  width="20"
                                  height="20"
-                                 class="cursor-pointer" />
-                            <img src="{% static 'images/general/eye.svg' %}"
-                                 alt="view"
+                                 viewBox="0 0 20 20"
+                                 class="cursor-pointer">
+                                <g fill="none" stroke="#00B2B2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
+                                <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
+                                <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
+                                </g>
+                            </svg>
+                            <!-- view -->
+                            <svg xmlns="http://www.w3.org/2000/svg"
                                  width="20"
                                  height="20"
-                                 class="cursor-pointer" />
-                            <img src="{% static 'images/general/trash.svg' %}"
-                                 alt="delete"
+                                 viewBox="0 0 20 20"
+                                 class="cursor-pointer">
+                                <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
+                            </svg>
+                            <!-- delete -->
+                            <svg xmlns="http://www.w3.org/2000/svg"
                                  width="20"
                                  height="20"
-                                 class="cursor-pointer" />
+                                 viewBox="0 0 20 20"
+                                 class="cursor-pointer">
+                                <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
+                            </svg>
                         </div>
                         {% comment %} <p class="text-gray-600 mb-1">Contact: {{ staff_member.user.contact }}</p>
                         <p class="text-gray-600 mb-1">Address: {{ staff_member.user.address }}</p>
@@ -76,22 +88,32 @@
                     {% if staff.has_previous %}
                         <a href="?page={{ staff.previous_page_number }}&search={{ search_query }}"
                            class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
-                            <img src="{% static 'images/general/previous.svg' %}"
-                                 alt="previous"
+                            <svg xmlns="http://www.w3.org/2000/svg"
                                  width="20"
                                  height="20"
-                                 class="cursor-pointer" />
+                                 viewBox="0 0 20 20"
+                                 class="cursor-pointer">
+                                <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
+                                </g>
+                            </svg>
                         </a>
                     {% endif %}
                     <span class="px-3 py-2">Page {{ staff.number }} of {{ staff.paginator.num_pages }}</span>
                     {% if staff.has_next %}
                         <a href="?page={{ staff.next_page_number }}&search={{ search_query }}"
                            class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
-                            <img src="{% static 'images/general/next.svg' %}"
-                                 alt="next"
+                            <svg xmlns="http://www.w3.org/2000/svg"
                                  width="20"
                                  height="20"
-                                 class="cursor-pointer" />
+                                 viewBox="0 0 20 20"
+                                 class="cursor-pointer">
+                                <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
+                                </g>
+                            </svg>
                         </a>
                     {% endif %}
                 </div>

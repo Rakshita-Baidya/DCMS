@@ -250,11 +250,23 @@ def user_profile(request):
         user_to_delete.delete()
         messages.success(request, f"User {
             user_to_delete.username} has been deleted.")
+# Initialize profile data
+    staff_profile = None
+    doctor_profile = None
 
+    # Check the user's role and fetch data accordingly
+    if user_queryset.role == 'staff':
+        staff_profile = user_queryset.staff_profile
+    elif user_queryset.role == 'doctor':
+        doctor_profile = user_queryset.doctor_profile
+
+    # Pass the profile data to the context
     context = {
         'page_title': 'User Profile',
         'active_page': 'profile',
         'user': user_queryset,
+        'staff_profile': staff_profile,
+        'doctor_profile': doctor_profile,
     }
 
     return render(request, 'user_profile.html', context)

@@ -6,6 +6,7 @@ module.exports = {
         primaryLogo: "#00B2B2",
         secondaryLogo: "#7C7C7C",
         darkerPrimary: "#018181",
+        dangerRed: "#B20003",
       },
     },
   },
