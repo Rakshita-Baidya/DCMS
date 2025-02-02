@@ -5,7 +5,8 @@
     <div class="p-8">
         <div class="flex justify-between items-center w-full mb-6">
             <p class="text-3xl font-bold">{{ user.get_full_name }}'s Profile</p>
-            <div class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
+            <a href="{% url 'edit_profile' %}"
+               class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="20"
                      height="20"
@@ -16,7 +17,7 @@
                     </g>
                 </svg>
                 <p>Edit Profile</p>
-            </div>
+            </a>
             {% comment %} <div class="inline-flex items-center px-4 py-1.5 bg-dangerRed text-white rounded-lg hover:bg-darkerPrimary space-x-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
                     <path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.249995" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
@@ -38,8 +39,8 @@
                         <p>Position</p>
                     {% elif doctor_profile %}
                         <p>Specialization</p>
-                        <p>Experience</p>
-                        <p>License Number</p>
+                        <p>Qualification</p>
+                        <p>NMC Number</p>
                     {% endif %}
                 </div>
                 <div class="text-lg space-y-6 mx-auto ">
@@ -54,8 +55,8 @@
                         <p>{{ staff_profile.position }}</p>
                     {% elif doctor_profile %}
                         <p>{{ doctor_profile.specialization }}</p>
-                        <p>{{ doctor_profile.experience }}</p>
-                        <p>{{ doctor_profile.license_number }}</p>
+                        <p>{{ doctor_profile.qualification }}</p>
+                        <p>{{ doctor_profile.nmc_no }}</p>
                     {% endif %}
                     {% comment %} <form method="post" class="flex items-center justify-center space-x-2 py-2">
                         {% csrf_token %}

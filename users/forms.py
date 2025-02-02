@@ -28,7 +28,9 @@ class DoctorForm(forms.ModelForm):
         model = Doctor
         fields = ['specialization', 'qualification', 'nmc_no']
 
+
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'address', 'contact', 'email']
+        fields = ['first_name', 'last_name', 'address',
+                  'contact', 'username', 'email', 'profile_image']

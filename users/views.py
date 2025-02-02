@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from .forms import RegistrationForm, LoginForm, StaffForm, DoctorForm
+from .forms import RegistrationForm, LoginForm, StaffForm, DoctorForm, UserEditForm
 from .models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -270,3 +270,51 @@ def user_profile(request):
     }
 
     return render(request, 'user_profile.html', context)
+
+
+@login_required
+def edit_profile(request):
+    user_queryset = User.objects.get(pk=request.user.id)
+    staff_profile = None
+    doctor_profile = None
+
+    # Fetch profile data based on the user's role
+    if user_queryset.role == 'staff':
+        staff_profile = user_queryset.staff_profile
+    elif user_queryset.role == 'doctor':
+        doctor_profile = user_queryset.doctor_profile
+
+    if request.method == 'POST':
+        user_form = UserEditForm(
+            request.POST, request.FILES, instance=user_queryset)
+        staff_form = StaffForm(
+            request.POST, instance=staff_profile) if staff_profile else None
+        doctor_form = DoctorForm(
+            request.POST, instance=doctor_profile) if doctor_profile else None
+
+        if user_form.is_valid():
+            user_form.save()
+            if staff_form and staff_form.is_valid():
+                staff_form.save()
+            if doctor_form and doctor_form.is_valid():
+                doctor_form.save()
+
+            messages.success(
+                request, 'Your profile has been updated successfully!')
+            return redirect('profile')
+    else:
+        user_form = UserEditForm(instance=user_queryset)
+        staff_form = StaffForm(
+            instance=staff_profile) if staff_profile else None
+        doctor_form = DoctorForm(
+            instance=doctor_profile) if doctor_profile else None
+
+    context = {
+        'user_form': user_form,
+        'staff_form': staff_form,
+        'doctor_form': doctor_form,
+        'page_title': 'Edit Profile',
+        'active_page': 'profile',
+    }
+
+    return render(request, 'user_profile_edit.html', context)

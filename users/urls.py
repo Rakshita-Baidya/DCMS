@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import user_login, user_logout, user_register, users_list, user_approve, user_profile, staff_form, doctor_form
+from .views import user_login, user_logout, user_register, users_list, user_approve, user_profile, staff_form, doctor_form, edit_profile
 from django.contrib.auth import views as auth_views
 
 # app_name = 'users'
@@ -25,4 +25,5 @@ urlpatterns = [
     path('list/', users_list, name='list'),
     path('approve/', user_approve, name='approve'),
     path('profile/', user_profile, name='profile'),
+    path('profile/edit/', edit_profile, name='edit_profile'),
 ]

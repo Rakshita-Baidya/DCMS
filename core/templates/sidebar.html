@@ -10,67 +10,75 @@
      <nav class="space-y-1 px-4 flex-1">
           <a href="{% url 'core:dashboard' %}"
              class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'dashboard' %}bg-darkerPrimary{% endif %}">
-               <img src="{% static 'images/sidebar/Dashboard.svg' %}"
-                    alt="dashboard"
-                    width="20px"
-                    height="20px">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+                    <g clip-path="url(#a)">
+                    <path fill="#fff" d="M23.1141 10.2876c-.5662-1.43719-1.3871-2.74292-2.4171-3.84481-1.0276-1.10455-2.2452-1.98481-3.5854-2.592-1.3924-.6318-2.8679-.9504-4.3912-.9504-1.5233 0-2.99874.3186-4.39111.9504-1.34024.60719-2.55788 1.48745-3.58543 2.592-1.03004 1.10189-1.85092 2.40762-2.41714 3.84481-.58918 1.4931-.88629 3.0753-.88629 4.7088 0 3.5829 1.46791 6.9579 4.02605 9.2637l.04281.0378c.14603.1296.32984.2025.51868.2025H19.4154c.1889 0 .3727-.0729.5187-.2025l.0428-.0378c2.5556-2.3058 4.0235-5.6808 4.0235-9.2637 0-1.6335-.2996-3.2157-.8863-4.7088Zm-11.149-4.14721c0-.1188.0906-.216.2014-.216h1.1079c.1107 0 .2014.0972.2014.216v2.16c0 .1188-.0907.216-.2014.216h-1.1079c-.1108 0-.2014-.0972-.2014-.216v-2.16ZM6.62722 15.5904c0 .1188-.09065.216-.20143.216H4.4115c-.11078 0-.20143-.0972-.20143-.216v-1.188c0-.1188.09065-.216.20143-.216h2.01429c.11078 0 .20143.0972.20143.216v1.188Zm2.28369-5.5215-.78305.8397c-.03786.0402-.08898.0627-.14226.0627-.05328 0-.1044-.0225-.14226-.0627L6.41823 9.38039c-.03748-.0406-.05851-.09542-.05851-.15255 0-.05713.02103-.11195.05851-.15255l.78306-.8397c.07805-.0837.20646-.0837.28451 0l1.42511 1.5282c.07806.0837.07806.2214 0 .30511Zm7.32949 2.2572-2.1276 2.2815c.1259.5049.005 1.0638-.3651 1.4607-.1308.1406-.2863.2521-.4573.3282-.1711.0761-.3545.1153-.5398.1153-.1852 0-.3686-.0392-.5397-.1153-.1711-.0761-.3265-.1876-.4573-.3282-.1311-.1403-.2351-.307-.3061-.4904-.071-.1835-.1075-.3802-.1075-.5788s.0365-.3953.1075-.5788c.071-.1834.175-.3501.3061-.4904.1748-.1881.3928-.3233.632-.392.2392-.0688.491-.0686.7301.0005l2.1276-2.2815c.0781-.0837.2065-.0837.2845 0l.7126.7641c.078.0837.078.2187 0 .3051Zm1.0827-1.4148-.7831-.8397c-.0375-.0406-.0585-.09543-.0585-.15256s.021-.11195.0585-.15255l1.4251-1.5282c.0781-.0837.2065-.0837.2845 0l.7831.8397c.0781.0837.0781.2214 0 .3051l-1.4251 1.52821c-.0379.0402-.089.0627-.1423.0627-.0532 0-.1044-.0225-.1422-.0627Zm3.807 4.6791c0 .1188-.0907.216-.2015.216h-2.0142c-.1108 0-.2015-.0972-.2015-.216v-1.188c0-.1188.0907-.216.2015-.216h2.0142c.1108 0 .2015.0972.2015.216v1.188Z" />
+                    </g>
+                    <defs>
+                    <clipPath id="a">
+                    <path fill="#fff" d="M0 0h24v24H0z" transform="translate(0 .5)" />
+                    </clipPath>
+                    </defs>
+               </svg>
                <span>Dashboard</span>
           </a>
           <a href="{% url 'core:doctor' %}"
              class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'doctor' %}bg-darkerPrimary{% endif %}">
-               <img src="{% static 'images/sidebar/Doctor.svg' %}"
-                    alt="doctor"
-                    width="20px"
-                    height="20px">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+                    <g clip-path="url(#a)">
+                    <path fill="#fff" d="M12 12.5c1.5913 0 3.1174-.6321 4.2426-1.7574C17.3679 9.61742 18 8.0913 18 6.5c0-1.5913-.6321-3.11742-1.7574-4.24264C15.1174 1.13214 13.5913.5 12 .5c-1.5913 0-3.11742.63214-4.24264 1.75736C6.63214 3.38258 6 4.9087 6 6.5s.63214 3.11742 1.75736 4.2426C8.88258 11.8679 10.4087 12.5 12 12.5Zm-4.5 2.5875c-3.46875 1.0172-6 4.2234-6 8.0203 0 .7688.62344 1.3922 1.39219 1.3922H21.1078c.7688 0 1.3922-.6234 1.3922-1.3922 0-3.7969-2.5312-7.0031-6-8.0203v2.3813c1.2938.3328 2.25 1.5093 2.25 2.9062v1.875c0 .4125-.3375.75-.75.75h-.75c-.4125 0-.75-.3375-.75-.75s.3375-.75.75-.75v-1.125c0-.8297-.6703-1.5-1.5-1.5s-1.5.6703-1.5 1.5V21.5c.4125 0 .75.3375.75.75s-.3375.75-.75.75h-.75c-.4125 0-.75-.3375-.75-.75v-1.875c0-1.3969.9563-2.5734 2.25-2.9062v-2.6766c-.2812-.0281-.5672-.0422-.8578-.0422H9.85781c-.29062 0-.57656.0141-.85781.0422v3.0656c1.0828.3234 1.875 1.3266 1.875 2.5172C10.875 21.8234 9.69844 23 8.25 23s-2.625-1.1766-2.625-2.625c0-1.1906.79219-2.1938 1.875-2.5172v-2.7703ZM8.25 21.5c.29837 0 .58452-.1185.7955-.3295.21097-.211.3295-.4971.3295-.7955s-.11853-.5845-.3295-.7955c-.21098-.211-.49713-.3295-.7955-.3295-.29837 0-.58452.1185-.7955.3295-.21097.211-.3295.4971-.3295.7955s.11853.5845.3295.7955c.21098.211.49713.3295.7955.3295Z" />
+                    </g>
+                    <defs>
+                    <clipPath id="a">
+                    <path fill="#fff" d="M0 0h24v24H0z" transform="translate(0 .5)" />
+                    </clipPath>
+                    </defs>
+               </svg>
                <span>Doctors</span>
           </a>
           <a href="{% url 'core:staff' %}"
              class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'staff' %}bg-darkerPrimary{% endif %}">
-               <img src="{% static 'images/sidebar/staff.svg' %}"
-                    alt="staff"
-                    width="20px"
-                    height="20px">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+                    <path stroke="#fff" stroke-width="2" d="M12 16.5V23m4.5-11c2.6704 1.1826 4.5 3.6506 4.5 7v4H3v-4c0-3.3543 1.83498-5.8246 4.5-7 0 2.2091 2.01472 4 4.5 4 2.4853 0 4.5-1.7909 4.5-4ZM12 13c3.7279 0 6.75-2.6863 6.75-6 0-3.31371-3.0221-6-6.75-6-3.72792 0-6.75 2.68629-6.75 6 0 3.3137 3.02208 6 6.75 6Z" />
+               </svg>
                <span>Staff</span>
           </a>
           <a href="{% url 'core:patient' %}"
              class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'patient' %}bg-darkerPrimary{% endif %}">
-               <img src="{% static 'images/sidebar/Patients.svg' %}"
-                    alt="patient"
-                    width="20px"
-                    height="20px">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+                    <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.0001 7.66c-.06-.01-.13-.01-.19 0-1.38-.05-2.48-1.18-2.48-2.58 0-1.43 1.15-2.58 2.58-2.58 1.43 0 2.58 1.16 2.58 2.58-.01 1.4-1.11 2.53-2.49 2.58Zm-1.0297 7.2802c1.37.23 2.88-.01 3.94-.72 1.41-.94 1.41-2.48 0-3.42-1.07-.71-2.6-.95004-3.97-.71M5.97047 7.66c.06-.01.13-.01.19 0 1.38-.05 2.48-1.18 2.48-2.58 0-1.43-1.15-2.58-2.58-2.58-1.43 0-2.58 1.16-2.58 2.58.01 1.4 1.11 2.53 2.49 2.58Zm1.02996 7.2802c-1.37.23-2.88-.01-3.94-.72-1.41-.94-1.41-2.48 0-3.42 1.07-.71 2.6-.95004 3.97-.71m4.96967 5.0395c-.06-.01-.13-.01-.19 0-1.38-.05-2.48002-1.18-2.48002-2.58 0-1.43 1.15002-2.57997 2.58002-2.57997 1.43 0 2.58 1.15997 2.58 2.57997-.01 1.4-1.11 2.54-2.49 2.58Zm-2.91037 3.1497c-1.41.94-1.41 2.48 0 3.42 1.59997 1.07 4.21997 1.07 5.81997 0 1.41-.94 1.41-2.48 0-3.42-1.59-1.06-4.22-1.06-5.81997 0Z" />
+               </svg>
                <span>Patients</span>
           </a>
           <a href="{% url 'core:appointment' %}"
              class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'appointment' %}bg-darkerPrimary{% endif %}">
-               <img src="{% static 'images/sidebar/Appointment.svg' %}"
-                    alt="appointment"
-                    width="20px"
-                    height="20px">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+                    <path fill="#fff" d="M19 4.5h-2v-2h-2v2H9v-2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-14c0-1.103-.897-2-2-2Zm.002 16H5v-12h14l.002 12Z" />
+                    <path fill="#fff" d="M8 15.5h3v3h2v-3h3v-2h-3v-3h-2v3H8v2Z" />
+               </svg>
                <span>Appointment</span>
           </a>
           <a href="{% url 'core:schedule' %}"
              class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'schedule' %}bg-darkerPrimary{% endif %}">
-               <img src="{% static 'images/sidebar/Schedule.svg' %}"
-                    alt="schedule"
-                    width="20px"
-                    height="20px">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="28" fill="none">
+                    <path stroke="#fff" stroke-width="2" d="M7 22v4h16V10H1m22 4h-6M13 3v3M5 3v3m-1 8h2m2 0h6M4 18h2m2 0h6M1 6h16v16H1V6Z" />
+               </svg>
                <span>Schedule</span>
           </a>
           {% if user_role == 'admin' or request.user.is_superuser %}
                <a href="{% url 'list' %}"
                   class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'users' %}bg-darkerPrimary{% endif %}">
-                    <img src="{% static 'images/sidebar/user.svg' %}"
-                         alt="schedule"
-                         width="20px"
-                         height="20px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+                         <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.0006 11.1631c2.7795 0 5.0328-1.74671 5.0328-3.90141 0-2.15469-2.2533-3.90134-5.0328-3.90134-2.77956 0-5.03283 1.74665-5.03283 3.90134 0 2.1547 2.25327 3.90141 5.03283 3.90141Zm8.6398 9.4771c0-3.014-3.8664-5.4586-8.64-5.4586-4.77365 0-8.64005 2.4446-8.64005 5.4586" />
+                    </svg>
                     <span>Users</span>
                </a>
                <a href="{% url 'core:finance' %}"
                   class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'finance' %}bg-darkerPrimary{% endif %}">
-                    <img src="{% static 'images/sidebar/wallet.svg' %}"
-                         alt="wallet"
-                         width="20px"
-                         height="20px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+                         <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.04 13.55c-.42.41-.66 1-.6 1.63.09 1.08 1.08 1.87 2.16 1.87h1.9v1.19c0 2.07-1.69 3.76-3.76 3.76H6.26c-2.07 0-3.76-1.69-3.76-3.76v-6.73c0-2.06999 1.69-3.76 3.76-3.76h11.48c2.07 0 3.76 1.69001 3.76 3.76v1.44h-2.02c-.56 0-1.07.22-1.44.6Z" />
+                         <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.5 12.4103V7.84035c0-1.19.73-2.25005 1.84-2.67005l7.94-3c1.24-.47 2.57.45003 2.57 1.78003v3.79999m7.7088 6.21988v2.06c0 .55-.44 1-1 1.02h-1.96c-1.08 0-2.07-.79-2.16-1.87-.06-.63.18-1.22.6-1.63.37-.38.88-.6 1.44-.6h2.08c.56.02 1 .47 1 1.02ZM7 12h7" />
+                    </svg>
                     <span>Finance</span>
                </a>
                <a href="{% url 'core:statistics' %}"

@@ -1,77 +1,144 @@
 {% extends "index.html" %}
 {% load static %}
+{% load widget_tweaks %}
 {% block content %}
-    {% load widget_tweaks %}
-    <div class="p-6">
-        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 items-center">
-            <div class="flex col-span-2 space-x-3 justify-end items-center w-full">
-                <div class="inline-flex items-center px-4 py-1.5 bg-primaryLogo w-24 text-white rounded-lg hover:bg-darkerPrimary space-x-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
-                        <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M13.2603 3.60022 5.05034 12.2902c-.31.33-.61.98-.67 1.43l-.37 3.24c-.13 1.17.71 1.97 1.87 1.77l3.22-.55c.45-.08 1.07996-.41 1.38996-.75l8.21-8.68998c1.42-1.5 2.06-3.21-.15-5.3-2.2-2.07-3.87-1.34-5.29.16Z" />
-                        <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M11.8896 5.0498c.43 2.76 2.67 4.87 5.45 5.15M3 22h18" />
-                    </svg>
-                    <span>Edit</span>
+    <div class="p-8">
+        <div class="flex items-center mb-8 space-x-2">
+            <button onclick="history.back()">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                     width="24px"
+                     fill="none"
+                     height="24px"
+                     viewBox="0 0 20 20">
+                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                </svg>
+            </button>
+            <p class="text-gray-700 text-2xl font-medium">Edit Profile</p>
+        </div>
+        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
+            <form method="post"
+                  enctype="multipart/form-data"
+                  class="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-6">
+                {% csrf_token %}
+                <!-- User Form Fields -->
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.username.label_tag }}</label>
+                    {{ user_form.username|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.username.errors %}<div class="text-red-500 text-sm">{{ user_form.username.errors }}</div>{% endif %}
                 </div>
-                {% comment %} <div class="inline-flex items-center px-4 py-1.5 bg-dangerRed text-white rounded-lg hover:bg-darkerPrimary space-x-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
-                        <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 5.98047c-3.33-.33-6.68-.5-10.02-.5-1.98 0-3.96.1-5.94.3l-2.04.2M8.5 4.97l.22-1.31C8.88 2.71 9 2 10.69 2h2.62c1.69 0 1.82.75 1.97 1.67l.22 1.3m3.3504 4.16965-.65 10.06995c-.11 1.57-.2 2.79-2.99 2.79H8.79039c-2.79 0-2.88-1.22-2.99-2.79l-.65-10.06995M10.3301 16.5h3.33M9.5 12.5h5" />
-                    </svg>
-                    <span>Delete</span>
-                </div> {% endcomment %}
-            </div>
-            <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
-                <img src="{{ user.profile_image.url }}"
-                     alt="{{ user.get_full_name }}"
-                     class="object-fill absolute scale-110"
-                     width="full"
-                     height="full" />
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 my-6">
-                <div class="text-xl font-semibold text-gray-800 space-y-6">
-                    <p>Identification Number</p>
-                    <p>Username</p>
-                    <p>Full Name</p>
-                    <p>Email Address</p>
-                    <p>Address</p>
-                    <p>Contact Number</p>
-                    <p>Role</p>
+                <div class="row-span-4">
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.profile_image.label_tag }}</label>
+                    <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
+                        <img src="{{ user.profile_image.url }}"
+                             alt="{{ user.get_full_name }}"
+                             class="object-fill absolute scale-110"
+                             width="full"
+                             height="full" />
+                    </div>
+                    <!-- Hidden File Input -->
+                    <input type="file" id="id_profile_image" name="profile_image" class="hidden">
+                    <!-- Custom Button to Trigger File Input -->
+                    <label for="id_profile_image"
+                           class="mt-4 flex items-center mx-auto w-36 justify-center bg-primaryLogo text-white px-4 py-2 rounded-md cursor-pointer hover:bg-darkerPrimary">
+                        Choose File
+                    </label>
+                    {% comment %} {{ user_form.profile_image|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }} {% endcomment %}
+                    {% if user_form.profile_image.errors %}
+                        <div class="text-red-500 text-sm">{{ user_form.profile_image.errors }}</div>
+                    {% endif %}
                 </div>
-                <div class="text-lg space-y-6">
-                    <p>{{ user.id }}</p>
-                    <p>{{ user.username }}</p>
-                    <p>{{ user.get_full_name }}</p>
-                    <p>{{ user.email }}</p>
-                    <p>{{ user.address }}</p>
-                    <p>{{ user.contact }}</p>
-                    <p>{{ user.role|capfirst }}</p>
-                    {% comment %} <form method="post" class="flex items-center justify-center space-x-2 py-2">
-                        {% csrf_token %}
-                        <select name="role" class="border px-2 py-1 rounded-sm">
-                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
-                            <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Staff</option>
-                            <option value="doctor" {% if user.role == 'doctor' %}selected{% endif %}>Doctor</option>
-                        </select>
-                        <button type="submit" name="action" value="approve">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                 width="26"
-                                                 height="26"
-                                                 viewBox="0 0 20 20"
-                                                 class="cursor-pointer">
-                                                <g fill="none" stroke="#00b2b2" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-                                                <path d="M9.999996 18.3320235c4.582029 0 8.3320275-3.7499985 8.3320275-8.3320275 0-4.58202983-3.7499985-8.33202833-8.3320275-8.33202833-4.58202983 0-8.33202833 3.7499985-8.33202833 8.33202833 0 4.582029 3.7499985 8.3320275 8.33202833 8.3320275Zm0 0" />
-                                                <path d="m6.45702825 9.999996 2.35937489 2.35937406 4.72655978-4.71874812" />
-                                                </g>
-                                            </svg>
-                        </button>
-                        <button type="submit" name="action" value="deny">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer">
-  <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.999996 18.3320235c4.582029 0 8.3320275-3.7499985 8.3320275-8.3320275 0-4.58202983-3.7499985-8.33202833-8.3320275-8.33202833-4.58202983 0-8.33202833 3.7499985-8.33202833 8.33202833 0 4.582029 3.7499985 8.3320275 8.33202833 8.3320275Zm-2.35937406-5.97265344 4.71874812-4.71874812m0 4.71874812L7.64062194 7.64062194" />
-</svg>
-                        </button>
-                        <input type="hidden" name="user_id" value="{{ user.id }}">
-                    </form> {% endcomment %}
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.first_name.label_tag }}</label>
+                    {{ user_form.first_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.first_name.errors %}
+                        <div class="text-red-500 text-sm">{{ user_form.first_name.errors }}</div>
+                    {% endif %}
                 </div>
-            </div>
+                <div class="col-start-1">
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.last_name.label_tag }}</label>
+                    {{ user_form.last_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.last_name.errors %}<div class="text-red-500 text-sm">{{ user_form.last_name.errors }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.email.label_tag }}</label>
+                    {{ user_form.email|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.email.errors %}<div class="text-red-500 text-sm">{{ user_form.email.errors }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.address.label_tag }}</label>
+                    {{ user_form.address|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.address.errors %}<div class="text-red-500 text-sm">{{ user_form.address.errors }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.contact.label_tag }}</label>
+                    {{ user_form.contact|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.contact.errors %}<div class="text-red-500 text-sm">{{ user_form.contact.errors }}</div>{% endif %}
+                </div>
+                <!-- Staff Form Fields -->
+                {% if staff_form %}
+                    <div>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ staff_form.position.label_tag }}</label>
+                        {{ staff_form.position|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        {% if staff_form.position.errors %}<div class="text-red-500 text-sm">{{ staff_form.position.errors }}</div>{% endif %}
+                    </div>
+                {% endif %}
+                <!-- Doctor Form Fields -->
+                {% if doctor_form %}
+                    <div>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.specialization.label_tag }}</label>
+                        {{ doctor_form.specialization|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        {% if doctor_form.specialization.errors %}
+                            <div class="text-red-500 text-sm">{{ doctor_form.specialization.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.qualification.label_tag }}</label>
+                        {{ doctor_form.qualification|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        {% if doctor_form.qualification.errors %}
+                            <div class="text-red-500 text-sm">{{ doctor_form.qualification.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.nmc_no.label_tag }}</label>
+                        {{ doctor_form.nmc_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        {% if doctor_form.nmc_no.errors %}<div class="text-red-500 text-sm">{{ doctor_form.nmc_no.errors }}</div>{% endif %}
+                    </div>
+                {% endif %}
+                <!-- Submit Button -->
+                <div class="w-full flex space-x-6 col-span-2">
+                    <button type="submit"
+                            class="col-span-2 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
+                        Save Changes
+                    </button>
+                    <a href="{% url 'profile' %}"
+                       class="text-center col-span-2 w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">Back to Profile</a>
+                </div>
+            </form>
         </div>
     </div>
+    <!-- SweetAlert2 for Messages -->
+    {% if messages %}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.js"></script>
+        <script>
+        {% for message in messages %}
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: '{{ message.tags }}',
+                title: '{{ message }}',
+                showConfirmButton: false,
+                timer: 3000,
+                background: '#F5F5F5',
+                iconColor: '{% if "success" in message.tags %}#28A745{% elif "error" in message.tags %}#DC3545{% else %}#FFC107{% endif %}',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInRight'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutRight'
+                }
+            });
+        {% endfor %}
+        </script>
+    {% endif %}
 {% endblock content %}
