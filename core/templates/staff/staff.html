@@ -38,11 +38,11 @@
                                  width="full"
                                  height="full" />
                         </div>
-                        <!-- Staff Info -->
+                        {% comment %} Staff Info {% endcomment %}
                         <h3 class="text-2xl font-semibold text-gray-800 mb-2">{{ staff_member.user.get_full_name }}</h3>
                         <p class="text-md text-gray-600 mb-4">{{ staff_member.position }}</p>
                         <div class="flex items-center justify-between w-full px-8">
-                            <!-- edit -->
+                            {% comment %} edit {% endcomment %}
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="20"
                                  height="20"
@@ -53,7 +53,7 @@
                                 <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
                                 </g>
                             </svg>
-                            <!-- view -->
+                            {% comment %} view {% endcomment %}
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="20"
                                  height="20"
@@ -61,7 +61,7 @@
                                  class="cursor-pointer">
                                 <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
                             </svg>
-                            <!-- delete -->
+                            {% comment %} delete {% endcomment %}
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="20"
                                  height="20"
@@ -81,7 +81,7 @@
                 </div>
             {% endfor %}
         </div>
-        <!-- Pagination -->
+        {% comment %} Pagination {% endcomment %}
         {% if staff.has_other_pages %}
             <div class="flex justify-center mt-8">
                 <div class="flex items-center space-x-2">

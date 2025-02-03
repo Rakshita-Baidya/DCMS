@@ -134,7 +134,7 @@ def users_list(request):
         messages.error(request, "Access denied.")
         return redirect('login')
     else:
-        user_queryset = User.objects.all()
+        user_queryset = User.objects.all().order_by('-is_approved')
 
         # user needs to be deleted
         if request.method == 'POST' and 'delete_user_id' in request.POST:
@@ -179,12 +179,13 @@ def user_approve(request):
         return redirect('login')
 
     if request.method == 'POST':
+        print(request.POST)  # Debugging output
+
         user_id = request.POST.get('user_id')
         role = request.POST.get('role')
         action = request.POST.get('action')
 
         try:
-
             user = User.objects.get(id=user_id)
             if action == 'approve':
                 if user and not user.is_superuser:
@@ -213,7 +214,7 @@ def user_approve(request):
             messages.error(request, "User not found.")
 
     # Fetch pending users
-    user_queryset = User.objects.filter(is_approved="Pending")
+    user_queryset = User.objects.filter(is_approved="Pending").order_by('id')
 
     # Add search functionality
     search_query = request.GET.get('search', '')

@@ -66,24 +66,39 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">
+                                        {% comment %} edit {% endcomment %}
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
-                                             fill="none"
                                              viewBox="0 0 20 20"
                                              class="cursor-pointer">
-                                            <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M13.2603 3.60022 5.05034 12.2902c-.31.33-.61.98-.67 1.43l-.37 3.24c-.13 1.17.71 1.97 1.87 1.77l3.22-.55c.45-.08 1.07996-.41 1.38996-.75l8.21-8.68998c1.42-1.5 2.06-3.21-.15-5.3-2.2-2.07-3.87-1.34-5.29.16Z" />
-                                            <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M11.8896 5.0498c.43 2.76 2.67 4.87 5.45 5.15M3 22h18" />
+                                            <g fill="none" stroke="#00B2B2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
+                                            <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
+                                            <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
+                                            </g>
                                         </svg>
+                                        {% comment %} view {% endcomment %}
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
+                                             viewBox="0 0 20 20"
+                                             class="cursor-pointer">
+                                            <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
+                                        </svg>
+                                        {% comment %} delete {% endcomment %}
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="20"
+                                             height="20"
+                                             viewBox="0 0 20 20"
                                              class="cursor-pointer"
-                                             onclick="confirmDelete({{ user.id }}, '{{ user.username }}')">
-                                            <path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.249995" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
+                                             onclick="confirmDelete('{{ user.id }}', '{{ user.username }}')">
+                                            <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
                                         </svg>
                                     </div>
-                                    <form id="delete-form-{{ user.id }}" method="post" class="hidden">
+                                    <form id="delete-form-{{ user.id }}"
+                                          method="post"
+                                          class="hidden"
+                                          action="{% url 'list' %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="delete_user_id" value="{{ user.id }}">
                                     </form>
@@ -92,7 +107,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <!-- Pagination -->
+                {% comment %} Pagination {% endcomment %}
                 {% if user.has_other_pages %}
                     <div class="flex justify-center mt-8">
                         <div class="flex items-center space-x-2">
@@ -133,6 +148,7 @@
             {% endif %}
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function confirmDelete(userId, userName) {
             Swal.fire({
@@ -142,12 +158,11 @@
                 confirmButtonText: 'Yes, Delete',
                 cancelButtonText: 'Cancel',
                 customClass: {
-                    confirmButton: 'bg-red-500 text-white hover:bg-red-600 py-2 w-32',
-                    cancelButton: 'bg-gray-300 text-gray-800 hover:bg-gray-400 py-2 w-32',
+                    confirmButton: 'bg-dangerRed text-white hover:bg-red-600 py-2 w-32',
+                    cancelButton: 'bg-[#444444] text-white hover:bg-gray-400 py-2 w-32',
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // If confirmed, send a POST request to delete the user
                     document.getElementById('delete-form-' + userId).submit();
                 }
             });
