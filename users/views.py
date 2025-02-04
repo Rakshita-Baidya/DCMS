@@ -167,7 +167,7 @@ def users_list(request):
             'search_query': search_query,
         }
 
-    return render(request, 'users_list.html', context)
+    return render(request, 'reg_users/users_list.html', context)
 
 # Approval View
 
@@ -237,7 +237,7 @@ def user_approve(request):
         'search_query': search_query,
     }
 
-    return render(request, 'user_approve.html', context)
+    return render(request, 'reg_users/user_approve.html', context)
 
 
 @login_required
@@ -264,13 +264,12 @@ def user_profile(request):
     # Pass the profile data to the context
     context = {
         'page_title': 'User Profile',
-        'active_page': 'profile',
         'user': user_queryset,
         'staff_profile': staff_profile,
         'doctor_profile': doctor_profile,
     }
 
-    return render(request, 'user_profile.html', context)
+    return render(request, 'profile/profile.html', context)
 
 
 @login_required
@@ -314,8 +313,78 @@ def edit_profile(request):
         'user_form': user_form,
         'staff_form': staff_form,
         'doctor_form': doctor_form,
-        'page_title': 'Edit Profile',
-        'active_page': 'profile',
+        'page_title': 'User Profile',
     }
 
-    return render(request, 'user_profile_edit.html', context)
+    return render(request, 'profile/edit_profile.html', context)
+
+
+@login_required
+def view_user_profile(request, user_id):
+    user_queryset = User.objects.get(pk=user_id)
+    staff_profile = None
+    doctor_profile = None
+
+    # Fetch profile data based on the user's role
+    if user_queryset.role == 'staff' and hasattr(user_queryset, 'staff_profile'):
+        staff_profile = user_queryset.staff_profile
+    elif user_queryset.role == 'doctor' and hasattr(user_queryset, 'doctor_profile'):
+        doctor_profile = user_queryset.doctor_profile
+
+    context = {
+        'page_title': 'User Management',
+        'active_page': 'users',
+        'user': user_queryset,
+        'staff_profile': staff_profile,
+        'doctor_profile': doctor_profile,
+    }
+
+    return render(request, 'reg_users/view_user_profile.html', context)
+
+
+@login_required
+def edit_user_profile(request, user_id):
+    user_queryset = User.objects.get(pk=user_id)
+    staff_profile = None
+    doctor_profile = None
+
+    # Fetch profile data based on the user's role
+    if user_queryset.role == 'staff' and hasattr(user_queryset, 'staff_profile'):
+        staff_profile = user_queryset.staff_profile
+    elif user_queryset.role == 'doctor' and hasattr(user_queryset, 'doctor_profile'):
+        doctor_profile = user_queryset.doctor_profile
+
+    if request.method == 'POST':
+        user_form = UserEditForm(
+            request.POST, request.FILES, instance=user_queryset)
+        staff_form = StaffForm(
+            request.POST, instance=staff_profile) if staff_profile else None
+        doctor_form = DoctorForm(
+            request.POST, instance=doctor_profile) if doctor_profile else None
+
+        if user_form.is_valid():
+            user_form.save()
+            if staff_form and staff_form.is_valid():
+                staff_form.save()
+            if doctor_form and doctor_form.is_valid():
+                doctor_form.save()
+
+            messages.success(
+                request, 'Your profile has been updated successfully!')
+            return redirect('view_user_profile', user_id=user_queryset.id)
+    else:
+        user_form = UserEditForm(instance=user_queryset)
+        staff_form = StaffForm(
+            instance=staff_profile) if staff_profile else None
+        doctor_form = DoctorForm(
+            instance=doctor_profile) if doctor_profile else None
+
+    context = {
+        'user_form': user_form,
+        'staff_form': staff_form,
+        'doctor_form': doctor_form,
+        'page_title': 'User Management',
+        'active_page': 'users',
+    }
+
+    return render(request, 'reg_users/edit_user_profile.html', context)

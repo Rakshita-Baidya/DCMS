@@ -9,7 +9,7 @@
                 <p class="text-secondary">The time is currently {% now "g:i A" %}</p>
                 <br />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full">
-                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-[#00B2B2] text-center flex flex-col justify-center items-center">
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center flex flex-col justify-center items-center">
                         <img src="{% static 'images/dashboard/Patients.png' %}"
                              alt="patient"
                              width="full"
@@ -18,7 +18,7 @@
                         <h3 class="text-xl font-semibold mb-2">120</h3>
                         <p class="text-secondary">Total Patients</p>
                     </div>
-                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-[#00B2B2] text-center flex flex-col justify-center items-center">
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center flex flex-col justify-center items-center">
                         <img src="{% static 'images/dashboard/Schedule.png' %}"
                              alt="appointment"
                              width="full"
@@ -27,13 +27,13 @@
                         <h3 class="text-xl font-semibold">12</h3>
                         <p class="text-secondary">Scheduled Appointments</p>
                     </div>
-                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-[#00B2B2] text-center">
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center">
                         <h3 class="text-xl font-semibold">7/12</h3>
                         <p class="text-secondary">Appointments Completed</p>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-[#00B2B2] h-full">
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo h-full">
                 <div class="text-center">
                     <h3 class="text-xl font-semibold">Follow up</h3>
                 </div>
@@ -56,7 +56,7 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-[#00B2B2] h-full">
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo h-full">
                 <div>
                     <h3 class="text-xl font-semibold">Today's Appointments</h3>
                 </div>
@@ -80,8 +80,8 @@
                                 <td class="px-2 py-4">10:00 A.M.</td>
                                 <td class="px-2 py-4 text-green-500">Completed</td>
                                 <td class="px-2 py-4 flex space-x-2">
-                                    <p class="text-[#00b2b2]">Edit</p>
-                                    <p class="text-red-600">Delete</p>
+                                    <p class="text-primaryLogo">Edit</p>
+                                    <p class="text-dangerRed">Delete</p>
                                 </td>
                             </tr>
                             <tr class="border-b hover:bg-gray-50 text-center">
@@ -91,8 +91,8 @@
                                 <td class="px-2 py-4">12:00 P.M.</td>
                                 <td class="px-2 py-4 text-yellow-500">Pending</td>
                                 <td class="px-2 py-4 flex space-x-2">
-                                    <p class="text-[#00b2b2]">Edit</p>
-                                    <p class="text-red-600">Delete</p>
+                                    <p class="text-primaryLogo">Edit</p>
+                                    <p class="text-dangerRed">Delete</p>
                                 </td>
                             </tr>
                             <tr class="border-b hover:bg-gray-50 text-center">
@@ -102,8 +102,8 @@
                                 <td class="px-2 py-4">2:00 P.M.</td>
                                 <td class="px-2 py-4 text-yellow-500">Pending</td>
                                 <td class="px-2 py-4 flex space-x-2">
-                                    <p class="text-[#00b2b2]">Edit</p>
-                                    <p class="text-red-600">Delete</p>
+                                    <p class="text-primaryLogo">Edit</p>
+                                    <p class="text-dangerRed">Delete</p>
                                 </td>
                             </tr>
                             <tr class="border-b hover:bg-gray-50 text-center">
@@ -113,8 +113,8 @@
                                 <td class="px-2 py-4">3:00 P.M.</td>
                                 <td class="px-2 py-4 text-yellow-500">Pending</td>
                                 <td class="px-2 py-4 flex space-x-2">
-                                    <p class="text-[#00b2b2]">Edit</p>
-                                    <p class="text-red-600">Delete</p>
+                                    <p class="text-primaryLogo">Edit</p>
+                                    <p class="text-dangerRed">Delete</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -130,15 +130,15 @@
                   </span>
                 </td>
                 <td class="px-2 py-4 flex space-x-2">
-                  <p class="text-[#00b2b2]">Edit</p>
-                  <p class="text-red-600">Delete</p>
+                  <p class="text-primaryLogo">Edit</p>
+                  <p class="text-dangerRed">Delete</p>
                 </td>
               </tr>
                         {% endfor %} {% endcomment %}
                     </tbody>
                 </table>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-[#00B2B2] h-full">
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo h-full">
                 <div class="text-center">
                     <h3 class="text-xl font-semibold">Patient Summary</h3>
                     <canvas id="patientSummary"></canvas>

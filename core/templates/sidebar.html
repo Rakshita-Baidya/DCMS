@@ -98,7 +98,7 @@
           {% csrf_token %}
           <button type="button"
                   onclick="confirmLogout()"
-                  class="flex mx-auto w-full bg-red-500 p-2 rounded-md justify-center">
+                  class="flex mx-auto w-full bg-dangerRed p-2 hover:bg-darkerDangerRed rounded-md justify-center">
                <span>Logout</span>
           </button>
      </form>
@@ -112,7 +112,7 @@
              confirmButtonText: 'Logout',
              cancelButtonText: 'Cancel',
              customClass: {
-               confirmButton: 'bg-dangerRed text-white hover:bg-red-600 py-2 w-32',
+               confirmButton: 'bg-dangerRed text-white hover:bg-darkerDangerRed py-2 w-32',
                cancelButton: 'bg-[#444444] text-white hover:bg-gray-400 py-2 w-32',
            }
          }).then((result) => {

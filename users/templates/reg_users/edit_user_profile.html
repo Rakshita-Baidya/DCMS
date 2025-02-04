@@ -4,7 +4,7 @@
 {% block content %}
     <div class="p-8">
         <div class="flex items-center mb-8 space-x-2">
-            <a href="{% url 'profile' %}">
+            <a href="{% url 'view_user_profile' user.id %}">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      xmlns:xlink="http://www.w3.org/1999/xlink"
                      width="24px"
@@ -25,7 +25,7 @@
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.username.label_tag }}</label>
                     {{ user_form.username|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.username.errors %}<div class="text-red-500 text-sm">{{ user_form.username.errors }}</div>{% endif %}
+                    {% if user_form.username.errors %}<div class="text-dangerRed text-sm">{{ user_form.username.errors }}</div>{% endif %}
                 </div>
                 <div class="row-span-4">
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.profile_image.label_tag }}</label>
@@ -45,42 +45,46 @@
                     </label>
                     {% comment %} {{ user_form.profile_image|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }} {% endcomment %}
                     {% if user_form.profile_image.errors %}
-                        <div class="text-red-500 text-sm">{{ user_form.profile_image.errors }}</div>
+                        <div class="text-dangerRed text-sm">{{ user_form.profile_image.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.first_name.label_tag }}</label>
                     {{ user_form.first_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.first_name.errors %}
-                        <div class="text-red-500 text-sm">{{ user_form.first_name.errors }}</div>
+                        <div class="text-dangerRed text-sm">{{ user_form.first_name.errors }}</div>
                     {% endif %}
                 </div>
                 <div class="col-start-1">
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.last_name.label_tag }}</label>
                     {{ user_form.last_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.last_name.errors %}<div class="text-red-500 text-sm">{{ user_form.last_name.errors }}</div>{% endif %}
+                    {% if user_form.last_name.errors %}
+                        <div class="text-dangerRed text-sm">{{ user_form.last_name.errors }}</div>
+                    {% endif %}
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.email.label_tag }}</label>
                     {{ user_form.email|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.email.errors %}<div class="text-red-500 text-sm">{{ user_form.email.errors }}</div>{% endif %}
+                    {% if user_form.email.errors %}<div class="text-dangerRed text-sm">{{ user_form.email.errors }}</div>{% endif %}
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.address.label_tag }}</label>
                     {{ user_form.address|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.address.errors %}<div class="text-red-500 text-sm">{{ user_form.address.errors }}</div>{% endif %}
+                    {% if user_form.address.errors %}<div class="text-dangerRed text-sm">{{ user_form.address.errors }}</div>{% endif %}
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.contact.label_tag }}</label>
                     {{ user_form.contact|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.contact.errors %}<div class="text-red-500 text-sm">{{ user_form.contact.errors }}</div>{% endif %}
+                    {% if user_form.contact.errors %}<div class="text-dangerRed text-sm">{{ user_form.contact.errors }}</div>{% endif %}
                 </div>
                 {% comment %} Staff Form Fields {% endcomment %}
                 {% if staff_form %}
                     <div>
                         <label class="block text-sm font-medium text-secondaryLogo">{{ staff_form.position.label_tag }}</label>
                         {{ staff_form.position|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                        {% if staff_form.position.errors %}<div class="text-red-500 text-sm">{{ staff_form.position.errors }}</div>{% endif %}
+                        {% if staff_form.position.errors %}
+                            <div class="text-dangerRed text-sm">{{ staff_form.position.errors }}</div>
+                        {% endif %}
                     </div>
                 {% endif %}
                 {% comment %} Doctor Form Fields {% endcomment %}
@@ -89,20 +93,20 @@
                         <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.specialization.label_tag }}</label>
                         {{ doctor_form.specialization|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                         {% if doctor_form.specialization.errors %}
-                            <div class="text-red-500 text-sm">{{ doctor_form.specialization.errors }}</div>
+                            <div class="text-dangerRed text-sm">{{ doctor_form.specialization.errors }}</div>
                         {% endif %}
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.qualification.label_tag }}</label>
                         {{ doctor_form.qualification|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                         {% if doctor_form.qualification.errors %}
-                            <div class="text-red-500 text-sm">{{ doctor_form.qualification.errors }}</div>
+                            <div class="text-dangerRed text-sm">{{ doctor_form.qualification.errors }}</div>
                         {% endif %}
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.nmc_no.label_tag }}</label>
                         {{ doctor_form.nmc_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                        {% if doctor_form.nmc_no.errors %}<div class="text-red-500 text-sm">{{ doctor_form.nmc_no.errors }}</div>{% endif %}
+                        {% if doctor_form.nmc_no.errors %}<div class="text-dangerRed text-sm">{{ doctor_form.nmc_no.errors }}</div>{% endif %}
                     </div>
                 {% endif %}
                 {% comment %} Submit Button {% endcomment %}

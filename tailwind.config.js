@@ -7,6 +7,7 @@ module.exports = {
         secondaryLogo: "#7C7C7C",
         darkerPrimary: "#018181",
         dangerRed: "#B20003",
+        darkerDangerRed: "#660002",
       },
     },
   },

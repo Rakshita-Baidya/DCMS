@@ -139,7 +139,6 @@
             {% endif %}
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function confirmAction(event, userId, userName, actionType) {
             event.preventDefault();
@@ -156,7 +155,7 @@
                 customClass: {
                     confirmButton: actionType === 'approve'
                         ? 'bg-primaryLogo text-white hover:bg-darkerPrimary py-2 w-32'
-                        : 'bg-dangerRed text-white hover:bg-red-800 py-2 w-32',
+                        : 'bg-dangerRed text-white hover:bg-darkerDangerRed py-2 w-32',
                     cancelButton: 'bg-[#444444] text-white hover:bg-gray-400 py-2 w-32',
                 }
             }).then((result) => {
