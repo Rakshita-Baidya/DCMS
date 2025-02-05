@@ -1,7 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q
-from users.models import Staff
+from users.models import Staff, User, Doctor
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 
 # Create your views here.
 
@@ -52,6 +55,36 @@ def staff(request):
     }
 
     return render(request, 'staff/staff.html', context)
+
+
+def view_staff_profile(request, user_id):
+    user_queryset = User.objects.get(pk=user_id)
+    staff_profile = None
+
+    # Fetch profile data based on the user's role
+    if user_queryset.role == 'staff' and hasattr(user_queryset, 'staff_profile'):
+        staff_profile = user_queryset.staff_profile
+
+    # user needs to be deleted
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        if not request.user.is_superuser and request.user.role != 'admin':
+            messages.error(request, "You do not have permission to delete.")
+        else:
+            user_id_to_delete = request.POST['delete_user_id']
+            user_to_delete = User.objects.get(id=user_id_to_delete)
+            user_to_delete.delete()
+            messages.success(request, f"User {
+                user_to_delete.username} has been deleted.")
+            return redirect('view_user_profile')
+
+    context = {
+        'page_title': 'Staff Management',
+        'active_page': 'staff',
+        'user': user_queryset,
+        'staff_profile': staff_profile,
+    }
+
+    return render(request, 'staff/view_staff_profile.html', context)
 
 
 def patient(request):

@@ -1,0 +1,112 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+    <div class="p-6">
+        {% comment %} Header Section {% endcomment %}
+        <div class="flex justify-between items-center mb-4 ">
+            <div class="space-x-1 flex items-center">
+                <a href="{% url 'core:staff' %}">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink"
+                         width="24px"
+                         fill="none"
+                         height="24px"
+                         viewBox="0 0 20 20">
+                        <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                    </svg>
+                </a>
+                <p class="text-2xl font-semibold">{{ user.get_full_name }}'s Profile</p>
+            </div>
+            <div class="space-x-3 flex items-center">
+                <a href="{% url 'edit_user_profile' user.id %}"
+                   class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="20"
+                         height="20"
+                         viewBox="0 0 20 20">
+                        <g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
+                        <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
+                        <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
+                        </g>
+                    </svg>
+                    <p>Edit Profile</p>
+                </a>
+                <form id="delete-form-{{ user.id }}"
+                      method="post"
+                      action="{% url 'list' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete_user_id" value="{{ user.id }}">
+                </form>
+                <div class="inline-flex items-center px-4 py-1.5 bg-dangerRed text-white rounded-lg hover:bg-darkerDangerRed space-x-2 cursor-pointer"
+                     onclick="confirmDelete('{{ user.id }}', '{{ user.username }}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                        <path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.249995" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
+                    </svg>
+                    <span>Delete Profile</span>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 items-center">
+            <div class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 my-6">
+                <div class="text-xl font-semibold text-gray-800 space-y-6 mx-auto ">
+                    <p>Identification Number</p>
+                    <p>Username</p>
+                    <p>Full Name</p>
+                    <p>Email Address</p>
+                    <p>Address</p>
+                    <p>Contact Number</p>
+                    <p>Role</p>
+                    {% if staff_profile %}
+                        <p>Position</p>
+                    {% elif doctor_profile %}
+                        <p>Specialization</p>
+                        <p>Qualification</p>
+                        <p>NMC Number</p>
+                    {% endif %}
+                </div>
+                <div class="text-lg space-y-6 mx-auto ">
+                    <p>{{ user.id }}</p>
+                    <p>{{ user.username }}</p>
+                    <p>{{ user.get_full_name }}</p>
+                    <p>{{ user.email }}</p>
+                    <p>{{ user.address }}</p>
+                    <p>{{ user.contact }}</p>
+                    <p>{{ user.role|capfirst }}</p>
+                    {% if staff_profile %}
+                        <p>{{ staff_profile.position }}</p>
+                    {% elif doctor_profile %}
+                        <p>{{ doctor_profile.specialization }}</p>
+                        <p>{{ doctor_profile.qualification }}</p>
+                        <p>{{ doctor_profile.nmc_no }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
+                <img src="{{ user.profile_image.url }}"
+                     alt="{{ user.get_full_name }}"
+                     class="object-fill absolute scale-110"
+                     width="full"
+                     height="full" />
+            </div>
+        </div>
+    </div>
+    <script>
+        function confirmDelete(userId, userName) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action will permanently delete the user "+ userName +".",
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'bg-dangerRed text-white hover:bg-darkerDangerRed py-2 w-32',
+                    cancelButton: 'bg-[#444444] text-white hover:bg-gray-400 py-2 w-32',
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + userId).submit();
+                }
+            });
+        }
+    </script>
+{% endblock content %}

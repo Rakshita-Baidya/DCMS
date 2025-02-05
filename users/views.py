@@ -244,14 +244,6 @@ def user_approve(request):
 def user_profile(request):
     user_queryset = User.objects.get(pk=request.user.id)
 
-    # user needs to be deleted
-    if request.method == 'POST' and 'delete_user_id' in request.POST:
-        user_id_to_delete = request.POST['delete_user_id']
-        user_to_delete = User.objects.get(id=user_id_to_delete)
-        user_to_delete.delete()
-        messages.success(request, f"User {
-            user_to_delete.username} has been deleted.")
-
     # Initialize profile data
     staff_profile = None
     doctor_profile = None
@@ -334,12 +326,15 @@ def view_user_profile(request, user_id):
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
-        user_id_to_delete = request.POST['delete_user_id']
-        user_to_delete = User.objects.get(id=user_id_to_delete)
-        user_to_delete.delete()
-        messages.success(request, f"User {
-            user_to_delete.username} has been deleted.")
-        return redirect('view_user_profile')
+        if not request.user.is_superuser and request.user.role != 'admin':
+            messages.error(request, "You do not have permission to delete.")
+        else:
+            user_id_to_delete = request.POST['delete_user_id']
+            user_to_delete = User.objects.get(id=user_id_to_delete)
+            user_to_delete.delete()
+            messages.success(request, f"User {
+                user_to_delete.username} has been deleted.")
+            return redirect('view_user_profile')
 
     context = {
         'page_title': 'User Management',
