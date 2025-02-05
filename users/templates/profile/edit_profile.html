@@ -30,15 +30,18 @@
                 <div class="row-span-4">
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.profile_image.label_tag }}</label>
                     <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
-                        <img src="{{ user.profile_image.url }}"
+                        <img id="profileImagePreview"
+                             src="{{ user.profile_image.url }}"
                              alt="{{ user.get_full_name }}"
                              class="object-fill absolute scale-110"
                              width="full"
                              height="full" />
                     </div>
-                    {% comment %} Hidden File Input {% endcomment %}
-                    <input type="file" id="id_profile_image" name="profile_image" class="hidden">
-                    {% comment %} Custom Button to Trigger File Input {% endcomment %}
+                    <input type="file"
+                           id="id_profile_image"
+                           name="profile_image"
+                           class="hidden"
+                           accept="image/*">
                     <label for="id_profile_image"
                            class="mt-4 flex items-center mx-auto w-36 justify-center bg-primaryLogo text-white px-4 py-2 rounded-md cursor-pointer hover:bg-darkerPrimary">
                         Choose File
@@ -121,6 +124,18 @@
             </form>
         </div>
     </div>
+    <script>
+        document.getElementById('id_profile_image').addEventListener('change', function(event) {
+            const file = event.target.files[0];  // Get the selected file
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImagePreview').src = e.target.result; // Update image preview
+                };
+                reader.readAsDataURL(file); // Convert file to base64 URL
+            }
+        });
+    </script>
     {% comment %} SweetAlert2 for Messages {% endcomment %}
     {% if messages %}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.js"></script>

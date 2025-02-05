@@ -251,7 +251,8 @@ def user_profile(request):
         user_to_delete.delete()
         messages.success(request, f"User {
             user_to_delete.username} has been deleted.")
-# Initialize profile data
+
+    # Initialize profile data
     staff_profile = None
     doctor_profile = None
 
@@ -331,6 +332,15 @@ def view_user_profile(request, user_id):
     elif user_queryset.role == 'doctor' and hasattr(user_queryset, 'doctor_profile'):
         doctor_profile = user_queryset.doctor_profile
 
+    # user needs to be deleted
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        user_id_to_delete = request.POST['delete_user_id']
+        user_to_delete = User.objects.get(id=user_id_to_delete)
+        user_to_delete.delete()
+        messages.success(request, f"User {
+            user_to_delete.username} has been deleted.")
+        return redirect('view_user_profile')
+
     context = {
         'page_title': 'User Management',
         'active_page': 'users',
@@ -353,6 +363,15 @@ def edit_user_profile(request, user_id):
         staff_profile = user_queryset.staff_profile
     elif user_queryset.role == 'doctor' and hasattr(user_queryset, 'doctor_profile'):
         doctor_profile = user_queryset.doctor_profile
+
+    # user needs to be deleted
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        user_id_to_delete = request.POST['delete_user_id']
+        user_to_delete = User.objects.get(id=user_id_to_delete)
+        user_to_delete.delete()
+        messages.success(request, f"User {
+            user_to_delete.username} has been deleted.")
+        return redirect('list')
 
     if request.method == 'POST':
         user_form = UserEditForm(
@@ -380,6 +399,7 @@ def edit_user_profile(request, user_id):
             instance=doctor_profile) if doctor_profile else None
 
     context = {
+        'user': user_queryset,
         'user_form': user_form,
         'staff_form': staff_form,
         'doctor_form': doctor_form,

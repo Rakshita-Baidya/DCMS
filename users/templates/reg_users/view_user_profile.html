@@ -31,6 +31,12 @@
                     </svg>
                     <p>Edit Profile</p>
                 </a>
+                <form id="delete-form-{{ user.id }}"
+                      method="post"
+                      action="{% url 'list' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete_user_id" value="{{ user.id }}">
+                </form>
                 <div class="inline-flex items-center px-4 py-1.5 bg-dangerRed text-white rounded-lg hover:bg-darkerDangerRed space-x-2 cursor-pointer"
                      onclick="confirmDelete('{{ user.id }}', '{{ user.username }}')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">

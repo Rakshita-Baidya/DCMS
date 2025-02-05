@@ -1137,11 +1137,6 @@ video {
   text-transform: capitalize;
 }
 
-.text-\[\#00b2b2\] {
-  --tw-text-opacity: 1;
-  color: rgb(0 178 178 / var(--tw-text-opacity, 1));
-}
-
 .text-\[\#1d2a2a\] {
   --tw-text-opacity: 1;
   color: rgb(29 42 42 / var(--tw-text-opacity, 1));
@@ -1195,11 +1190,6 @@ video {
 .text-primaryLogo {
   --tw-text-opacity: 1;
   color: rgb(0 178 178 / var(--tw-text-opacity, 1));
-}
-
-.text-red-600 {
-  --tw-text-opacity: 1;
-  color: rgb(220 38 38 / var(--tw-text-opacity, 1));
 }
 
 .text-secondaryLogo {
