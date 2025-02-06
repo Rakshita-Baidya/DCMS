@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q
-from users.models import Staff, User, Doctor
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from users.models import Staff, User, Doctor
+from users.forms import StaffForm, DoctorForm, UserEditForm
 
 
 # Create your views here.
@@ -46,6 +47,18 @@ def staff(request):
     page = request.GET.get('page', 1)
     staff_list = paginator.get_page(page)
 
+    # user needs to be deleted
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        if not request.user.is_superuser and request.user.role != 'admin':
+            messages.error(request, "You do not have permission to delete.")
+        else:
+            user_id_to_delete = request.POST['delete_user_id']
+            user_to_delete = User.objects.get(id=user_id_to_delete)
+            user_to_delete.delete()
+            messages.success(request, f"User {
+                user_to_delete.username} has been deleted.")
+            return redirect('core:staff')
+
     context = {
         'page_title': 'Staff Management',
         'active_page': 'staff',
@@ -75,7 +88,7 @@ def view_staff_profile(request, user_id):
             user_to_delete.delete()
             messages.success(request, f"User {
                 user_to_delete.username} has been deleted.")
-            return redirect('view_user_profile')
+            return redirect('core:staff')
 
     context = {
         'page_title': 'Staff Management',
@@ -85,6 +98,57 @@ def view_staff_profile(request, user_id):
     }
 
     return render(request, 'staff/view_staff_profile.html', context)
+
+
+@login_required
+def edit_staff_profile(request, user_id):
+    user_queryset = User.objects.get(pk=user_id)
+    staff_profile = None
+
+    # Fetch profile data based on the user's role
+    if user_queryset.role == 'staff' and hasattr(user_queryset, 'staff_profile'):
+        staff_profile = user_queryset.staff_profile
+
+    # user needs to be deleted
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        if not request.user.is_superuser and request.user.role != 'admin':
+            messages.error(request, "You do not have permission to delete.")
+        else:
+            user_id_to_delete = request.POST['delete_user_id']
+            user_to_delete = User.objects.get(id=user_id_to_delete)
+            user_to_delete.delete()
+            messages.success(request, f"User {
+                user_to_delete.username} has been deleted.")
+            return redirect('core:staff')
+
+    if request.method == 'POST':
+        user_form = UserEditForm(
+            request.POST, request.FILES, instance=user_queryset)
+        staff_form = StaffForm(
+            request.POST, instance=staff_profile) if staff_profile else None
+
+        if user_form.is_valid():
+            user_form.save()
+            if staff_form and staff_form.is_valid():
+                staff_form.save()
+
+            messages.success(
+                request, 'The staff profile has been updated successfully!')
+            return redirect('core:view_staff_profile', user_id=user_queryset.id)
+    else:
+        user_form = UserEditForm(instance=user_queryset)
+        staff_form = StaffForm(
+            instance=staff_profile) if staff_profile else None
+
+    context = {
+        'user': user_queryset,
+        'user_form': user_form,
+        'staff_form': staff_form,
+        'page_title': 'Staff Management',
+        'active_page': 'staff',
+    }
+
+    return render(request, 'staff/edit_staff_profile.html', context)
 
 
 def patient(request):
