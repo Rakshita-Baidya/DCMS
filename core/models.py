@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import datetime
 from django.db import models
 from users.models import User
 
@@ -12,11 +12,11 @@ TRANSACTION_TYPE = [
 
 class Transaction(models.Model):
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name='doctor_profile')
+        User, on_delete=models.CASCADE, related_name='transaction_profile')
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=500)
-    amount = models.DecimalField()
-    date = models.DateTimeField(default=timezone.now)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(default=datetime.now)
     type = models.CharField(choices=TRANSACTION_TYPE, default="Income")
 
     def __str__(self):

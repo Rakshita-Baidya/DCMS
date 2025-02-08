@@ -1275,6 +1275,11 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.ring-primaryLogo {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(0 178 178 / var(--tw-ring-opacity, 1));
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
