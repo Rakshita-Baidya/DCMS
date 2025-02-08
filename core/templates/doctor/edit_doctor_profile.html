@@ -1,0 +1,162 @@
+{% extends "index.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="p-6">
+        <div class="flex items-center mb-6 space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                 width="24px"
+                 fill="none"
+                 height="24px"
+                 viewBox="0 0 20 20"
+                 onclick="history.back()">
+                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+            </svg>
+            <p class="text-gray-700 text-2xl font-medium">{{ user.get_full_name }}'s Profile</p>
+        </div>
+        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
+            <form method="post"
+                  enctype="multipart/form-data"
+                  class="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-6">
+                {% csrf_token %}
+                {% comment %} User Form Fields {% endcomment %}
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.username.label_tag }}</label>
+                    {{ user_form.username|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.username.errors %}<div class="text-dangerRed text-sm">{{ user_form.username.errors }}</div>{% endif %}
+                </div>
+                <div class="row-span-5">
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.profile_image.label_tag }}</label>
+                    <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
+                        <img id="profileImagePreview"
+                             src="{{ user.profile_image.url }}"
+                             alt="{{ user.get_full_name }}"
+                             class="object-fill absolute scale-110"
+                             width="full"
+                             height="full" />
+                    </div>
+                    <input type="file"
+                           id="id_profile_image"
+                           name="profile_image"
+                           class="hidden"
+                           accept="image/*">
+                    <label for="id_profile_image"
+                           class="mt-4 flex items-center mx-auto w-36 justify-center bg-primaryLogo text-white px-4 py-2 rounded-md cursor-pointer hover:bg-darkerPrimary">
+                        Choose File
+                    </label>
+                    {% comment %} {{ user_form.profile_image|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }} {% endcomment %}
+                    {% if user_form.profile_image.errors %}
+                        <div class="text-dangerRed text-sm">{{ user_form.profile_image.errors }}</div>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.first_name.label_tag }}</label>
+                    {{ user_form.first_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.first_name.errors %}
+                        <div class="text-dangerRed text-sm">{{ user_form.first_name.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-start-1">
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.last_name.label_tag }}</label>
+                    {{ user_form.last_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.last_name.errors %}
+                        <div class="text-dangerRed text-sm">{{ user_form.last_name.errors }}</div>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.email.label_tag }}</label>
+                    {{ user_form.email|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.email.errors %}<div class="text-dangerRed text-sm">{{ user_form.email.errors }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.address.label_tag }}</label>
+                    {{ user_form.address|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.address.errors %}<div class="text-dangerRed text-sm">{{ user_form.address.errors }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.contact.label_tag }}</label>
+                    {{ user_form.contact|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.contact.errors %}<div class="text-dangerRed text-sm">{{ user_form.contact.errors }}</div>{% endif %}
+                </div>
+                {% comment %} Doctor Form Fields {% endcomment %}
+                {% if doctor_form %}
+                    <div>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.position.label_tag }}</label>
+                        {{ doctor_form.position|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        {% if doctor_form.position.errors %}
+                            <div class="text-dangerRed text-sm">{{ doctor_form.position.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {% comment %} Doctor Form Fields {% endcomment %}
+                {% if doctor_form %}
+                    <div>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.specialization.label_tag }}</label>
+                        {{ doctor_form.specialization|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        {% if doctor_form.specialization.errors %}
+                            <div class="text-dangerRed text-sm">{{ doctor_form.specialization.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.qualification.label_tag }}</label>
+                        {{ doctor_form.qualification|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        {% if doctor_form.qualification.errors %}
+                            <div class="text-dangerRed text-sm">{{ doctor_form.qualification.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.nmc_no.label_tag }}</label>
+                        {{ doctor_form.nmc_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        {% if doctor_form.nmc_no.errors %}<div class="text-dangerRed text-sm">{{ doctor_form.nmc_no.errors }}</div>{% endif %}
+                    </div>
+                {% endif %}
+                {% comment %} Submit Button {% endcomment %}
+                <div class="w-full flex space-x-6 col-span-2">
+                    <button type="submit"
+                            class="col-span-2 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
+                        Save Changes
+                    </button>
+                    <a href="{% url 'core:view_doctor_profile' user.id %}"
+                       class="text-center col-span-2 w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">Back to Profile</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('id_profile_image').addEventListener('change', function(event) {
+            const file = event.target.files[0];  // Get the selected file
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImagePreview').src = e.target.result; // Update image preview
+                };
+                reader.readAsDataURL(file); // Convert file to base64 URL
+            }
+        });
+    </script>
+    {% comment %} SweetAlert2 for Messages {% endcomment %}
+    {% if messages %}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.js"></script>
+        <script>
+        {% for message in messages %}
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: '{{ message.tags }}',
+                title: '{{ message }}',
+                showConfirmButton: false,
+                timer: 3000,
+                background: '#F5F5F5',
+                iconColor: '{% if "success" in message.tags %}#28A745{% elif "error" in message.tags %}#DC3545{% else %}#FFC107{% endif %}',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInRight'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutRight'
+                }
+            });
+        {% endfor %}
+        </script>
+    {% endif %}
+{% endblock content %}
