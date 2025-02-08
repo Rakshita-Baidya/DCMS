@@ -31,7 +31,7 @@ def doctor(request):
         doctor_queryset = doctor_queryset.filter(
             Q(user__first_name__icontains=search_query) |
             Q(user__last_name__icontains=search_query) |
-            Q(position__icontains=search_query)
+            Q(specialization__icontains=search_query)
         )
 
     # Pagination

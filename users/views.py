@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from .forms import RegistrationForm, LoginForm, StaffForm, DoctorForm, UserEditForm
-from .models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.contrib.auth.models import Group
+from .forms import RegistrationForm, LoginForm, StaffForm, DoctorForm, UserEditForm
+from .models import User
 
 
 def user_register(request):
@@ -200,6 +201,10 @@ def user_approve(request):
                     user.is_approved = "Approved"
                     user.role = role
                     user.save()
+
+                    group, created = Group.objects.get_or_create(name=role)
+                    user.groups.add(group)
+
                     messages.success(
                         request, f"{user.username} approved successfully.")
                 else:
