@@ -93,29 +93,36 @@ def staff_form(request):
 
 
 def doctor_form(request):
-    temp_user_id = request.session.get('temp_user_id')
+    try:
+        temp_user_id = request.session.get('temp_user_id')
 
-    # Ensure temp_user_id exists in session
-    if not temp_user_id:
-        messages.error(request, "No user session found. Please log in again.")
+        # Ensure temp_user_id exists in session
+        if not temp_user_id:
+            messages.error(
+                request, "No user session found. Please log in again.")
+            return redirect('login')
+
+        temp_user = User.objects.get(id=temp_user_id)
+
+        if request.method == 'POST':
+            form = DoctorForm(request.POST)
+            if form.is_valid():
+                doctor_profile = form.save(commit=False)
+                doctor_profile.user = temp_user
+                doctor_profile.save()
+
+                # Log the user in after completing the form
+                login(request, temp_user)
+                del request.session['temp_user_id']  # Clear session
+                messages.success(
+                    request, "Welcome! Your details have been saved.")
+                return redirect('core:dashboard')
+        else:
+            form = DoctorForm()
+    except:
+        messages.error(
+            request, "An error occurred while processing your request.")
         return redirect('login')
-
-    temp_user = User.objects.get(id=temp_user_id)
-
-    if request.method == 'POST':
-        form = DoctorForm(request.POST)
-        if form.is_valid():
-            doctor_profile = form.save(commit=False)
-            doctor_profile.user = temp_user
-            doctor_profile.save()
-
-            # Log the user in after completing the form
-            login(request, temp_user)
-            del request.session['temp_user_id']  # Clear session
-            messages.success(request, "Welcome! Your details have been saved.")
-            return redirect('core:dashboard')
-    else:
-        form = DoctorForm()
 
     return render(request, 'doctor_form.html', {'form': form})
 
