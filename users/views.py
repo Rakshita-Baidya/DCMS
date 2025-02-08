@@ -42,11 +42,11 @@ def user_login(request):
                     request.session['temp_user_id'] = user.id
 
                     # Redirect based on role to the corresponding form
-                    if user.role == 'staff':
+                    if user.role == 'Staff':
                         return redirect('staff_form')
-                    elif user.role == 'doctor':
+                    elif user.role == 'Doctor':
                         return redirect('doctor_form')
-                    elif user.role == 'admin':
+                    elif user.role == 'Administrator':
                         login(request, user)  # Directly log in admins
                         return redirect('core:dashboard')
                 else:
@@ -130,7 +130,7 @@ def user_logout(request):
 def users_list(request):
 
     # Allow only superusers and admins
-    if not request.user.is_superuser and request.user.role != 'admin':
+    if not request.user.is_superuser and request.user.role != 'Administrator':
         messages.error(request, "Access denied.")
         return redirect('login')
     else:
@@ -174,7 +174,7 @@ def users_list(request):
 
 @login_required
 def user_approve(request):
-    if not request.user.is_superuser and request.user.role != 'admin':
+    if not request.user.is_superuser and request.user.role != 'Administrator':
         messages.error(request, "Access denied.")
         return redirect('login')
 
@@ -249,9 +249,9 @@ def user_profile(request):
     doctor_profile = None
 
     # Check the user's role and fetch data accordingly
-    if user_queryset.role == 'staff':
+    if user_queryset.role == 'Staff':
         staff_profile = user_queryset.staff_profile
-    elif user_queryset.role == 'doctor':
+    elif user_queryset.role == 'Doctor':
         doctor_profile = user_queryset.doctor_profile
 
     # Pass the profile data to the context
@@ -272,9 +272,9 @@ def edit_profile(request):
     doctor_profile = None
 
     # Fetch profile data based on the user's role
-    if user_queryset.role == 'staff':
+    if user_queryset.role == 'Staff':
         staff_profile = user_queryset.staff_profile
-    elif user_queryset.role == 'doctor':
+    elif user_queryset.role == 'Doctor':
         doctor_profile = user_queryset.doctor_profile
 
     if request.method == 'POST':
@@ -319,14 +319,14 @@ def view_user_profile(request, user_id):
     doctor_profile = None
 
     # Fetch profile data based on the user's role
-    if user_queryset.role == 'staff' and hasattr(user_queryset, 'staff_profile'):
+    if user_queryset.role == 'Staff' and hasattr(user_queryset, 'staff_profile'):
         staff_profile = user_queryset.staff_profile
-    elif user_queryset.role == 'doctor' and hasattr(user_queryset, 'doctor_profile'):
+    elif user_queryset.role == 'Doctor' and hasattr(user_queryset, 'doctor_profile'):
         doctor_profile = user_queryset.doctor_profile
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'admin':
+        if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
         else:
             user_id_to_delete = request.POST['delete_user_id']
@@ -354,14 +354,14 @@ def edit_user_profile(request, user_id):
     doctor_profile = None
 
     # Fetch profile data based on the user's role
-    if user_queryset.role == 'staff' and hasattr(user_queryset, 'staff_profile'):
+    if user_queryset.role == 'Staff' and hasattr(user_queryset, 'staff_profile'):
         staff_profile = user_queryset.staff_profile
-    elif user_queryset.role == 'doctor' and hasattr(user_queryset, 'doctor_profile'):
+    elif user_queryset.role == 'Doctor' and hasattr(user_queryset, 'doctor_profile'):
         doctor_profile = user_queryset.doctor_profile
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'admin':
+        if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
         else:
             user_id_to_delete = request.POST['delete_user_id']

@@ -3,9 +3,9 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 ROLE_CHOICES = [
-    ('admin', 'Administrator'),
-    ('staff', 'Staff'),
-    ('doctor', 'Doctor'),
+    ('Administrator', 'Administrator'),
+    ('Staff', 'Staff'),
+    ('Doctor', 'Doctor'),
 ]
 
 APPROVAL_STATUS = [

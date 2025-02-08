@@ -57,9 +57,12 @@
                                           class="flex items-center justify-center space-x-2 py-2">
                                         {% csrf_token %}
                                         <select name="role" class="border px-2 py-1 rounded-sm">
-                                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
-                                            <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Staff</option>
-                                            <option value="doctor" {% if user.role == 'doctor' %}selected{% endif %}>Doctor</option>
+                                            <option value="Administrator"
+                                                    {% if user.role == 'Administrator' %}selected{% endif %}>
+                                                Admin
+                                            </option>
+                                            <option value="Staff" {% if user.role == 'Staff' %}selected{% endif %}>Staff</option>
+                                            <option value="Doctor" {% if user.role == 'Doctor' %}selected{% endif %}>Doctor</option>
                                         </select>
                                         {% comment %} approve {% endcomment %}
                                         <button type="button"

@@ -41,7 +41,7 @@ def doctor(request):
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'admin':
+        if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
         else:
             user_id_to_delete = request.POST['delete_user_id']
@@ -67,12 +67,12 @@ def view_doctor_profile(request, user_id):
     doctor_profile = None
 
     # Fetch profile data based on the user's role
-    if user_queryset.role == 'doctor' and hasattr(user_queryset, 'doctor_profile'):
+    if user_queryset.role == 'Doctor' and hasattr(user_queryset, 'doctor_profile'):
         doctor_profile = user_queryset.doctor_profile
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'admin':
+        if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
         else:
             user_id_to_delete = request.POST['delete_user_id']
@@ -98,12 +98,12 @@ def edit_doctor_profile(request, user_id):
     doctor_profile = None
 
     # Fetch profile data based on the user's role
-    if user_queryset.role == 'doctor' and hasattr(user_queryset, 'doctor_profile'):
+    if user_queryset.role == 'Doctor' and hasattr(user_queryset, 'doctor_profile'):
         doctor_profile = user_queryset.doctor_profile
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'admin':
+        if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
         else:
             user_id_to_delete = request.POST['delete_user_id']
@@ -162,7 +162,7 @@ def staff(request):
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'admin':
+        if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
         else:
             user_id_to_delete = request.POST['delete_user_id']
@@ -188,12 +188,12 @@ def view_staff_profile(request, user_id):
     staff_profile = None
 
     # Fetch profile data based on the user's role
-    if user_queryset.role == 'staff' and hasattr(user_queryset, 'staff_profile'):
+    if user_queryset.role == 'Staff' and hasattr(user_queryset, 'staff_profile'):
         staff_profile = user_queryset.staff_profile
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'admin':
+        if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
         else:
             user_id_to_delete = request.POST['delete_user_id']
@@ -219,12 +219,12 @@ def edit_staff_profile(request, user_id):
     staff_profile = None
 
     # Fetch profile data based on the user's role
-    if user_queryset.role == 'staff' and hasattr(user_queryset, 'staff_profile'):
+    if user_queryset.role == 'Staff' and hasattr(user_queryset, 'staff_profile'):
         staff_profile = user_queryset.staff_profile
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'admin':
+        if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
         else:
             user_id_to_delete = request.POST['delete_user_id']

@@ -65,7 +65,7 @@
                </svg>
                <span>Schedule</span>
           </a>
-          {% if user_role == 'admin' or request.user.is_superuser %}
+          {% if user_role == 'Administrator' or request.user.is_superuser %}
                <a href="{% url 'list' %}"
                   class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'users' %}bg-darkerPrimary{% endif %}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
