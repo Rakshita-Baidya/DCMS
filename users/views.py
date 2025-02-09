@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.contrib.auth.models import Group
 from .forms import RegistrationForm, LoginForm, StaffForm, DoctorForm, UserEditForm
 from .models import User
+from .decorators import admin_only, allowed_users, unauthenticated_user
 
 
 def user_register(request):
@@ -65,6 +66,7 @@ def user_login(request):
     return render(request, 'login.html', {'form': form})
 
 
+@allowed_users(allowed_roles=['Staff'])
 def staff_form(request):
     temp_user_id = request.session.get('temp_user_id')
 
@@ -93,6 +95,7 @@ def staff_form(request):
     return render(request, 'staff_form.html', {'form': form})
 
 
+@allowed_users(allowed_roles=['Doctor'])
 def doctor_form(request):
     try:
         temp_user_id = request.session.get('temp_user_id')
@@ -134,53 +137,55 @@ def user_logout(request):
     return redirect('login')
 
 
-@login_required
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Administrator'])
 def users_list(request):
 
     # Allow only superusers and admins
-    if not request.user.is_superuser and request.user.role != 'Administrator':
-        messages.error(request, "Access denied.")
-        return redirect('login')
-    else:
-        user_queryset = User.objects.all().order_by('-is_approved')
+    # if not request.user.is_superuser and request.user.role != 'Administrator':
+    #     messages.error(request, "Access denied.")
+    #     return redirect('login')
+    # else:
+    user_queryset = User.objects.all().order_by('-is_approved')
 
-        # user needs to be deleted
-        if request.method == 'POST' and 'delete_user_id' in request.POST:
-            user_id_to_delete = request.POST['delete_user_id']
-            user_to_delete = User.objects.get(id=user_id_to_delete)
-            user_to_delete.delete()
-            messages.success(request, f"User {
-                             user_to_delete.username} has been deleted.")
+    # user needs to be deleted
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        user_id_to_delete = request.POST['delete_user_id']
+        user_to_delete = User.objects.get(id=user_id_to_delete)
+        user_to_delete.delete()
+        messages.success(request, f"User {
+                         user_to_delete.username} has been deleted.")
 
-        # Add search functionality
-        search_query = request.GET.get('search', '')
-        if search_query:
-            user_queryset = user_queryset.filter(
-                Q(first_name__icontains=search_query) |
-                Q(last_name__icontains=search_query) |
-                Q(username__icontains=search_query) |
-                Q(email__icontains=search_query)
-            )
+    # Add search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        user_queryset = user_queryset.filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(username__icontains=search_query) |
+            Q(email__icontains=search_query)
+        )
 
-        # Pagination
-        paginator = Paginator(user_queryset, 8)
-        page = request.GET.get('page', 1)
-        user_list = paginator.get_page(page)
+    # Pagination
+    paginator = Paginator(user_queryset, 8)
+    page = request.GET.get('page', 1)
+    user_list = paginator.get_page(page)
 
-        context = {
-            'page_title': 'User Management',
-            'active_page': 'users',
-            'users': user_list,
-            'total_user': user_queryset.count(),
-            'search_query': search_query,
-        }
+    context = {
+        'page_title': 'User Management',
+        'active_page': 'users',
+        'users': user_list,
+        'total_user': user_queryset.count(),
+        'search_query': search_query,
+    }
 
     return render(request, 'reg_users/users_list.html', context)
 
 # Approval View
 
 
-@login_required
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Administrator'])
 def user_approve(request):
     if not request.user.is_superuser and request.user.role != 'Administrator':
         messages.error(request, "Access denied.")

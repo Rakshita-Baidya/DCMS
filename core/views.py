@@ -302,3 +302,7 @@ def statistics(request):
         'active_page': 'statistics',
     }
     return render(request, 'statistics/statistics.html', context)
+
+
+def error(request):
+    return render(request, 'error.html')

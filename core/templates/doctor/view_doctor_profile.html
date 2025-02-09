@@ -46,8 +46,8 @@
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            <div class="col-span-2 bg-white px-8 py-10 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center ">
-                <div class="mx-auto text-xl font-semibold text-gray-800 space-y-2">
+            <div class="col-span-2 bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center ">
+                <div class="text-xl font-semibold text-gray-800 space-y-3 mx-auto ">
                     <p>Identification Number</p>
                     <p>Username</p>
                     <p>Full Name</p>
@@ -61,7 +61,7 @@
                         <p>NMC Number</p>
                     {% endif %}
                 </div>
-                <div class="mx-auto text-lg space-y-2">
+                <div class="mx-auto text-lg space-y-3">
                     <p>{{ user.id }}</p>
                     <p>{{ user.username }}</p>
                     <p>{{ user.get_full_name }}</p>

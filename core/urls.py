@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import dashboard, doctor, schedule, staff, patient, appointment, finance, statistics, view_staff_profile, edit_staff_profile, view_doctor_profile, edit_doctor_profile
+from .views import dashboard, doctor, schedule, staff, patient, appointment, finance, statistics, view_staff_profile, edit_staff_profile, view_doctor_profile, edit_doctor_profile, error
 
 app_name = 'core'
 
@@ -22,5 +22,7 @@ urlpatterns = [
     path('schedule/', schedule, name='schedule'),
 
     path('finance/', finance, name='finance',),
-    path('statistics/', statistics, name='statistics')
+    path('statistics/', statistics, name='statistics'),
+
+    path('error/', error, name='error')
 ]
