@@ -138,7 +138,7 @@ def user_logout(request):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Administrator'])
+@admin_only
 def users_list(request):
 
     # Allow only superusers and admins
@@ -185,15 +185,13 @@ def users_list(request):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Administrator'])
+@admin_only
 def user_approve(request):
-    if not request.user.is_superuser and request.user.role != 'Administrator':
-        messages.error(request, "Access denied.")
-        return redirect('login')
+    # if not request.user.is_superuser and request.user.role != 'Administrator':
+    #     messages.error(request, "Access denied.")
+    #     return redirect('login')
 
     if request.method == 'POST':
-        print(request.POST)  # Debugging output
-
         user_id = request.POST.get('user_id')
         role = request.POST.get('role')
         action = request.POST.get('action')
@@ -257,7 +255,7 @@ def user_approve(request):
     return render(request, 'reg_users/user_approve.html', context)
 
 
-@login_required
+@login_required(login_url='login')
 def user_profile(request):
     user_queryset = User.objects.get(pk=request.user.id)
 
@@ -282,7 +280,7 @@ def user_profile(request):
     return render(request, 'profile/profile.html', context)
 
 
-@login_required
+@login_required(login_url='login')
 def edit_profile(request):
     user_queryset = User.objects.get(pk=request.user.id)
     staff_profile = None
@@ -329,7 +327,7 @@ def edit_profile(request):
     return render(request, 'profile/edit_profile.html', context)
 
 
-@login_required
+@login_required(login_url='login')
 def view_user_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
     staff_profile = None
@@ -364,7 +362,7 @@ def view_user_profile(request, user_id):
     return render(request, 'reg_users/view_user_profile.html', context)
 
 
-@login_required
+@login_required(login_url='login')
 def edit_user_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
     staff_profile = None

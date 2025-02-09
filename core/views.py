@@ -5,15 +5,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from users.models import Staff, User, Doctor
 from users.forms import StaffForm, DoctorForm, UserEditForm
+from users.decorators import admin_only, allowed_users, unauthenticated_user
 
 
 # Create your views here.
 
 
-def home(request):
-    return render(request, 'index.html')
+# def home(request):
+#     return render(request, 'index.html')
 
-
+@login_required(login_url='login')
 def dashboard(request):
     context = {
         'page_title': 'Dashboard',
@@ -22,6 +23,7 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard.html', context)
 
 
+@login_required(login_url='login')
 def doctor(request):
     doctor_queryset = Doctor.objects.all()
 
@@ -62,6 +64,7 @@ def doctor(request):
     return render(request, 'doctor/doctor.html', context)
 
 
+@login_required(login_url='login')
 def view_doctor_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
     doctor_profile = None
@@ -92,7 +95,8 @@ def view_doctor_profile(request, user_id):
     return render(request, 'doctor/view_doctor_profile.html', context)
 
 
-@login_required
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Doctor', 'Administrator'])
 def edit_doctor_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
     doctor_profile = None
@@ -143,6 +147,7 @@ def edit_doctor_profile(request, user_id):
     return render(request, 'doctor/edit_doctor_profile.html', context)
 
 
+@login_required(login_url='login')
 def staff(request):
     staff_queryset = Staff.objects.all()
 
@@ -183,6 +188,7 @@ def staff(request):
     return render(request, 'staff/staff.html', context)
 
 
+@login_required(login_url='login')
 def view_staff_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
     staff_profile = None
@@ -213,7 +219,8 @@ def view_staff_profile(request, user_id):
     return render(request, 'staff/view_staff_profile.html', context)
 
 
-@login_required
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Staff', 'Administrator'])
 def edit_staff_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
     staff_profile = None
@@ -288,6 +295,8 @@ def schedule(request):
     return render(request, 'schedule/schedule.html', context)
 
 
+@login_required(login_url='login')
+@admin_only
 def finance(request):
     context = {
         'page_title': 'Finance Management',
@@ -296,6 +305,8 @@ def finance(request):
     return render(request, 'finance/finance.html', context)
 
 
+@login_required(login_url='login')
+@admin_only
 def statistics(request):
     context = {
         'page_title': 'Statistics',

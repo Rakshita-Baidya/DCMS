@@ -47,4 +47,7 @@ def admin_only(view_func):
         if group == 'Administrator':
             return view_func(request, *args, **kwargs)
 
+        messages.error(request, 'You are not authorized to view this page')
+        return redirect('core:error')
+
     return wrapper_function
