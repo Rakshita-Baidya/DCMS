@@ -21,3 +21,24 @@ class Transaction(models.Model):
 
     def __str__(self):
         return super().__str__()
+
+
+class Patient(models.Model):
+    reg_no = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
+    contact = models.CharField(max_length=13)
+    address = models.CharField(max_length=150)
+    dob = models.DateField()
+    gender = models.CharField(max_length=6)
+    blood_group = models.CharField(max_length=3)
+    age = models.CharField(max_length=3)
+    email = models.EmailField()
+    telephone = models.CharField()
+    occupation = models.CharField()
+    nationality = models.CharField()
+    marital_status = models.CharField()
+    photo = models.ImageField()
+
+    def __str__(self):
+        return super().__str__()
+
