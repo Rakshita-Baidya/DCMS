@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+    {% load widget_tweaks %}
+    <div class="p-6">
+        <h1 class="text-4xl font-bold text-gray-800">Add Patient</h1>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-4">
+                    {{ field.label_tag }}
+                    {% if field.errors %}<span class="text-red-500">{{ field.errors }}</span>{% endif %}
+                    {% render_field field class="form-control" %}
+                </div>
+            {% endfor %}
+            <div class="flex justify-end">
+                <button type="submit" class="btn btn-primary">Add Patient</button>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

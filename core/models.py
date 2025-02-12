@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils.timezone import now
 from django.db import models
 from users.models import User
 
@@ -23,7 +23,7 @@ class Transaction(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=500)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateTimeField(default=datetime.now)
+    date = models.DateTimeField(default=now)
     type = models.CharField(choices=TRANSACTION_TYPE, default="Income")
 
     def __str__(self):
@@ -35,7 +35,8 @@ class Patient(models.Model):
     name = models.CharField(max_length=100)
     contact = models.CharField(max_length=13)
     address = models.CharField(max_length=150, blank=True, null=True)
-    dob = models.DateField(default=datetime.date, blank=True, null=True)
+    dob = models.DateField(default=now,
+                           blank=True, null=True)
     gender = models.CharField(max_length=6)
     blood_group = models.CharField(max_length=3)
     age = models.CharField(max_length=3)
@@ -89,7 +90,7 @@ class HeartHistory(models.Model):
     rheumatic_fever_age = models.CharField(max_length=3, blank=True, null=True)
     stroke_history = models.BooleanField(default=False)
     stroke_date = models.DateField(
-        default=datetime.date, blank=True, null=True)
+        default=now, blank=True, null=True)
 
     def __str__(self):
         return super().__str__()
@@ -186,7 +187,7 @@ class ThyroidHistory(models.Model):
 
 class DiabetesHistory(models.Model):
     history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_respiratory')
+        MedicalHistory, on_delete=models.CASCADE, related_name='history_diabetes')
     delayed_healing = models.BooleanField(default=False)
     increased_appetite = models.BooleanField(default=False)
     family_history = models.BooleanField(default=False)
@@ -197,7 +198,7 @@ class DiabetesHistory(models.Model):
 
 class RadiographyHistory(models.Model):
     history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_respiratory')
+        MedicalHistory, on_delete=models.CASCADE, related_name='history_radiography')
     radiography_therapy = models.BooleanField(default=False)
 
     def __str__(self):
@@ -219,7 +220,7 @@ class HospitalizationHistory(models.Model):
         MedicalHistory, on_delete=models.CASCADE, related_name='history_hospitalization')
     hospitalized = models.BooleanField(default=False)
     admission_date = models.DateField(
-        default=datetime.date, blank=True, null=True)
+        default=now, blank=True, null=True)
     specifics = models.TextField(max_length=500, blank=True, null=True)
 
     def __str__(self):
@@ -248,7 +249,7 @@ class ExtractionHistory(models.Model):
         MedicalHistory, on_delete=models.CASCADE, related_name='history_extraction')
     prev_extraction = models.BooleanField(default=False)
     date_of_last_extraction = models.DateField(
-        datetime.date, blank=True, null=True)
+        now, blank=True, null=True)
     untoward_reaction = models.BooleanField(default=False)
     specifics = models.TextField(max_length=500, blank=True, null=True)
     local_anesthesia_use = models.BooleanField(default=False)

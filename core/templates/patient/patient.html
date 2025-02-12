@@ -1,5 +1,166 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-    <div>Patient</div>
+    {% load widget_tweaks %}
+    <div class="p-8">
+        {% comment %} Header Section {% endcomment %}
+        <div class="flex justify-between items-center mb-6 ">
+            <div>
+                <p class="text-gray-700 text-2xl font-medium">{{ total_patient }} Total Patients</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                {% comment %} Search Bar {% endcomment %}
+                <form method="get">
+                    <input type="text"
+                           name="search"
+                           value="{{ search_query }}"
+                           placeholder="Search..."
+                           class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                    <button type="submit" class="hidden"></button>
+                </form>
+                {% comment %} Add Patient Button {% endcomment %}
+                <div>
+                    <a href="{% url 'core:add_patient' %}"
+                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                        + Add Patient
+                    </a>
+                </div>
+                {% comment %} <div>
+                    <a href="{% url 'approve' %}" class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                        Approve Patients
+                    </a>
+                </div> {% endcomment %}
+            </div>
+        </div>
+        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2]">
+            {% if patients %}
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr class="border-b-2 border-primaryLogo text-center pb-4">
+                            <th class="pb-2">Patient ID</th>
+                            <th class="pb-2">Reg No.</th>
+                            <th class="pb-2">Full Name</th>
+                            <th class="pb-2">Contact</th>
+                            <th class="pb-2">Email</th>
+                            <th class="pb-2">Blood Group</th>
+                            <th class="pb-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patients %}
+                            <tr class="border-b text-center py-4">
+                                <td>{{ patient.id }}</td>
+                                <td>{{ patient.reg_no }}</td>
+                                <td>{{ patient.name }}</td>
+                                <td>{{ patient.contact }}</td>
+                                <td>{{ patient.email }}</td>
+                                <td>{{ patient.blood_group }}</td>
+                                <td>
+                                    <div class="flex items-center justify-center space-x-3">
+                                        {% comment %} edit {% endcomment %}
+                                        <a href="{% url 'edit_patient_profile' patient.id %}">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 width="20"
+                                                 height="20"
+                                                 viewBox="0 0 20 20"
+                                                 class="cursor-pointer"
+                                                 onclick="{% url 'edit_patient_profile' patient.id %}">
+                                                <g fill="none" stroke="#00B2B2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
+                                                <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
+                                                <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
+                                                </g>
+                                            </svg>
+                                        </a>
+                                        {% comment %} view {% endcomment %}
+                                        <a href="{% url 'view_patient_profile' patient.id %}">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 width="20"
+                                                 height="20"
+                                                 viewBox="0 0 20 20"
+                                                 class="cursor-pointer">
+                                                <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
+                                            </svg>
+                                        </a>
+                                        {% comment %} delete {% endcomment %}
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="20"
+                                             height="20"
+                                             viewBox="0 0 20 20"
+                                             class="cursor-pointer"
+                                             onclick="confirmDelete('{{ patient.id }}', '{{ patient.patientname }}')">
+                                            <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
+                                        </svg>
+                                    </div>
+                                    <form id="delete-form-{{ patient.id }}"
+                                          method="post"
+                                          class="hidden"
+                                          action="{% url 'list' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="delete_patient_id" value="{{ patient.id }}">
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% comment %} Pagination {% endcomment %}
+                {% if patient.has_other_pages %}
+                    <div class="flex justify-center mt-8">
+                        <div class="flex items-center space-x-2">
+                            {% if patient.has_previous %}
+                                <a href="?page={{ patient.previous_page_number }}&search={{ search_query }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="20"
+                                         height="20"
+                                         viewBox="0 0 20 20"
+                                         class="cursor-pointer">
+                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                        <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
+                                        </g>
+                                    </svg>
+                                </a>
+                            {% endif %}
+                            <p class="px-3 py-2">Page {{ patient.number }} of {{ patient.paginator.num_pages }}</p>
+                            {% if patient.has_next %}
+                                <a href="?page={{ patient.next_page_number }}&search={{ search_query }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="20"
+                                         height="20"
+                                         viewBox="0 0 20 20"
+                                         class="cursor-pointer">
+                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                        <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
+                                        </g>
+                                    </svg>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <p class="text-center text-gray-500 py-4">No registered patients found.</p>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        function confirmDelete(patientId, patientName) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action will permanently delete the patient "+ patientName +".",
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'bg-dangerRed text-white hover:bg-darkerDangerRed py-2 w-32',
+                    cancelButton: 'bg-[#444444] text-white hover:bg-gray-400 py-2 w-32',
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + patientId).submit();
+                }
+            });
+        }
+    </script>
 {% endblock content %}

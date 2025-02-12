@@ -4,7 +4,9 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from users.models import Staff, User, Doctor
+from .models import Patient, MedicalHistory, HeartHistory, HospitalizationHistory, EarHistory, EmergencyContact, ArthritisHistory, NervousHistory, WomenHistory, LiverHistory, RadiographyHistory, RespitoryHistory, ExtractionHistory, BloodHistory, AllergiesHistory, DiabetesHistory, ThyroidHistory, UrinaryHistory
 from users.forms import StaffForm, DoctorForm, UserEditForm
+from .forms import PatientForm
 from users.decorators import admin_only, allowed_users, unauthenticated_user
 
 
@@ -271,12 +273,66 @@ def edit_staff_profile(request, user_id):
     return render(request, 'staff/edit_staff_profile.html', context)
 
 
+@login_required(login_url='login')
 def patient(request):
+
+    # Allow only superusers and admins
+    # if not request.user.is_superuser and request.user.role != 'Administrator':
+    #     messages.error(request, "Access denied.")
+    #     return redirect('login')
+    # else:
+    patient_queryset = Patient.objects.all().order_by('reg_no')
+
+    # patient needs to be deleted
+    if request.method == 'POST' and 'delete_patient_id' in request.POST:
+        patient_id_to_delete = request.POST['delete_patient_id']
+        patient_to_delete = Patient.objects.get(id=patient_id_to_delete)
+        patient_to_delete.delete()
+        messages.success(request, f"Patient {
+                         patient_to_delete.patientname} has been deleted.")
+
+    # Add search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        patient_queryset = patient_queryset.filter(
+            Q(name__icontains=search_query) |
+            Q(email__icontains=search_query)
+        )
+
+    # Pagination
+    paginator = Paginator(patient_queryset, 8)
+    page = request.GET.get('page', 1)
+    patient_list = paginator.get_page(page)
+
     context = {
         'page_title': 'Patient Management',
         'active_page': 'patient',
+        'patients': patient_list,
+        'total_patient': patient_queryset.count(),
+        'search_query': search_query,
     }
+
     return render(request, 'patient/patient.html', context)
+
+
+def add_patient(request):
+    if request.method == 'POST':
+        form = PatientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request, 'The patient has been added successfully!')
+            return redirect('core:patient')
+    else:
+        form = PatientForm()
+
+    context = {
+        'page_title': 'Patient Management',
+        'active_page': 'patient',
+
+    }
+
+    return render(request, 'patient/add_patient.html', context)
 
 
 def appointment(request):
