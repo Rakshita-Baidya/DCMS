@@ -329,6 +329,7 @@ def add_patient(request):
     context = {
         'page_title': 'Patient Management',
         'active_page': 'patient',
+        'form': form,
 
     }
 
