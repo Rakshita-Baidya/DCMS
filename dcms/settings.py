@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'widget_tweaks',
     'drf_spectacular',
+    'formtools',
 ]
 
 MIDDLEWARE = [

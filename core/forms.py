@@ -13,6 +13,7 @@ class EmergencyContactForm(forms.ModelForm):
     class Meta:
         model = EmergencyContact
         fields = '__all__'
+        exclude = ['patient']
 
 
 class MedicalHistoryForm(forms.ModelForm):
@@ -29,13 +30,6 @@ class HeartHistoryForm(forms.ModelForm):
         exclude = ['history']
 
 
-class HospitalizationHistoryForm(forms.ModelForm):
-    class Meta:
-        model = HospitalizationHistory
-        fields = '__all__'
-        exclude = ['history']
-
-
 class EarHistoryForm(forms.ModelForm):
     class Meta:
         model = EarHistory
@@ -46,5 +40,89 @@ class EarHistoryForm(forms.ModelForm):
 class ArthritisHistoryForm(forms.ModelForm):
     class Meta:
         model = ArthritisHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class NervousHistoryForm(forms.ModelForm):
+    class Meta:
+        model = NervousHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class WomenHistoryForm(forms.ModelForm):
+    class Meta:
+        model = WomenHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class LiverHistoryForm(forms.ModelForm):
+    class Meta:
+        model = LiverHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class RadiographyHistoryForm(forms.ModelForm):
+    class Meta:
+        model = RadiographyHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class RespitoryHistoryForm(forms.ModelForm):
+    class Meta:
+        model = RespitoryHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class BloodHistoryForm(forms.ModelForm):
+    class Meta:
+        model = BloodHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class DiabetesHistoryForm(forms.ModelForm):
+    class Meta:
+        model = DiabetesHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class ThyroidHistoryForm(forms.ModelForm):
+    class Meta:
+        model = ThyroidHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class UrinaryHistoryForm(forms.ModelForm):
+    class Meta:
+        model = UrinaryHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class ExtractionHistoryForm(forms.ModelForm):
+    class Meta:
+        model = ExtractionHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class AllergiesHistoryForm(forms.ModelForm):
+    class Meta:
+        model = AllergiesHistory
+        fields = '__all__'
+        exclude = ['history']
+
+
+class HospitalizationHistoryForm(forms.ModelForm):
+    class Meta:
+        model = HospitalizationHistory
         fields = '__all__'
         exclude = ['history']
