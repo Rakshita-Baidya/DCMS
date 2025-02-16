@@ -1,11 +1,83 @@
 {% extends "index.html" %}
+{% load static %}
+{% load widget_tweaks %}
 {% block content %}
     <div class="p-6">
         <p class="text-xl font-semibold">General Information</p>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ wizard.management_form }}
-            {{ form.as_p }}
+            <!-- Patient Form Fields -->
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.reg_no.label_tag }}</label>
+                {{ patient_form.reg_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if patient_form.reg_no.errors %}
+                    <div class="text-dangerRed text-sm">{{ patient_form.reg_no.errors }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.name.label_tag }}</label>
+                {{ patient_form.name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if patient_form.name.errors %}<div class="text-dangerRed text-sm">{{ patient_form.name.errors }}</div>{% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.contact.label_tag }}</label>
+                {{ patient_form.contact|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if patient_form.contact.errors %}
+                    <div class="text-dangerRed text-sm">{{ patient_form.contact.errors }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.address.label_tag }}</label>
+                {{ patient_form.address|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if patient_form.address.errors %}
+                    <div class="text-dangerRed text-sm">{{ patient_form.address.errors }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.dob.label_tag }}</label>
+                {{ patient_form.dob|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if patient_form.dob.errors %}<div class="text-dangerRed text-sm">{{ patient_form.dob.errors }}</div>{% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.gender.label_tag }}</label>
+                {{ patient_form.gender|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if patient_form.gender.errors %}
+                    <div class="text-dangerRed text-sm">{{ patient_form.gender.errors }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.blood_group.label_tag }}</label>
+                {{ patient_form.blood_group|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if patient_form.blood_group.errors %}
+                    <div class="text-dangerRed text-sm">{{ patient_form.blood_group.errors }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.age.label_tag }}</label>
+                {{ patient_form.age|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if patient_form.age.errors %}<div class="text-dangerRed text-sm">{{ patient_form.age.errors }}</div>{% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.email.label_tag }}</label>
+                {{ patient_form.email|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if patient_form.email.errors %}<div class="text-dangerRed text-sm">{{ patient_form.email.errors }}</div>{% endif %}
+            </div>
+            <!-- Emergency Contact Fields -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium">{{ emergency_form.relation.label_tag }}</label>
+                {{ emergency_form.relation|add_class:"mt-1 block w-full px-4 py-2 border rounded-md" }}
+                {% if emergency_form.relation.errors %}
+                    <div class="text-dangerRed text-sm">{{ emergency_form.relation.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium">{{ emergency_form.name.label_tag }}</label>
+                {{ emergency_form.name|add_class:"mt-1 block w-full px-4 py-2 border rounded-md" }}
+                {% if emergency_form.name.errors %}
+                    <div class="text-dangerRed text-sm">{{ emergency_form.name.errors }}</div>
+                {% endif %}
+            </div>
             <button type="submit" class="bg-blue-500 text-white px-4 py-2">Next</button>
         </form>
     </div>

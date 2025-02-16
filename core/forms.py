@@ -15,6 +15,13 @@ class EmergencyContactForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['patient']
 
+# general
+
+
+class GeneralNestedForm(forms.Form):
+    patient = PatientForm()
+    emergency_contact = EmergencyContactForm()
+
 
 class MedicalHistoryForm(forms.ModelForm):
     class Meta:
@@ -106,6 +113,24 @@ class UrinaryHistoryForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['history']
 
+# history
+
+
+class MedicalHistoryNestedForm(forms.Form):
+    medical_history = MedicalHistoryForm()
+    heart_history = HeartHistoryForm()
+    ear_history = EarHistoryForm()
+    arthritis_history = ArthritisHistoryForm()
+    nervous_history = NervousHistoryForm()
+    women_history = WomenHistoryForm()
+    liver_history = LiverHistoryForm()
+    radiography_history = RadiographyHistoryForm()
+    respiratory_history = RespitoryHistoryForm()
+    blood_history = BloodHistoryForm()
+    diabetes_history = DiabetesHistoryForm()
+    thyroid_history = ThyroidHistoryForm()
+    urinary_history = UrinaryHistoryForm()
+
 
 class ExtractionHistoryForm(forms.ModelForm):
     class Meta:
@@ -126,3 +151,11 @@ class HospitalizationHistoryForm(forms.ModelForm):
         model = HospitalizationHistory
         fields = '__all__'
         exclude = ['history']
+
+# allergies
+
+
+class AllergiesNestedForm(forms.Form):
+    extraction_history = ExtractionHistoryForm()
+    allergies_history = AllergiesHistoryForm()
+    hospitalization_history = HospitalizationHistoryForm()

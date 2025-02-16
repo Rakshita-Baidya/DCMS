@@ -594,12 +594,12 @@ video {
   grid-column: span 2 / span 2;
 }
 
-.col-span-full {
-  grid-column: 1 / -1;
-}
-
 .col-span-3 {
   grid-column: span 3 / span 3;
+}
+
+.col-span-full {
+  grid-column: 1 / -1;
 }
 
 .col-start-1 {
@@ -808,10 +808,6 @@ video {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.grid-cols-12 {
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-}
-
 .flex-col {
   flex-direction: column;
 }
@@ -978,6 +974,11 @@ video {
   background-color: rgb(236 244 244 / var(--tw-bg-opacity, 1));
 }
 
+.bg-blue-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(59 130 246 / var(--tw-bg-opacity, 1));
+}
+
 .bg-dangerRed {
   --tw-bg-opacity: 1;
   background-color: rgb(178 0 3 / var(--tw-bg-opacity, 1));
@@ -986,6 +987,11 @@ video {
 .bg-darkerPrimary {
   --tw-bg-opacity: 1;
   background-color: rgb(1 129 129 / var(--tw-bg-opacity, 1));
+}
+
+.bg-green-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(34 197 94 / var(--tw-bg-opacity, 1));
 }
 
 .bg-primaryLogo {
@@ -1264,38 +1270,6 @@ video {
   color: rgb(202 138 4 / var(--tw-text-opacity, 1));
 }
 
-.text-\[secondaryLogo\] {
-  color: secondaryLogo;
-}
-
-.text-\[\] {
-  color: ;
-}
-
-.text-\[\#\] {
-  color: #;
-}
-
-.text-\[\#ffffff\] {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
-.text-\[\#433e3e\] {
-  --tw-text-opacity: 1;
-  color: rgb(67 62 62 / var(--tw-text-opacity, 1));
-}
-
-.text-\[\#262424\] {
-  --tw-text-opacity: 1;
-  color: rgb(38 36 36 / var(--tw-text-opacity, 1));
-}
-
-.text-\[\#1a1a1a\] {
-  --tw-text-opacity: 1;
-  color: rgb(26 26 26 / var(--tw-text-opacity, 1));
-}
-
 .shadow-lg {
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
@@ -1437,12 +1411,6 @@ video {
     font-size: 1.25rem;
     line-height: 1.75rem;
   }
-
-  @media (min-width: 1024px) {
-    .md\:lg\:gap-6 {
-      gap: 1.5rem;
-    }
-  }
 }
 
 @media (min-width: 1024px) {
@@ -1470,10 +1438,6 @@ video {
     gap: 1.5rem;
   }
 
-  .lg\:gap-8 {
-    gap: 2rem;
-  }
-
   .lg\:gap-x-8 {
     -moz-column-gap: 2rem;
          column-gap: 2rem;
@@ -1488,6 +1452,11 @@ video {
     padding-right: 1rem;
   }
 
+  .lg\:text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
   .lg\:text-4xl {
     font-size: 2.25rem;
     line-height: 2.5rem;
@@ -1496,16 +1465,6 @@ video {
   .lg\:text-5xl {
     font-size: 3rem;
     line-height: 1;
-  }
-
-  .lg\:text-2xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-
-  .lg\:text-xl {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
   }
 }
 
