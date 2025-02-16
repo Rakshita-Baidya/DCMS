@@ -798,12 +798,6 @@ video {
   table-layout: auto;
 }
 
-.scale-100 {
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
 .scale-110 {
   --tw-scale-x: 1.1;
   --tw-scale-y: 1.1;
@@ -1212,19 +1206,14 @@ video {
   text-transform: capitalize;
 }
 
-.text-\[\#1d2a2a\] {
-  --tw-text-opacity: 1;
-  color: rgb(29 42 42 / var(--tw-text-opacity, 1));
-}
-
-.text-black {
-  --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
-}
-
 .text-dangerRed {
   --tw-text-opacity: 1;
   color: rgb(178 0 3 / var(--tw-text-opacity, 1));
+}
+
+.text-darkText {
+  --tw-text-opacity: 1;
+  color: rgb(29 42 42 / var(--tw-text-opacity, 1));
 }
 
 .text-gray-500 {
@@ -1285,15 +1274,6 @@ video {
 .text-yellow-600 {
   --tw-text-opacity: 1;
   color: rgb(202 138 4 / var(--tw-text-opacity, 1));
-}
-
-.text-darkText {
-  --tw-text-opacity: 1;
-  color: rgb(29 42 42 / var(--tw-text-opacity, 1));
-}
-
-.text-\[\#1darkTextd2a2a\] {
-  color: #1darkTextd2a2a;
 }
 
 .shadow-lg {

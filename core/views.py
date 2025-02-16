@@ -26,9 +26,9 @@ FORMS = {
 
 
 TEMPLATES = {
-    "general": "patient/general.html",
-    "history": "patient/history.html",
-    "other": "patient/other.html",
+    "0": "patient/general.html",
+    "1": "patient/history.html",
+    "2": "patient/other.html",
 }
 
 file_storage = FileSystemStorage(
@@ -378,6 +378,8 @@ class PatientFormWizard(SessionWizardView):
             return Patient()
         elif step == '1':  # Medical History Form
             return MedicalHistory()
+        elif step == '2':
+            return AllergiesHistory()
         return None
 
     def done(self, form_list, **kwargs):

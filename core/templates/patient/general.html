@@ -46,7 +46,7 @@
                         <img id="profileImagePreview"
                              src="{% if patient.profile_image %}{{ patient.profile_image.url }}{% else %}{% static 'images/profile/default.jpg' %}{% endif %}"
                              alt="{{ patient.get_full_name }}"
-                             class="object-fill absolute scale-100"
+                             class="object-fill absolute scale-110"
                              width="full"
                              height="full" />
                     </div>
@@ -66,7 +66,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.dob.label_tag }}</label>
-                    {{ wizard.form.dob|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {{ wizard.form.dob|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.dob.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.dob.errors }}</div>{% endif %}
                 </div>
                 <div>
@@ -119,36 +119,30 @@
                         <div class="text-dangerRed text-sm">{{ wizard.form.marital_status.errors }}</div>
                     {% endif %}
                 </div>
-                <div class="col-start-1 col-span-3 font-bold text-2xl text-secondaryLogo">Emergency Contact:</div>
+                <div class="col-start-1 col-span-3 mt-4 font-bold text-2xl text-darkText">Emergency Contact:</div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.emergency_contact_name.label_tag }}</label>
+                    <label class="block text-sm font-medium text-secondaryLogo">Name:</label>
                     {{ wizard.form.emergency_contact_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.emergency_contact_name.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.emergency_contact_name.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">
-                        {{ wizard.form.emergency_contact_contact.label_tag }}
-                    </label>
+                    <label class="block text-sm font-medium text-secondaryLogo">Contact Number:</label>
                     {{ wizard.form.emergency_contact_contact|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.emergency_contact_contact.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.emergency_contact_contact.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">
-                        {{ wizard.form.emergency_contact_address.label_tag }}
-                    </label>
+                    <label class="block text-sm font-medium text-secondaryLogo">Address:</label>
                     {{ wizard.form.emergency_contact_address|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.emergency_contact_address.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.emergency_contact_address.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">
-                        {{ wizard.form.emergency_contact_relation.label_tag }}
-                    </label>
+                    <label class="block text-sm font-medium text-secondaryLogo">Relation with patient:</label>
                     {{ wizard.form.emergency_contact_relation|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.emergency_contact_relation.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.emergency_contact_relation.errors }}</div>

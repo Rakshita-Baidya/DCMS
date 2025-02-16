@@ -9,32 +9,17 @@
             {{ wizard.management_form }}
             <!-- general Fields -->
             <div>
-                <label class="block text-sm font-medium text-secondaryLogo">{{ medical_form.chief_dental_complaint.label_tag }}</label>
-                {{ medical_form.chief_dental_complaint|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                {% if medical_form.chief_dental_complaint.errors %}
-                    <div class="text-dangerRed text-sm">{{ medical_form.chief_dental_complaint.errors }}</div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.chief_dental_complaint.label_tag }}</label>
+                {{ wizard.form.chief_dental_complaint|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if wizard.form.chief_dental_complaint.errors %}
+                    <div class="text-dangerRed text-sm">{{ wizard.form.chief_dental_complaint.errors }}</div>
                 {% endif %}
             </div>
             <div>
-                <label class="block text-sm font-medium text-secondaryLogo">{{ medical_form.marked_weight_change.label_tag }}</label>
-                {{ medical_form.marked_weight_change|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                {% if medical_form.marked_weight_change.errors %}
-                    <div class="text-dangerRed text-sm">{{ medical_form.marked_weight_change.errors }}</div>
-                {% endif %}
-            </div>
-            <!-- Emergency Contact Fields -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium">{{ emergency_form.relation.label_tag }}</label>
-                {{ emergency_form.relation|add_class:"mt-1 block w-full px-4 py-2 border rounded-md" }}
-                {% if emergency_form.relation.errors %}
-                    <div class="text-dangerRed text-sm">{{ emergency_form.relation.errors }}</div>
-                {% endif %}
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium">{{ emergency_form.name.label_tag }}</label>
-                {{ emergency_form.name|add_class:"mt-1 block w-full px-4 py-2 border rounded-md" }}
-                {% if emergency_form.name.errors %}
-                    <div class="text-dangerRed text-sm">{{ emergency_form.name.errors }}</div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.marked_weight_change.label_tag }}</label>
+                {{ wizard.form.marked_weight_change|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if wizard.form.marked_weight_change.errors %}
+                    <div class="text-dangerRed text-sm">{{ wizard.form.marked_weight_change.errors }}</div>
                 {% endif %}
             </div>
             <button type="submit" class="bg-blue-500 text-white px-4 py-2">Next</button>
