@@ -16,6 +16,13 @@ MARTIAL_STATUS = [
     ('Other', 'Other'),
 ]
 
+GENDER_CHOICES = [
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+    ('Prefer not to say', 'Prefer not to say'),
+    ('Other', 'Other'),
+]
+
 
 class Transaction(models.Model):
     user = models.OneToOneField(
@@ -37,7 +44,8 @@ class Patient(models.Model):
     address = models.CharField(max_length=150, blank=True, null=True)
     dob = models.DateField(default=now,
                            blank=True, null=True)
-    gender = models.CharField(max_length=6)
+    gender = models.CharField(max_length=17, null=True,
+                              blank=True, default="Prefer not to say", choices=GENDER_CHOICES)
     blood_group = models.CharField(max_length=3)
     age = models.CharField(max_length=3)
     email = models.EmailField(unique=True, null=True, blank=True)
@@ -51,8 +59,10 @@ class Patient(models.Model):
         blank=True,
         null=True,
     )
-    emergency_contact_name = models.CharField(max_length=100)
-    emergency_contact_contact = models.CharField(max_length=13)
+    emergency_contact_name = models.CharField(
+        max_length=100, null=True, blank=True)
+    emergency_contact_contact = models.CharField(
+        max_length=13, null=True, blank=True)
     emergency_contact_address = models.CharField(
         max_length=150, blank=True, null=True)
     emergency_contact_relation = models.CharField(
