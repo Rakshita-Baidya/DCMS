@@ -51,18 +51,12 @@ class Patient(models.Model):
         blank=True,
         null=True,
     )
-
-    def __str__(self):
-        return super().__str__()
-
-
-class EmergencyContact(models.Model):
-    patient = models.OneToOneField(
-        Patient, on_delete=models.CASCADE, related_name='patient_emergency')
-    name = models.CharField(max_length=100)
-    contact = models.CharField(max_length=13)
-    address = models.CharField(max_length=150, blank=True, null=True)
-    relation = models.CharField(max_length=15, blank=True, null=True)
+    emergency_contact_name = models.CharField(max_length=100)
+    emergency_contact_contact = models.CharField(max_length=13)
+    emergency_contact_address = models.CharField(
+        max_length=150, blank=True, null=True)
+    emergency_contact_relation = models.CharField(
+        max_length=15, blank=True, null=True)
 
     def __str__(self):
         return super().__str__()
@@ -75,16 +69,9 @@ class MedicalHistory(models.Model):
         max_length=500, blank=True, null=True)
     marked_weight_change = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class HeartHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_heart')
+    # heart
     chest_pain = models.BooleanField(default=False)
     hypertention = models.BooleanField(default=False)
-
     ankle_edema = models.BooleanField(default=False)
     rheumatic_fever = models.BooleanField(default=False)
     rheumatic_fever_age = models.CharField(max_length=3, blank=True, null=True)
@@ -92,132 +79,68 @@ class HeartHistory(models.Model):
     stroke_date = models.DateField(
         default=now, blank=True, null=True)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class ArthritisHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_arthritis')
+    # arthritis
     joint_pain = models.BooleanField(default=False)
     joint_swelling = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class NervousHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_nervous')
+    # nervous system
     headaches = models.BooleanField(default=False)
     convulsions_or_epilepsy = models.BooleanField(default=False)
     numbness_or_tingles = models.BooleanField(default=False)
     dizziness_or_fainting = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class LiverHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_liver')
+    # liver
     jaundice = models.BooleanField(default=False)
     history_of_liver_disease = models.BooleanField(default=False)
     specifics = models.TextField(max_length=500, blank=True, null=True)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class WomenHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_women')
+    # women
     pregnancy = models.BooleanField(default=False)
     pregnancy_month = models.CharField(max_length=2, blank=True, null=True)
     breast_feed = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class RespitoryHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_respiratory')
+    # respiratory
     persistant_cough = models.BooleanField(default=False)
     breathing_difficulty = models.BooleanField(default=False)
     shortness_of_breath = models.BooleanField(default=False)
     asthma = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class EarHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_ear')
+    # ear
     hearing_loss = models.BooleanField(default=False)
     ringing_of_ears = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class BloodHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_blood')
+    # blood
     bruise_easy = models.BooleanField(default=False)
     anemia = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class ThyroidHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_thyroid')
+    # thyroid
     perspire_easy = models.BooleanField(default=False)
     apprehension = models.BooleanField(default=False)
     palpitation = models.BooleanField(default=False)
     goiter = models.BooleanField(default=False)
     bulging_eyes = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class DiabetesHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_diabetes')
+    # diabetes
     delayed_healing = models.BooleanField(default=False)
     increased_appetite = models.BooleanField(default=False)
     family_history = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class RadiographyHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_radiography')
+    # radiography
     radiography_therapy = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class UrinaryHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_urinary')
+    # urinary
     increased_frequency = models.BooleanField(default=False)
     burning = models.BooleanField(default=False)
 
-    def __str__(self):
-        return super().__str__()
+    # extraction
+    prev_extraction = models.BooleanField(default=False)
+    date_of_last_extraction = models.DateField(
+        now, blank=True, null=True)
+    untoward_reaction = models.BooleanField(default=False)
+    specifics = models.TextField(max_length=500, blank=True, null=True)
+    local_anesthesia_use = models.BooleanField(default=False)
 
-
-class HospitalizationHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_hospitalization')
+    # hospitalization
     hospitalized = models.BooleanField(default=False)
     admission_date = models.DateField(
         default=now, blank=True, null=True)
@@ -239,20 +162,6 @@ class AllergiesHistory(models.Model):
     local_anesthesia = models.BooleanField(default=False)
     others = models.BooleanField(default=False)
     specifics = models.TextField(max_length=500, blank=True, null=True)
-
-    def __str__(self):
-        return super().__str__()
-
-
-class ExtractionHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_extraction')
-    prev_extraction = models.BooleanField(default=False)
-    date_of_last_extraction = models.DateField(
-        now, blank=True, null=True)
-    untoward_reaction = models.BooleanField(default=False)
-    specifics = models.TextField(max_length=500, blank=True, null=True)
-    local_anesthesia_use = models.BooleanField(default=False)
 
     def __str__(self):
         return super().__str__()

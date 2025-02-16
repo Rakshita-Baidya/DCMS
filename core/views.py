@@ -13,26 +13,22 @@ from django.urls import reverse
 from users.models import Staff, User, Doctor
 from users.forms import StaffForm, DoctorForm, UserEditForm
 
-from .models import (Patient, MedicalHistory, HeartHistory, HospitalizationHistory, EarHistory, EmergencyContact, ArthritisHistory, NervousHistory, WomenHistory,
-                     LiverHistory, RadiographyHistory, RespitoryHistory, ExtractionHistory, BloodHistory, AllergiesHistory, DiabetesHistory, ThyroidHistory, UrinaryHistory)
-from .forms import (PatientForm, EmergencyContactForm, MedicalHistoryForm, HeartHistoryForm, HospitalizationHistoryForm, EarHistoryForm, ArthritisHistoryForm, EarHistoryForm, EmergencyContactForm, ArthritisHistoryForm,
-                    NervousHistoryForm, WomenHistoryForm, LiverHistoryForm, RadiographyHistoryForm, RespitoryHistoryForm, ExtractionHistoryForm, BloodHistoryForm, AllergiesHistoryForm, DiabetesHistoryForm, ThyroidHistoryForm, UrinaryHistoryForm, GeneralNestedForm, MedicalHistoryNestedForm, AllergiesNestedForm)
+from .models import (Patient, MedicalHistory, AllergiesHistory)
+from .forms import (PatientForm,  MedicalHistoryForm, AllergiesHistoryForm)
 
 
 # Create your views here.
-FORMS = [
-    # general
-    ("general", GeneralNestedForm),
-    # history
-    ("history", MedicalHistoryNestedForm),
-    # allergies
-    ("allergies", AllergiesNestedForm),
-]
+FORMS = {
+    "general": PatientForm,
+    "history": MedicalHistoryForm,
+    "allergies": AllergiesHistoryForm,
+}
+
 
 TEMPLATES = {
     "general": "patient/general.html",
     "history": "patient/history.html",
-    "allergies": "patient/allergies.html",
+    "other": "patient/other.html",
 }
 
 file_storage = FileSystemStorage(
@@ -361,166 +357,48 @@ def patient(request):
 
 #     return render(request, 'patient/add_patient.html', context)
 
-class PatientWizard(SessionWizardView):
-    form_list = FORMS
+
+class PatientFormWizard(SessionWizardView):
+    form_list = [PatientForm, MedicalHistoryForm, AllergiesHistoryForm]
     file_storage = file_storage
 
     def get_template_names(self):
-        # Determine which template to use based on the current step.
-        general_forms = {"general"}
-        history_forms = {"history"}
-        allergies_forms = {"allergies"}
+        return [TEMPLATES.get(self.steps.current, "patient/general.html")]
 
-        if self.steps.current in general_forms:
-            return [TEMPLATES["general"]]
-        elif self.steps.current in history_forms:
-            return [TEMPLATES["history"]]
-        elif self.steps.current in allergies_forms:
-            return [TEMPLATES["allergies"]]
-
-        return [TEMPLATES["general"]]  # Default
-
-    def get_context_data(self, form, **kwargs):
-        # Pass additional data to the template.
-        context = super().get_context_data(form=form, **kwargs)
-        print(self.request.session)
-        # general forms
-        if self.steps.current == "general":
-            general_data = self.get_cleaned_data_for_step("general") or {}
-
-            context["patient_form"] = PatientForm(
-                data=general_data.get("patient", {})
-            )
-            context["emergency_form"] = EmergencyContactForm(
-                data=general_data.get("emergency_contact", {})
-            )
-        # history forms
-        elif self.steps.current == "history":
-            history_data = self.get_cleaned_data_for_step("history") or {}
-
-            context["medical_form"] = MedicalHistoryForm(
-                data=history_data.get("medical_history", {})
-            )
-            context["heart_form"] = HeartHistoryForm(
-                data=history_data.get("heart_history", {})
-            )
-            context["ear_form"] = EarHistoryForm(
-                data=history_data.get("ear_history", {})
-            )
-            context["arthritis_form"] = ArthritisHistoryForm(
-                data=history_data.get("arthritis_history", {})
-            )
-            context["nervous_form"] = NervousHistoryForm(
-                data=history_data.get("nervous_history", {})
-            )
-            context["women_form"] = WomenHistoryForm(
-                data=history_data.get("women_history", {})
-            )
-            context["liver_form"] = LiverHistoryForm(
-                data=history_data.get("liver_history", {})
-            )
-            context["radiography_form"] = RadiographyHistoryForm(
-                data=history_data.get("radiography_history", {})
-            )
-            context["respiratory_form"] = RespitoryHistoryForm(
-                data=history_data.get("respiratory_history", {})
-            )
-            context["blood_form"] = BloodHistoryForm(
-                data=history_data.get("blood_history", {})
-            )
-            context["diabetes_form"] = DiabetesHistoryForm(
-                data=history_data.get("diabetes_history", {})
-            )
-            context["thyroid_form"] = ThyroidHistoryForm(
-                data=history_data.get("thyroid_history", {})
-            )
-            context["urinary_form"] = UrinaryHistoryForm(
-                data=history_data.get("urinary_history", {})
-            )
-
-        # allergy forms
-        elif self.steps.current == "allergies":
-            allergies_data = self.get_cleaned_data_for_step("allergies") or {}
-
-            context["extraction_form"] = ExtractionHistoryForm(
-                data=allergies_data.get("extraction_history", {})
-            )
-            context["allergies_form"] = AllergiesHistoryForm(
-                data=allergies_data.get("allergies_history", {})
-            )
-            context["hospitalization_form"] = HospitalizationHistoryForm(
-                data=allergies_data.get("hospitalization_history", {})
-            )
-
-        return context
+    def get_form_instance(self, step):
+        # Retrieve an existing instance or create a new one.
+        if step == '0':  # Patient Form
+            return Patient()
+        elif step == '1':  # Medical History Form
+            return MedicalHistory()
+        return None  # Other forms will create new instances
 
     def done(self, form_list, **kwargs):
-        form_data = {form.prefix: form.cleaned_data for form in form_list}
+        # Process the forms and save them.
+        form_data = [form.cleaned_data for form in form_list]
 
-        # General models
-        general_data = form_data.get("general", {})
+        # Save Patient
+        patient = form_list[0].save()
 
-        general_models = {
-            "patient": Patient,
-            "emergency_contact": EmergencyContact,
-        }
+        # Save Medical History
+        medical_history = form_list[1].save(commit=False)
+        medical_history.patient = patient
+        medical_history.save()
 
-        # Create Patient instance
-        patient_data = general_data.get("patient", {})
-        patient_instance = Patient.objects.create(**patient_data)
+        # Save Allergies, Hospitalization, Extraction histories
+        allergy_history = form_list[2].save(commit=False)
+        allergy_history.history = medical_history
+        allergy_history.save()
 
-        if "emergency_contact" in general_data:
-            EmergencyContact.objects.create(
-                patient=patient_instance, **general_data["emergency_contact"])
+        # hospitalization_history = form_list[3].save(commit=False)
+        # hospitalization_history.history = medical_history
+        # hospitalization_history.save()
 
-        # History-related data
-        history_data = form_data.get("history", {})
+        # extraction_history = form_list[4].save(commit=False)
+        # extraction_history.history = medical_history
+        # extraction_history.save()
 
-        history_models = {
-            "medical_history": MedicalHistory,
-            "heart_history": HeartHistory,
-            "ear_history": EarHistory,
-            "arthritis_history": ArthritisHistory,
-            "nervous_history": NervousHistory,
-            "women_history": WomenHistory,
-            "liver_history": LiverHistory,
-            "radiography_history": RadiographyHistory,
-            "respiratory_history": RespitoryHistory,
-            "blood_history": BloodHistory,
-            "diabetes_history": DiabetesHistory,
-            "thyroid_history": ThyroidHistory,
-            "urinary_history": UrinaryHistory,
-        }
-
-        # Create medical history first
-        medical_data = history_data.get("medical_history", {})
-
-        if medical_data:  # Ensure data exists
-            medical_instance = MedicalHistory.objects.create(
-                patient=patient_instance, **medical_data)
-
-            # Create Other History Models
-            for key, model in history_models.items():
-                if key in history_data:
-                    model.objects.create(
-                        history=medical_instance, **history_data[key])
-
-        # Save Allergies-related data
-            allergies_data = form_data.get("allergies", {})
-
-            allergies_models = {
-                "extraction_history": ExtractionHistory,
-                "allergies_history": AllergiesHistory,
-                "hospitalization_history": HospitalizationHistory,
-            }
-
-            for key, model in allergies_models.items():
-                if key in allergies_data:
-                    model.objects.create(
-                        medical=medical_instance, **history_data[key])
-
-        messages.success(self.request, "Patient added successfully!")
-        return redirect("core:patient")
+        return redirect('core:patient')
 
 
 @login_required(login_url='login')

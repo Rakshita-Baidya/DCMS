@@ -1,26 +1,11 @@
 from django import forms
-from .models import (Patient, MedicalHistory, HeartHistory, HospitalizationHistory, EarHistory, EmergencyContact, ArthritisHistory, NervousHistory, WomenHistory,
-                     LiverHistory, RadiographyHistory, RespitoryHistory, ExtractionHistory, BloodHistory, AllergiesHistory, DiabetesHistory, ThyroidHistory, UrinaryHistory)
+from .models import (Patient, MedicalHistory, AllergiesHistory)
 
 
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
         fields = '__all__'
-
-
-class EmergencyContactForm(forms.ModelForm):
-    class Meta:
-        model = EmergencyContact
-        fields = '__all__'
-        exclude = ['patient']
-
-# general
-
-
-class GeneralNestedForm(forms.Form):
-    patient = PatientForm()
-    emergency_contact = EmergencyContactForm()
 
 
 class MedicalHistoryForm(forms.ModelForm):
@@ -30,113 +15,113 @@ class MedicalHistoryForm(forms.ModelForm):
         exclude = ['patient']
 
 
-class HeartHistoryForm(forms.ModelForm):
-    class Meta:
-        model = HeartHistory
-        fields = '__all__'
-        exclude = ['history']
+# class HeartHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = HeartHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class EarHistoryForm(forms.ModelForm):
-    class Meta:
-        model = EarHistory
-        fields = '__all__'
-        exclude = ['history']
+# class EarHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = EarHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class ArthritisHistoryForm(forms.ModelForm):
-    class Meta:
-        model = ArthritisHistory
-        fields = '__all__'
-        exclude = ['history']
+# class ArthritisHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = ArthritisHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class NervousHistoryForm(forms.ModelForm):
-    class Meta:
-        model = NervousHistory
-        fields = '__all__'
-        exclude = ['history']
+# class NervousHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = NervousHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class WomenHistoryForm(forms.ModelForm):
-    class Meta:
-        model = WomenHistory
-        fields = '__all__'
-        exclude = ['history']
+# class WomenHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = WomenHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class LiverHistoryForm(forms.ModelForm):
-    class Meta:
-        model = LiverHistory
-        fields = '__all__'
-        exclude = ['history']
+# class LiverHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = LiverHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class RadiographyHistoryForm(forms.ModelForm):
-    class Meta:
-        model = RadiographyHistory
-        fields = '__all__'
-        exclude = ['history']
+# class RadiographyHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = RadiographyHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class RespitoryHistoryForm(forms.ModelForm):
-    class Meta:
-        model = RespitoryHistory
-        fields = '__all__'
-        exclude = ['history']
+# class RespitoryHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = RespitoryHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class BloodHistoryForm(forms.ModelForm):
-    class Meta:
-        model = BloodHistory
-        fields = '__all__'
-        exclude = ['history']
+# class BloodHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = BloodHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class DiabetesHistoryForm(forms.ModelForm):
-    class Meta:
-        model = DiabetesHistory
-        fields = '__all__'
-        exclude = ['history']
+# class DiabetesHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = DiabetesHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class ThyroidHistoryForm(forms.ModelForm):
-    class Meta:
-        model = ThyroidHistory
-        fields = '__all__'
-        exclude = ['history']
+# class ThyroidHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = ThyroidHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
-class UrinaryHistoryForm(forms.ModelForm):
-    class Meta:
-        model = UrinaryHistory
-        fields = '__all__'
-        exclude = ['history']
+# class UrinaryHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = UrinaryHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
-# history
-
-
-class MedicalHistoryNestedForm(forms.Form):
-    medical_history = MedicalHistoryForm()
-    heart_history = HeartHistoryForm()
-    ear_history = EarHistoryForm()
-    arthritis_history = ArthritisHistoryForm()
-    nervous_history = NervousHistoryForm()
-    women_history = WomenHistoryForm()
-    liver_history = LiverHistoryForm()
-    radiography_history = RadiographyHistoryForm()
-    respiratory_history = RespitoryHistoryForm()
-    blood_history = BloodHistoryForm()
-    diabetes_history = DiabetesHistoryForm()
-    thyroid_history = ThyroidHistoryForm()
-    urinary_history = UrinaryHistoryForm()
+# # history
 
 
-class ExtractionHistoryForm(forms.ModelForm):
-    class Meta:
-        model = ExtractionHistory
-        fields = '__all__'
-        exclude = ['history']
+# class MedicalHistoryNestedForm(forms.Form):
+#     medical_history = MedicalHistoryForm()
+#     heart_history = HeartHistoryForm()
+#     ear_history = EarHistoryForm()
+#     arthritis_history = ArthritisHistoryForm()
+#     nervous_history = NervousHistoryForm()
+#     women_history = WomenHistoryForm()
+#     liver_history = LiverHistoryForm()
+#     radiography_history = RadiographyHistoryForm()
+#     respiratory_history = RespitoryHistoryForm()
+#     blood_history = BloodHistoryForm()
+#     diabetes_history = DiabetesHistoryForm()
+#     thyroid_history = ThyroidHistoryForm()
+#     urinary_history = UrinaryHistoryForm()
+
+
+# class ExtractionHistoryForm(forms.ModelForm):
+#     class Meta:
+#         model = ExtractionHistory
+#         fields = '__all__'
+#         exclude = ['history']
 
 
 class AllergiesHistoryForm(forms.ModelForm):
@@ -146,16 +131,8 @@ class AllergiesHistoryForm(forms.ModelForm):
         exclude = ['history']
 
 
-class HospitalizationHistoryForm(forms.ModelForm):
-    class Meta:
-        model = HospitalizationHistory
-        fields = '__all__'
-        exclude = ['history']
-
-# allergies
-
-
-class AllergiesNestedForm(forms.Form):
-    extraction_history = ExtractionHistoryForm()
-    allergies_history = AllergiesHistoryForm()
-    hospitalization_history = HospitalizationHistoryForm()
+# class HospitalizationHistoryForm(forms.ModelForm):
+    # class Meta:
+    #     model = HospitalizationHistory
+    #     fields = '__all__'
+    #     exclude = ['history']
