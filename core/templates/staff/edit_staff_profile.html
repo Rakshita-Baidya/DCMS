@@ -114,28 +114,4 @@
             }
         });
     </script>
-    {% comment %} SweetAlert2 for Messages {% endcomment %}
-    {% if messages %}
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.js"></script>
-        <script>
-        {% for message in messages %}
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: '{{ message.tags }}',
-                title: '{{ message }}',
-                showConfirmButton: false,
-                timer: 3000,
-                background: '#F5F5F5',
-                iconColor: '{% if "success" in message.tags %}#28A745{% elif "error" in message.tags %}#DC3545{% else %}#FFC107{% endif %}',
-                showClass: {
-                    popup: 'animate__animated animate__fadeInRight'
-                },
-                hideClass: {
-                    popup: 'animate__animated animate__fadeOutRight'
-                }
-            });
-        {% endfor %}
-        </script>
-    {% endif %}
 {% endblock content %}

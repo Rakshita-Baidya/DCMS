@@ -365,38 +365,34 @@ class PatientFormWizard(SessionWizardView):
     def get_template_names(self):
         return [TEMPLATES.get(self.steps.current, "patient/general.html")]
 
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+        context.update({
+            'page_title': 'Patient Management',
+            'active_page': 'patient',
+        })
+        return context
+
     def get_form_instance(self, step):
-        # Retrieve an existing instance or create a new one.
         if step == '0':  # Patient Form
             return Patient()
         elif step == '1':  # Medical History Form
             return MedicalHistory()
-        return None  # Other forms will create new instances
+        return None
 
     def done(self, form_list, **kwargs):
-        # Process the forms and save them.
-        form_data = [form.cleaned_data for form in form_list]
-
-        # Save Patient
+        # Save patient info
         patient = form_list[0].save()
 
-        # Save Medical History
+        # Save medical history
         medical_history = form_list[1].save(commit=False)
         medical_history.patient = patient
         medical_history.save()
 
-        # Save Allergies, Hospitalization, Extraction histories
+        # Save allergies history
         allergy_history = form_list[2].save(commit=False)
         allergy_history.history = medical_history
         allergy_history.save()
-
-        # hospitalization_history = form_list[3].save(commit=False)
-        # hospitalization_history.history = medical_history
-        # hospitalization_history.save()
-
-        # extraction_history = form_list[4].save(commit=False)
-        # extraction_history.history = medical_history
-        # extraction_history.save()
 
         return redirect('core:patient')
 
