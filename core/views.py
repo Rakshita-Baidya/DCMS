@@ -307,7 +307,7 @@ def patient(request):
     #     messages.error(request, "Access denied.")
     #     return redirect('login')
     # else:
-    patient_queryset = Patient.objects.all().order_by('reg_no')
+    patient_queryset = Patient.objects.all().order_by('id')
 
     # patient needs to be deleted
     if request.method == 'POST' and 'delete_patient_id' in request.POST:
@@ -383,7 +383,7 @@ class PatientWizard(SessionWizardView):
     def get_context_data(self, form, **kwargs):
         # Pass additional data to the template.
         context = super().get_context_data(form=form, **kwargs)
-
+        print(self.request.session)
         # general forms
         if self.steps.current == "general":
             general_data = self.get_cleaned_data_for_step("general") or {}
@@ -469,11 +469,9 @@ class PatientWizard(SessionWizardView):
         patient_data = general_data.get("patient", {})
         patient_instance = Patient.objects.create(**patient_data)
 
-        # Save other general models linked to Patient
-        for key, model in general_models.items():
-            if key in general_data and key != "patient":
-                model.objects.create(
-                    patient=patient_instance, **general_data[key])
+        if "emergency_contact" in general_data:
+            EmergencyContact.objects.create(
+                patient=patient_instance, **general_data["emergency_contact"])
 
         # History-related data
         history_data = form_data.get("history", {})
@@ -495,31 +493,80 @@ class PatientWizard(SessionWizardView):
         }
 
         # Create medical history first
-        medical_data = medical_data.get("medical", {})
-        medical_instance = MedicalHistory.objects.create(
-            patient=patient_instance, **medical_data)
+        medical_data = history_data.get("medical_history", {})
 
-        for key, model in history_models.items():
-            if key in history_data and key != "medical":
-                model.objects.create(
-                    medical=medical_instance, **history_data[key])
+        if medical_data:  # Ensure data exists
+            medical_instance = MedicalHistory.objects.create(
+                patient=patient_instance, **medical_data)
 
-        # ✅ Save Allergies-related data
-        allergies_data = form_data.get("allergies", {})
+            # Create Other History Models
+            for key, model in history_models.items():
+                if key in history_data:
+                    model.objects.create(
+                        history=medical_instance, **history_data[key])
 
-        allergies_models = {
-            "extraction_history": ExtractionHistory,
-            "allergies_history": AllergiesHistory,
-            "hospitalization_history": HospitalizationHistory,
-        }
+        # Save Allergies-related data
+            allergies_data = form_data.get("allergies", {})
 
-        for key, model in allergies_models.items():
-            if key in allergies_data and key != "medical":
-                model.objects.create(
-                    medical=medical_instance, **history_data[key])
+            allergies_models = {
+                "extraction_history": ExtractionHistory,
+                "allergies_history": AllergiesHistory,
+                "hospitalization_history": HospitalizationHistory,
+            }
+
+            for key, model in allergies_models.items():
+                if key in allergies_data:
+                    model.objects.create(
+                        medical=medical_instance, **history_data[key])
 
         messages.success(self.request, "Patient added successfully!")
         return redirect("core:patient")
+
+
+@login_required(login_url='login')
+def edit_patient_profile(request, patient_id):
+    patient_queryset = User.objects.get(pk=patient_id)
+
+    # patient needs to be deleted
+    if request.method == 'POST' and 'delete_patient_id' in request.POST:
+        if not request.user.is_superuser and request.user.role != 'Administrator':
+            messages.error(request, "You do not have permission to delete.")
+        else:
+            patient_id_to_delete = request.POST['delete_patient_id']
+            user_to_delete = User.objects.get(id=patient_id_to_delete)
+            user_to_delete.delete()
+            messages.success(request, f"Patient {
+                user_to_delete.username} has been deleted.")
+            return redirect('core:patient')
+
+    # if request.method == 'POST':
+    #     user_form = UserEditForm(
+    #         request.POST, request.FILES, instance=patient_queryset)
+    #     patient_form = StaffForm(
+    #         request.POST, instance=patient_profile) if patient_profile else None
+
+    #     if user_form.is_valid():
+    #         user_form.save()
+    #         if patient_form and patient_form.is_valid():
+    #             patient_form.save()
+
+    #         messages.success(
+    #             request, 'The patient profile has been updated successfully!')
+    #         return redirect('core:view_patient_profile', patient_id=patient_queryset.id)
+    # else:
+    #     user_form = UserEditForm(instance=patient_queryset)
+    #     patient_form = StaffForm(
+    #         instance=patient_profile) if patient_profile else None
+
+    context = {
+        'patient': patient_queryset,
+        # 'user_form': user_form,
+        # 'patient_form': patient_form,
+        'page_title': 'Patient Management',
+        'active_page': 'patient',
+    }
+
+    return render(request, 'patient/edit_patient_profile.html', context)
 
 
 def appointment(request):

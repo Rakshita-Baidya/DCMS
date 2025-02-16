@@ -38,7 +38,6 @@
                     <thead>
                         <tr class="border-b-2 border-primaryLogo text-center pb-4">
                             <th class="pb-2">Patient ID</th>
-                            <th class="pb-2">Reg No.</th>
                             <th class="pb-2">Full Name</th>
                             <th class="pb-2">Contact</th>
                             <th class="pb-2">Email</th>
@@ -50,7 +49,6 @@
                         {% for patient in patients %}
                             <tr class="border-b text-center py-4">
                                 <td>{{ patient.id }}</td>
-                                <td>{{ patient.reg_no }}</td>
                                 <td>{{ patient.name }}</td>
                                 <td>{{ patient.contact }}</td>
                                 <td>{{ patient.email }}</td>
@@ -58,13 +56,12 @@
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">
                                         {% comment %} edit {% endcomment %}
-                                        <a href="{% url 'edit_patient_profile' patient.id %}">
+                                        <a href="{% url 'core:edit_patient_profile' patient.id %}">
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                  width="20"
                                                  height="20"
                                                  viewBox="0 0 20 20"
-                                                 class="cursor-pointer"
-                                                 onclick="{% url 'edit_patient_profile' patient.id %}">
+                                                 class="cursor-pointer">
                                                 <g fill="none" stroke="#00B2B2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
                                                 <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
                                                 <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
@@ -72,15 +69,15 @@
                                             </svg>
                                         </a>
                                         {% comment %} view {% endcomment %}
-                                        <a href="{% url 'view_patient_profile' patient.id %}">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                 width="20"
-                                                 height="20"
-                                                 viewBox="0 0 20 20"
-                                                 class="cursor-pointer">
-                                                <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
-                                            </svg>
-                                        </a>
+                                        {% comment %} <a href="{% url 'view_patient_profile' patient.id %}"> {% endcomment %}
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="20"
+                                             height="20"
+                                             viewBox="0 0 20 20"
+                                             class="cursor-pointer">
+                                            <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
+                                        </svg>
+                                        {% comment %} </a> {% endcomment %}
                                         {% comment %} delete {% endcomment %}
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"

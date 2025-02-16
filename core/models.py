@@ -31,7 +31,7 @@ class Transaction(models.Model):
 
 
 class Patient(models.Model):
-    reg_no = models.CharField(max_length=10, unique=True)
+    # reg_no = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=100)
     contact = models.CharField(max_length=13)
     address = models.CharField(max_length=150, blank=True, null=True)

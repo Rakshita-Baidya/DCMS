@@ -8,13 +8,13 @@
             {% csrf_token %}
             {{ wizard.management_form }}
             <!-- Patient Form Fields -->
-            <div>
+            {% comment %} <div>
                 <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.reg_no.label_tag }}</label>
                 {{ patient_form.reg_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                 {% if patient_form.reg_no.errors %}
                     <div class="text-dangerRed text-sm">{{ patient_form.reg_no.errors }}</div>
                 {% endif %}
-            </div>
+            </div> {% endcomment %}
             <div>
                 <label class="block text-sm font-medium text-secondaryLogo">{{ patient_form.name.label_tag }}</label>
                 {{ patient_form.name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}

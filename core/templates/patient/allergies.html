@@ -1,12 +1,43 @@
 {% extends "index.html" %}
+{% load static %}
+{% load widget_tweaks %}
 {% block content %}
     <div class="p-6">
-        <p class="text-xl font-semibold">Allergies, Hospitalization and Extraction</p>
-        <form method="post">
+        <p class="text-xl font-semibold">Allergies Information</p>
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ wizard.management_form }}
-            {{ form.as_p }}
-            <button type="submit" class="bg-green-500 text-white px-4 py-2">Submit</button>
+            <!-- general Fields -->
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ allergies_form.sleeping_pills.label_tag }}</label>
+                {{ allergies_form.sleeping_pills|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if allergies_form.sleeping_pills.errors %}
+                    <div class="text-dangerRed text-sm">{{ allergies_form.sleeping_pills.errors }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-secondaryLogo">{{ allergies_form.local_anesthesia.label_tag }}</label>
+                {{ allergies_form.local_anesthesia|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                {% if allergies_form.local_anesthesia.errors %}
+                    <div class="text-dangerRed text-sm">{{ allergies_form.local_anesthesia.errors }}</div>
+                {% endif %}
+            </div>
+            <!-- Emergency Contact Fields -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium">{{ emergency_form.relation.label_tag }}</label>
+                {{ emergency_form.relation|add_class:"mt-1 block w-full px-4 py-2 border rounded-md" }}
+                {% if emergency_form.relation.errors %}
+                    <div class="text-dangerRed text-sm">{{ emergency_form.relation.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium">{{ emergency_form.name.label_tag }}</label>
+                {{ emergency_form.name|add_class:"mt-1 block w-full px-4 py-2 border rounded-md" }}
+                {% if emergency_form.name.errors %}
+                    <div class="text-dangerRed text-sm">{{ emergency_form.name.errors }}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2">Next</button>
         </form>
     </div>
 {% endblock content %}
