@@ -3,41 +3,124 @@
 {% load widget_tweaks %}
 {% block content %}
     <div class="p-6">
-        <p class="text-xl font-semibold">Allergies Information</p>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ wizard.management_form }}
-            <!-- general Fields -->
-            <div>
-                <label class="block text-sm font-medium text-secondaryLogo">{{ allergies_form.sleeping_pills.label_tag }}</label>
-                {{ allergies_form.sleeping_pills|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                {% if allergies_form.sleeping_pills.errors %}
-                    <div class="text-dangerRed text-sm">{{ allergies_form.sleeping_pills.errors }}</div>
-                {% endif %}
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-secondaryLogo">{{ allergies_form.local_anesthesia.label_tag }}</label>
-                {{ allergies_form.local_anesthesia|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                {% if allergies_form.local_anesthesia.errors %}
-                    <div class="text-dangerRed text-sm">{{ allergies_form.local_anesthesia.errors }}</div>
-                {% endif %}
-            </div>
-            <!-- Emergency Contact Fields -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium">{{ emergency_form.relation.label_tag }}</label>
-                {{ emergency_form.relation|add_class:"mt-1 block w-full px-4 py-2 border rounded-md" }}
-                {% if emergency_form.relation.errors %}
-                    <div class="text-dangerRed text-sm">{{ emergency_form.relation.errors }}</div>
-                {% endif %}
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium">{{ emergency_form.name.label_tag }}</label>
-                {{ emergency_form.name|add_class:"mt-1 block w-full px-4 py-2 border rounded-md" }}
-                {% if emergency_form.name.errors %}
-                    <div class="text-dangerRed text-sm">{{ emergency_form.name.errors }}</div>
-                {% endif %}
-            </div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2">Next</button>
-        </form>
+        <div class="flex items-center mb-6 space-x-2">
+            <a href="{% url "core:patient" %}">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                     width="24px"
+                     fill="none"
+                     height="24px"
+                     viewBox="0 0 20 20">
+                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                </svg>
+            </a>
+            <p class="text-gray-700 text-2xl font-medium">Add Patient / Allergies</p>
+        </div>
+        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
+            <form method="post"
+                  enctype="multipart/form-data"
+                  class="grid grid-cols-2 lg:grid-cols-2 md:grid-cols-1 text-md ">
+                {% csrf_token %}
+                {{ wizard.management_form }}
+                {% comment %} first {% endcomment %}
+                <div class="px-4 my-4">
+                    <div class="flex items-center justify-between ">
+                        <label class="font-medium text-secondaryLogo">{{ wizard.form.sleeping_pills.label_tag }}</label>
+                        {{ wizard.form.sleeping_pills }}
+                        {% if wizard.form.sleeping_pills.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.sleeping_pills.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center justify-between ">
+                        <label class="font-medium text-secondaryLogo">{{ wizard.form.aspirin.label_tag }}</label>
+                        {{ wizard.form.aspirin }}
+                        {% if wizard.form.aspirin.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.aspirin.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="font-medium text-secondaryLogo">{{ wizard.form.sulfa_drugs.label_tag }}</label>
+                        {{ wizard.form.sulfa_drugs }}
+                        {% if wizard.form.sulfa_drugs.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.sulfa_drugs.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="font-medium text-secondaryLogo">{{ wizard.form.food.label_tag }}</label>
+                        {{ wizard.form.food }}
+                        {% if wizard.form.food.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.food.errors }}</div>{% endif %}
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="font-medium text-secondaryLogo">{{ wizard.form.penicilin.label_tag }}</label>
+                        {{ wizard.form.penicilin }}
+                        {% if wizard.form.penicilin.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.penicilin.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="border-l-2 rounded-sm border-darkText px-4 my-4">
+                    <div class="flex items-center justify-between">
+                        <label class="font-medium text-secondaryLogo">{{ wizard.form.antibiotics.label_tag }}</label>
+                        {{ wizard.form.antibiotics }}
+                        {% if wizard.form.antibiotics.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.antibiotics.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="font-medium text-secondaryLogo">{{ wizard.form.local_anesthesia.label_tag }}</label>
+                        {{ wizard.form.local_anesthesia }}
+                        {% if wizard.form.local_anesthesia.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.local_anesthesia.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="block font-medium text-secondaryLogo">{{ wizard.form.others.label_tag }}</label>
+                        {{ wizard.form.others |attr:"id:others" }}
+                        {% if wizard.form.others.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.others.errors }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block font-medium text-secondaryLogo">{{ wizard.form.specifics.label_tag }}</label>
+                        <input type="text"
+                               id="specifics"
+                               name="{{ wizard.form.specifics.html_name }}"
+                               class="my-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                               disabled>
+                        {% if wizard.form.specifics.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.specifics.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% comment %} buttons {% endcomment %}
+                <div class="col-start-1 w-full flex space-x-6 mt-4 col-span-4">
+                    <p onclick="history.back()"
+                       class="text-center col-start-1 col-span-2 w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
+                        Previous
+                    </p>
+                    <button type="submit"
+                            class="col-start-3 col-span-2 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
+                        Add Patient
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+    <script>
+        function toggleField(checkboxId, fieldId) {
+            let checkbox = document.getElementById(checkboxId);
+            let field = document.getElementById(fieldId);
+    
+            // Disable field by default
+            field.disabled = !checkbox.checked;
+    
+            // Add event listener to toggle the disabled state
+            checkbox.addEventListener("change", function () {
+                field.disabled = !this.checked;
+            });
+        }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            toggleField("others", "specifics");
+            
+        });
+    </script>
 {% endblock content %}
