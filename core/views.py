@@ -13,15 +13,15 @@ from django.urls import reverse
 from users.models import Staff, User, Doctor
 from users.forms import StaffForm, DoctorForm, UserEditForm
 
-from .models import (Patient, MedicalHistory, AllergiesHistory)
-from .forms import (PatientForm,  MedicalHistoryForm, AllergiesHistoryForm)
+from .models import (Patient, MedicalHistory, OtherPatientHistory)
+from .forms import (PatientForm,  MedicalHistoryForm, OtherPatientHistoryForm)
 
 
 # Create your views here.
 FORMS = {
     "general": PatientForm,
     "history": MedicalHistoryForm,
-    "allergies": AllergiesHistoryForm,
+    "other": OtherPatientHistoryForm,
 }
 
 
@@ -297,12 +297,6 @@ def edit_staff_profile(request, user_id):
 
 @login_required(login_url='login')
 def patient(request):
-
-    # Allow only superusers and admins
-    # if not request.user.is_superuser and request.user.role != 'Administrator':
-    #     messages.error(request, "Access denied.")
-    #     return redirect('login')
-    # else:
     patient_queryset = Patient.objects.all().order_by('id')
 
     # patient needs to be deleted
@@ -337,29 +331,8 @@ def patient(request):
     return render(request, 'patient/patient.html', context)
 
 
-# def add_patient(request):
-#     if request.method == 'POST':
-#         form = PatientForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(
-#                 request, 'The patient has been added successfully!')
-#             return redirect('core:patient')
-#     else:
-#         form = PatientForm()
-
-#     context = {
-#         'page_title': 'Patient Management',
-#         'active_page': 'patient',
-#         'form': form,
-
-#     }
-
-#     return render(request, 'patient/add_patient.html', context)
-
-
 class PatientFormWizard(SessionWizardView):
-    form_list = [PatientForm, MedicalHistoryForm, AllergiesHistoryForm]
+    form_list = [PatientForm, MedicalHistoryForm, OtherPatientHistoryForm]
     file_storage = file_storage
 
     def get_template_names(self):
@@ -379,7 +352,7 @@ class PatientFormWizard(SessionWizardView):
         elif step == '1':  # Medical History Form
             return MedicalHistory()
         elif step == '2':
-            return AllergiesHistory()
+            return OtherPatientHistory()
         return None
 
     def done(self, form_list, **kwargs):
@@ -392,17 +365,17 @@ class PatientFormWizard(SessionWizardView):
         medical_history.patient = patient
         medical_history.save()
 
-        # Save allergies history
-        allergy_history = form_list[2].save(commit=False)
-        allergy_history.history = medical_history
-        allergy_history.save()
+        # Save other history
+        other_history = form_list[2].save(commit=False)
+        other_history.history = medical_history
+        other_history.save()
         messages.success(request, 'The patient has been added successfully!')
         return redirect('core:patient')
 
 
 @login_required(login_url='login')
 def edit_patient_profile(request, patient_id):
-    patient_queryset = User.objects.get(pk=patient_id)
+    patient_queryset = Patient.objects.get(pk=patient_id)
 
     # patient needs to be deleted
     if request.method == 'POST' and 'delete_patient_id' in request.POST:
@@ -410,10 +383,10 @@ def edit_patient_profile(request, patient_id):
             messages.error(request, "You do not have permission to delete.")
         else:
             patient_id_to_delete = request.POST['delete_patient_id']
-            user_to_delete = User.objects.get(id=patient_id_to_delete)
-            user_to_delete.delete()
+            patient_to_delete = Patient.objects.get(id=patient_id_to_delete)
+            patient_to_delete.delete()
             messages.success(request, f"Patient {
-                user_to_delete.username} has been deleted.")
+                patient_to_delete.name} has been deleted.")
             return redirect('core:patient')
 
     # if request.method == 'POST':

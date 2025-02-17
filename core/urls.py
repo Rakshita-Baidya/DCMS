@@ -25,7 +25,7 @@ urlpatterns = [
     # path('patient/add/', add_patient, name='add_patient'),
     #     path('patient/add/', PatientWizard.as_view(), name='add_patient'),
     path('patient/add/', PatientFormWizard.as_view(), name='add_patient'),
-    path('patient/<int:user_id>/edit',
+    path('patient/<int:patient_id>/edit',
          edit_patient_profile, name='edit_patient_profile'),
 
     path('appointment/', appointment, name='appointment'),

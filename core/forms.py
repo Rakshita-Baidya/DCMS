@@ -1,5 +1,5 @@
 from django import forms
-from .models import (Patient, MedicalHistory, AllergiesHistory)
+from .models import (Patient, MedicalHistory, OtherPatientHistory)
 
 
 class PatientForm(forms.ModelForm):
@@ -124,9 +124,9 @@ class MedicalHistoryForm(forms.ModelForm):
 #         exclude = ['history']
 
 
-class AllergiesHistoryForm(forms.ModelForm):
+class OtherPatientHistoryForm(forms.ModelForm):
     class Meta:
-        model = AllergiesHistory
+        model = OtherPatientHistory
         fields = '__all__'
         exclude = ['history']
 

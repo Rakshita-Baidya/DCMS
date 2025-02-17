@@ -142,6 +142,14 @@ class MedicalHistory(models.Model):
     increased_frequency = models.BooleanField(default=False)
     burning = models.BooleanField(default=False)
 
+    def __str__(self):
+        return super().__str__()
+
+
+class OtherPatientHistory(models.Model):
+    history = models.OneToOneField(
+        MedicalHistory, on_delete=models.CASCADE, related_name='history_other_patients')
+
     # extraction
     prev_extraction = models.BooleanField(default=False)
     date_of_last_extraction = models.DateField(blank=True, null=True)
@@ -156,13 +164,7 @@ class MedicalHistory(models.Model):
     hospitalization_specifics = models.TextField(
         max_length=500, blank=True, null=True)
 
-    def __str__(self):
-        return super().__str__()
-
-
-class AllergiesHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_allergies')
+    # allergies
     sleeping_pills = models.BooleanField(default=False)
     aspirin = models.BooleanField(default=False)
     food = models.BooleanField(default=False)
