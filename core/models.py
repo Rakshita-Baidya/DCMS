@@ -26,7 +26,7 @@ GENDER_CHOICES = [
 
 class Transaction(models.Model):
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name='transaction_profile')
+        User, on_delete=models.CASCADE, related_name='transaction_user')
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=500)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -174,6 +174,97 @@ class OtherPatientHistory(models.Model):
     local_anesthesia = models.BooleanField(default=False)
     others = models.BooleanField(default=False)
     specifics = models.TextField(max_length=500, blank=True, null=True)
+
+    def __str__(self):
+        return super().__str__()
+
+
+class DentalChart(models.Model):
+    patient = models.OneToOneField(
+        Patient, on_delete=models.CASCADE, related_name='dental_chart')
+
+
+class ToothRecord(models.Model):
+    dental_chart = models.ForeignKey(
+        DentalChart, on_delete=models.CASCADE, related_name='tooth_records')
+    tooth_no = models.CharField(max_length=10)
+    condition = models.TextField(max_length=255, blank=True, null=True)
+    severity = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return super().__str__()
+
+
+APPOINTMENT_STATUS = [
+    ('Pending', 'Pending'),
+    ('Cancelled', 'Cancelled'),
+    ('Completed', 'Completed')
+]
+
+
+class Appointment(models.Model):
+    patient = models.ForeignKey(
+        Patient, on_delete=models.CASCADE, related_name='patient_appointment')
+    date = models.DateTimeField(default=now, blank=True, null=True)
+    time = models.CharField(max_length=25, blank=True, null=True)
+    description = models.TextField(max_length=255)
+    status = models.CharField(
+        choices=APPOINTMENT_STATUS, default="Pending")
+    total_amt = models.DecimalField(
+        decimal_places=2, max_digits=10, blank=True, null=True)
+
+    def __str__(self):
+        return super().__str__()
+
+
+LAB_CHOICES = [
+    ('Medi Dent Nepal', 'Medi Dent Nepal'),
+    ('Proficient Dental Lab', 'Proficient Dental Lab'),
+    ('Other', 'Other')]
+
+
+class Treatment(models.Model):
+    appointment = models.ForeignKey(
+        Appointment, on_delete=models.CASCADE, related_name='treatment_appointment')
+    type = models.CharField(max_length=100, blank=True, null=True)
+    plan = models.TimeField(max_length=255, blank=True, null=True)
+    x_ray = models.BooleanField(default=False)
+    x_ray_cost = models.DecimalField(
+        decimal_places=2, max_digits=10, blank=True, null=True)
+    lab = models.BooleanField(default=False)
+    lab_sent = models.CharField(choices=LAB_CHOICES, blank=True, null=True)
+    lab_order_date = models.DateTimeField(default=now)
+    lab_cost = models.DecimalField(
+        decimal_places=2, max_digits=10, blank=True, null=True)
+    total_treatment_cost = models.DecimalField(
+        decimal_places=2, max_digits=10, blank=True, null=True)
+
+    def __str__(self):
+        return super().__str__()
+
+
+class TreatmentDoctor(models.Model):
+    treatment = models.ForeignKey(
+        Treatment, on_delete=models.CASCADE, related_name='treatment_td')
+    doctor = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='doctor_td')
+    percent = models.FloatField(blank=True, null=True)
+    amount = models.DecimalField(
+        decimal_places=2, max_digits=10, blank=True, null=True)
+
+    def __str__(self):
+        return super().__str__()
+
+
+class PurchasedProduct(models.Model):
+    appointment = models.ForeignKey(
+        Appointment, on_delete=models.CASCADE, related_name='product_appointment')
+    name = models.CharField(max_length=100, blank=True, null=True)
+    rate = models.DecimalField(
+        decimal_places=2, max_digits=10, blank=True, null=True)
+    quantity = models.IntegerField(blank=True, null=True)
+    total_amt = models.DecimalField(
+        decimal_places=2, max_digits=10, blank=True, null=True)
 
     def __str__(self):
         return super().__str__()

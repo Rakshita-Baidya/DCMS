@@ -18,21 +18,6 @@ from .forms import (PatientForm,  MedicalHistoryForm, OtherPatientHistoryForm)
 
 
 # Create your views here.
-FORMS = {
-    "general": PatientForm,
-    "history": MedicalHistoryForm,
-    "other": OtherPatientHistoryForm,
-}
-
-
-TEMPLATES = {
-    "0": "patient/general.html",
-    "1": "patient/history.html",
-    "2": "patient/other.html",
-}
-
-file_storage = FileSystemStorage(
-    location=os.path.join("media", "wizard_uploads"))
 
 # def home(request):
 #     return render(request, 'index.html')
@@ -329,6 +314,23 @@ def patient(request):
     }
 
     return render(request, 'patient/patient.html', context)
+
+
+FORMS = {
+    "general": PatientForm,
+    "history": MedicalHistoryForm,
+    "other": OtherPatientHistoryForm,
+}
+
+
+TEMPLATES = {
+    "0": "patient/general.html",
+    "1": "patient/history.html",
+    "2": "patient/other.html",
+}
+
+file_storage = FileSystemStorage(
+    location=os.path.join("media", "wizard_uploads"))
 
 
 class PatientFormWizard(SessionWizardView):
