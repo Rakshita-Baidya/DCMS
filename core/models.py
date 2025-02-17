@@ -86,8 +86,7 @@ class MedicalHistory(models.Model):
     rheumatic_fever = models.BooleanField(default=False)
     rheumatic_fever_age = models.CharField(max_length=3, blank=True, null=True)
     stroke_history = models.BooleanField(default=False)
-    stroke_date = models.DateField(
-        default=now, blank=True, null=True)
+    stroke_date = models.DateField(blank=True, null=True)
 
     # arthritis
     joint_pain = models.BooleanField(default=False)
@@ -102,7 +101,8 @@ class MedicalHistory(models.Model):
     # liver
     jaundice = models.BooleanField(default=False)
     history_of_liver_disease = models.BooleanField(default=False)
-    specifics = models.TextField(max_length=500, blank=True, null=True)
+    liver_disease_specifics = models.TextField(
+        max_length=500, blank=True, null=True)
 
     # women
     pregnancy = models.BooleanField(default=False)
@@ -144,17 +144,17 @@ class MedicalHistory(models.Model):
 
     # extraction
     prev_extraction = models.BooleanField(default=False)
-    date_of_last_extraction = models.DateField(
-        now, blank=True, null=True)
+    date_of_last_extraction = models.DateField(blank=True, null=True)
     untoward_reaction = models.BooleanField(default=False)
-    specifics = models.TextField(max_length=500, blank=True, null=True)
+    untoward_reaction_specifics = models.TextField(
+        max_length=500, blank=True, null=True)
     local_anesthesia_use = models.BooleanField(default=False)
 
     # hospitalization
     hospitalized = models.BooleanField(default=False)
-    admission_date = models.DateField(
-        default=now, blank=True, null=True)
-    specifics = models.TextField(max_length=500, blank=True, null=True)
+    admission_date = models.DateField(blank=True, null=True)
+    hospitalization_specifics = models.TextField(
+        max_length=500, blank=True, null=True)
 
     def __str__(self):
         return super().__str__()
