@@ -383,6 +383,7 @@ class PatientFormWizard(SessionWizardView):
         return None
 
     def done(self, form_list, **kwargs):
+        request = self.request
         # Save patient info
         patient = form_list[0].save()
 
@@ -395,7 +396,7 @@ class PatientFormWizard(SessionWizardView):
         allergy_history = form_list[2].save(commit=False)
         allergy_history.history = medical_history
         allergy_history.save()
-
+        messages.success(request, 'The patient has been added successfully!')
         return redirect('core:patient')
 
 
