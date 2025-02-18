@@ -34,7 +34,7 @@ class Transaction(models.Model):
     type = models.CharField(choices=TRANSACTION_TYPE, default="Income")
 
     def __str__(self):
-        return super().__str__()
+        return f"{self.user} - {self.title} ({self.type})"
 
 
 class Patient(models.Model):
@@ -69,7 +69,7 @@ class Patient(models.Model):
         max_length=15, blank=True, null=True)
 
     def __str__(self):
-        return super().__str__()
+        return f"{self.name}"
 
 
 class MedicalHistory(models.Model):
@@ -143,7 +143,7 @@ class MedicalHistory(models.Model):
     burning = models.BooleanField(default=False)
 
     def __str__(self):
-        return super().__str__()
+        return f"Medical History for {self.patient.name}"
 
 
 class OtherPatientHistory(models.Model):
@@ -176,12 +176,15 @@ class OtherPatientHistory(models.Model):
     specifics = models.TextField(max_length=500, blank=True, null=True)
 
     def __str__(self):
-        return super().__str__()
+        return f"Additional History for {self.history.patient.name}"
 
 
 class DentalChart(models.Model):
     patient = models.OneToOneField(
         Patient, on_delete=models.CASCADE, related_name='dental_chart')
+
+    def __str__(self):
+        return f"Dental Chart for {self.patient.name}"
 
 
 class ToothRecord(models.Model):
@@ -192,7 +195,7 @@ class ToothRecord(models.Model):
     severity = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return super().__str__()
+        return f"Tooth {self.tooth_no} - ({self.severity})"
 
 
 APPOINTMENT_STATUS = [
@@ -214,7 +217,7 @@ class Appointment(models.Model):
         decimal_places=2, max_digits=10, blank=True, null=True)
 
     def __str__(self):
-        return super().__str__()
+        return f"Appointment for {self.patient.name} on {self.date.strftime('%Y-%m-%d %H:%M')}"
 
 
 LAB_CHOICES = [
@@ -240,7 +243,7 @@ class Treatment(models.Model):
         decimal_places=2, max_digits=10, blank=True, null=True)
 
     def __str__(self):
-        return super().__str__()
+        return f"Treatment for {self.appointment.patient.name}"
 
 
 class TreatmentDoctor(models.Model):
@@ -253,7 +256,7 @@ class TreatmentDoctor(models.Model):
         decimal_places=2, max_digits=10, blank=True, null=True)
 
     def __str__(self):
-        return super().__str__()
+        return f"Dr. {self.doctor.username} - {self.treatment.appointment.patient.name}"
 
 
 class PurchasedProduct(models.Model):
@@ -267,4 +270,4 @@ class PurchasedProduct(models.Model):
         decimal_places=2, max_digits=10, blank=True, null=True)
 
     def __str__(self):
-        return super().__str__()
+        return f"{self.name} - {self.quantity} pcs"
