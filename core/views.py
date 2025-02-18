@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -6,6 +6,7 @@ from django.contrib import messages
 from users.decorators import admin_only, allowed_users, unauthenticated_user
 from django.core.files.storage import FileSystemStorage
 import os
+from django.forms import formset_factory
 
 from formtools.wizard.views import SessionWizardView
 from django.urls import reverse
@@ -13,16 +14,13 @@ from django.urls import reverse
 from users.models import Staff, User, Doctor
 from users.forms import StaffForm, DoctorForm, UserEditForm
 
-from .models import (Patient, MedicalHistory, OtherPatientHistory)
-from .forms import (PatientForm,  MedicalHistoryForm, OtherPatientHistoryForm)
+from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart,
+                     ToothRecord, Transaction, Appointment, Treatment, TreatmentDoctor, PurchasedProduct)
+from .forms import (PatientForm,  MedicalHistoryForm,
+                    OtherPatientHistoryForm, DentalChartForm, ToothRecordFormSet)
 
 
 # Create your views here.
-
-# def home(request):
-#     return render(request, 'index.html')
-
-
 @login_required(login_url='login')
 def dashboard(request):
     context = {
@@ -290,7 +288,7 @@ def patient(request):
         patient_to_delete = Patient.objects.get(id=patient_id_to_delete)
         patient_to_delete.delete()
         messages.success(request, f"Patient {
-                         patient_to_delete.patientname} has been deleted.")
+                         patient_to_delete.name} has been deleted.")
 
     # Add search functionality
     search_query = request.GET.get('search', '')
@@ -316,25 +314,20 @@ def patient(request):
     return render(request, 'patient/patient.html', context)
 
 
-FORMS = {
-    "general": PatientForm,
-    "history": MedicalHistoryForm,
-    "other": OtherPatientHistoryForm,
-}
-
-
 TEMPLATES = {
     "0": "patient/general.html",
     "1": "patient/history.html",
     "2": "patient/other.html",
+    '3': 'patient/dental_chart.html',
 }
 
 file_storage = FileSystemStorage(
-    location=os.path.join("media", "wizard_uploads"))
+    location=os.path.join("media", "images", "patient"))
 
 
 class PatientFormWizard(SessionWizardView):
-    form_list = [PatientForm, MedicalHistoryForm, OtherPatientHistoryForm]
+    form_list = [PatientForm, MedicalHistoryForm,
+                 OtherPatientHistoryForm, DentalChartForm]
     file_storage = file_storage
 
     def get_template_names(self):
@@ -342,10 +335,13 @@ class PatientFormWizard(SessionWizardView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
+        # context['profile_image'] = self.request.session.get('profile_image')
         context.update({
             'page_title': 'Patient Management',
             'active_page': 'patient',
         })
+        if self.steps.current == '3':  # Dental Chart step
+            context['tooth_record_formset'] = ToothRecordFormSet()
         return context
 
     def get_form_instance(self, step):
@@ -353,14 +349,20 @@ class PatientFormWizard(SessionWizardView):
             return Patient()
         elif step == '1':  # Medical History Form
             return MedicalHistory()
-        elif step == '2':
+        elif step == '2':  # remaining
             return OtherPatientHistory()
+        elif step == '3':  # Dental Chart Form
+            return DentalChart()
         return None
 
     def done(self, form_list, **kwargs):
         request = self.request
         # Save patient info
         patient = form_list[0].save()
+
+        if 'profile_image' in request.session:
+            patient.profile_image = request.session['profile_image']
+            patient.save()
 
         # Save medical history
         medical_history = form_list[1].save(commit=False)
@@ -371,54 +373,112 @@ class PatientFormWizard(SessionWizardView):
         other_history = form_list[2].save(commit=False)
         other_history.history = medical_history
         other_history.save()
+
+        # Save dental chart
+        dental_chart = form_list[3].save(commit=False)
+        dental_chart.patient = patient
+        dental_chart.save()
+
+        # Save tooth records
+        tooth_record_formset = ToothRecordFormSet(
+            request.POST, instance=dental_chart)
+        if tooth_record_formset.is_valid():
+            tooth_record_formset.save()
+
         messages.success(request, 'The patient has been added successfully!')
         return redirect('core:patient')
 
 
-@login_required(login_url='login')
-def edit_patient_profile(request, patient_id):
-    patient_queryset = Patient.objects.get(pk=patient_id)
+class EditPatientFormWizard(SessionWizardView):
+    form_list = [PatientForm, MedicalHistoryForm,
+                 OtherPatientHistoryForm, DentalChartForm]
+    file_storage = file_storage
 
-    # patient needs to be deleted
-    if request.method == 'POST' and 'delete_patient_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'Administrator':
-            messages.error(request, "You do not have permission to delete.")
-        else:
-            patient_id_to_delete = request.POST['delete_patient_id']
-            patient_to_delete = Patient.objects.get(id=patient_id_to_delete)
-            patient_to_delete.delete()
-            messages.success(request, f"Patient {
-                patient_to_delete.name} has been deleted.")
-            return redirect('core:patient')
+    def get_template_names(self):
+        return [TEMPLATES.get(self.steps.current, "patient/general.html")]
 
-    # if request.method == 'POST':
-    #     user_form = UserEditForm(
-    #         request.POST, request.FILES, instance=patient_queryset)
-    #     patient_form = StaffForm(
-    #         request.POST, instance=patient_profile) if patient_profile else None
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+        patient_id = self.kwargs.get('patient_id')
+        context.update({
+            'page_title': 'Patient Management',
+            'active_page': 'patient',
+            'is_editing': bool(patient_id),
+        })
+        if self.steps.current == '3':  # Dental Chart step
+            dental_chart = self.get_form_instance('3')
+            context['tooth_record_formset'] = ToothRecordFormSet(
+                instance=dental_chart)
 
-    #     if user_form.is_valid():
-    #         user_form.save()
-    #         if patient_form and patient_form.is_valid():
-    #             patient_form.save()
+        return context
 
-    #         messages.success(
-    #             request, 'The patient profile has been updated successfully!')
-    #         return redirect('core:view_patient_profile', patient_id=patient_queryset.id)
-    # else:
-    #     user_form = UserEditForm(instance=patient_queryset)
-    #     patient_form = StaffForm(
-    #         instance=patient_profile) if patient_profile else None
+    def get_form_instance(self, step):
+        patient_id = self.kwargs.get('patient_id')
+        if not patient_id:
+            return None
 
-    context = {
-        'patient': patient_queryset,
-        # 'user_form': user_form,
-        # 'patient_form': patient_form,
-        'page_title': 'Patient Management',
-        'active_page': 'patient',
-    }
+        patient = get_object_or_404(Patient, id=patient_id)
 
-    return render(request, 'patient/edit_patient_profile.html', context)
+        if step == '0':  # Patient Form
+            return patient
+        elif step == '1':  # Medical History Form
+            medical_history, created = MedicalHistory.objects.get_or_create(
+                patient=patient)
+
+            return medical_history
+        elif step == '2':
+            medical_history, created = MedicalHistory.objects.get_or_create(
+                patient=patient)
+            other_history, created = OtherPatientHistory.objects.get_or_create(
+                history=medical_history)
+            # Add this debug line
+            print("Retrieved date:", other_history.date_of_last_extraction)
+
+            return other_history
+        elif step == '3':  # Dental Chart Form
+            dental_chart, created = DentalChart.objects.get_or_create(
+                patient=patient)
+            return dental_chart
+        return None
+
+    def done(self, form_list, **kwargs):
+        request = self.request
+        patient_id = self.kwargs.get('patient_id')
+        patient = get_object_or_404(Patient, id=patient_id)
+
+        # Update patient info
+        patient_form = form_list[0]
+        for field, value in patient_form.cleaned_data.items():
+            setattr(patient, field, value)
+        patient.save()
+
+        # Update or create medical history
+        medical_history_form = form_list[1]
+        medical_history, created = MedicalHistory.objects.update_or_create(
+            patient=patient, defaults=medical_history_form.cleaned_data
+        )
+
+        # Update or create other patient history
+        other_history_form = form_list[2]
+        OtherPatientHistory.objects.update_or_create(
+            history=medical_history, defaults=other_history_form.cleaned_data
+        )
+
+        # Update or create dental chart
+        dental_chart_form = form_list[3]
+        dental_chart, created = DentalChart.objects.update_or_create(
+            patient=patient, defaults=dental_chart_form.cleaned_data
+        )
+
+        # Update or create tooth records
+        tooth_record_formset = ToothRecordFormSet(
+            request.POST, instance=dental_chart)
+        if tooth_record_formset.is_valid():
+            tooth_record_formset.save()
+
+        messages.success(
+            request, 'The patient details have been updated successfully!')
+        return redirect('core:patient')
 
 
 def appointment(request):

@@ -132,7 +132,7 @@
                                    id="pregnancy_month"
                                    name="{{ wizard.form.pregnancy_month.html_name }}"
                                    class="my-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
-                                   disabled>
+                                   value="{{ wizard.form.pregnancy_month.value|default_if_none:'' }}">
                             {% if wizard.form.pregnancy_month.errors %}
                                 <div class="text-dangerRed text-sm">{{ wizard.form.pregnancy_month.errors }}</div>
                             {% endif %}
@@ -168,7 +168,7 @@
                                    id="liver_disease_specifics"
                                    name="{{ wizard.form.liver_disease_specifics.html_name }}"
                                    class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
-                                   disabled>
+                                   value="{{ wizard.form.liver_disease_specifics.value|default_if_none:'' }}">
                             {% if wizard.form.liver_disease_specifics.errors %}
                                 <div class="text-dangerRed text-sm">{{ wizard.form.liver_disease_specifics.errors }}</div>
                             {% endif %}
@@ -229,7 +229,7 @@
                                    id="rheumatic_fever_age"
                                    name="{{ wizard.form.rheumatic_fever_age.html_name }}"
                                    class="my-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
-                                   disabled>
+                                   value="{{ wizard.form.rheumatic_fever_age.value|default_if_none:'' }}">
                             {% if wizard.form.rheumatic_fever_age.errors %}
                                 <div class="text-dangerRed text-sm">{{ wizard.form.rheumatic_fever_age.errors }}</div>
                             {% endif %}
@@ -247,7 +247,7 @@
                                    id="stroke_date"
                                    name="{{ wizard.form.stroke_date.html_name }}"
                                    class="my-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
-                                   disabled>
+                                   value="{{ wizard.form.stroke_date.value|date:'Y-m-d'|default_if_none:'' }}">
                             {% if wizard.form.stroke_date.errors %}
                                 <div class="text-dangerRed text-sm">{{ wizard.form.stroke_date.errors }}</div>
                             {% endif %}
@@ -373,13 +373,24 @@
             let checkbox = document.getElementById(checkboxId);
             let field = document.getElementById(fieldId);
     
-            // Disable field by default
-            field.disabled = !checkbox.checked;
-    
-            // Add event listener to toggle the disabled state
-            checkbox.addEventListener("change", function () {
-                field.disabled = !this.checked;
-            });
+            // Function to handle field state
+            function updateFieldState() {
+                field.disabled = !checkbox.checked;
+                
+                // If field becomes disabled, store its current value as a data attribute
+                if (field.disabled) {
+                    field.setAttribute('data-stored-value', field.value);
+                    field.value = '';
+                } else {
+                    const storedValue = field.getAttribute('data-stored-value');
+                    if (storedValue) {
+                        field.value = storedValue;
+                    }
+                }
+            }
+            
+            updateFieldState();
+            checkbox.addEventListener("change", updateFieldState);
         }
     
         document.addEventListener("DOMContentLoaded", function () {

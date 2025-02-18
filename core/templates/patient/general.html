@@ -41,30 +41,6 @@
                         <div class="text-dangerRed text-sm">{{ wizard.form.address.errors }}</div>
                     {% endif %}
                 </div>
-                <div class="row-span-5">
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.profile_image.label_tag }}</label>
-                    <div class="relative h-56 w-56 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
-                        <img id="profileImagePreview"
-                             src="{% if patient.profile_image %}{{ patient.profile_image.url }}{% else %}{% static 'images/profile/default.jpg' %}{% endif %}"
-                             alt="{{ patient.get_full_name }}"
-                             class="object-fill absolute scale-110"
-                             width="full"
-                             height="full" />
-                    </div>
-                    <input type="file"
-                           id="id_profile_image"
-                           name="profile_image"
-                           class="hidden"
-                           accept="image/*">
-                    <label for="id_profile_image"
-                           class="mt-4 flex items-center mx-auto w-36 justify-center bg-primaryLogo text-white px-4 py-2 rounded-md cursor-pointer hover:bg-darkerPrimary">
-                        Choose File
-                    </label>
-                    {% comment %} {{ wizard.form.profile_image|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }} {% endcomment %}
-                    {% if wizard.form.profile_image.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.profile_image.errors }}</div>
-                    {% endif %}
-                </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.dob.label_tag }}</label>
                     {{ wizard.form.dob|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
@@ -120,7 +96,7 @@
                         <div class="text-dangerRed text-sm">{{ wizard.form.marital_status.errors }}</div>
                     {% endif %}
                 </div>
-                <div class="col-start-1 col-span-3 mt-4 font-bold text-2xl text-darkText">Emergency Contact:</div>
+                <div class="col-start-1 col-span-4 mt-4 font-bold text-2xl text-darkText">Emergency Contact:</div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">Name:</label>
                     {{ wizard.form.emergency_contact_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
@@ -160,16 +136,4 @@
             </form>
         </div>
     </div>
-    <script>
-        document.getElementById('id_profile_image').addEventListener('change', function(event) {
-            const file = event.target.files[0];  // Get the selected file
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('profileImagePreview').src = e.target.result; // Update image preview
-                };
-                reader.readAsDataURL(file); // Convert file to base64 URL
-            }
-        });
-    </script>
 {% endblock content %}

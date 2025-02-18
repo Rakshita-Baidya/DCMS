@@ -37,7 +37,7 @@
                                id="date_of_last_extraction"
                                name="{{ wizard.form.date_of_last_extraction.html_name }}"
                                class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
-                               disabled>
+                               value="{{ wizard.form.date_of_last_extraction.value|date:'Y-m-d'|default_if_none:'' }}" />
                         {% if wizard.form.date_of_last_extraction.errors %}
                             <div class="text-dangerRed text-sm">{{ wizard.form.date_of_last_extraction.errors }}</div>
                         {% endif %}
@@ -55,7 +55,7 @@
                                id="untoward_reaction_specifics"
                                name="{{ wizard.form.untoward_reaction_specifics.html_name }}"
                                class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
-                               disabled>
+                               value="{{ wizard.form.untoward_reaction_specifics.value|default_if_none:'' }}">
                         {% if wizard.form.untoward_reaction_specifics.errors %}
                             <div class="text-dangerRed text-sm">{{ wizard.form.untoward_reaction_specifics.errors }}</div>
                         {% endif %}
@@ -82,8 +82,8 @@
                         <input type="date"
                                id="admission_date"
                                name="{{ wizard.form.admission_date.html_name }}"
-                               class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
-                               disabled>
+                               value="{{ wizard.form.admission_date.value|date:'Y-m-d'|default_if_none:'' }}"
+                               class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
                         {% if wizard.form.admission_date.errors %}
                             <div class="text-dangerRed text-sm">{{ wizard.form.admission_date.errors }}</div>
                         {% endif %}
@@ -94,7 +94,7 @@
                                id="hospitalization_specifics"
                                name="{{ wizard.form.hospitalization_specifics.html_name }}"
                                class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
-                               disabled>
+                               value="{{ wizard.form.hospitalization_specifics.value|default_if_none:'' }}">
                         {% if wizard.form.hospitalization_specifics.errors %}
                             <div class="text-dangerRed text-sm">{{ wizard.form.hospitalization_specifics.errors }}</div>
                         {% endif %}
@@ -160,7 +160,7 @@
                                id="specifics"
                                name="{{ wizard.form.specifics.html_name }}"
                                class="my-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
-                               disabled>
+                               value="{{ wizard.form.specifics.value|default_if_none:'' }}">
                         {% if wizard.form.specifics.errors %}
                             <div class="text-dangerRed text-sm">{{ wizard.form.specifics.errors }}</div>
                         {% endif %}
@@ -174,7 +174,7 @@
                     </p>
                     <button type="submit"
                             class="col-start-3 col-span-2 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                        Add Patient
+                        Next
                     </button>
                 </div>
             </form>
@@ -185,21 +185,32 @@
             let checkbox = document.getElementById(checkboxId);
             let field = document.getElementById(fieldId);
     
-            // Disable field by default
-            field.disabled = !checkbox.checked;
-    
-            // Add event listener to toggle the disabled state
-            checkbox.addEventListener("change", function () {
-                field.disabled = !this.checked;
-            });
+            // Function to handle field state
+            function updateFieldState() {
+                field.disabled = !checkbox.checked;
+                
+                // If field becomes disabled, store its current value as a data attribute
+                if (field.disabled) {
+                    field.setAttribute('data-stored-value', field.value);
+                    field.value = '';
+                } else {
+                    const storedValue = field.getAttribute('data-stored-value');
+                    if (storedValue) {
+                        field.value = storedValue;
+                    }
+                }
+            }
+            
+            updateFieldState();
+            checkbox.addEventListener("change", updateFieldState);
         }
     
         document.addEventListener("DOMContentLoaded", function () {
             toggleField("hospitalized", "admission_date");
             toggleField("hospitalized", "hospitalization_specifics");
             toggleField("prev_extraction", "date_of_last_extraction");
-            toggleField("untoward_reaction", "untoward_reaction_specifics");toggleField("others", "specifics");
-            
+            toggleField("untoward_reaction", "untoward_reaction_specifics");
+            toggleField("others", "specifics");
         });
     </script>
 {% endblock content %}

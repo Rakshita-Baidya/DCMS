@@ -53,12 +53,12 @@ class Patient(models.Model):
     occupation = models.CharField(blank=True, null=True)
     nationality = models.CharField(blank=True, null=True)
     marital_status = models.CharField(choices=MARTIAL_STATUS, default="Single")
-    profile_image = models.ImageField(
-        upload_to='images/profile/',
-        default='images/profile/default.jpg',
-        blank=True,
-        null=True,
-    )
+    # profile_image = models.ImageField(
+    #     upload_to='images/patient/',
+    #     default='images/profile/default.jpg',
+    #     blank=True,
+    #     null=True,
+    # )
     emergency_contact_name = models.CharField(
         max_length=100, null=True, blank=True)
     emergency_contact_contact = models.CharField(
@@ -187,12 +187,20 @@ class DentalChart(models.Model):
         return f"Dental Chart for {self.patient.name}"
 
 
+SEVERITY_CHOICES = [
+    ('Mild', 'Mild'),
+    ('Moderate', 'Moderate'),
+    ('Severe', 'Severe')
+]
+
+
 class ToothRecord(models.Model):
     dental_chart = models.ForeignKey(
         DentalChart, on_delete=models.CASCADE, related_name='tooth_records')
     tooth_no = models.CharField(max_length=10)
     condition = models.TextField(max_length=255, blank=True, null=True)
-    severity = models.CharField(max_length=50, blank=True, null=True)
+    severity = models.CharField(
+        choices=SEVERITY_CHOICES, max_length=50, blank=True, null=True)
 
     def __str__(self):
         return f"Tooth {self.tooth_no} - ({self.severity})"
