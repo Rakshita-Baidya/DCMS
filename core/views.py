@@ -481,6 +481,81 @@ class EditPatientFormWizard(SessionWizardView):
         return redirect('core:patient')
 
 
+@login_required(login_url='login')
+def view_patient_profile(request, patient_id):
+    patient_queryset = Patient.objects.get(pk=patient_id)
+
+    patient_history = getattr(patient_queryset, 'patient_history', None)
+    history_other_patients = getattr(
+        patient_history, 'history_other_patients', None)
+    dental_chart = getattr(patient_queryset, 'dental_chart')
+
+    exclude_fields = {'id', 'patient', 'history'}
+
+    # Define sections for medical history
+    medical_history_sections = {
+        "General": ["chief_dental_complaint", "marked_weight_change"],
+        "Heart": ["chest_pain", "hypertention", "ankle_edema", "rheumatic_fever", "rheumatic_fever_age", "stroke_history", "stroke_date"],
+        "Arthritis": ["joint_pain", "joint_swelling"],
+        "Nervous System": ["headaches", "convulsions_or_epilepsy", "numbness_or_tingles", "dizziness_or_fainting"],
+        "Liver": ["jaundice", "history_of_liver_disease", "liver_disease_specifics"],
+        "Women": ["pregnancy", "pregnancy_month", "breast_feed"],
+        "Respiratory": ["persistant_cough", "breathing_difficulty", "shortness_of_breath", "asthma"],
+        "Ear": ["hearing_loss", "ringing_of_ears"],
+        "Blood": ["bruise_easy", "anemia"],
+        "Thyroid": ["perspire_easy", "apprehension", "palpitation", "goiter", "bulging_eyes"],
+        "Diabetes": ["delayed_healing", "increased_appetite", "family_history"],
+        "Radiography": ["radiography_therapy"],
+        "Urinary": ["increased_frequency", "burning"],
+    }
+
+    # Define sections for other patient history
+    other_history_sections = {
+        "Extraction": ["prev_extraction", "date_of_last_extraction", "untoward_reaction", "untoward_reaction_specifics", "local_anesthesia_use"],
+        "Hospitalization": ["hospitalized", "admission_date", "hospitalization_specifics"],
+        "Allergies": ["sleeping_pills", "aspirin", "food", "penicilin", "antibiotics", "sulfa_drugs", "local_anesthesia", "others", "specifics"],
+    }
+
+    def get_sectioned_data(instance, sections):
+        data = {}
+        if instance:
+            for section, fields in sections.items():
+                section_data = {field: getattr(
+                    instance, field) for field in fields if getattr(instance, field)}
+                if section_data:
+                    data[section] = section_data
+        return data
+
+    medical_history_data = get_sectioned_data(
+        patient_history, medical_history_sections)
+    other_history_data = get_sectioned_data(
+        history_other_patients, other_history_sections)
+
+    # patient needs to be deleted
+    if request.method == 'POST' and 'delete_patient_id' in request.POST:
+        if not request.user.is_superuser and request.user.role != 'Administrator':
+            messages.error(request, "You do not have permission to delete.")
+        else:
+            patient_id_to_delete = request.POST['delete_patient_id']
+            patient_to_delete = Patient.objects.get(id=patient_id_to_delete)
+            patient_to_delete.delete()
+            messages.success(request, f"Patient {
+                patient_to_delete.name} has been deleted.")
+            return redirect('core:patient')
+
+    context = {
+        'page_title': 'Patient Management',
+        'active_page': 'patient',
+        'patient': patient_queryset,
+        'medical_history_data': medical_history_data,
+        'other_history_data': other_history_data,
+        'dental_chart': dental_chart,
+        'tooth_records': dental_chart.tooth_records.all() if dental_chart else None,
+    }
+
+    return render(request, 'patient/view_patient_profile.html', context)
+
+
 def appointment(request):
     context = {
         'page_title': 'Appointment Management',

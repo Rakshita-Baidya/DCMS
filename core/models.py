@@ -68,6 +68,9 @@ class Patient(models.Model):
     emergency_contact_relation = models.CharField(
         max_length=15, blank=True, null=True)
 
+    date_created = models.DateTimeField(default=now,
+                                        blank=True, null=True)
+
     def __str__(self):
         return f"{self.name}"
 
@@ -223,6 +226,8 @@ class Appointment(models.Model):
         choices=APPOINTMENT_STATUS, default="Pending")
     total_amt = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
+    date_created = models.DateTimeField(default=now,
+                                        blank=True, null=True)
 
     def __str__(self):
         return f"Appointment for {self.patient.name} on {self.date.strftime('%Y-%m-%d %H:%M')}"
@@ -249,6 +254,8 @@ class Treatment(models.Model):
         decimal_places=2, max_digits=10, blank=True, null=True)
     total_treatment_cost = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
+    date_created = models.DateTimeField(default=now,
+                                        blank=True, null=True)
 
     def __str__(self):
         return f"Treatment for {self.appointment.patient.name}"
@@ -262,6 +269,8 @@ class TreatmentDoctor(models.Model):
     percent = models.FloatField(blank=True, null=True)
     amount = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
+    date_created = models.DateTimeField(default=now,
+                                        blank=True, null=True)
 
     def __str__(self):
         return f"Dr. {self.doctor.username} - {self.treatment.appointment.patient.name}"
@@ -276,6 +285,8 @@ class PurchasedProduct(models.Model):
     quantity = models.IntegerField(blank=True, null=True)
     total_amt = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
+    date_created = models.DateTimeField(default=now,
+                                        blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} - {self.quantity} pcs"
