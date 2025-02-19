@@ -17,7 +17,7 @@ from users.forms import StaffForm, DoctorForm, UserEditForm
 from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart,
                      ToothRecord, Transaction, Appointment, Treatment, TreatmentDoctor, PurchasedProduct)
 from .forms import (AppointmentForm, PatientForm,  MedicalHistoryForm,
-                    OtherPatientHistoryForm, DentalChartForm, PurchasedProductFormSet, ToothRecordFormSet, TreatmentDoctorFormSet, TreatmentForm)
+                    OtherPatientHistoryForm, DentalChartForm, PurchasedProductFormSet, ToothRecordFormSet, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentForm)
 
 
 # Create your views here.
@@ -622,7 +622,8 @@ def appointment(request):
 
 
 class AppointmentFormWizard(SessionWizardView):
-    form_list = [AppointmentForm, TreatmentForm]
+    form_list = [AppointmentForm, TreatmentForm,
+                 TreatmentDoctorForm, PurchasedProductFormSet]
     file_storage = FileSystemStorage(
         location=os.path.join("media", "appointment"))
 
@@ -642,6 +643,8 @@ class AppointmentFormWizard(SessionWizardView):
             'page_title': 'Appointment Management',
             'active_page': 'appointment',
             'patients': Patient.objects.all(),
+            'doctors': User.objects.filter(role='Doctor', doctor_profile__isnull=False)
+
         })
         if self.steps.current == '2':
             context['treatment_doctor_formset'] = TreatmentDoctorFormSet()

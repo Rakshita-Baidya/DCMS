@@ -249,7 +249,7 @@ class Treatment(models.Model):
         decimal_places=2, max_digits=10, blank=True, null=True)
     lab = models.BooleanField(default=False)
     lab_sent = models.CharField(choices=LAB_CHOICES, blank=True, null=True)
-    lab_order_date = models.DateTimeField(default=now)
+    lab_order_date = models.DateTimeField(default=now, blank=True, null=True)
     lab_cost = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
     total_treatment_cost = models.DecimalField(

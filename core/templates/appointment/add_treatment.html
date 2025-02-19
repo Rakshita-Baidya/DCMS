@@ -14,7 +14,14 @@
                     <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
                 </svg>
             </a>
-            <p class="text-gray-700 text-2xl font-medium">Add Appointment / Treatment</p>
+            <p class="text-gray-700 text-2xl font-medium">
+                {% if is_editing %}
+                    Edit
+                {% else %}
+                    Add
+                {% endif %}
+                Appointment / Treatment
+            </p>
         </div>
         <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
             <form method="post"
@@ -23,45 +30,63 @@
                 {% csrf_token %}
                 {{ wizard.management_form }}
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.type.label_tag }}</label>
+                    <label class="block font-medium text-secondaryLogo">{{ form.type.label_tag }}</label>
                     {{ form.type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.type.errors %}<div class="text-dangerRed text-sm">{{ form.type.errors }}</div>{% endif %}
                 </div>
                 <div class="col-start-1 col-span-4">
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.plan.label_tag }}</label>
+                    <label class="block font-medium text-secondaryLogo">{{ form.plan.label_tag }}</label>
                     {{ form.plan|attr:"rows:2" |add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.plan.errors %}<div class="text-dangerRed text-sm">{{ form.plan.errors }}</div>{% endif %}
                 </div>
-                <div class="flex items-center justify-between">
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.x_ray.label_tag }}</label>
-                    {{ form.x_ray }}
-                    {% if form.x_ray.errors %}<div class="text-dangerRed text-sm">{{ form.x_ray.errors }}</div>{% endif %}
+                <div class="flex items-center">
+                    <label class="block font-medium text-secondaryLogo w-36">{{ wizard.form.x_ray.label_tag }}</label>
+                    {{ wizard.form.x_ray |attr:"id:x_ray" }}
+                    {% if wizard.form.x_ray.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.x_ray.errors }}</div>{% endif %}
                 </div>
-                <div class="flex items-center justify-between col-start-1">
-                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.lab.label_tag }}</label>
+                <div class="flex items-center justify-between">
+                    <label class=" font-medium text-secondaryLogo">{{ wizard.form.x_ray_cost.label_tag }}</label>
+                    <input type="text"
+                           id="x_ray_cost"
+                           name="{{ wizard.form.x_ray_cost.html_name }}"
+                           class="w-40 px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                           value="{{ wizard.form.x_ray_cost.value|default_if_none:'' }}">
+                    {% if wizard.form.x_ray_cost.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.x_ray_cost.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="flex items-center col-start-1">
+                    <label class="block font-medium text-secondaryLogo w-36">{{ wizard.form.lab.label_tag }}</label>
                     {{ wizard.form.lab |attr:"id:lab" }}
                     {% if wizard.form.lab.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.lab.errors }}</div>{% endif %}
                 </div>
-                <div>
-                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.lab_order_date.label_tag }}</label>
+                <div class="flex items-center justify-between">
+                    <label class="font-medium text-secondaryLogo">{{ wizard.form.lab_order_date.label_tag }}</label>
                     <input type="date"
                            id="lab_order_date"
                            name="{{ wizard.form.lab_order_date.html_name }}"
                            value="{{ wizard.form.lab_order_date.value|date:'Y-m-d'|default_if_none:'' }}"
-                           class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                           class="w-40 px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
                     {% if wizard.form.lab_order_date.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.lab_order_date.errors }}</div>
                     {% endif %}
                 </div>
-                <div>
-                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.lab_cost.label_tag }}</label>
+                <div class="flex items-center justify-between">
+                    <label class="font-medium text-secondaryLogo">{{ wizard.form.lab_cost.label_tag }}</label>
                     <input type="text"
                            id="lab_cost"
                            name="{{ wizard.form.lab_cost.html_name }}"
-                           class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                           class="w-54 px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
                            value="{{ wizard.form.lab_cost.value|default_if_none:'' }}">
                     {% if wizard.form.lab_cost.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.lab_cost.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-span-4">
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.total_treatment_cost.label_tag }}</label>
+                    {{ wizard.form.total_treatment_cost|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.total_treatment_cost.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.total_treatment_cost.errors }}</div>
                     {% endif %}
                 </div>
                 <p onclick="history.back()"
@@ -101,7 +126,9 @@
         }
     
         document.addEventListener("DOMContentLoaded", function () {
-            toggleField("stroke_history", "stroke_date");
+            toggleField("x_ray", "x_ray_cost");
+            toggleField("lab", "lab_order_date");
+            toggleField("lab", "lab_cost");
         });
     </script>
 {% endblock content %}
