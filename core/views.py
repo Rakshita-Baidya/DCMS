@@ -16,16 +16,19 @@ from users.forms import StaffForm, DoctorForm, UserEditForm
 
 from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart,
                      ToothRecord, Transaction, Appointment, Treatment, TreatmentDoctor, PurchasedProduct)
-from .forms import (PatientForm,  MedicalHistoryForm,
-                    OtherPatientHistoryForm, DentalChartForm, ToothRecordFormSet)
+from .forms import (AppointmentForm, PatientForm,  MedicalHistoryForm,
+                    OtherPatientHistoryForm, DentalChartForm, PurchasedProductFormSet, ToothRecordFormSet, TreatmentDoctorFormSet, TreatmentForm)
 
 
 # Create your views here.
 @login_required(login_url='login')
 def dashboard(request):
+    patient_queryset = Patient.objects.all().order_by('id')
+
     context = {
         'page_title': 'Dashboard',
         'active_page': 'dashboard',
+        'total_patient': patient_queryset.count(),
     }
     return render(request, 'dashboard/dashboard.html', context)
 
@@ -314,24 +317,21 @@ def patient(request):
     return render(request, 'patient/patient.html', context)
 
 
-TEMPLATES = {
-    "0": "patient/general.html",
-    "1": "patient/history.html",
-    "2": "patient/other.html",
-    '3': 'patient/dental_chart.html',
-}
-
-file_storage = FileSystemStorage(
-    location=os.path.join("media", "images", "patient"))
-
-
 class PatientFormWizard(SessionWizardView):
     form_list = [PatientForm, MedicalHistoryForm,
                  OtherPatientHistoryForm, DentalChartForm]
-    file_storage = file_storage
+    file_storage = FileSystemStorage(
+        location=os.path.join("media", "patient"))
+
+    TEMPLATES = {
+        "0": "patient/general.html",
+        "1": "patient/history.html",
+        "2": "patient/other.html",
+        '3': 'patient/dental_chart.html',
+    }
 
     def get_template_names(self):
-        return [TEMPLATES.get(self.steps.current, "patient/general.html")]
+        return [self.TEMPLATES.get(str(self.steps.current), "patient/general.html")]
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
@@ -360,9 +360,9 @@ class PatientFormWizard(SessionWizardView):
         # Save patient info
         patient = form_list[0].save()
 
-        if 'profile_image' in request.session:
-            patient.profile_image = request.session['profile_image']
-            patient.save()
+        # if 'profile_image' in request.session:
+        #     patient.profile_image = request.session['profile_image']
+        #     patient.save()
 
         # Save medical history
         medical_history = form_list[1].save(commit=False)
@@ -392,10 +392,18 @@ class PatientFormWizard(SessionWizardView):
 class EditPatientFormWizard(SessionWizardView):
     form_list = [PatientForm, MedicalHistoryForm,
                  OtherPatientHistoryForm, DentalChartForm]
-    file_storage = file_storage
+    file_storage = FileSystemStorage(
+        location=os.path.join("media", "patient"))
+
+    TEMPLATES = {
+        "0": "patient/general.html",
+        "1": "patient/history.html",
+        "2": "patient/other.html",
+        '3': 'patient/dental_chart.html',
+    }
 
     def get_template_names(self):
-        return [TEMPLATES.get(self.steps.current, "patient/general.html")]
+        return [self.TEMPLATES.get(str(self.steps.current), "patient/general.html")]
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
@@ -556,12 +564,131 @@ def view_patient_profile(request, patient_id):
     return render(request, 'patient/view_patient_profile.html', context)
 
 
+@login_required(login_url='login')
 def appointment(request):
+    appointment_queryset = Appointment.objects.all().order_by('id')
+
+    # appointment needs to be deleted
+    if request.method == 'POST' and 'delete_appointment_id' in request.POST:
+        appointment_id_to_delete = request.POST['delete_appointment_id']
+        appointment_to_delete = Appointment.objects.get(
+            id=appointment_id_to_delete)
+        appointment_to_delete.delete()
+        messages.success(request, f"Appointment for {
+                         appointment_to_delete.patient.name} on {appointment_to_delete.date} at {appointment_to_delete.time} has been deleted.")
+
+    # Add search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        appointment_queryset = appointment_queryset.filter(
+            Q(patient__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
+    # Pagination
+    paginator = Paginator(appointment_queryset, 8)
+    page = request.GET.get('page', 1)
+    appointment_list = paginator.get_page(page)
+
     context = {
         'page_title': 'Appointment Management',
         'active_page': 'appointment',
+        'appointments': appointment_list,
+        'total_appointment': appointment_queryset.count(),
+        'search_query': search_query,
     }
+
     return render(request, 'appointment/appointment.html', context)
+
+
+def add_appointment(request):
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.save()
+            messages.success(
+                request, 'The appointment has been scheduled successfully!')
+            return redirect('core:appointment')
+    else:
+        form = AppointmentForm()
+
+    context = {
+        'page_title': 'Appointment Management',
+        'active_page': 'appointment',
+        'form': form,
+    }
+    return render(request, 'appointment/add_appointment.html', context)
+
+
+class AppointmentFormWizard(SessionWizardView):
+    form_list = [AppointmentForm, TreatmentForm]
+    file_storage = FileSystemStorage(
+        location=os.path.join("media", "appointment"))
+
+    TEMPLATES = {
+        '0': 'appointment/add_appointment.html',
+        '1': 'appointment/add_treatment.html',
+        '2': 'appointment/add_treatment_doctor.html',
+        '3': 'appointment/add_purchased_product.html',
+    }
+
+    def get_template_names(self):
+        return [self.TEMPLATES.get(str(self.steps.current), "appointment/add_appointment.html")]
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+        context.update({
+            'page_title': 'Appointment Management',
+            'active_page': 'appointment',
+        })
+        if self.steps.current == '2':
+            context['treatment_doctor_formset'] = TreatmentDoctorFormSet()
+        if self.steps.current == '3':
+            context['purchased product_formset'] = PurchasedProductFormSet()
+        return context
+
+    def get_form_instance(self, step):
+        if step == '0':
+            return Appointment()
+        elif step == '1':
+            return Treatment()
+        elif step == '2':
+            return TreatmentDoctor()
+        elif step == '3':
+            return PurchasedProduct()
+        return None
+
+    def done(self, form_list, **kwargs):
+        request = self.request
+
+        appointment = form_list[0].save()
+
+        treatment = form_list[1].save(commit=False)
+        treatment.appointment = appointment
+        treatment.save()
+
+        treatment_doctor = form_list[2].save(commit=False)
+        treatment_doctor.treatment = treatment
+        treatment_doctor.save()
+
+        purchased_product = form_list[3].save(commit=False)
+        purchased_product.appointment = appointment
+        purchased_product.save()
+
+        treatment_doctor_formset = TreatmentDoctorFormSet(
+            request.POST, instance=treatment_doctor)
+        if treatment_doctor_formset.is_valid():
+            treatment_doctor_formset.save()
+
+        purchased_product_formset = PurchasedProductFormSet(
+            request.POST, instance=purchased_product)
+        if purchased_product_formset.is_valid():
+            purchased_product_formset.save()
+
+        messages.success(
+            request, 'The appointment has been added successfully!')
+        return redirect('core:appointment')
 
 
 def schedule(request):

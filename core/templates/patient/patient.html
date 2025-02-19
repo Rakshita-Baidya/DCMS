@@ -48,8 +48,8 @@
                     </thead>
                     <tbody>
                         {% for patient in patients %}
-                            <tr class="border-b text-center py-4">
-                                <td>{{ patient.id }}</td>
+                            <tr class="border-b text-center">
+                                <td class="py-3">{{ patient.id }}</td>
                                 <td>{{ patient.name }}</td>
                                 <td>{{ patient.contact }}</td>
                                 <td>{{ patient.address }}</td>

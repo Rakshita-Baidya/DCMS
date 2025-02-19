@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        {# Patient Info Card #}
+        {% comment %}Patient Info Card {% endcomment %}
         <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo p-8 mb-6 grid grid-cols-2 gap-6">
             <div class="space-y-2">
                 <p class="text-3xl font-semibold">{{ patient.name }}</p>
@@ -61,7 +61,7 @@
                 <p class="text-gray-600">{{ patient.emergency_contact_contact }}</p>
             </div>
         </div>
-        {# Tabs Section #}
+        {% comment %}Tabs Section {% endcomment %}
         <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo overflow-hidden">
             <div class="border-b border-gray-200">
                 <nav class="flex">
@@ -87,9 +87,9 @@
                     </button>
                 </nav>
             </div>
-            {# Tab Contents #}
+            {% comment %}Tab Contents {% endcomment %}
             <div class="p-6">
-                {# General Information Tab #}
+                {% comment %}General Information Tab {% endcomment %}
                 <div id="general-tab" class="tab-content">
                     <div class="grid grid-cols-3 gap-8">
                         <div class="space-y-6">
@@ -136,7 +136,7 @@
                         </div>
                     </div>
                 </div>
-                {# Dental Chart Tab #}
+                {% comment %}Dental Chart Tab {% endcomment %}
                 <div id="dental-tab" class="tab-content hidden">
                     <div class="space-y-4">
                         {% for tooth in tooth_records %}
@@ -144,7 +144,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                {# Medical History Tab #}
+                {% comment %}Medical History Tab {% endcomment %}
                 <div id="medical-tab" class="tab-content hidden">
                     <div class="grid grid-cols-2 gap-8">
                         <div>
@@ -173,11 +173,11 @@
                         </div>
                     </div>
                 </div>
-                {# Treatment History Tab #}
+                {% comment %}Treatment History Tab {% endcomment %}
                 <div id="treatment-tab" class="tab-content hidden">
                     <div class="text-center text-gray-500 py-8">Treatment history content will be displayed here</div>
                 </div>
-                {# Attachments Tab #}
+                {% comment %}Attachments Tab {% endcomment %}
                 <div id="attachments-tab" class="tab-content hidden">
                     <div class="text-center text-gray-500 py-8">Attachments content will be displayed here</div>
                 </div>

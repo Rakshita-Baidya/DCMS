@@ -9,16 +9,16 @@
                 <p class="text-secondary">The time is currently {% now "g:i A" %}</p>
                 <br />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full">
-                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center flex flex-col justify-center items-center">
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center flex flex-col justify-center items-center space-y-2">
                         <img src="{% static 'images/dashboard/Patients.png' %}"
                              alt="patient"
                              width="full"
                              height="full"
                              class="w-12 h-12 object-contain mx-auto">
-                        <h3 class="text-xl font-semibold mb-2">120</h3>
+                        <h3 class="text-xl font-semibold">{{ total_patient }}</h3>
                         <p class="text-secondary">Total Patients</p>
                     </div>
-                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center flex flex-col justify-center items-center">
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center flex flex-col justify-center items-center space-y-1">
                         <img src="{% static 'images/dashboard/Schedule.png' %}"
                              alt="appointment"
                              width="full"
