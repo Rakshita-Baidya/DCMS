@@ -51,7 +51,7 @@ class TreatmentForm(forms.ModelForm):
     class Meta:
         model = Treatment
         fields = '__all__'
-        exclude = ['patient']
+        exclude = ['appointment']
 
 
 class TreatmentDoctorForm(forms.ModelForm):

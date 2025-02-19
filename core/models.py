@@ -243,7 +243,7 @@ class Treatment(models.Model):
     appointment = models.ForeignKey(
         Appointment, on_delete=models.CASCADE, related_name='treatment_appointment')
     type = models.CharField(max_length=100, blank=True, null=True)
-    plan = models.TimeField(max_length=255, blank=True, null=True)
+    plan = models.TextField(max_length=255, blank=True, null=True)
     x_ray = models.BooleanField(default=False)
     x_ray_cost = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)

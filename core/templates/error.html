@@ -15,12 +15,12 @@
         {% comment %} Include SweetAlert2 JS {% endcomment %}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.js"></script>
     </head>
-    <body class="bg-gradient-to-b from-[#e9efef] to-primaryLogo flex justify-center items-center h-screen">
-        <div class="bg-white px-12 py-8 rounded-lg shadow-md lg:w-1/4 md:w-2/4 border-2 border-primaryLogo text-center">
-            <p class="text-5xl my-4 font-bold">404 page</p>
-            <p class="text-xl mb-6 text-secondaryLogo font-semibold">Looks like you lost your way.</p>
+    <body class="bg-[radial-gradient(ellipse_at_center,_#f0f0f0_30%,_#91DEDE_50%,_#00B2B2_100%)] flex justify-center items-center h-screen">
+        <div class="px-12 py-8 lg:w-1/2 md:w-2/4 text-center space-y-16">
+            <p class="text-9xl font-bold text-primaryLogo">404 page</p>
+            <p class="text-3xl text-secondaryLogo font-semibold pb-8">Looks like you lost your way.</p>
             <a href="{% url 'core:dashboard' %}"
-               class="bg-primaryLogo py-2 px-4 text-white rounded-md text-lg font-bold">Return to Dashboard</a>
+               class="bg-primaryLogo py-2 px-4 text-white rounded-md text-2xl font-bold">Return to Dashboard</a>
         </div>
         {% comment %} SweetAlert2 Toast Notifications {% endcomment %}
         {% if messages %}

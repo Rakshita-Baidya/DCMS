@@ -96,7 +96,9 @@
                         <div class="text-dangerRed text-sm">{{ wizard.form.marital_status.errors }}</div>
                     {% endif %}
                 </div>
-                <div class="col-start-1 col-span-4 mt-4 font-bold text-2xl text-darkText">Emergency Contact:</div>
+                <div class="col-start-1 col-span-4 mt-4 font-bold text-2xl text-darkText border-b border-darkText rounded-sm">
+                    Emergency Contact:
+                </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">Name:</label>
                     {{ wizard.form.emergency_contact_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
@@ -125,14 +127,10 @@
                         <div class="text-dangerRed text-sm">{{ wizard.form.emergency_contact_relation.errors }}</div>
                     {% endif %}
                 </div>
-                <div class="col-start-1 w-full flex space-x-6 mt-4 col-span-4">
-                    <a href="{% url 'core:patient' %}"
-                       class="text-center col-start-1 col-span-2 w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">Back to Patient list</a>
-                    <button type="submit"
-                            class="col-start-3 col-span-2 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                        Next
-                    </button>
-                </div>
+                <button type="submit"
+                        class="col-start-4 mt-4 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
+                    Next
+                </button>
             </form>
         </div>
     </div>

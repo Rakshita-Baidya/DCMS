@@ -17,66 +17,91 @@
             <p class="text-gray-700 text-2xl font-medium">Add Appointment / Treatment</p>
         </div>
         <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
-            <form method="post" enctype="multipart/form-data" class="text-md">
+            <form method="post"
+                  enctype="multipart/form-data"
+                  class="grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 lg:gap-6 gap-4">
                 {% csrf_token %}
                 {{ wizard.management_form }}
-                {{ wizard.form }}
-                {{ treatment_formset.management_form }}
-                <div id="treatments-container">
-                    {% for form in treatment_formset.forms %}
-                        <div class="treatment-form mb-4 p-4 border border-darkerPrimary rounded-md">
-                            <label class="block text-sm font-medium text-secondaryLogo">{{ form.plan.label_tag }}</label>
-                            {{ form.plan|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                            {% if form.plan.errors %}<div class="text-dangerRed text-sm">{{ form.plan.errors }}</div>{% endif %}
-                            <label class="block text-sm font-medium text-secondaryLogo">{{ form.type.label_tag }}</label>
-                            {{ form.type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                            {% if form.type.errors %}<div class="text-dangerRed text-sm">{{ form.type.errors }}</div>{% endif %}
-                        </div>
-                    {% endfor %}
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.type.label_tag }}</label>
+                    {{ form.type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if form.type.errors %}<div class="text-dangerRed text-sm">{{ form.type.errors }}</div>{% endif %}
                 </div>
-                <button type="button"
-                        id="add-treatment"
-                        class="bg-primaryLogo text-white px-4 py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo">
-                    Add Treatment
+                <div class="col-start-1 col-span-4">
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.plan.label_tag }}</label>
+                    {{ form.plan|attr:"rows:2" |add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if form.plan.errors %}<div class="text-dangerRed text-sm">{{ form.plan.errors }}</div>{% endif %}
+                </div>
+                <div class="flex items-center justify-between">
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.x_ray.label_tag }}</label>
+                    {{ form.x_ray }}
+                    {% if form.x_ray.errors %}<div class="text-dangerRed text-sm">{{ form.x_ray.errors }}</div>{% endif %}
+                </div>
+                <div class="flex items-center justify-between col-start-1">
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.lab.label_tag }}</label>
+                    {{ wizard.form.lab |attr:"id:lab" }}
+                    {% if wizard.form.lab.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.lab.errors }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.lab_order_date.label_tag }}</label>
+                    <input type="date"
+                           id="lab_order_date"
+                           name="{{ wizard.form.lab_order_date.html_name }}"
+                           value="{{ wizard.form.lab_order_date.value|date:'Y-m-d'|default_if_none:'' }}"
+                           class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                    {% if wizard.form.lab_order_date.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.lab_order_date.errors }}</div>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.lab_cost.label_tag }}</label>
+                    <input type="text"
+                           id="lab_cost"
+                           name="{{ wizard.form.lab_cost.html_name }}"
+                           class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                           value="{{ wizard.form.lab_cost.value|default_if_none:'' }}">
+                    {% if wizard.form.lab_cost.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.lab_cost.errors }}</div>
+                    {% endif %}
+                </div>
+                <p onclick="history.back()"
+                   class="col-start-3 text-center text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
+                    Previous
+                </p>
+                <button type="submit"
+                        class="text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
+                    Next
                 </button>
-                <div class="w-full flex space-x-6 mt-4">
-                    <p onclick="history.back()"
-                       class="text-center w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
-                        Previous
-                    </p>
-                    <button type="submit"
-                            class="w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                        {% if is_editing %}
-                            Save Changes
-                        {% else %}
-                            Add Patient
-                        {% endif %}
-                    </button>
-                </div>
             </form>
         </div>
     </div>
     <script>
+        function toggleField(checkboxId, fieldId) {
+            let checkbox = document.getElementById(checkboxId);
+            let field = document.getElementById(fieldId);
+    
+            // Function to handle field state
+            function updateFieldState() {
+                field.disabled = !checkbox.checked;
+                
+                // If field becomes disabled, store its current value as a data attribute
+                if (field.disabled) {
+                    field.setAttribute('data-stored-value', field.value);
+                    field.value = '';
+                } else {
+                    const storedValue = field.getAttribute('data-stored-value');
+                    if (storedValue) {
+                        field.value = storedValue;
+                    }
+                }
+            }
+            
+            updateFieldState();
+            checkbox.addEventListener("change", updateFieldState);
+        }
+    
         document.addEventListener("DOMContentLoaded", function () {
-            const container = document.getElementById("treatments-container");
-            const addButton = document.getElementById("add-treatment");
-            const totalForms = document.getElementById("id_treatments-TOTAL_FORMS");
-            let formCount = parseInt(totalForms.value);
-
-            addButton.addEventListener("click", function () {
-                const newForm = document.createElement("div");
-                newForm.classList.add("treatment-form", "mb-4", "p-4", "border", "border-darkerPrimary", "rounded-md");
-                newForm.innerHTML = `
-                    <label for="id_treatments-${formCount}-plan">Plan:</label>
-                    <input type="text" name="treatments-${formCount}-plan" id="id_treatments-${formCount}-plan" class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                    
-                    <label for="id_treatments-${formCount}-percent">Type:</label>
-                    <input type="text" name="treatments-${formCount}-type" id="id_treatments-${formCount}-type" class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                `;
-                container.appendChild(newForm);
-                formCount++;
-                totalForms.value = formCount;
-            });
+            toggleField("stroke_history", "stroke_date");
         });
     </script>
 {% endblock content %}

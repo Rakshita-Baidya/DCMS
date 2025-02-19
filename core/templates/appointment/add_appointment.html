@@ -24,11 +24,11 @@
                 {{ wizard.management_form }}
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.patient.label_tag }}</label>
-                    <select name="patient"
-                            class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                    {% comment %} <select name="patient" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
                         <option value="">Select a Patient</option>
                         {% for patient in patients %}<option value="{{ patient.id }}">{{ patient.name }}</option>{% endfor %}
-                    </select>
+                    </select> {% endcomment %}
+                    {{ wizard.form.patient|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.patient.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.patient.errors }}</div>
                     {% endif %}
@@ -55,21 +55,17 @@
                         <div class="text-dangerRed text-sm">{{ wizard.form.description.errors }}</div>
                     {% endif %}
                 </div>
-                <div class="col-start-1">
+                <div class="col-span-4">
                     <label class="block text-sm font-medium text-secondaryLogo">Appointment Cost:</label>
                     {{ wizard.form.total_amt|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.total_amt.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.total_amt.errors }}</div>
                     {% endif %}
                 </div>
-                <div class="col-start-1 w-full flex space-x-6 mt-4 col-span-4">
-                    <a href="{% url 'core:appointment' %}"
-                       class="text-center col-start-1 col-span-2 w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">Back to Appointment list</a>
-                    <button type="submit"
-                            class="col-start-3 col-span-2 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                        Next
-                    </button>
-                </div>
+                <button type="submit"
+                        class="col-start-4 mt-4 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
+                    Next
+                </button>
             </form>
         </div>
     </div>

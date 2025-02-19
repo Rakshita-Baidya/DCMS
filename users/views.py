@@ -10,6 +10,7 @@ from .models import User
 from .decorators import admin_only, allowed_users, unauthenticated_user
 
 
+
 def user_register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
