@@ -219,9 +219,9 @@ APPOINTMENT_STATUS = [
 class Appointment(models.Model):
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, related_name='patient_appointment')
-    date = models.DateTimeField(default=now, blank=True, null=True)
+    date = models.DateField(default=now, blank=True, null=True)
     time = models.CharField(max_length=25, blank=True, null=True)
-    description = models.TextField(max_length=255)
+    description = models.TextField(max_length=255, blank=True, null=True)
     status = models.CharField(
         choices=APPOINTMENT_STATUS, default="Pending")
     total_amt = models.DecimalField(

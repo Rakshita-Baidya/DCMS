@@ -601,24 +601,24 @@ def appointment(request):
     return render(request, 'appointment/appointment.html', context)
 
 
-def add_appointment(request):
-    if request.method == 'POST':
-        form = AppointmentForm(request.POST)
-        if form.is_valid():
-            appointment = form.save(commit=False)
-            appointment.save()
-            messages.success(
-                request, 'The appointment has been scheduled successfully!')
-            return redirect('core:appointment')
-    else:
-        form = AppointmentForm()
+# def add_appointment(request):
+#     if request.method == 'POST':
+#         form = AppointmentForm(request.POST)
+#         if form.is_valid():
+#             appointment = form.save(commit=False)
+#             appointment.save()
+#             messages.success(
+#                 request, 'The appointment has been scheduled successfully!')
+#             return redirect('core:appointment')
+#     else:
+#         form = AppointmentForm()
 
-    context = {
-        'page_title': 'Appointment Management',
-        'active_page': 'appointment',
-        'form': form,
-    }
-    return render(request, 'appointment/add_appointment.html', context)
+#     context = {
+#         'page_title': 'Appointment Management',
+#         'active_page': 'appointment',
+#         'form': form,
+#     }
+#     return render(request, 'appointment/add_appointment.html', context)
 
 
 class AppointmentFormWizard(SessionWizardView):
@@ -641,11 +641,12 @@ class AppointmentFormWizard(SessionWizardView):
         context.update({
             'page_title': 'Appointment Management',
             'active_page': 'appointment',
+            'patients': Patient.objects.all(),
         })
         if self.steps.current == '2':
             context['treatment_doctor_formset'] = TreatmentDoctorFormSet()
         if self.steps.current == '3':
-            context['purchased product_formset'] = PurchasedProductFormSet()
+            context['purchased_product_formset'] = PurchasedProductFormSet()
         return context
 
     def get_form_instance(self, step):
