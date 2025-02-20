@@ -47,7 +47,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.time.label_tag }}</label>
-                    {{ wizard.form.time|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {{ wizard.form.time|attr:"type:time"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.time.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.time.errors }}</div>{% endif %}
                 </div>
                 <div>

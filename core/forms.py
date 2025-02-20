@@ -62,7 +62,7 @@ class TreatmentDoctorForm(forms.ModelForm):
 
 
 TreatmentDoctorFormSet = forms.inlineformset_factory(
-    Treatment, TreatmentDoctor, form=TreatmentDoctorForm, extra=0)
+    Treatment, TreatmentDoctor, form=TreatmentDoctorForm, extra=1, can_delete=True)
 
 
 class PurchasedProductForm(forms.ModelForm):
@@ -73,4 +73,4 @@ class PurchasedProductForm(forms.ModelForm):
 
 
 PurchasedProductFormSet = forms.inlineformset_factory(
-    Appointment, PurchasedProduct, form=PurchasedProductForm, extra=0)
+    Appointment, PurchasedProduct, form=PurchasedProductForm, extra=1, can_delete=True)

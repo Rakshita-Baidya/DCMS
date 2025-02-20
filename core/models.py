@@ -288,5 +288,10 @@ class PurchasedProduct(models.Model):
     date_created = models.DateTimeField(default=now,
                                         blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        if self.rate is not None and self.quantity is not None:
+            self.total_amt = self.rate * self.quantity
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.name} - {self.quantity} pcs"
