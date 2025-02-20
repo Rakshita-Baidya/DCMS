@@ -62,15 +62,14 @@ class TreatmentDoctorForm(forms.ModelForm):
 
 
 TreatmentDoctorFormSet = forms.inlineformset_factory(
-    Treatment, TreatmentDoctor, form=TreatmentDoctorForm, extra=0
-)
+    Treatment, TreatmentDoctor, form=TreatmentDoctorForm, extra=0)
 
 
 class PurchasedProductForm(forms.ModelForm):
     class Meta:
         model = PurchasedProduct
         fields = '__all__'
-        exclude = ['appointment']
+        exclude = ['appointment', 'total_amt']
 
 
 PurchasedProductFormSet = forms.inlineformset_factory(

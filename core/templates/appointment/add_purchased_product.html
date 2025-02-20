@@ -14,41 +14,57 @@
                     <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
                 </svg>
             </a>
-            <p class="text-gray-700 text-2xl font-medium">Add Appointment / Treatment Doctors</p>
+            <p class="text-gray-700 text-2xl font-medium">
+                {% if is_editing %}
+                    Edit
+                {% else %}
+                    Add
+                {% endif %}
+                Appointment / Purchased Products
+            </p>
         </div>
         <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
             <form method="post" enctype="multipart/form-data" class="text-md">
                 {% csrf_token %}
                 {{ wizard.management_form }}
-                {{ wizard.form }}
-                <h3 class="font-bold text-xl text-darkText text-center mb-4">Doctors</h3>
-                {{ purchased_product_formset.management_form }}
-                <div id="purchased-products-container">
-                    {% for form in purchased_product_formset.forms %}
-                        <div class="purchased-product-form mb-4 p-4 border border-darkerPrimary rounded-md">
-                            <label class="block text-sm font-medium text-secondaryLogo">{{ form.name.label_tag }}</label>
-                            {{ form.name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                            {% if form.name.errors %}<div class="text-dangerRed text-sm">{{ form.name.errors }}</div>{% endif %}
-                        </div>
-                    {% endfor %}
-                </div>
+                {{ wizard.form.management_form }}
+                {% for hidden_field in wizard.form.hidden_fields %}{{ hidden_field }}{% endfor %}
+                <h3 class="font-bold text-xl text-darkText text-center mb-4">Purchased Products</h3>
+                {% if purchased_product_formset %}
+                    {{ purchased_product_formset.management_form }}
+                    <div id="purchased-products-container">
+                        {% for form in purchased_product_formset.forms %}
+                            <div class="purchased-product-form mb-4 p-4 border border-darkerPrimary rounded-md">
+                                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                                <label class="block text-sm font-medium text-secondaryLogo">{{ form.name.label_tag }}</label>
+                                {{ form.name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                                {% if form.name.errors %}<div class="text-dangerRed text-sm">{{ form.name.errors }}</div>{% endif %}
+                                <label class="block text-sm font-medium text-secondaryLogo">{{ form.rate.label_tag }}</label>
+                                {{ form.rate|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                                {% if form.rate.errors %}<div class="text-dangerRed text-sm">{{ form.rate.errors }}</div>{% endif %}
+                                <label class="block text-sm font-medium text-secondaryLogo">{{ form.quantity.label_tag }}</label>
+                                {{ form.quantity|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                                {% if form.quantity.errors %}<div class="text-dangerRed text-sm">{{ form.quantity.errors }}</div>{% endif %}
+                                <label class="block text-sm font-medium text-secondaryLogo">{{ form.total_amt.label_tag }}</label>
+                                Total
+                                {% if form.total_amt.errors %}<div class="text-dangerRed text-sm">{{ form.total_amt.errors }}</div>{% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <button type="button"
                         id="add-purchased-product"
                         class="bg-primaryLogo text-white px-4 py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo">
-                    Add Product
+                    Add Purchased Product
                 </button>
-                <div class="w-full flex space-x-6 mt-4">
+                <div class="grid grid-cols-4 gap-6">
                     <p onclick="history.back()"
-                       class="text-center w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
+                       class="col-start-3 text-center text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
                         Previous
                     </p>
                     <button type="submit"
-                            class="w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                        {% if is_editing %}
-                            Save Changes
-                        {% else %}
-                            Add Appointment
-                        {% endif %}
+                            class="text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
+                        Next
                     </button>
                 </div>
             </form>
@@ -58,17 +74,38 @@
         document.addEventListener("DOMContentLoaded", function () {
             const container = document.getElementById("purchased-products-container");
             const addButton = document.getElementById("add-purchased-product");
-            const totalForms = document.getElementById("id_purchased_products-TOTAL_FORMS");
+            const totalForms = document.querySelector("[name$='-TOTAL_FORMS']");
+            
             let formCount = parseInt(totalForms.value);
+            const formsetPrefix = totalForms.name.replace('-TOTAL_FORMS', '');
 
             addButton.addEventListener("click", function () {
                 const newForm = document.createElement("div");
                 newForm.classList.add("purchased-product-form", "mb-4", "p-4", "border", "border-darkerPrimary", "rounded-md");
+                
                 newForm.innerHTML = `
-                    <label for="id_purchased_products-${formCount}-name">Product Name:</label>
-                    <input type="text" name="purchased_products-${formCount}-name" id="id_purchased_products-${formCount}-name" class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
                     
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-secondaryLogo" for="id_${formsetPrefix}-${formCount}-name">Name:</label>
+                        <input type="text" name="${formsetPrefix}-${formCount}-name" id="id_${formsetPrefix}-${formCount}-name" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-secondaryLogo" for="id_${formsetPrefix}-${formCount}-rate">Rate:</label>
+                        <input type="number" name="${formsetPrefix}-${formCount}-rate" id="id_${formsetPrefix}-${formCount}-rate" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-secondaryLogo" for="id_${formsetPrefix}-${formCount}-quantity">Quantity:</label>
+                        <input type="number" name="${formsetPrefix}-${formCount}-quantity" id="id_${formsetPrefix}-${formCount}-quantity" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                    </div>
+
+                    
+                    
+                    <input type="hidden" name="${formsetPrefix}-${formCount}-id" id="id_${formsetPrefix}-${formCount}-id">
                 `;
+
                 container.appendChild(newForm);
                 formCount++;
                 totalForms.value = formCount;

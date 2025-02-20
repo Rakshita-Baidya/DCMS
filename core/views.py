@@ -601,29 +601,9 @@ def appointment(request):
     return render(request, 'appointment/appointment.html', context)
 
 
-# def add_appointment(request):
-#     if request.method == 'POST':
-#         form = AppointmentForm(request.POST)
-#         if form.is_valid():
-#             appointment = form.save(commit=False)
-#             appointment.save()
-#             messages.success(
-#                 request, 'The appointment has been scheduled successfully!')
-#             return redirect('core:appointment')
-#     else:
-#         form = AppointmentForm()
-
-#     context = {
-#         'page_title': 'Appointment Management',
-#         'active_page': 'appointment',
-#         'form': form,
-#     }
-#     return render(request, 'appointment/add_appointment.html', context)
-
-
 class AppointmentFormWizard(SessionWizardView):
     form_list = [AppointmentForm, TreatmentForm,
-                 TreatmentDoctorForm, PurchasedProductFormSet]
+                 TreatmentDoctorFormSet, PurchasedProductFormSet]
     file_storage = FileSystemStorage(
         location=os.path.join("media", "appointment"))
 
@@ -647,9 +627,29 @@ class AppointmentFormWizard(SessionWizardView):
 
         })
         if self.steps.current == '2':
-            context['treatment_doctor_formset'] = TreatmentDoctorFormSet()
+            if self.storage.get_step_data('2'):
+                treatment_doctor_formset = TreatmentDoctorFormSet(
+                    self.storage.get_step_data('2'),
+                    prefix='treatment_doctors'
+                )
+            else:
+                treatment_doctor_formset = TreatmentDoctorFormSet(
+                    prefix='treatment_doctors',
+                    instance=Treatment()
+                )
+            context['treatment_doctor_formset'] = treatment_doctor_formset
         if self.steps.current == '3':
-            context['purchased_product_formset'] = PurchasedProductFormSet()
+            if self.storage.get_step_data('3'):
+                purchased_product_formset = PurchasedProductFormSet(
+                    self.storage.get_step_data('3'),
+                    prefix='purchased_product'
+                )
+            else:
+                purchased_product_formset = PurchasedProductFormSet(
+                    prefix='purchased_product',
+                    instance=Appointment()
+                )
+            context['purchased_product_formset'] = purchased_product_formset
         return context
 
     def get_form_instance(self, step):
@@ -672,23 +672,25 @@ class AppointmentFormWizard(SessionWizardView):
         treatment.appointment = appointment
         treatment.save()
 
-        treatment_doctor = form_list[2].save(commit=False)
-        treatment_doctor.treatment = treatment
-        treatment_doctor.save()
+        treatment_doctor_data = self.storage.get_step_data('2')
+        if treatment_doctor_data:
+            treatment_doctor_formset = TreatmentDoctorFormSet(
+                treatment_doctor_data,
+                instance=treatment,
+                prefix='treatment_doctors'
+            )
+            if treatment_doctor_formset.is_valid():
+                treatment_doctor_formset.save()
 
-        purchased_product = form_list[3].save(commit=False)
-        purchased_product.appointment = appointment
-        purchased_product.save()
-
-        treatment_doctor_formset = TreatmentDoctorFormSet(
-            request.POST, instance=treatment_doctor)
-        if treatment_doctor_formset.is_valid():
-            treatment_doctor_formset.save()
-
-        purchased_product_formset = PurchasedProductFormSet(
-            request.POST, instance=purchased_product)
-        if purchased_product_formset.is_valid():
-            purchased_product_formset.save()
+        purchased_product_data = self.storage.get_step_data('3')
+        if purchased_product_data:
+            purchased_product_formset = PurchasedProductFormSet(
+                purchased_product_data,
+                instance=appointment,
+                prefix='purchased_product'
+            )
+            if purchased_product_formset.is_valid():
+                purchased_product_formset.save()
 
         messages.success(
             request, 'The appointment has been added successfully!')
