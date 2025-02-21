@@ -642,11 +642,11 @@ class AppointmentFormWizard(SessionWizardView):
             if self.storage.get_step_data('3'):
                 purchased_product_formset = PurchasedProductFormSet(
                     self.storage.get_step_data('3'),
-                    prefix='purchased_product'
+                    prefix='purchased_products'
                 )
             else:
                 purchased_product_formset = PurchasedProductFormSet(
-                    prefix='purchased_product',
+                    prefix='purchased_products',
                     instance=Appointment()
                 )
             context['purchased_product_formset'] = purchased_product_formset

@@ -34,14 +34,18 @@
                     {{ treatment_doctor_formset.management_form }}
                     <div id="treatment-doctors-container">
                         {% for form in treatment_doctor_formset.forms %}
-                            <div class="treatment-doctor-form mb-4 p-4 border border-darkerPrimary rounded-md">
+                            <div class="treatment-doctor-form mb-4 p-4 border border-darkerPrimary rounded-md grid grid-cols-2 gap-6">
                                 {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-                                <label class="block text-sm font-medium text-secondaryLogo">{{ form.doctor.label_tag }}</label>
-                                {{ form.doctor|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                                {% if form.doctor.errors %}<div class="text-dangerRed text-sm">{{ form.doctor.errors }}</div>{% endif %}
-                                <label class="block text-sm font-medium text-secondaryLogo">{{ form.percent.label_tag }}</label>
-                                {{ form.percent|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                                {% if form.percent.errors %}<div class="text-dangerRed text-sm">{{ form.percent.errors }}</div>{% endif %}
+                                <div>
+                                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.doctor.label_tag }}</label>
+                                    {{ form.doctor|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                                    {% if form.doctor.errors %}<div class="text-dangerRed text-sm">{{ form.doctor.errors }}</div>{% endif %}
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.percent.label_tag }}</label>
+                                    {{ form.percent|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                                    {% if form.percent.errors %}<div class="text-dangerRed text-sm">{{ form.percent.errors }}</div>{% endif %}
+                                </div>
                             </div>
                         {% endfor %}
                     </div>
