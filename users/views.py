@@ -1,9 +1,6 @@
 from rest_framework_simplejwt.tokens import RefreshToken
 from .forms import LoginForm
-from django.http import JsonResponse
 from django.shortcuts import redirect, render
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
