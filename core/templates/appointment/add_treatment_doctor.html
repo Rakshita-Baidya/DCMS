@@ -65,7 +65,7 @@
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        {% comment %} document.addEventListener("DOMContentLoaded", function () {
             const container = document.getElementById("treatment-doctors-container");
             const addButton = document.getElementById("add-treatment-doctor");
             const totalForms = document.querySelector("[name$='-TOTAL_FORMS']");
@@ -100,6 +100,76 @@
                 formCount++;
                 totalForms.value = formCount;
             });
+}); {% endcomment %}
+            {% comment %} document.addEventListener("DOMContentLoaded", function () {
+                const container = document.getElementById("treatment-doctors-container");
+                const addButton = document.getElementById("add-treatment-doctor");
+                const totalForms = document.querySelector("[name='treatment_doctors-TOTAL_FORMS']");
+        
+                let formCount = parseInt(totalForms.value);
+        
+                addButton.addEventListener("click", function () {
+                    const newForm = document.createElement("div");
+                    newForm.classList.add("treatment-doctor-form", "mb-4", "p-4", "border", "border-darkerPrimary", "rounded-md");
+        
+                    newForm.innerHTML = `
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-secondaryLogo" for="id_treatment_doctors-${formCount}-doctor">Doctor:</label>
+                            <select name="treatment_doctors-${formCount}-doctor" id="id_treatment_doctors-${formCount}-doctor" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                                <option value="">---------</option>
+                                {% for doctor in doctors %}
+                                    <option value="{{ doctor.id }}">{{ doctor.get_full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-secondaryLogo" for="id_treatment_doctors-${formCount}-percent">Percent:</label>
+                            <input type="number" name="treatment_doctors-${formCount}-percent" id="id_treatment_doctors-${formCount}-percent" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                        </div>
+        
+                        <input type="hidden" name="treatment_doctors-${formCount}-id" id="id_treatment_doctors-${formCount}-id">
+                    `;
+        
+                    container.appendChild(newForm);
+                    formCount++;
+                    totalForms.value = formCount;
+                });
+            });
+{% endcomment %}
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.getElementById("treatment-doctors-container");
+            const addButton = document.getElementById("add-treatment-doctor");
+            const totalForms = document.querySelector("[name='treatment_doctors-TOTAL_FORMS']");
+    
+            addButton.addEventListener("click", function () {
+                let formCount = parseInt(totalForms.value); 
+                let emptyForm = document.querySelector(".treatment-doctor-form"); 
+                
+                if (!emptyForm) {
+                    console.error("No form found to clone.");
+                    return;
+                }
+    
+                let newForm = emptyForm.cloneNode(true);
+                newForm.querySelectorAll("input, select").forEach(input => {
+                    if (input.name) {
+                        let oldName = input.name;
+                        let oldId = input.id;
+    
+                        let newName = oldName.replace(/\d+/, formCount);
+                        let newId = oldId.replace(/\d+/, formCount);
+    
+                        input.name = newName;
+                        input.id = newId;
+                        input.value = ""; 
+                    }
+                });
+    
+                container.appendChild(newForm); 
+                totalForms.value = formCount + 1; 
+            });
         });
+        
     </script>
 {% endblock content %}

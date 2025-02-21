@@ -687,7 +687,7 @@ class AppointmentFormWizard(SessionWizardView):
             purchased_product_formset = PurchasedProductFormSet(
                 purchased_product_data,
                 instance=appointment,
-                prefix='purchased_product'
+                prefix='purchased_products'
             )
             if purchased_product_formset.is_valid():
                 purchased_product_formset.save()

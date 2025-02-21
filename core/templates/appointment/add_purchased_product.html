@@ -45,9 +45,6 @@
                                 <label class="block text-sm font-medium text-secondaryLogo">{{ form.quantity.label_tag }}</label>
                                 {{ form.quantity|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                                 {% if form.quantity.errors %}<div class="text-dangerRed text-sm">{{ form.quantity.errors }}</div>{% endif %}
-                                <label class="block text-sm font-medium text-secondaryLogo">{{ form.total_amt.label_tag }}</label>
-                                Total
-                                {% if form.total_amt.errors %}<div class="text-dangerRed text-sm">{{ form.total_amt.errors }}</div>{% endif %}
                             </div>
                         {% endfor %}
                     </div>
@@ -74,41 +71,35 @@
         document.addEventListener("DOMContentLoaded", function () {
             const container = document.getElementById("purchased-products-container");
             const addButton = document.getElementById("add-purchased-product");
-            const totalForms = document.querySelector("[name$='-TOTAL_FORMS']");
-            
-            let formCount = parseInt(totalForms.value);
-            const formsetPrefix = totalForms.name.replace('-TOTAL_FORMS', '');
+            const totalForms = document.querySelector("[name='purchased_products-TOTAL_FORMS']");
 
             addButton.addEventListener("click", function () {
-                const newForm = document.createElement("div");
-                newForm.classList.add("purchased-product-form", "mb-4", "p-4", "border", "border-darkerPrimary", "rounded-md");
+                let formCount = parseInt(totalForms.value); 
+                let emptyForm = document.querySelector(".purchased-product-form"); 
                 
-                newForm.innerHTML = `
-                    
-                    
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-secondaryLogo" for="id_${formsetPrefix}-${formCount}-name">Name:</label>
-                        <input type="text" name="${formsetPrefix}-${formCount}-name" id="id_${formsetPrefix}-${formCount}-name" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                    </div>
+                if (!emptyForm) {
+                    console.error("No form found to clone.");
+                    return;
+                }
 
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-secondaryLogo" for="id_${formsetPrefix}-${formCount}-rate">Rate:</label>
-                        <input type="number" name="${formsetPrefix}-${formCount}-rate" id="id_${formsetPrefix}-${formCount}-rate" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                    </div>
+                const newForm = firstForm.cloneNode(true);
+                newForm.querySelectorAll("input, select").forEach(input => {
+                    if (input.name) {
+                        const oldName = input.name;
+                        const oldId = input.id;
 
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-secondaryLogo" for="id_${formsetPrefix}-${formCount}-quantity">Quantity:</label>
-                        <input type="number" name="${formsetPrefix}-${formCount}-quantity" id="id_${formsetPrefix}-${formCount}-quantity" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                    </div>
+                        const newName = oldName.replace(/\d+/, formCount);
+                        const newId = oldId.replace(/\d+/, formCount);
 
-                    
-                    
-                    <input type="hidden" name="${formsetPrefix}-${formCount}-id" id="id_${formsetPrefix}-${formCount}-id">
-                `;
+                        input.name = newName;
+                        input.id = newId;
+                        input.value = ""; 
+                    }
+                });
 
-                container.appendChild(newForm);
-                formCount++;
-                totalForms.value = formCount;
+                
+                container.appendChild(newForm); 
+                totalForms.value = formCount + 1; 
             });
         });
     </script>

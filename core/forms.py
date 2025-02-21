@@ -1,6 +1,7 @@
 from django import forms
 from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart,
                      ToothRecord, Transaction, Appointment, Treatment, TreatmentDoctor, PurchasedProduct)
+from users.models import User
 
 
 class PatientForm(forms.ModelForm):
@@ -59,6 +60,13 @@ class TreatmentDoctorForm(forms.ModelForm):
         model = TreatmentDoctor
         fields = '__all__'
         exclude = ['treatment']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Only allow users who have a doctor_profile
+        self.fields['doctor'].queryset = User.objects.filter(
+            role='Doctor', doctor_profile__isnull=False)
+        self.fields['doctor'].label_from_instance = lambda obj: obj.get_full_name()
 
 
 TreatmentDoctorFormSet = forms.inlineformset_factory(

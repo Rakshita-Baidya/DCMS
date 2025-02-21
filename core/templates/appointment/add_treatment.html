@@ -61,6 +61,22 @@
                     {% if wizard.form.lab.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.lab.errors }}</div>{% endif %}
                 </div>
                 <div class="flex items-center justify-between">
+                    <label class="font-medium text-secondaryLogo">Lab sent to:</label>
+                    <select id="lab_sent"
+                            name="{{ wizard.form.lab_sent.html_name }}"
+                            class="w-40 px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                        {% for value, label in wizard.form.lab_sent.field.choices %}
+                            <option value="{{ value }}"
+                                    {% if wizard.form.lab_sent.value == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if wizard.form.lab_sent.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.lab_sent.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="flex items-center justify-between">
                     <label class="font-medium text-secondaryLogo">{{ wizard.form.lab_order_date.label_tag }}</label>
                     <input type="date"
                            id="lab_order_date"
@@ -127,6 +143,7 @@
     
         document.addEventListener("DOMContentLoaded", function () {
             toggleField("x_ray", "x_ray_cost");
+            toggleField("lab", "lab_sent");
             toggleField("lab", "lab_order_date");
             toggleField("lab", "lab_cost");
         });
