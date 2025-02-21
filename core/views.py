@@ -581,7 +581,7 @@ def appointment(request):
     search_query = request.GET.get('search', '')
     if search_query:
         appointment_queryset = appointment_queryset.filter(
-            Q(patient__icontains=search_query) |
+            Q(patient__name__icontains=search_query) |
             Q(description__icontains=search_query)
         )
 
@@ -625,6 +625,103 @@ class AppointmentFormWizard(SessionWizardView):
             'patients': Patient.objects.all(),
             'doctors': User.objects.filter(role='Doctor', doctor_profile__isnull=False)
 
+        })
+        if self.steps.current == '2':
+            if self.storage.get_step_data('2'):
+                treatment_doctor_formset = TreatmentDoctorFormSet(
+                    self.storage.get_step_data('2'),
+                    prefix='treatment_doctors'
+                )
+            else:
+                treatment_doctor_formset = TreatmentDoctorFormSet(
+                    prefix='treatment_doctors',
+                    instance=Treatment()
+                )
+            context['treatment_doctor_formset'] = treatment_doctor_formset
+        if self.steps.current == '3':
+            if self.storage.get_step_data('3'):
+                purchased_product_formset = PurchasedProductFormSet(
+                    self.storage.get_step_data('3'),
+                    prefix='purchased_products'
+                )
+            else:
+                purchased_product_formset = PurchasedProductFormSet(
+                    prefix='purchased_products',
+                    instance=Appointment()
+                )
+            context['purchased_product_formset'] = purchased_product_formset
+        return context
+
+    def get_form_instance(self, step):
+        if step == '0':
+            return Appointment()
+        elif step == '1':
+            return Treatment()
+        elif step == '2':
+            return TreatmentDoctor()
+        elif step == '3':
+            return PurchasedProduct()
+        return None
+
+    def done(self, form_list, **kwargs):
+        request = self.request
+
+        appointment = form_list[0].save()
+
+        treatment = form_list[1].save(commit=False)
+        treatment.appointment = appointment
+        treatment.save()
+
+        treatment_doctor_data = self.storage.get_step_data('2')
+        if treatment_doctor_data:
+            treatment_doctor_formset = TreatmentDoctorFormSet(
+                treatment_doctor_data,
+                instance=treatment,
+                prefix='treatment_doctors'
+            )
+            if treatment_doctor_formset.is_valid():
+                treatment_doctor_formset.save()
+
+        purchased_product_data = self.storage.get_step_data('3')
+        if purchased_product_data:
+            purchased_product_formset = PurchasedProductFormSet(
+                purchased_product_data,
+                instance=appointment,
+                prefix='purchased_products'
+            )
+            if purchased_product_formset.is_valid():
+                purchased_product_formset.save()
+
+        messages.success(
+            request, 'The appointment has been added successfully!')
+        return redirect('core:appointment')
+
+
+class EditAppointmentWizard(SessionWizardView):
+    form_list = [AppointmentForm, TreatmentForm,
+                 TreatmentDoctorFormSet, PurchasedProductFormSet]
+    file_storage = FileSystemStorage(
+        location=os.path.join("media", "appointment"))
+
+    TEMPLATES = {
+        '0': 'appointment/add_appointment.html',
+        '1': 'appointment/add_treatment.html',
+        '2': 'appointment/add_treatment_doctor.html',
+        '3': 'appointment/add_purchased_product.html',
+    }
+
+    def get_template_names(self):
+        return [self.TEMPLATES.get(str(self.steps.current), "appointment/add_appointment.html")]
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+        appointment_id = self.kwargs.get('appointment_id')
+        context.update({
+            'page_title': 'Appointment Management',
+            'active_page': 'appointment',
+            'patients': Patient.objects.all(),
+            'doctors': User.objects.filter(role='Doctor', doctor_profile__isnull=False),
+            'is_editing': bool(appointment_id),
         })
         if self.steps.current == '2':
             if self.storage.get_step_data('2'):

@@ -37,6 +37,8 @@
                             <th class="pb-2">Date</th>
                             <th class="pb-2">Time</th>
                             <th class="pb-2">Description</th>
+                            <th class="pb-2">Status</th>
+                            <th class="pb-2">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,10 +49,11 @@
                                 <td>{{ appointment.date }}</td>
                                 <td>{{ appointment.time }}</td>
                                 <td>{{ appointment.description }}</td>
+                                <td>{{ appointment.status }}</td>
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">
                                         {% comment %} edit {% endcomment %}
-                                        {% comment %} <a href="{% url 'core:edit_patient_profile' patient.id %}"> {% endcomment %}
+                                        <a href="{% url 'core:edit_appointment' appointment.id %}">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"

@@ -1,3 +1,8 @@
+from rest_framework_simplejwt.tokens import RefreshToken
+from .forms import LoginForm
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -8,7 +13,6 @@ from django.contrib.auth.models import Group
 from .forms import RegistrationForm, LoginForm, StaffForm, DoctorForm, UserEditForm
 from .models import User
 from .decorators import admin_only, allowed_users, unauthenticated_user
-
 
 
 def user_register(request):
@@ -41,22 +45,38 @@ def user_login(request):
             if user:
                 # Check if the user has already completed their first login setup
                 if user.last_login is None:
-                    # Store user ID temporarily in session
                     request.session['temp_user_id'] = user.id
 
-                    # Redirect based on role to the corresponding form
                     if user.role == 'Staff':
                         return redirect('staff_form')
                     elif user.role == 'Doctor':
                         return redirect('doctor_form')
                     elif user.role == 'Administrator':
-                        login(request, user)  # Directly log in admins
+                        login(request, user)
                         return redirect('core:dashboard')
                 else:
-                    # Directly log the user in if it's not their first login
                     login(request, user)
+                    refresh = RefreshToken.for_user(user)
+
+                    # Store tokens
+                    access_token = str(refresh.access_token)
+                    refresh_token = str(refresh)
+
+                    # Set the JWT as an HTTP-only cookie
+                    response = redirect('core:dashboard')
+                    response.set_cookie(
+                        key='jwt',
+                        value=access_token,
+                        httponly=True,
+                        secure=True,    # Use in production with HTTPS
+                        samesite='Lax'
+                    )
+
+                    # Set the Authorization header for frontend requests
+                    response['Authorization'] = f'Bearer {access_token}'
+
                     messages.success(request, "Login successful!")
-                    return redirect('core:dashboard')
+                    return response
             else:
                 messages.error(request, "Invalid username or password.")
         else:
@@ -135,7 +155,9 @@ def doctor_form(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect('login')
+    response = redirect('login')
+    response.delete_cookie('jwt')
+    return response
 
 
 @login_required(login_url='login')
