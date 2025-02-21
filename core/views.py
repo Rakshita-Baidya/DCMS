@@ -725,21 +725,21 @@ class EditAppointmentWizard(SessionWizardView):
             'is_editing': bool(appointment_id),
         })
 
-        if self.steps.current == '2':  # TreatmentDoctor Formset step
+        if self.steps.current == '2':  
             treatment = Treatment.objects.filter(
                 appointment_id=appointment_id).first()
             treatment_doctor_formset = TreatmentDoctorFormSet(
                 self.storage.get_step_data('2') or None,
-                instance=treatment,  # ✅ Pass treatment instance
+                instance=treatment,  
                 prefix='treatment_doctors'
             )
             context['treatment_doctor_formset'] = treatment_doctor_formset
 
-        if self.steps.current == '3':  # PurchasedProduct Formset step
+        if self.steps.current == '3': 
             appointment = get_object_or_404(Appointment, id=appointment_id)
             purchased_product_formset = PurchasedProductFormSet(
                 self.storage.get_step_data('3') or None,
-                instance=appointment,  # ✅ Pass appointment instance
+                instance=appointment, 
                 prefix='purchased_products'
             )
             context['purchased_product_formset'] = purchased_product_formset
@@ -764,9 +764,7 @@ class EditAppointmentWizard(SessionWizardView):
                 appointment=appointment).first()
             return treatment
         elif step == '3':
-            appointment = get_object_or_404(Appointment, id=appointment_id)
-            return appointment if appointment else None
-
+            return appointment
         return None
 
     def done(self, form_list, **kwargs):
