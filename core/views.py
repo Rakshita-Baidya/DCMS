@@ -702,7 +702,6 @@ class EditAppointmentWizard(SessionWizardView):
                  TreatmentDoctorFormSet, PurchasedProductFormSet]
     file_storage = FileSystemStorage(
         location=os.path.join("media", "appointment"))
-
     TEMPLATES = {
         '0': 'appointment/add_appointment.html',
         '1': 'appointment/add_treatment.html',
@@ -725,26 +724,51 @@ class EditAppointmentWizard(SessionWizardView):
             'is_editing': bool(appointment_id),
         })
 
-        if self.steps.current == '2':  
-            treatment = Treatment.objects.filter(
-                appointment_id=appointment_id).first()
-            treatment_doctor_formset = TreatmentDoctorFormSet(
-                self.storage.get_step_data('2') or None,
-                instance=treatment,  
-                prefix='treatment_doctors'
-            )
-            context['treatment_doctor_formset'] = treatment_doctor_formset
+        # Handle formsets directly in context
+        if self.steps.current == '2':
+            # For TreatmentDoctorFormSet
+            treatment = None
+            if appointment_id:
+                appointment = get_object_or_404(Appointment, id=appointment_id)
+                treatment = Treatment.objects.filter(
+                    appointment=appointment).first()
 
-        if self.steps.current == '3': 
-            appointment = get_object_or_404(Appointment, id=appointment_id)
-            purchased_product_formset = PurchasedProductFormSet(
-                self.storage.get_step_data('3') or None,
-                instance=appointment, 
-                prefix='purchased_products'
-            )
-            context['purchased_product_formset'] = purchased_product_formset
+            context['treatment_doctor_formset'] = form
+            if isinstance(form, TreatmentDoctorFormSet):
+                if self.storage.get_step_data('2'):
+                    form.initial = self.storage.get_step_data('2')
+                context['treatment_doctor_formset'] = form
+
+        elif self.steps.current == '3':
+            # For PurchasedProductFormSet
+            if appointment_id:
+                appointment = get_object_or_404(Appointment, id=appointment_id)
+                context['purchased_product_formset'] = form
+                if isinstance(form, PurchasedProductFormSet):
+                    if self.storage.get_step_data('3'):
+                        form.initial = self.storage.get_step_data('3')
+                    context['purchased_product_formset'] = form
 
         return context
+
+    def get_form(self, step=None, data=None, files=None):
+        form = super().get_form(step, data, files)
+
+        appointment_id = self.kwargs.get('appointment_id')
+        if appointment_id:
+            appointment = get_object_or_404(Appointment, id=appointment_id)
+
+            if step == '2':
+                treatment = Treatment.objects.filter(
+                    appointment=appointment).first()
+                if isinstance(form, TreatmentDoctorFormSet):
+                    if treatment:
+                        form.instance = treatment
+            elif step == '3':
+                if isinstance(form, PurchasedProductFormSet):
+                    form.instance = appointment
+
+        return form
 
     def get_form_instance(self, step):
         appointment_id = self.kwargs.get('appointment_id')
@@ -756,12 +780,17 @@ class EditAppointmentWizard(SessionWizardView):
         if step == '0':
             return appointment
         elif step == '1':
-            treatment, _ = Treatment.objects.get_or_create(
-                appointment=appointment)
+            treatment = Treatment.objects.filter(
+                appointment=appointment).first()
+            if not treatment:
+                treatment = Treatment(appointment=appointment)
             return treatment
         elif step == '2':
             treatment = Treatment.objects.filter(
                 appointment=appointment).first()
+            if not treatment:
+                treatment = Treatment(appointment=appointment)
+                treatment.save()
             return treatment
         elif step == '3':
             return appointment
@@ -780,34 +809,64 @@ class EditAppointmentWizard(SessionWizardView):
 
         # Save Treatment data
         treatment_form = form_list[1]
-        treatment, _ = Treatment.objects.update_or_create(
-            appointment=appointment, defaults=treatment_form.cleaned_data)
+        treatment = Treatment.objects.filter(appointment=appointment).first()
+        if not treatment:
+            treatment = Treatment(appointment=appointment)
+
+        for field, value in treatment_form.cleaned_data.items():
+            setattr(treatment, field, value)
+        treatment.save()
 
         # Save multiple TreatmentDoctor records
-        treatment_doctor_data = self.storage.get_step_data('2')
-        if treatment_doctor_data:
-            treatment_doctor_formset = TreatmentDoctorFormSet(
-                treatment_doctor_data,
-                instance=treatment,
-                prefix='treatment_doctors'
-            )
-            if treatment_doctor_formset.is_valid():
-                treatment_doctor_formset.save()
+        treatment_doctor_formset = form_list[2]
+        if treatment_doctor_formset.is_valid():
+            treatment_doctor_formset.instance = treatment
+            treatment_doctor_formset.save()
 
         # Save multiple PurchasedProduct records
-        purchased_product_data = self.storage.get_step_data('3')
-        if purchased_product_data:
-            purchased_product_formset = PurchasedProductFormSet(
-                purchased_product_data,
-                instance=appointment,
-                prefix='purchased_products'
-            )
-            if purchased_product_formset.is_valid():
-                purchased_product_formset.save()
+        purchased_product_formset = form_list[3]
+        if purchased_product_formset.is_valid():
+            purchased_product_formset.instance = appointment
+            purchased_product_formset.save()
 
         messages.success(
             request, 'The appointment has been updated successfully!')
         return redirect('core:appointment')
+
+
+@login_required(login_url='login')
+def view_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, pk=appointment_id)
+
+    # Get related data
+    treatment = Treatment.objects.filter(appointment=appointment).first()
+    treatment_doctors = TreatmentDoctor.objects.filter(
+        treatment=treatment) if treatment else None
+    purchased_products = PurchasedProduct.objects.filter(
+        appointment=appointment)
+
+    # Handle deletion
+    if request.method == 'POST' and 'delete_appointment_id' in request.POST:
+        if not request.user.is_superuser and request.user.role != 'Administrator':
+            messages.error(request, "You do not have permission to delete.")
+        else:
+            appointment_id_to_delete = request.POST['delete_appointment_id']
+            appointment_to_delete = Appointment.objects.get(
+                id=appointment_id_to_delete)
+            appointment_to_delete.delete()
+            messages.success(request, f"Appointment has been deleted.")
+            return redirect('core:appointment')
+
+    context = {
+        'page_title': 'Appointment Management',
+        'active_page': 'appointment',
+        'appointment': appointment,
+        'treatment': treatment,
+        'treatment_doctors': treatment_doctors,
+        'purchased_products': purchased_products,
+    }
+
+    return render(request, 'appointment/view_appointment.html', context)
 
 
 def schedule(request):

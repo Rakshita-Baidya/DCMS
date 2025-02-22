@@ -44,7 +44,7 @@
                     <tbody>
                         {% for appointment in appointments %}
                             <tr class="border-b text-center py-4">
-                                <td>{{ appointment.id }}</td>
+                                <td class="py-3">{{ appointment.id }}</td>
                                 <td>{{ appointment.patient.name }}</td>
                                 <td>{{ appointment.date }}</td>
                                 <td>{{ appointment.time }}</td>
@@ -64,9 +64,9 @@
                                                 <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
                                                 </g>
                                             </svg>
-                                            {% comment %} </a> {% endcomment %}
-                                            {% comment %} view {% endcomment %}
-                                            {% comment %} <a href="{% url 'core:view_patient_profile' patient.id %}"> {% endcomment %}
+                                        </a>
+                                        {% comment %} view {% endcomment %}
+                                        <a href="{% url 'core:view_appointment' appointment.id %}">
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                  width="20"
                                                  height="20"
@@ -74,73 +74,73 @@
                                                  class="cursor-pointer">
                                                 <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
                                             </svg>
-                                            {% comment %} </a> {% endcomment %}
-                                            {% comment %} delete {% endcomment %}
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                 width="20"
-                                                 height="20"
-                                                 viewBox="0 0 20 20"
-                                                 class="cursor-pointer"
-                                                 onclick="confirmDelete('{{ appointment.id }}', '{{ appointment.patient.name }}','{{ appointment.date }}', '{{ appointment.time }}')">
-                                                <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
-                                            </svg>
-                                        </div>
-                                        <form id="delete-form-{{ appointment.id }}"
-                                              method="post"
-                                              class="hidden"
-                                              action="{% url 'core:appointment' %}">
-                                            {% csrf_token %}
-                                            <input type="hidden"
-                                                   name="delete_appointment_id"
-                                                   value="{{ appointment.id }}">
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    {% comment %} Pagination {% endcomment %}
-                    {% if appointment.has_other_pages %}
-                        <div class="flex justify-center mt-8">
-                            <div class="flex items-center space-x-2">
-                                {% if appointment.has_previous %}
-                                    <a href="?page={{ appointment.previous_page_number }}&search={{ search_query }}">
+                                        </a>
+                                        {% comment %} delete {% endcomment %}
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
                                              viewBox="0 0 20 20"
-                                             class="cursor-pointer">
-                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-                                            <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
-                                            <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
-                                            </g>
+                                             class="cursor-pointer"
+                                             onclick="confirmDelete('{{ appointment.id }}', '{{ appointment.patient.name }}','{{ appointment.date }}', '{{ appointment.time }}')">
+                                            <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
                                         </svg>
-                                    </a>
-                                {% endif %}
-                                <p class="px-3 py-2">Page {{ appointment.number }} of {{ appointment.paginator.num_pages }}</p>
-                                {% if appointment.has_next %}
-                                    <a href="?page={{ appointment.next_page_number }}&search={{ search_query }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             width="20"
-                                             height="20"
-                                             viewBox="0 0 20 20"
-                                             class="cursor-pointer">
-                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-                                            <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
-                                            <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
-                                            </g>
-                                        </svg>
-                                    </a>
-                                {% endif %}
-                            </div>
+                                    </div>
+                                    <form id="delete-form-{{ appointment.id }}"
+                                          method="post"
+                                          class="hidden"
+                                          action="{% url 'core:appointment' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden"
+                                               name="delete_appointment_id"
+                                               value="{{ appointment.id }}">
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% comment %} Pagination {% endcomment %}
+                {% if appointment.has_other_pages %}
+                    <div class="flex justify-center mt-8">
+                        <div class="flex items-center space-x-2">
+                            {% if appointment.has_previous %}
+                                <a href="?page={{ appointment.previous_page_number }}&search={{ search_query }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="20"
+                                         height="20"
+                                         viewBox="0 0 20 20"
+                                         class="cursor-pointer">
+                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                        <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
+                                        </g>
+                                    </svg>
+                                </a>
+                            {% endif %}
+                            <p class="px-3 py-2">Page {{ appointment.number }} of {{ appointment.paginator.num_pages }}</p>
+                            {% if appointment.has_next %}
+                                <a href="?page={{ appointment.next_page_number }}&search={{ search_query }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="20"
+                                         height="20"
+                                         viewBox="0 0 20 20"
+                                         class="cursor-pointer">
+                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                        <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
+                                        </g>
+                                    </svg>
+                                </a>
+                            {% endif %}
                         </div>
-                    {% endif %}
-                {% else %}
-                    <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
+                    </div>
                 {% endif %}
-            </div>
+            {% else %}
+                <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
+            {% endif %}
         </div>
-        <script>
+    </div>
+    <script>
         function confirmDelete(appointmentId, appointmentPatient, appointmentDate, appointmentTime) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -158,5 +158,5 @@
                 }
             });
         }
-        </script>
-    {% endblock content %}
+    </script>
+{% endblock content %}

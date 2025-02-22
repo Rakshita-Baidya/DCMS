@@ -1,0 +1,199 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+    <div class="p-6">
+        <div class="flex justify-between items-center mb-4 ">
+            <div class="space-x-1 flex items-center">
+                <a href="{% url 'core:appointment' %}">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink"
+                         width="24px"
+                         fill="none"
+                         height="24px"
+                         viewBox="0 0 20 20">
+                        <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                    </svg>
+                </a>
+                <p class="text-2xl font-semibold">{{ appointment.patient.name }}'s Appointment</p>
+            </div>
+            <div class="space-x-3 flex items-center">
+                <a href="{% url 'core:edit_appointment' appointment.id %}"
+                   class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="20"
+                         height="20"
+                         viewBox="0 0 20 20">
+                        <g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
+                        <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
+                        <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
+                        </g>
+                    </svg>
+                    <p>Edit Appointment</p>
+                </a>
+                <form id="delete-form-{{ appointment.id }}" method="post">
+                    {% comment %} action="{% url 'core:staff' %}"> {% endcomment %}
+                    {% csrf_token %}
+                    <input type="hidden"
+                           name="delete_appointment_id"
+                           value="{{ appointment.id }}">
+                </form>
+                <div class="inline-flex items-center px-4 py-1.5 bg-dangerRed text-white rounded-lg hover:bg-darkerDangerRed space-x-2 cursor-pointer"
+                     onclick="confirmDelete('{{ appointment.id }}', '{{ appointment.patient.name }}','{{ appointment.date }}', '{{ appointment.time }}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                        <path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.249995" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
+                    </svg>
+                    <span>Delete Appointment</span>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md border-2 border-primaryLogo">
+            <!-- Appointment Details -->
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-xl font-semibold mb-4">Appointment Information</h2>
+                <div class="grid grid-cols-4 gap-4">
+                    <div>
+                        <p class="text-gray-600">Patient Name</p>
+                        <p class="font-medium">{{ appointment.patient.name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Date</p>
+                        <p class="font-medium">{{ appointment.date }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Time</p>
+                        <p class="font-medium">{{ appointment.time }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Status</p>
+                        <p class="font-medium">{{ appointment.status }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Total Amount</p>
+                        <p class="font-medium">Rs. {{ appointment.total_amt|default:"0.00"|floatformat:2 }}</p>
+                    </div>
+                    <div class="col-span-3">
+                        <p class="text-gray-600">Description</p>
+                        <p class="font-medium">{{ appointment.description|default:"No description" }}</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Treatment Details -->
+            {% if treatment %}
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold mb-4">Treatment Information</h2>
+                    <div class="grid grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-gray-600">Treatment Type</p>
+                            <p class="font-medium">{{ treatment.type|default:"Not specified" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Treatment Cost</p>
+                            <p class="font-medium">Rs. {{ treatment.treatment_cost|default:"0.00"|floatformat:2 }}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <p class="text-gray-600">Treatment Plan</p>
+                            <p class="font-medium">{{ treatment.plan|default:"No plan specified" }}</p>
+                        </div>
+                        <!-- X-Ray Information -->
+                        <div>
+                            <p class="text-gray-600">X-Ray Required</p>
+                            <p class="font-medium">{{ treatment.x_ray|yesno:"Yes,No" }}</p>
+                        </div>
+                        {% if treatment.x_ray %}
+                            <div>
+                                <p class="text-gray-600">X-Ray Cost</p>
+                                <p class="font-medium">Rs. {{ treatment.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
+                            </div>
+                        {% endif %}
+                        <!-- Lab Information -->
+                        <div class="col-start-1">
+                            <p class=" text-gray-600">Lab Required</p>
+                            <p class="font-medium">{{ treatment.lab|yesno:"Yes,No" }}</p>
+                        </div>
+                        {% if treatment.lab %}
+                            <div>
+                                <p class="text-gray-600">Lab Sent To</p>
+                                <p class="font-medium">{{ treatment.lab_sent|default:"Not specified" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Lab Order Date</p>
+                                <p class="font-medium">{{ treatment.lab_order_date|default:"Not specified" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Lab Cost</p>
+                                <p class="font-medium">Rs. {{ treatment.lab_cost|default:"0.00"|floatformat:2 }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            <!-- Treatment Doctors -->
+            {% if treatment_doctors %}
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold mb-4">Treatment Doctors</h2>
+                    <div class="grid grid-cols-1 gap-4">
+                        {% for td in treatment_doctors %}
+                            <div class="bg-gray-50 p-4 rounded-md">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-gray-600">Doctor</p>
+                                        <p class="font-medium">{{ td.doctor.get_full_name }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-600">Percentage</p>
+                                        <p class="font-medium">{{ td.percent }}%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            <!-- Purchased Products -->
+            {% if purchased_products %}
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold mb-4">Purchased Products</h2>
+                    <div class="grid grid-cols-1 gap-4">
+                        {% for product in purchased_products %}
+                            <div class="bg-gray-50 p-4 rounded-md">
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <p class="text-gray-600">Product Name</p>
+                                        <p class="font-medium">{{ product.name }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-600">Rate</p>
+                                        <p class="font-medium">Rs. {{ product.rate|floatformat:2 }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-600">Quantity</p>
+                                        <p class="font-medium">{{ product.quantity }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        function confirmDelete(appointmentId, appointmentPatient, appointmentDate, appointmentTime) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action will permanently delete the appointment for "+ appointmentPatient + " on " + appointmentDate + " at " + appointmentTime + ".",
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'bg-dangerRed text-white hover:bg-darkerDangerRed py-2 w-32',
+                    cancelButton: 'bg-[#444444] text-white hover:bg-gray-400 py-2 w-32',
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + appointmentId).submit();
+                }
+            });
+        }
+    </script>
+{% endblock content %}
