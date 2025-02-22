@@ -84,7 +84,6 @@ def user_login(request):
     return render(request, 'login.html', {'form': form})
 
 
-@allowed_users(allowed_roles=['Staff'])
 def staff_form(request):
     temp_user_id = request.session.get('temp_user_id')
 
@@ -113,7 +112,6 @@ def staff_form(request):
     return render(request, 'staff_form.html', {'form': form})
 
 
-@allowed_users(allowed_roles=['Doctor'])
 def doctor_form(request):
     try:
         temp_user_id = request.session.get('temp_user_id')
