@@ -158,7 +158,7 @@ def user_logout(request):
 
 
 @login_required(login_url='login')
-@admin_only
+@allowed_users(allowed_roles=['Administrator'])
 def users_list(request):
 
     # Allow only superusers and admins
@@ -205,7 +205,7 @@ def users_list(request):
 
 
 @login_required(login_url='login')
-@admin_only
+@allowed_users(allowed_roles=['Administrator'])
 def user_approve(request):
     # if not request.user.is_superuser and request.user.role != 'Administrator':
     #     messages.error(request, "Access denied.")

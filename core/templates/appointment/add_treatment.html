@@ -99,10 +99,10 @@
                     {% endif %}
                 </div>
                 <div class="col-span-4">
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.total_treatment_cost.label_tag }}</label>
-                    {{ wizard.form.total_treatment_cost|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.total_treatment_cost.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.total_treatment_cost.errors }}</div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.treatment_cost.label_tag }}</label>
+                    {{ wizard.form.treatment_cost|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.treatment_cost.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.treatment_cost.errors }}</div>
                     {% endif %}
                 </div>
                 <p onclick="history.back()"

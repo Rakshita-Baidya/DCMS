@@ -1,5 +1,5 @@
 from django import forms
-from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart,
+from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart, Payment,
                      ToothRecord, Transaction, Appointment, Treatment, TreatmentDoctor, PurchasedProduct)
 from users.models import User
 
@@ -82,3 +82,10 @@ class PurchasedProductForm(forms.ModelForm):
 
 PurchasedProductFormSet = forms.inlineformset_factory(
     Appointment, PurchasedProduct, form=PurchasedProductForm, extra=1, can_delete=True)
+
+
+class PaymentForm(forms.ModelForm):
+    class Meta:
+        model = Payment
+        fields = '__all__'
+        exclude = ['appointment']

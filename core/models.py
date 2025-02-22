@@ -1,8 +1,14 @@
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.utils.timezone import now
 from django.db import models
+
 from users.models import User
 
 # Create your models here.
+phone_regex = RegexValidator(
+    regex=r'^\+?1?\d{9,15}$',
+    message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
+)
 
 MARTIAL_STATUS = [
     ('Single', 'Single'),
@@ -18,20 +24,32 @@ GENDER_CHOICES = [
     ('Other', 'Other'),
 ]
 
+BLOOD_GROUP_CHOICES = [
+    ('A+', 'A+'),
+    ('A-', 'A-'),
+    ('B+', 'B+'),
+    ('B-', 'B-'),
+    ('AB+', 'AB+'),
+    ('AB-', 'AB-'),
+    ('O+', 'O+'),
+    ('O-', 'O-')
+]
+
 
 class Patient(models.Model):
-    # reg_no = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=100)
-    contact = models.CharField(max_length=13)
+    contact = models.CharField(
+        validators=[phone_regex], max_length=17)
     address = models.CharField(max_length=150, blank=True, null=True)
     dob = models.DateField(default=now,
                            blank=True, null=True)
-    gender = models.CharField(max_length=17, null=True,
-                              blank=True, default="Prefer not to say", choices=GENDER_CHOICES)
-    blood_group = models.CharField(max_length=3)
-    age = models.CharField(max_length=3)
+    gender = models.CharField(max_length=17, null=True, blank=True,
+                              default="Prefer not to say", choices=GENDER_CHOICES)
+    blood_group = models.CharField(choices=BLOOD_GROUP_CHOICES)
+    age = models.PositiveIntegerField(
+        blank=True, null=True, validators=[MaxValueValidator(150)])
     email = models.EmailField(unique=True, null=True, blank=True)
-    telephone = models.CharField(max_length=10)
+    telephone = models.CharField(max_length=10, blank=True, null=True)
     occupation = models.CharField(blank=True, null=True)
     nationality = models.CharField(blank=True, null=True)
     marital_status = models.CharField(choices=MARTIAL_STATUS, default="Single")
@@ -42,9 +60,9 @@ class Patient(models.Model):
     #     null=True,
     # )
     emergency_contact_name = models.CharField(
-        max_length=100, null=True, blank=True)
+        max_length=100)
     emergency_contact_contact = models.CharField(
-        max_length=13, null=True, blank=True)
+        validators=[phone_regex], max_length=13)
     emergency_contact_address = models.CharField(
         max_length=150, blank=True, null=True)
     emergency_contact_relation = models.CharField(
@@ -69,7 +87,8 @@ class MedicalHistory(models.Model):
     hypertention = models.BooleanField(default=False)
     ankle_edema = models.BooleanField(default=False)
     rheumatic_fever = models.BooleanField(default=False)
-    rheumatic_fever_age = models.CharField(max_length=3, blank=True, null=True)
+    rheumatic_fever_age = models.PositiveBigIntegerField(
+        validators=[MaxValueValidator(100)], blank=True, null=True)
     stroke_history = models.BooleanField(default=False)
     stroke_date = models.DateField(blank=True, null=True)
 
@@ -246,11 +265,11 @@ class TreatmentDoctor(models.Model):
         Treatment, on_delete=models.CASCADE, related_name='treatment_td')
     doctor = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='doctor_td')
-    percent = models.FloatField(blank=True, null=True)
+    percent = models.FloatField(blank=True, null=True, validators=[
+                                MinValueValidator(0), MaxValueValidator(100)])
     amount = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
-    date_created = models.DateTimeField(default=now,
-                                        blank=True, null=True)
+    date_created = models.DateTimeField(default=now, blank=True, null=True)
 
     def __str__(self):
         return f"Dr. {self.doctor.username} - {self.treatment.appointment.patient.name}"
@@ -265,8 +284,7 @@ class PurchasedProduct(models.Model):
     quantity = models.IntegerField(blank=True, null=True)
     total_amt = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
-    date_created = models.DateTimeField(default=now,
-                                        blank=True, null=True)
+    date_created = models.DateTimeField(default=now, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if self.rate is not None and self.quantity is not None:
@@ -278,9 +296,9 @@ class PurchasedProduct(models.Model):
 
 
 PAYMENT_STATUS_CHOICES = [
-    ('Unpaid', 'Unpaid'),
-    ('Partially Paid', 'Partially Paid'),
+    ('Pending', 'Pending'),
     ('Paid', 'Paid'),
+    ('Overpaid', 'Overpaid'),
 ]
 
 PAYMENT_METHOD_CHOICES = [
@@ -301,7 +319,7 @@ class Payment(models.Model):
         max_digits=10, decimal_places=2, default=0)
     paid_amount = models.DecimalField(
         max_digits=10, decimal_places=2, default=0)
-    final_total = models.DecimalField(
+    final_amount = models.DecimalField(
         max_digits=10, decimal_places=2, default=0)
     remaining_balance = models.DecimalField(
         max_digits=10, decimal_places=2, default=0)
@@ -318,16 +336,18 @@ class Payment(models.Model):
                                         blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        self.final_total = self.additional_cost - \
-            self.discount_amount - self.paid_amount
-        self.remaining_balance = self.final_total - self.paid_amount
+        self.final_amount = (self.appointment.treatment.treatment_cost +
+                             self.appointment.treatment.lab_cost +
+                             self.appointment.treatment.xray_cost +
+                             self.appointment.treatment.additional_cost) - self.discount_amount
+        self.remaining_balance = self.final_amount - self.paid_amount
 
-        if self.paid_amount >= self.final_total:
-            self.payment_status = "Paid"
-        elif self.paid_amount > 0:
-            self.payment_status = "Partially Paid"
+        if self.remaining_balance > 0:
+            self.payment_status = 'Pending'
+        elif self.remaining_balance == 0:
+            self.payment_status = 'Paid'
         else:
-            self.payment_status = "Unpaid"
+            self.payment_status = 'Overpaid'
 
         super().save(*args, **kwargs)
 

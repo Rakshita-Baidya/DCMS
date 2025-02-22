@@ -14,10 +14,10 @@ from django.urls import reverse
 from users.models import Staff, User, Doctor
 from users.forms import StaffForm, DoctorForm, UserEditForm
 
-from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart,
+from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart, Payment,
                      ToothRecord, Transaction, Appointment, Treatment, TreatmentDoctor, PurchasedProduct)
 from .forms import (AppointmentForm, PatientForm,  MedicalHistoryForm,
-                    OtherPatientHistoryForm, DentalChartForm, PurchasedProductFormSet, ToothRecordFormSet, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentForm)
+                    OtherPatientHistoryForm, DentalChartForm, PaymentForm, PurchasedProductFormSet, ToothRecordFormSet, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentForm)
 
 
 # Create your views here.
@@ -699,7 +699,7 @@ class AppointmentFormWizard(SessionWizardView):
 
 class EditAppointmentWizard(SessionWizardView):
     form_list = [AppointmentForm, TreatmentForm,
-                 TreatmentDoctorFormSet, PurchasedProductFormSet]
+                 TreatmentDoctorFormSet, PurchasedProductFormSet, PaymentForm]
     file_storage = FileSystemStorage(
         location=os.path.join("media", "appointment"))
     TEMPLATES = {
@@ -707,6 +707,7 @@ class EditAppointmentWizard(SessionWizardView):
         '1': 'appointment/add_treatment.html',
         '2': 'appointment/add_treatment_doctor.html',
         '3': 'appointment/add_purchased_product.html',
+        '4': 'appointment/add_payment.html',
     }
 
     def get_template_names(self):
@@ -724,9 +725,22 @@ class EditAppointmentWizard(SessionWizardView):
             'is_editing': bool(appointment_id),
         })
 
-        # Handle formsets directly in context
+        if appointment_id:
+            appointment = get_object_or_404(Appointment, id=appointment_id)
+            treatment = Treatment.objects.filter(
+                appointment=appointment).first()
+            payment = Payment.objects.filter(appointment=appointment).first()
+
+        context.update({
+            'treatment_cost': treatment.treatment_cost if treatment else 0,
+            'lab_cost': treatment.lab_cost if treatment else 0,
+            'xray_cost': treatment.xray_cost if treatment else 0,
+            'additional_cost': treatment.additional_cost if treatment else 0,
+            'discount_amount': payment.discount_amount if payment else 0,
+            'paid_amount': payment.paid_amount if payment else 0,
+        })
+
         if self.steps.current == '2':
-            # For TreatmentDoctorFormSet
             treatment = None
             if appointment_id:
                 appointment = get_object_or_404(Appointment, id=appointment_id)
@@ -740,7 +754,6 @@ class EditAppointmentWizard(SessionWizardView):
                 context['treatment_doctor_formset'] = form
 
         elif self.steps.current == '3':
-            # For PurchasedProductFormSet
             if appointment_id:
                 appointment = get_object_or_404(Appointment, id=appointment_id)
                 context['purchased_product_formset'] = form
@@ -794,6 +807,10 @@ class EditAppointmentWizard(SessionWizardView):
             return treatment
         elif step == '3':
             return appointment
+        elif step == '4':
+            payment = Payment.objects.filter(appointment=appointment).first()
+            if not payment:
+                payment = Payment(appointment=appointment)
         return None
 
     def done(self, form_list, **kwargs):
@@ -828,6 +845,13 @@ class EditAppointmentWizard(SessionWizardView):
         if purchased_product_formset.is_valid():
             purchased_product_formset.instance = appointment
             purchased_product_formset.save()
+
+        # Save Payment data
+        payment_form = form_list[4]
+        payment = Payment.objects.filter(appointment=appointment).first()
+        for field, value in payment_form.cleaned_data.items():
+            setattr(payment, field, value)
+        payment.save()
 
         messages.success(
             request, 'The appointment has been updated successfully!')

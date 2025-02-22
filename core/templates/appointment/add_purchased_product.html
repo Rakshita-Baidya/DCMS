@@ -67,7 +67,7 @@
                     </p>
                     <button type="submit"
                             class="text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                        Save Changes
+                        Next
                     </button>
                 </div>
             </form>
@@ -77,13 +77,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const container = document.getElementById("purchased-products-container");
             const addButton = document.getElementById("add-purchased-product");
-            const totalForms = document.querySelector("[name='purchased_products-TOTAL_FORMS']");
-        
-            // Ensure that the totalForms element exists
-            if (!totalForms) {
-                console.error("TOTAL_FORMS element not found.");
-                return;
-            }
+            const totalForms = document.querySelector("[name='purchased_products-TOTAL_FORMS']");            
         
             addButton.addEventListener("click", function () {
                 let formCount = parseInt(totalForms.value); 
