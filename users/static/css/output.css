@@ -883,6 +883,10 @@ video {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .flex-col {
   flex-direction: column;
 }
@@ -1114,6 +1118,11 @@ video {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.bg-gray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
 }
 
 .bg-\[radial-gradient\(ellipse_at_center\2c _\#f0f0f0_30\%\2c _\#91DEDE_50\%\2c _\#00B2B2_100\%\)\] {

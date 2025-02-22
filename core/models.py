@@ -1,4 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from django.db.models import Sum, F
+from django.db.models.functions import Coalesce
 from django.utils.timezone import now
 from django.db import models
 
@@ -240,7 +242,7 @@ LAB_CHOICES = [
 
 class Treatment(models.Model):
     appointment = models.ForeignKey(
-        Appointment, on_delete=models.CASCADE, related_name='treatment_appointment')
+        Appointment, on_delete=models.CASCADE, related_name='treatments')
     type = models.CharField(max_length=100, blank=True, null=True)
     plan = models.TextField(max_length=255, blank=True, null=True)
     x_ray = models.BooleanField(default=False)
@@ -295,12 +297,6 @@ class PurchasedProduct(models.Model):
         return f"{self.name} - {self.quantity} pcs"
 
 
-PAYMENT_STATUS_CHOICES = [
-    ('Pending', 'Pending'),
-    ('Paid', 'Paid'),
-    ('Overpaid', 'Overpaid'),
-]
-
 PAYMENT_METHOD_CHOICES = [
     ('Cash', 'Cash'),
     ('Card', 'Card'),
@@ -312,7 +308,8 @@ PAYMENT_METHOD_CHOICES = [
 
 class Payment(models.Model):
     appointment = models.ForeignKey(
-        Appointment, on_delete=models.CASCADE, related_name='payment_appointment')
+        Appointment, on_delete=models.CASCADE, related_name='payments'
+    )
     additional_cost = models.DecimalField(
         max_digits=10, decimal_places=2, default=0)
     discount_amount = models.DecimalField(
@@ -324,30 +321,25 @@ class Payment(models.Model):
     remaining_balance = models.DecimalField(
         max_digits=10, decimal_places=2, default=0)
 
-    payment_status = models.CharField(
-        max_length=15, choices=PAYMENT_STATUS_CHOICES, default="Unpaid")
+    payment_status = models.CharField(max_length=15, default="Unpaid")
     payment_method = models.CharField(
         max_length=15, choices=PAYMENT_METHOD_CHOICES, default="Cash", blank=True, null=True
     )
     payment_date = models.DateTimeField(blank=True, null=True)
     payment_notes = models.TextField(blank=True, null=True)
 
-    date_created = models.DateTimeField(default=now,
-                                        blank=True, null=True)
+    date_created = models.DateTimeField(default=now, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        self.final_amount = (self.appointment.treatment.treatment_cost +
-                             self.appointment.treatment.lab_cost +
-                             self.appointment.treatment.xray_cost +
-                             self.appointment.treatment.additional_cost) - self.discount_amount
-        self.remaining_balance = self.final_amount - self.paid_amount
+        if self.appointment:
+            self.remaining_balance = self.final_amount - self.paid_amount
 
-        if self.remaining_balance > 0:
-            self.payment_status = 'Pending'
-        elif self.remaining_balance == 0:
-            self.payment_status = 'Paid'
-        else:
-            self.payment_status = 'Overpaid'
+            if self.remaining_balance > 0:
+                self.payment_status = 'Pending'
+            elif self.remaining_balance == 0:
+                self.payment_status = 'Paid'
+            else:
+                self.payment_status = 'Overpaid'
 
         super().save(*args, **kwargs)
 

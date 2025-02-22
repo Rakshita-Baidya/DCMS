@@ -89,3 +89,8 @@ class PaymentForm(forms.ModelForm):
         model = Payment
         fields = '__all__'
         exclude = ['appointment']
+        widgets = {
+            'final_amount': forms.HiddenInput(),
+            'remaining_balance': forms.HiddenInput(),
+            'payment_status': forms.HiddenInput(),
+        }

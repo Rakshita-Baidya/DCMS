@@ -26,9 +26,51 @@
         <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
             <form method="post"
                   enctype="multipart/form-data"
+                  id="paymentForm"
                   class="grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 lg:gap-6 gap-4">
                 {% csrf_token %}
                 {{ wizard.management_form }}
+                {% comment %} debuggggggggg {% endcomment %}
+                <div class="col-span-4 grid grid-cols-5 gap-6 bg-gray-100 p-4 border border-primaryLogo">
+                    <div>
+                        <label class="block font-medium text-gray-700">Treatment Cost</label>
+                        <input type="text"
+                               readonly
+                               value="{{ treatment_cost }}"
+                               class="mt-1 block w-full px-2 py-1 bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700">Lab Cost</label>
+                        <input type="text"
+                               readonly
+                               value="{{ lab_cost }}"
+                               class="mt-1 block w-full px-2 py-1 bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700">X-Ray Cost</label>
+                        <input type="text"
+                               readonly
+                               value="{{ x_ray_cost }}"
+                               class="mt-1 block w-full px-2 py-1 bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700">Products Total</label>
+                        <input type="text"
+                               readonly
+                               value="{{ products_total }}"
+                               class="mt-1 block w-full px-2 py-1 bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700">Total Amount</label>
+                        <input type="text"
+                               id="final_total"
+                               name="final_total"
+                               readonly
+                               class="mt-1 block w-full px-2 py-1 bg-white"
+                               value="{{ treatment_cost|add:treatment_cost|add:lab_cost|add:x_ray_cost|add:products_total }}">
+                    </div>
+                </div>
+                {% comment %} end debugggg {% endcomment %}
                 <div>
                     <label class="block font-medium text-secondaryLogo">{{ form.additional_cost.label_tag }}</label>
                     {{ form.additional_cost|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
@@ -65,27 +107,6 @@
                     {{ form.payment_notes|attr:"rows:2" |add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.payment_notes.errors %}<div class="text-dangerRed text-sm">{{ form.payment_notes.errors }}</div>{% endif %}
                 </div>
-                <div>
-                    <label class="block font-medium text-secondaryLogo">Final Total</label>
-                    <input type="text"
-                           id="final_total"
-                           readonly
-                           class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                </div>
-                <div>
-                    <label class="block font-medium text-secondaryLogo">Remaining Balance</label>
-                    <input type="text"
-                           id="remaining_balance"
-                           readonly
-                           class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                </div>
-                <div>
-                    <label class="block font-medium text-secondaryLogo">{{ form.payment_status.label_tag }}</label>
-                    <input type="text"
-                           id="payment_status"
-                           readonly
-                           class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                </div>
                 <p onclick="history.back()"
                    class="col-start-3 text-center text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
                     Previous
@@ -97,38 +118,4 @@
             </form>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            function calculatePayment() {
-                let treatmentCost = parseFloat(document.getElementById('id_treatment_cost').value) || 0;
-                let labCost = parseFloat(document.getElementById('id_lab_cost').value) || 0;
-                let xrayCost = parseFloat(document.getElementById('id_xray_cost').value) || 0;
-                let additionalCost = parseFloat(document.getElementById('id_additional_cost').value) || 0;
-                let discountAmount = parseFloat(document.getElementById('id_discount_amount').value) || 0;
-                let paidAmount = parseFloat(document.getElementById('id_paid_amount').value) || 0;
-    
-                let finalAmount = (treatmentCost + labCost + xrayCost + additionalCost) - discountAmount;
-                document.getElementById('id_final_amount').value = finalAmount.toFixed(2);
-    
-                let remainingBalance = finalAmount - paidAmount;
-                document.getElementById('id_remaining_balance').value = remainingBalance.toFixed(2);
-    
-                let paymentStatus = document.getElementById('id_payment_status');
-                if (remainingBalance > 0) {
-                    paymentStatus.value = 'Pending';
-                } else if (remainingBalance == 0) {
-                    paymentStatus.value = 'Paid';
-                } else {
-                    paymentStatus.value = 'Overpaid';
-                }
-            }
-    
-            document.querySelectorAll('#id_treatment_cost, #id_lab_cost, #id_xray_cost, #id_additional_cost, #id_discount_amount, #id_paid_amount')
-                .forEach(element => {
-                    element.addEventListener('input', calculatePayment);
-                });
-    
-            calculatePayment();
-        });
-    </script>
 {% endblock content %}

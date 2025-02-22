@@ -692,6 +692,9 @@ class AppointmentFormWizard(SessionWizardView):
             if purchased_product_formset.is_valid():
                 purchased_product_formset.save()
 
+        payment, created = Payment.objects.get_or_create(
+            appointment=appointment)
+
         messages.success(
             request, 'The appointment has been added successfully!')
         return redirect('core:appointment')
@@ -717,27 +720,46 @@ class EditAppointmentWizard(SessionWizardView):
         context = super().get_context_data(form=form, **kwargs)
         appointment_id = self.kwargs.get('appointment_id')
 
-        context.update({
-            'page_title': 'Appointment Management',
-            'active_page': 'appointment',
-            'patients': Patient.objects.all(),
-            'doctors': User.objects.filter(role='Doctor', doctor_profile__isnull=False),
-            'is_editing': bool(appointment_id),
-        })
+        treatment_cost = 0
+        lab_cost = 0
+        x_ray_cost = 0
+        products_total = 0
+        additional_cost = 0
+        discount_amount = 0
+        paid_amount = 0
 
         if appointment_id:
             appointment = get_object_or_404(Appointment, id=appointment_id)
             treatment = Treatment.objects.filter(
                 appointment=appointment).first()
             payment = Payment.objects.filter(appointment=appointment).first()
+            products = PurchasedProduct.objects.filter(appointment=appointment)
+            products_total = sum(
+                product.total_amt or 0 for product in products)
+            if treatment:
+                treatment_cost = treatment.treatment_cost or 0
+                lab_cost = treatment.lab_cost or 0
+                x_ray_cost = treatment.x_ray_cost or 0
+
+            if payment:
+                additional_cost = payment.additional_cost or 0
+                discount_amount = payment.discount_amount or 0
+                paid_amount = payment.paid_amount or 0
 
         context.update({
-            'treatment_cost': treatment.treatment_cost if treatment else 0,
-            'lab_cost': treatment.lab_cost if treatment else 0,
-            'xray_cost': treatment.xray_cost if treatment else 0,
-            'additional_cost': treatment.additional_cost if treatment else 0,
-            'discount_amount': payment.discount_amount if payment else 0,
-            'paid_amount': payment.paid_amount if payment else 0,
+            'page_title': 'Appointment Management',
+            'active_page': 'appointment',
+            'patients': Patient.objects.all(),
+            'doctors': User.objects.filter(role='Doctor', doctor_profile__isnull=False),
+            'is_editing': bool(appointment_id),
+
+            'treatment_cost': treatment_cost,
+            'lab_cost': lab_cost,
+            'x_ray_cost': x_ray_cost,
+            'products_total': products_total,
+            'additional_cost': additional_cost,
+            'discount_amount': discount_amount,
+            'paid_amount': paid_amount,
         })
 
         if self.steps.current == '2':
@@ -761,6 +783,16 @@ class EditAppointmentWizard(SessionWizardView):
                     if self.storage.get_step_data('3'):
                         form.initial = self.storage.get_step_data('3')
                     context['purchased_product_formset'] = form
+
+        # print("Context values:", {
+        #     'treatment_cost': context['treatment_cost'],
+        #     'lab_cost': context['lab_cost'],
+        #     'x_ray_cost': context['x_ray_cost'],
+        #     'products_total': context['products_total'],
+        #     'additional_cost': context['additional_cost'],
+        #     'discount_amount': context['discount_amount'],
+        #     'paid_amount': context['paid_amount']
+        # })
 
         return context
 
@@ -808,9 +840,9 @@ class EditAppointmentWizard(SessionWizardView):
         elif step == '3':
             return appointment
         elif step == '4':
-            payment = Payment.objects.filter(appointment=appointment).first()
-            if not payment:
-                payment = Payment(appointment=appointment)
+            payment, created = Payment.objects.get_or_create(
+                appointment=appointment)
+            return payment
         return None
 
     def done(self, form_list, **kwargs):
@@ -849,8 +881,19 @@ class EditAppointmentWizard(SessionWizardView):
         # Save Payment data
         payment_form = form_list[4]
         payment = Payment.objects.filter(appointment=appointment).first()
+
+        treatment_cost = appointment.treatment_cost
+        lab_cost = appointment.lab_cost
+        x_ray_cost = appointment.x_ray_cost
+        products_total = appointment.products_total
+
+        final_amount = (treatment_cost + lab_cost +
+                        x_ray_cost + products_total)
+
         for field, value in payment_form.cleaned_data.items():
             setattr(payment, field, value)
+
+        payment.final_amount = final_amount
         payment.save()
 
         messages.success(
