@@ -49,7 +49,9 @@
                                 <td>{{ appointment.date }}</td>
                                 <td>{{ appointment.time }}</td>
                                 <td>{{ appointment.description }}</td>
-                                <td>{{ appointment.status }}</td>
+                                <td class="py-2 text-nowrap {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
+                                    {{ appointment.status }}
+                                </td>
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">
                                         {% comment %} edit {% endcomment %}

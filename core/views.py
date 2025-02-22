@@ -91,6 +91,9 @@ def view_doctor_profile(request, user_id):
     if user_queryset.role == 'Doctor' and hasattr(user_queryset, 'doctor_profile'):
         doctor_profile = user_queryset.doctor_profile
 
+    appointments = Appointment.objects.filter(
+        treatments__treatment_td__doctor=user_queryset).distinct().order_by('-date', '-time')[:5]
+
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
         if not request.user.is_superuser and request.user.role != 'Administrator':
@@ -108,6 +111,7 @@ def view_doctor_profile(request, user_id):
         'active_page': 'doctor',
         'user': user_queryset,
         'doctor_profile': doctor_profile,
+        'appointments': appointments,
     }
 
     return render(request, 'doctor/view_doctor_profile.html', context)

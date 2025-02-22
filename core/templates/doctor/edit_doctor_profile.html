@@ -26,7 +26,7 @@
                     {{ user_form.username|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.username.errors %}<div class="text-dangerRed text-sm">{{ user_form.username.errors }}</div>{% endif %}
                 </div>
-                <div class="row-span-5">
+                <div class="row-span-4">
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.profile_image.label_tag }}</label>
                     <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
                         <img id="profileImagePreview"
@@ -82,16 +82,6 @@
                 {% comment %} Doctor Form Fields {% endcomment %}
                 {% if doctor_form %}
                     <div>
-                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.position.label_tag }}</label>
-                        {{ doctor_form.position|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                        {% if doctor_form.position.errors %}
-                            <div class="text-dangerRed text-sm">{{ doctor_form.position.errors }}</div>
-                        {% endif %}
-                    </div>
-                {% endif %}
-                {% comment %} Doctor Form Fields {% endcomment %}
-                {% if doctor_form %}
-                    <div>
                         <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.specialization.label_tag }}</label>
                         {{ doctor_form.specialization|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                         {% if doctor_form.specialization.errors %}
@@ -113,12 +103,12 @@
                 {% endif %}
                 {% comment %} Submit Button {% endcomment %}
                 <div class="w-full flex space-x-6 col-span-2">
+                    <a href="{% url 'core:view_doctor_profile' user.id %}"
+                       class="text-center col-span-2 w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">Back to Profile</a>
                     <button type="submit"
                             class="col-span-2 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
                         Save Changes
                     </button>
-                    <a href="{% url 'core:view_doctor_profile' user.id %}"
-                       class="text-center col-span-2 w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">Back to Profile</a>
                 </div>
             </form>
         </div>
