@@ -3,11 +3,6 @@ from django.db import models
 from users.models import User
 
 # Create your models here.
-TRANSACTION_TYPE = [
-    ('Income', 'Income'),
-    ('Expense', 'Expense'),
-    ('Payment', 'Payment'),
-]
 
 MARTIAL_STATUS = [
     ('Single', 'Single'),
@@ -22,19 +17,6 @@ GENDER_CHOICES = [
     ('Prefer not to say', 'Prefer not to say'),
     ('Other', 'Other'),
 ]
-
-
-class Transaction(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name='transaction_user')
-    title = models.CharField(max_length=100)
-    description = models.CharField(max_length=500)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateTimeField(default=now)
-    type = models.CharField(choices=TRANSACTION_TYPE, default="Income")
-
-    def __str__(self):
-        return f"{self.user} - {self.title} ({self.type})"
 
 
 class Patient(models.Model):
@@ -224,8 +206,6 @@ class Appointment(models.Model):
     description = models.TextField(max_length=255, blank=True, null=True)
     status = models.CharField(
         choices=APPOINTMENT_STATUS, default="Pending")
-    total_amt = models.DecimalField(
-        decimal_places=2, max_digits=10, blank=True, null=True)
     date_created = models.DateTimeField(default=now,
                                         blank=True, null=True)
 
@@ -295,3 +275,80 @@ class PurchasedProduct(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.quantity} pcs"
+
+
+PAYMENT_STATUS_CHOICES = [
+    ('Unpaid', 'Unpaid'),
+    ('Partially Paid', 'Partially Paid'),
+    ('Paid', 'Paid'),
+]
+
+PAYMENT_METHOD_CHOICES = [
+    ('Cash', 'Cash'),
+    ('Card', 'Card'),
+    ('Mobile Payment', 'Mobile Payment'),
+    ('Bank Transfer', 'Bank Transfer'),
+    ('Other', 'Other'),
+]
+
+
+class Payment(models.Model):
+    appointment = models.ForeignKey(
+        Appointment, on_delete=models.CASCADE, related_name='payment_appointment')
+    additional_cost = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0)
+    discount_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0)
+    paid_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0)
+    final_total = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0)
+    remaining_balance = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0)
+
+    payment_status = models.CharField(
+        max_length=15, choices=PAYMENT_STATUS_CHOICES, default="Unpaid")
+    payment_method = models.CharField(
+        max_length=15, choices=PAYMENT_METHOD_CHOICES, default="Cash", blank=True, null=True
+    )
+    payment_date = models.DateTimeField(blank=True, null=True)
+    payment_notes = models.TextField(blank=True, null=True)
+
+    date_created = models.DateTimeField(default=now,
+                                        blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        self.final_total = self.additional_cost - \
+            self.discount_amount - self.paid_amount
+        self.remaining_balance = self.final_total - self.paid_amount
+
+        if self.paid_amount >= self.final_total:
+            self.payment_status = "Paid"
+        elif self.paid_amount > 0:
+            self.payment_status = "Partially Paid"
+        else:
+            self.payment_status = "Unpaid"
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Appointment - {self.appointment.patient.name}"
+
+
+TRANSACTION_TYPE = [
+    ('Income', 'Income'),
+    ('Expense', 'Expense'),
+]
+
+
+class Transaction(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='transaction_user')
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=500)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(default=now)
+    type = models.CharField(choices=TRANSACTION_TYPE, default="Income")
+
+    def __str__(self):
+        return f"{self.user} - {self.title} ({self.type})"

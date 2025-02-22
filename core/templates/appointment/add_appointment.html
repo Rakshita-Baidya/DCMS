@@ -62,13 +62,6 @@
                         <div class="text-dangerRed text-sm">{{ wizard.form.description.errors }}</div>
                     {% endif %}
                 </div>
-                <div class="col-span-4">
-                    <label class="block text-sm font-medium text-secondaryLogo">Appointment Cost:</label>
-                    {{ wizard.form.total_amt|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.total_amt.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.total_amt.errors }}</div>
-                    {% endif %}
-                </div>
                 <button type="submit"
                         class="col-start-4 mt-4 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
                     Next
