@@ -1060,10 +1060,31 @@ def view_appointment(request, appointment_id):
     return render(request, 'appointment/view_appointment.html', context)
 
 
+@login_required(login_url='login')
 def schedule(request):
+    appointments = Appointment.objects.all()
+    appointments_data = [
+        {
+            'title': f"Appointment - {app.patient.name}",
+            'start': f"{app.date.isoformat()}T{app.time.isoformat()}",
+            'description': app.description,
+            'status': app.status,
+        }
+        for app in appointments
+    ]
+
+    # # Add search functionality
+    # search_query = request.GET.get('search', '')
+    # if search_query:
+    #     appointment_queryset = appointments.filter(
+    #         Q(patient__name__icontains=search_query) |
+    #         Q(description__icontains=search_query)
+    #     )
+
     context = {
         'page_title': 'Schedule Management',
         'active_page': 'schedule',
+        'appointments': appointments_data,
     }
     return render(request, 'schedule/schedule.html', context)
 

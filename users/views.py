@@ -164,7 +164,7 @@ def users_list(request):
     #     messages.error(request, "Access denied.")
     #     return redirect('login')
     # else:
-    user_queryset = User.objects.all().order_by('-is_approved')
+    user_queryset = User.objects.all().order_by('-is_approved', 'role')
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
@@ -326,7 +326,7 @@ def edit_profile(request):
                 doctor_form.save()
 
             messages.success(
-                request, 'Your profile has been updated successfully!')
+                request, 'The profile has been updated successfully!')
             return redirect('profile')
     else:
         user_form = UserEditForm(instance=user_queryset)
