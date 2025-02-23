@@ -4,15 +4,9 @@
     <div class="p-8">
         <div class="flex justify-between items-center mb-4">
             <div>
-                <p class="text-gray-700 text-2xl font-medium">Schedule</p>
+                {% comment %} <p class="text-gray-700 text-2xl font-medium">Schedule</p> {% endcomment %}
             </div>
             <div class="flex items-center space-x-4">
-                {% comment %} Search Bar {% endcomment %}
-                {% comment %} <form method="get">
-                    <input type="text" name="search" value="{{ search_query }}" placeholder="Search..." class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                    <button type="submit" class="hidden"></button>
-                </form> {% endcomment %}
-                {% comment %} Add Appointment Button {% endcomment %}
                 <div>
                     <a href="{% url 'core:add_appointment' %}"
                        class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
@@ -26,73 +20,150 @@
                  class="fc fc-media-screen fc-direction-ltr fc-theme-standard"></div>
         </div>
     </div>
-    <!-- Appointment Details Modal -->
     <div id="appointmentModal"
-         class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold text-gray-900" id="modalTitle"></h3>
-                    <button onclick="closeAppointmentModal()"
-                            class="text-gray-400 hover:text-gray-500">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Patient</label>
-                        <p id="modalPatient" class="mt-1 text-gray-900"></p>
+         class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex justify-center items-center h-screen">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900" id="modalTitle"></h3>
+                        <button onclick="closeAppointmentModal()"
+                                class="text-gray-400 hover:text-gray-500">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Date & Time</label>
-                        <p id="modalDateTime" class="mt-1 text-gray-900"></p>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Patient</label>
+                            <p id="modalPatient" class="mt-1 text-gray-900"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Date & Time</label>
+                            <p id="modalDateTime" class="mt-1 text-gray-900"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Description</label>
+                            <p id="modalDescription" class="mt-1 text-gray-900"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Status</label>
+                            <p id="modalStatus" class="mt-1"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Total Amount</label>
+                            <p id="modalAmount" class="mt-1 text-gray-900"></p>
+                        </div>
                     </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Description</label>
-                        <p id="modalDescription" class="mt-1 text-gray-900"></p>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button onclick="closeAppointmentModal()"
+                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                            Close
+                        </button>
+                        <button onclick="editAppointment()"
+                                class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors">
+                            Edit
+                        </button>
                     </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Status</label>
-                        <p id="modalStatus" class="mt-1"></p>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Total Amount</label>
-                        <p id="modalAmount" class="mt-1 text-gray-900"></p>
-                    </div>
-                </div>
-                <div class="mt-6 flex justify-end space-x-3">
-                    <button onclick="closeAppointmentModal()"
-                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                        Close
-                    </button>
-                    <button onclick="editAppointment()"
-                            class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors">
-                        Edit
-                    </button>
                 </div>
             </div>
         </div>
     </div>
     <script>
-          document.addEventListener('DOMContentLoaded', function() {
-              var calendarEl = document.getElementById('calendar');
-              var calendar = new FullCalendar.Calendar(calendarEl, {
-                  initialView: 'dayGridMonth',
-                  headerToolbar: {
-                      left: 'prev,next today',
-                      center: 'title',
-                      right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                  },
-                  events: {{ appointments|safe }},
-                  eventContent: function(arg) {
-                      return {
-                          html: `<div class="text-nowrap overflow-hidden text-ellipsis"><b>${arg.event.title}</b><br>${arg.event.extendedProps.description}<br>Status: ${arg.event.extendedProps.status}</div>`
-                      };
-                  }
-              });
-              calendar.render();
-          });
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: {{ appointments|safe }},
+                eventColor: 'white',
+                eventDidMount: function(info) {
+                    info.el.classList.add('relative', 'rounded-lg', 'shadow-sm', 'hover:shadow-md');
+                    
+                    switch(info.event.extendedProps.status) {
+                        case 'Pending':
+                            info.el.classList.add('bg-white', 'border', 'border-yellow-200');
+                            const pendingDot = document.createElement('div');
+                            pendingDot.className = 'absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-yellow-400';
+                            info.el.prepend(pendingDot);
+                            break;
+                        case 'Cancelled':
+                            info.el.classList.add('bg-white', 'border', 'border-red-200');
+                            const cancelledDot = document.createElement('div');
+                            cancelledDot.className = 'absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-red-400';
+                            info.el.prepend(cancelledDot);
+                            break;
+                        case 'Completed':
+                            info.el.classList.add('bg-white', 'border', 'border-green-200');
+                            const completedDot = document.createElement('div');
+                            completedDot.className = 'absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-green-400';
+                            info.el.prepend(completedDot);
+                            break;
+                    }
+
+                    const titleEl = info.el.querySelector('.fc-event-title');
+                    const timeEl = info.el.querySelector('.fc-event-time');
+                    if (titleEl) titleEl.classList.add('pl-2', 'text-gray-700');
+                    if (timeEl) timeEl.classList.add('pl-2', 'text-gray-700');
+                },
+                
+                eventClick: function(info) {
+                    showAppointmentDetails(info.event);
+                },
+                height: 'calc(100vh - 225px)',
+                slotMinTime: '08:00:00',
+                slotMaxTime: '18:00:00',
+                allDaySlot: false,
+                slotDuration: '01:30:00',
+                businessHours: {
+                    daysOfWeek: [0, 1, 2, 3, 4, 5],
+                    startTime: '08:00',
+                    endTime: '18:00',
+                }
+            });
+            calendar.render();
+        });
+
+        function showAppointmentDetails(event) {
+            document.getElementById('modalTitle').textContent = event.title;
+            document.getElementById('modalPatient').textContent = event.extendedProps.patient_name;
+            document.getElementById('modalDateTime').textContent = new Date(event.start).toLocaleString();
+            document.getElementById('modalDescription').textContent = event.extendedProps.description || 'No description provided';
+            
+            const statusElement = document.getElementById('modalStatus');
+            const status = event.extendedProps.status;
+            let statusClass = '';
+            
+            switch(status) {
+                case 'Pending':
+                    statusClass = 'bg-yellow-100 text-yellow-800';
+                    break;
+                case 'Cancelled':
+                    statusClass = 'bg-red-100 text-red-800';
+                    break;
+                case 'Completed':
+                    statusClass = 'bg-green-100 text-green-800';
+                    break;
+            }
+            
+            statusElement.className = `inline-block px-2 py-1 rounded-full text-sm font-medium ${statusClass}`;
+            statusElement.textContent = status;
+            
+            document.getElementById('modalAmount').textContent = 
+                event.extendedProps.total_amt ? 
+                `Rs. ${parseFloat(event.extendedProps.total_amt).toFixed(2)}` : 
+                'Not specified';
+            
+            document.getElementById('appointmentModal').classList.remove('hidden');
+        }
+
+        function closeAppointmentModal() {
+            document.getElementById('appointmentModal').classList.add('hidden');
+        }
     </script>
 {% endblock content %}

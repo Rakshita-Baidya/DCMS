@@ -1066,9 +1066,12 @@ def schedule(request):
     appointments_data = [
         {
             'title': f"Appointment - {app.patient.name}",
-            'start': f"{app.date.isoformat()}T{app.time.isoformat()}",
-            'description': app.description,
-            'status': app.status,
+            'start': f"{app.date.isoformat()}T{app.time}",
+            'extendedProps': {
+                'patient_name': app.patient.name,
+                'description': app.description or 'No description provided',
+                'status': app.status,
+            }
         }
         for app in appointments
     ]
