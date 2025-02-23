@@ -76,50 +76,63 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 headerToolbar: {
-                    left: 'prev,next today',
+                    left: 'dayGridMonth,timeGridWeek,timeGridDay',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'prev,next today',
                 },
                 events: {{ appointments|safe }},
-                eventColor: 'white',
-                eventDidMount: function(info) {
-                    info.el.classList.add('relative', 'rounded-lg', 'shadow-sm', 'hover:shadow-md');
-                    
-                    switch(info.event.extendedProps.status) {
+                dayCellDidMount: function(arg) {
+                    if (arg.date.toDateString() === new Date().toDateString()) {
+                        arg.el.style.backgroundColor = 'white';  
+                        arg.el.style.boxShadow = 'inset 0 0 0 1.5px #00b2b2';  
+                    }
+                },
+                eventClassNames: function(info) {
+                    switch (info.event.extendedProps.status) {
                         case 'Pending':
-                            info.el.classList.add('bg-white', 'border', 'border-yellow-200');
-                            const pendingDot = document.createElement('div');
-                            pendingDot.className = 'absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-yellow-400';
-                            info.el.prepend(pendingDot);
+                            return ['bg-yellow-100', 'border-yellow-200'];
+                        case 'Cancelled':
+                            return ['bg-red-100', 'border-red-200'];
+                        case 'Completed':
+                            return ['bg-green-100', 'border-green-200'];
+                        default:
+                            return ['bg-white', 'border-gray-200'];
+                    }
+                },
+                eventContent: function(info) {
+                    const statusDot = document.createElement('div');
+                    switch (info.event.extendedProps.status) {
+                        case 'Pending':
+                            statusDot.className = 'w-2 h-2 rounded-full bg-yellow-400 mx-2 flex-shrink-0';
                             break;
                         case 'Cancelled':
-                            info.el.classList.add('bg-white', 'border', 'border-red-200');
-                            const cancelledDot = document.createElement('div');
-                            cancelledDot.className = 'absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-red-400';
-                            info.el.prepend(cancelledDot);
+                            statusDot.className = 'w-2 h-2 rounded-full bg-red-400 mx-2 flex-shrink-0';
                             break;
                         case 'Completed':
-                            info.el.classList.add('bg-white', 'border', 'border-green-200');
-                            const completedDot = document.createElement('div');
-                            completedDot.className = 'absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-green-400';
-                            info.el.prepend(completedDot);
+                            statusDot.className = 'w-2 h-2 rounded-full bg-green-400 mx-2 flex-shrink-0';
                             break;
                     }
-
-                    const titleEl = info.el.querySelector('.fc-event-title');
-                    const timeEl = info.el.querySelector('.fc-event-time');
-                    if (titleEl) titleEl.classList.add('pl-2', 'text-gray-700');
-                    if (timeEl) timeEl.classList.add('pl-2', 'text-gray-700');
+    
+                    const timeEl = document.createElement('div');
+                    timeEl.textContent = info.timeText;
+                    timeEl.className = 'text-gray-700 mr-1 whitespace-nowrap overflow-hidden text-ellipsis flex-shrink-0';
+    
+                    const titleEl = document.createElement('div');
+                    titleEl.textContent = info.event.title;
+                    titleEl.className = 'text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis flex-grow';
+    
+                    const content = document.createElement('div');
+                    content.className = 'flex items-center w-full';
+                    content.appendChild(statusDot);
+                    content.appendChild(timeEl);
+                    content.appendChild(titleEl);
+    
+                    return { domNodes: [content] };
                 },
-                
                 eventClick: function(info) {
                     showAppointmentDetails(info.event);
                 },
                 height: 'calc(100vh - 225px)',
-                slotMinTime: '08:00:00',
-                slotMaxTime: '18:00:00',
-                allDaySlot: false,
-                slotDuration: '01:30:00',
                 businessHours: {
                     daysOfWeek: [0, 1, 2, 3, 4, 5],
                     startTime: '08:00',
@@ -128,18 +141,18 @@
             });
             calendar.render();
         });
-
+    
         function showAppointmentDetails(event) {
             document.getElementById('modalTitle').textContent = event.title;
             document.getElementById('modalPatient').textContent = event.extendedProps.patient_name;
             document.getElementById('modalDateTime').textContent = new Date(event.start).toLocaleString();
             document.getElementById('modalDescription').textContent = event.extendedProps.description || 'No description provided';
-            
+    
             const statusElement = document.getElementById('modalStatus');
             const status = event.extendedProps.status;
             let statusClass = '';
-            
-            switch(status) {
+    
+            switch (status) {
                 case 'Pending':
                     statusClass = 'bg-yellow-100 text-yellow-800';
                     break;
@@ -150,18 +163,18 @@
                     statusClass = 'bg-green-100 text-green-800';
                     break;
             }
-            
+    
             statusElement.className = `inline-block px-2 py-1 rounded-full text-sm font-medium ${statusClass}`;
             statusElement.textContent = status;
-            
-            document.getElementById('modalAmount').textContent = 
-                event.extendedProps.total_amt ? 
-                `Rs. ${parseFloat(event.extendedProps.total_amt).toFixed(2)}` : 
+    
+            document.getElementById('modalAmount').textContent =
+                event.extendedProps.total_amt ?
+                `Rs. ${parseFloat(event.extendedProps.total_amt).toFixed(2)}` :
                 'Not specified';
-            
+    
             document.getElementById('appointmentModal').classList.remove('hidden');
         }
-
+    
         function closeAppointmentModal() {
             document.getElementById('appointmentModal').classList.add('hidden');
         }
