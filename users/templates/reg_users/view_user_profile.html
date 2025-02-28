@@ -5,7 +5,7 @@
         {% comment %} Header Section {% endcomment %}
         <div class="flex justify-between items-center mb-4 ">
             <div class="space-x-1 flex items-center">
-                <a href="{% url 'list' %}">
+                <div onclick="history.back()">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          xmlns:xlink="http://www.w3.org/1999/xlink"
                          width="24px"
@@ -14,7 +14,7 @@
                          viewBox="0 0 20 20">
                         <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
                     </svg>
-                </a>
+                </div>
                 <p class="text-2xl font-semibold">{{ user.get_full_name }}'s Profile</p>
             </div>
             <div class="space-x-3 flex items-center">
@@ -56,9 +56,9 @@
                     <p>Address</p>
                     <p>Contact Number</p>
                     <p>Role</p>
-                    {% if staff_profile %}
+                    {% if user.role == 'Staff' %}
                         <p>Position</p>
-                    {% elif doctor_profile %}
+                    {% elif user.role == 'Doctor' %}
                         <p>Specialization</p>
                         <p>Qualification</p>
                         <p>NMC Number</p>
@@ -72,12 +72,12 @@
                     <p>{{ user.address }}</p>
                     <p>{{ user.contact }}</p>
                     <p>{{ user.role|capfirst }}</p>
-                    {% if staff_profile %}
-                        <p>{{ staff_profile.position }}</p>
-                    {% elif doctor_profile %}
-                        <p>{{ doctor_profile.specialization }}</p>
-                        <p>{{ doctor_profile.qualification }}</p>
-                        <p>{{ doctor_profile.nmc_no }}</p>
+                    {% if user.role == 'Staff' %}
+                        <p>{{ user.position }}</p>
+                    {% elif user.role == 'Doctor' %}
+                        <p>{{ user.specialization }}</p>
+                        <p>{{ user.qualification }}</p>
+                        <p>{{ user.nmc_no }}</p>
                     {% endif %}
                 </div>
             </div>
