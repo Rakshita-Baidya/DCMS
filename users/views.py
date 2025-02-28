@@ -120,13 +120,8 @@ def user_logout(request):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['Administrator'])
 def users_list(request):
-
-    # Allow only superusers and admins
-    # if not request.user.is_superuser and request.user.role != 'Administrator':
-    #     messages.error(request, "Access denied.")
-    #     return redirect('login')
-    # else:
     user_queryset = User.objects.all().order_by('role')
+    serializer = UserSerializer
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
@@ -238,23 +233,11 @@ def users_list(request):
 @login_required(login_url='login')
 def user_profile(request):
     user_queryset = User.objects.get(pk=request.user.id)
+    serializer = UserSerializer
 
-    # # Initialize profile data
-    # staff_profile = None
-    # doctor_profile = None
-
-    # # Check the user's role and fetch data accordingly
-    # if user_queryset.role == 'Staff':
-    #     staff_profile = user_queryset
-    # elif user_queryset.role == 'Doctor':
-    #     doctor_profile = user_queryset
-
-    # Pass the profile data to the context
     context = {
         'page_title': 'User Profile',
         'user': user_queryset,
-        # 'staff_profile': staff_profile,
-        # 'doctor_profile': doctor_profile,
     }
 
     return render(request, 'profile/profile.html', context)
@@ -263,45 +246,21 @@ def user_profile(request):
 @login_required(login_url='login')
 def edit_profile(request):
     user_queryset = User.objects.get(pk=request.user.id)
-    # staff_profile = None
-    # doctor_profile = None
+    serializer = UserSerializer
 
-    # # Fetch profile data based on the user's role
-    # if user_queryset.role == 'Staff':
-    #     staff_profile = user_queryset.staff_profile
-    # elif user_queryset.role == 'Doctor':
-    #     doctor_profile = user_queryset.doctor_profile
-
-    # if request.method == 'POST':
-    #     user_form = UserEditForm(
-    #         request.POST, request.FILES, instance=user_queryset)
-    #     staff_form = StaffForm(
-    #         request.POST, instance=staff_profile) if staff_profile else None
-    #     doctor_form = DoctorForm(
-    #         request.POST, instance=doctor_profile) if doctor_profile else None
-
-    #     if user_form.is_valid():
-    #         user_form.save()
-    #         if staff_form and staff_form.is_valid():
-    #             staff_form.save()
-    #         if doctor_form and doctor_form.is_valid():
-    #             doctor_form.save()
-
-    #         messages.success(
-    #             request, 'The profile has been updated successfully!')
-    #         return redirect('profile')
-    # else:
-    #     user_form = UserEditForm(instance=user_queryset)
-    #     staff_form = StaffForm(
-    #         instance=staff_profile) if staff_profile else None
-    #     doctor_form = DoctorForm(
-    #         instance=doctor_profile) if doctor_profile else None
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, request.FILES,
+                            instance=user_queryset)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = UserEditForm(instance=user_queryset)
 
     context = {
-        # 'user_form': user_form,
-        # 'staff_form': staff_form,
-        # 'doctor_form': doctor_form,
         'page_title': 'User Profile',
+        'user_form': form,
+        'user': user_queryset,
     }
 
     return render(request, 'profile/edit_profile.html', context)

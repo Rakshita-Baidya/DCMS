@@ -35,9 +35,9 @@
                     <p>Address</p>
                     <p>Contact Number</p>
                     <p>Role</p>
-                    {% if staff_profile %}
+                    {% if user.role == 'Staff' %}
                         <p>Position</p>
-                    {% elif doctor_profile %}
+                    {% elif user.role == 'Doctor' %}
                         <p>Specialization</p>
                         <p>Qualification</p>
                         <p>NMC Number</p>
@@ -51,12 +51,12 @@
                     <p>{{ user.address }}</p>
                     <p>{{ user.contact }}</p>
                     <p>{{ user.role|capfirst }}</p>
-                    {% if staff_profile %}
-                        <p>{{ staff_profile.position }}</p>
-                    {% elif doctor_profile %}
-                        <p>{{ doctor_profile.specialization }}</p>
-                        <p>{{ doctor_profile.qualification }}</p>
-                        <p>{{ doctor_profile.nmc_no }}</p>
+                    {% if user.role == 'Staff' %}
+                        <p>{{ user.position }}</p>
+                    {% elif user.role == 'Doctor' %}
+                        <p>{{ user.specialization }}</p>
+                        <p>{{ user.qualification }}</p>
+                        <p>{{ user.nmc_no }}</p>
                     {% endif %}
                     {% comment %} <form method="post" class="flex items-center justify-center space-x-2 py-2">
                         {% csrf_token %}

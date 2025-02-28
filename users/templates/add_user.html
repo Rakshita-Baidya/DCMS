@@ -92,7 +92,6 @@
                     {{ form.role|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.role.errors %}<div class="text-dangerRed text-sm">{{ form.role.errors }}</div>{% endif %}
                 </div>
-                {% comment %} Staff-Specific Fields {% endcomment %}
                 <div id="staff_fields">
                     <label for="{{ form.position.id_for_label }}"
                            class="block text-sm font-medium text-secondaryLogo form-label">
