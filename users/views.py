@@ -76,8 +76,7 @@ def add_user(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST, request.FILES)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.save()
+            user = form.save()
 
             role = form.cleaned_data.get('role')
             if role == 'Staff':
@@ -295,6 +294,7 @@ def view_user_profile(request, user_id):
 @login_required(login_url='login')
 def edit_user_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
+    serializer = UserSerializer
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
@@ -324,8 +324,6 @@ def edit_user_profile(request, user_id):
     context = {
         'user': user_queryset,
         'user_form': user_form,
-        # 'staff_form': staff_form,
-        # 'doctor_form': doctor_form,
         'page_title': 'User Management',
         'active_page': 'users',
     }

@@ -1,63 +1,37 @@
-# from django.db.models.signals import pre_save, post_save
-# from django.dispatch import receiver
-# from django.core.mail import send_mail
-# from django.conf import settings
-# from .models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import User
 
 
-# # @receiver(pre_save, sender=User)
-# # def track_user_changes(sender, instance, **kwargs):
-# #     if instance.pk:  # Only for existing users
-# #         previous = sender.objects.get(pk=instance.pk)
-# #         instance._is_approved_changed = previous.is_approved != instance.is_approved
-# #     else:
-# #         instance._is_approved_changed = False
+@receiver(post_save, sender=User)
+def send_user_creation_email(sender, instance, created, raw, **kwargs):
+    if created and not raw:
+        username = instance.username
+        email = instance.email
 
+        password = getattr(instance, '_password', None)
+        login_url = f"http://127.0.0.1:8000/users/login/"
 
-# @receiver(post_save, sender=User)
-# def notify_user_on_status_change(sender, instance, created, **kwargs):
-#     # Ensure email is sent only for updates
-#     if not created:
-#         if instance._is_approved_changed:  # Only if is_approved was updated
-#             if instance.is_approved == "Approved":
-#                 # User approved
-#                 send_mail(
-#                     subject="Account Approved",
-#                     message=(
-#                         f"Dear {instance.username},\n\n"
-#                         f"Your account for DCMS has been approved. "
-#                         f"You can now log in and access the system as a {
-#                             instance.role.capitalize()}.\n\n"
-#                         "Thank you,\nDCMS Team"
-#                     ),
-#                     from_email=settings.DEFAULT_FROM_EMAIL,
-#                     recipient_list=[instance.email],
-#                     fail_silently=False,
-#                 )
-#             elif instance.is_approved == "Pending":
-#                 # Status changed to Pending
-#                 send_mail(
-#                     subject="Account Status Pending",
-#                     message=(
-#                         f"Dear {instance.username},\n\n"
-#                         f"Your account status has been updated to 'Pending'. "
-#                         f"Please wait while we review your account.\n\n"
-#                         "Thank you,\nDCMS Team"
-#                     ),
-#                     from_email=settings.DEFAULT_FROM_EMAIL,
-#                     recipient_list=[instance.email],
-#                     fail_silently=False,
-#                 )
-#             elif instance.is_approved == "Rejected":
-#                 # User denied
-#                 send_mail(
-#                     subject="Account Denied",
-#                     message=(
-#                         f"Dear {instance.username},\n\n"
-#                         f"We regret to inform you that your account request for DCMS has been denied.\n\n"
-#                         "Thank you,\nDCMS Team"
-#                     ),
-#                     from_email=settings.DEFAULT_FROM_EMAIL,
-#                     recipient_list=[instance.email],
-#                     fail_silently=False,
-#                 )
+        if password:
+            subject = 'Welcome to the DCMS Platform!'
+            message = (
+                f"Dear {username},\n\n"
+                f"Your account for the DCMS system has been successfully created.\n"
+                f"Username: {username}\n"
+                f"Password: {password}\n"
+                f"Please log in here: {login_url}\n\n"
+                "For security, we recommend changing your password after your first login.\n\n"
+                "Best regards,\nThe DCMS Team"
+            )
+            from_email = settings.DEFAULT_FROM_EMAIL
+            recipient_list = [email]
+
+            send_mail(
+                subject,
+                message,
+                from_email,
+                recipient_list,
+                fail_silently=False,
+            )
