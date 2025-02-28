@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 
 # Create your models here.
 ROLE_CHOICES = [
@@ -8,11 +8,11 @@ ROLE_CHOICES = [
     ('Doctor', 'Doctor'),
 ]
 
-APPROVAL_STATUS = [
-    ('Pending', 'Pending'),
-    ('Approved', 'Approved'),
-    ('Rejected', 'Rejected'),
-]
+# APPROVAL_STATUS = [
+#     ('Pending', 'Pending'),
+#     ('Approved', 'Approved'),
+#     ('Rejected', 'Rejected'),
+# ]
 
 
 class User(AbstractUser):
@@ -23,10 +23,10 @@ class User(AbstractUser):
         max_length=10, blank=True, null=True, unique=True)
     role = models.CharField(
         max_length=20, choices=ROLE_CHOICES, blank=True, null=True)
-    is_active = models.BooleanField(default=False)
-    is_approved = models.CharField(
-        choices=APPROVAL_STATUS, default="Pending"
-    )
+    # is_active = models.BooleanField(default=False)
+    # is_approved = models.CharField(
+    #     choices=APPROVAL_STATUS, default="Pending"
+    # )
     profile_image = models.ImageField(
         upload_to='images/profile/',
         default='images/profile/default.jpg',
@@ -34,25 +34,13 @@ class User(AbstractUser):
         null=True,
     )
 
-    def __str__(self):
-        return super().__str__()
+    # Fields specific to Staff
+    position = models.CharField(max_length=100, blank=True, null=True)
 
-
-class Staff(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name='staff_profile')
-    position = models.CharField(max_length=100)
-
-    def __str__(self):
-        return super().__str__()
-
-
-class Doctor(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name='doctor_profile')
-    specialization = models.CharField(max_length=100)
-    qualification = models.CharField(max_length=100)
-    nmc_no = models.CharField(max_length=5, unique=True)
+    # Fields specific to Doctor
+    specialization = models.CharField(max_length=100, blank=True, null=True)
+    qualification = models.CharField(max_length=100, blank=True, null=True)
+    nmc_no = models.CharField(max_length=5, unique=True, blank=True, null=True)
 
     def __str__(self):
-        return super().__str__()
+        return f"{self.username} ({self.role})"

@@ -25,9 +25,9 @@
                     </a>
                 </div> {% endcomment %}
                 <div>
-                    <a href="{% url 'approve' %}"
+                    <a href="{% url 'add_user' %}"
                        class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
-                        Approve Users
+                        + Add Users
                     </a>
                 </div>
             </div>
@@ -42,7 +42,6 @@
                             <th class="pb-2">Full Name</th>
                             <th class="pb-2">Email</th>
                             <th class="pb-2">Role</th>
-                            <th class="pb-2">Status</th>
                             <th class="pb-2">Actions</th>
                         </tr>
                     </thead>
@@ -54,15 +53,6 @@
                                 <td>{{ user.first_name }} {{ user.last_name }}</td>
                                 <td>{{ user.email }}</td>
                                 <td class="py-3 capitalize">{{ user.role|default:"N/A" }}</td>
-                                <td>
-                                    {% if user.is_approved == "Approved" %}
-                                        <span class="text-green-600 font-semibold">Approved</span>
-                                    {% elif user.is_approved == "Denied" %}
-                                        <span class="text-dangerRed font-semibold">Denied</span>
-                                    {% else %}
-                                        <span class="text-yellow-600 font-semibold">Pending</span>
-                                    {% endif %}
-                                </td>
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">
                                         {% comment %} edit {% endcomment %}

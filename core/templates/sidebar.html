@@ -22,27 +22,6 @@
                </svg>
                <span>Dashboard</span>
           </a>
-          <a href="{% url 'core:doctor' %}"
-             class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'doctor' %}bg-darkerPrimary{% endif %}">
-               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
-                    <g clip-path="url(#a)">
-                    <path fill="#fff" d="M12 12.5c1.5913 0 3.1174-.6321 4.2426-1.7574C17.3679 9.61742 18 8.0913 18 6.5c0-1.5913-.6321-3.11742-1.7574-4.24264C15.1174 1.13214 13.5913.5 12 .5c-1.5913 0-3.11742.63214-4.24264 1.75736C6.63214 3.38258 6 4.9087 6 6.5s.63214 3.11742 1.75736 4.2426C8.88258 11.8679 10.4087 12.5 12 12.5Zm-4.5 2.5875c-3.46875 1.0172-6 4.2234-6 8.0203 0 .7688.62344 1.3922 1.39219 1.3922H21.1078c.7688 0 1.3922-.6234 1.3922-1.3922 0-3.7969-2.5312-7.0031-6-8.0203v2.3813c1.2938.3328 2.25 1.5093 2.25 2.9062v1.875c0 .4125-.3375.75-.75.75h-.75c-.4125 0-.75-.3375-.75-.75s.3375-.75.75-.75v-1.125c0-.8297-.6703-1.5-1.5-1.5s-1.5.6703-1.5 1.5V21.5c.4125 0 .75.3375.75.75s-.3375.75-.75.75h-.75c-.4125 0-.75-.3375-.75-.75v-1.875c0-1.3969.9563-2.5734 2.25-2.9062v-2.6766c-.2812-.0281-.5672-.0422-.8578-.0422H9.85781c-.29062 0-.57656.0141-.85781.0422v3.0656c1.0828.3234 1.875 1.3266 1.875 2.5172C10.875 21.8234 9.69844 23 8.25 23s-2.625-1.1766-2.625-2.625c0-1.1906.79219-2.1938 1.875-2.5172v-2.7703ZM8.25 21.5c.29837 0 .58452-.1185.7955-.3295.21097-.211.3295-.4971.3295-.7955s-.11853-.5845-.3295-.7955c-.21098-.211-.49713-.3295-.7955-.3295-.29837 0-.58452.1185-.7955.3295-.21097.211-.3295.4971-.3295.7955s.11853.5845.3295.7955c.21098.211.49713.3295.7955.3295Z" />
-                    </g>
-                    <defs>
-                    <clipPath id="a">
-                    <path fill="#fff" d="M0 0h24v24H0z" transform="translate(0 .5)" />
-                    </clipPath>
-                    </defs>
-               </svg>
-               <span>Doctors</span>
-          </a>
-          <a href="{% url 'core:staff' %}"
-             class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'staff' %}bg-darkerPrimary{% endif %}">
-               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
-                    <path stroke="#fff" stroke-width="2" d="M12 16.5V23m4.5-11c2.6704 1.1826 4.5 3.6506 4.5 7v4H3v-4c0-3.3543 1.83498-5.8246 4.5-7 0 2.2091 2.01472 4 4.5 4 2.4853 0 4.5-1.7909 4.5-4ZM12 13c3.7279 0 6.75-2.6863 6.75-6 0-3.31371-3.0221-6-6.75-6-3.72792 0-6.75 2.68629-6.75 6 0 3.3137 3.02208 6 6.75 6Z" />
-               </svg>
-               <span>Staff</span>
-          </a>
           <a href="{% url 'core:patient' %}"
              class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'patient' %}bg-darkerPrimary{% endif %}">
                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
@@ -65,30 +44,53 @@
                </svg>
                <span>Schedule</span>
           </a>
-          {% if user_role == 'Administrator' or request.user.is_superuser %}
-               <a href="{% url 'list' %}"
-                  class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'users' %}bg-darkerPrimary{% endif %}">
+          {% if request.user.role == 'Administrator' or request.user.role == 'Staff' or request.user.is_superuser %}
+               <a href="{% url 'core:staff' %}"
+                  class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'staff' %}bg-darkerPrimary{% endif %}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
-                         <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.0006 11.1631c2.7795 0 5.0328-1.74671 5.0328-3.90141 0-2.15469-2.2533-3.90134-5.0328-3.90134-2.77956 0-5.03283 1.74665-5.03283 3.90134 0 2.1547 2.25327 3.90141 5.03283 3.90141Zm8.6398 9.4771c0-3.014-3.8664-5.4586-8.64-5.4586-4.77365 0-8.64005 2.4446-8.64005 5.4586" />
+                         <path stroke="#fff" stroke-width="2" d="M12 16.5V23m4.5-11c2.6704 1.1826 4.5 3.6506 4.5 7v4H3v-4c0-3.3543 1.83498-5.8246 4.5-7 0 2.2091 2.01472 4 4.5 4 2.4853 0 4.5-1.7909 4.5-4ZM12 13c3.7279 0 6.75-2.6863 6.75-6 0-3.31371-3.0221-6-6.75-6-3.72792 0-6.75 2.68629-6.75 6 0 3.3137 3.02208 6 6.75 6Z" />
                     </svg>
-                    <span>Users</span>
+                    <span>Staff</span>
                </a>
-               <a href="{% url 'core:finance' %}"
-                  class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'finance' %}bg-darkerPrimary{% endif %}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
-                         <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.04 13.55c-.42.41-.66 1-.6 1.63.09 1.08 1.08 1.87 2.16 1.87h1.9v1.19c0 2.07-1.69 3.76-3.76 3.76H6.26c-2.07 0-3.76-1.69-3.76-3.76v-6.73c0-2.06999 1.69-3.76 3.76-3.76h11.48c2.07 0 3.76 1.69001 3.76 3.76v1.44h-2.02c-.56 0-1.07.22-1.44.6Z" />
-                         <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.5 12.4103V7.84035c0-1.19.73-2.25005 1.84-2.67005l7.94-3c1.24-.47 2.57.45003 2.57 1.78003v3.79999m7.7088 6.21988v2.06c0 .55-.44 1-1 1.02h-1.96c-1.08 0-2.07-.79-2.16-1.87-.06-.63.18-1.22.6-1.63.37-.38.88-.6 1.44-.6h2.08c.56.02 1 .47 1 1.02ZM7 12h7" />
-                    </svg>
-                    <span>Finance</span>
-               </a>
-               <a href="{% url 'core:statistics' %}"
-                  class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'statistics' %}bg-darkerPrimary{% endif %}">
-                    <img src="{% static 'images/sidebar/Stat.svg' %}"
-                         alt="statistics"
-                         width="20px"
-                         height="20px">
-                    <span>Statistics</span>
-               </a>
+               {% if request.user.role == 'Administrator' or request.user.is_superuser %}
+                    <a href="{% url 'list' %}"
+                       class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'users' %}bg-darkerPrimary{% endif %}">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+                              <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.0006 11.1631c2.7795 0 5.0328-1.74671 5.0328-3.90141 0-2.15469-2.2533-3.90134-5.0328-3.90134-2.77956 0-5.03283 1.74665-5.03283 3.90134 0 2.1547 2.25327 3.90141 5.03283 3.90141Zm8.6398 9.4771c0-3.014-3.8664-5.4586-8.64-5.4586-4.77365 0-8.64005 2.4446-8.64005 5.4586" />
+                         </svg>
+                         <span>Users</span>
+                    </a>
+                    <a href="{% url 'core:doctor' %}"
+                       class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'doctor' %}bg-darkerPrimary{% endif %}">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+                              <g clip-path="url(#a)">
+                              <path fill="#fff" d="M12 12.5c1.5913 0 3.1174-.6321 4.2426-1.7574C17.3679 9.61742 18 8.0913 18 6.5c0-1.5913-.6321-3.11742-1.7574-4.24264C15.1174 1.13214 13.5913.5 12 .5c-1.5913 0-3.11742.63214-4.24264 1.75736C6.63214 3.38258 6 4.9087 6 6.5s.63214 3.11742 1.75736 4.2426C8.88258 11.8679 10.4087 12.5 12 12.5Zm-4.5 2.5875c-3.46875 1.0172-6 4.2234-6 8.0203 0 .7688.62344 1.3922 1.39219 1.3922H21.1078c.7688 0 1.3922-.6234 1.3922-1.3922 0-3.7969-2.5312-7.0031-6-8.0203v2.3813c1.2938.3328 2.25 1.5093 2.25 2.9062v1.875c0 .4125-.3375.75-.75.75h-.75c-.4125 0-.75-.3375-.75-.75s.3375-.75.75-.75v-1.125c0-.8297-.6703-1.5-1.5-1.5s-1.5.6703-1.5 1.5V21.5c.4125 0 .75.3375.75.75s-.3375.75-.75.75h-.75c-.4125 0-.75-.3375-.75-.75v-1.875c0-1.3969.9563-2.5734 2.25-2.9062v-2.6766c-.2812-.0281-.5672-.0422-.8578-.0422H9.85781c-.29062 0-.57656.0141-.85781.0422v3.0656c1.0828.3234 1.875 1.3266 1.875 2.5172C10.875 21.8234 9.69844 23 8.25 23s-2.625-1.1766-2.625-2.625c0-1.1906.79219-2.1938 1.875-2.5172v-2.7703ZM8.25 21.5c.29837 0 .58452-.1185.7955-.3295.21097-.211.3295-.4971.3295-.7955s-.11853-.5845-.3295-.7955c-.21098-.211-.49713-.3295-.7955-.3295-.29837 0-.58452.1185-.7955.3295-.21097.211-.3295.4971-.3295.7955s.11853.5845.3295.7955c.21098.211.49713.3295.7955.3295Z" />
+                              </g>
+                              <defs>
+                              <clipPath id="a">
+                              <path fill="#fff" d="M0 0h24v24H0z" transform="translate(0 .5)" />
+                              </clipPath>
+                              </defs>
+                         </svg>
+                         <span>Doctors</span>
+                    </a>
+                    <a href="{% url 'core:finance' %}"
+                       class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'finance' %}bg-darkerPrimary{% endif %}">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+                              <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.04 13.55c-.42.41-.66 1-.6 1.63.09 1.08 1.08 1.87 2.16 1.87h1.9v1.19c0 2.07-1.69 3.76-3.76 3.76H6.26c-2.07 0-3.76-1.69-3.76-3.76v-6.73c0-2.06999 1.69-3.76 3.76-3.76h11.48c2.07 0 3.76 1.69001 3.76 3.76v1.44h-2.02c-.56 0-1.07.22-1.44.6Z" />
+                              <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.5 12.4103V7.84035c0-1.19.73-2.25005 1.84-2.67005l7.94-3c1.24-.47 2.57.45003 2.57 1.78003v3.79999m7.7088 6.21988v2.06c0 .55-.44 1-1 1.02h-1.96c-1.08 0-2.07-.79-2.16-1.87-.06-.63.18-1.22.6-1.63.37-.38.88-.6 1.44-.6h2.08c.56.02 1 .47 1 1.02ZM7 12h7" />
+                         </svg>
+                         <span>Finance</span>
+                    </a>
+                    <a href="{% url 'core:statistics' %}"
+                       class="flex items-center space-x-2 p-2 border-b-2 border-white {% if active_page == 'statistics' %}bg-darkerPrimary{% endif %}">
+                         <img src="{% static 'images/sidebar/Stat.svg' %}"
+                              alt="statistics"
+                              width="20px"
+                              height="20px">
+                         <span>Statistics</span>
+                    </a>
+               {% endif %}
           {% endif %}
      </nav>
      <form id="logout-form"

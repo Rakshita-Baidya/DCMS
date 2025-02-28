@@ -37,10 +37,10 @@
                 <a href="{% url 'reset_password' %}"
                    class="text-primaryLogo hover:underline">Forgot Password?</a>
             </p>
-            <p class="mt-4 text-center text-secondaryLogo">
+            {% comment %} <p class="mt-4 text-center text-secondaryLogo">
                 Don't have an account?
                 <a href="{% url 'register' %}" class="text-primaryLogo hover:underline">Register here</a>
-            </p>
+            </p> {% endcomment %}
         </div>
         {% comment %} SweetAlert2 Toast Notifications {% endcomment %}
         {% if messages %}

@@ -5,14 +5,7 @@ from .models import User
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'role',
-                    'is_active', 'is_approved')
-    list_filter = ('is_active', 'role', 'is_approved')
-    actions = ['approve_users']
-
-    @admin.action(description='Approve selected users')
-    def approve_users(self, request, queryset):
-        queryset.update(is_active=True)
-
-
+    list_display = ('username', 'email', 'role')
+    list_filter = ['role']
+    
 admin.site.register(User, UserAdmin)

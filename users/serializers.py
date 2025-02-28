@@ -1,20 +1,9 @@
 from rest_framework import serializers
-from .models import User, Staff, Doctor
+from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'is_approved']
-
-
-class DoctorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Doctor
-        fields = ['id', 'specialization', 'qualification', 'nmc_no']
-
-
-class StaffSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Staff
-        fields = ['id', 'position']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'address', 'contact',
+                  'role', 'profile_image', 'specialization', 'qualification', 'nmc_no', 'position']

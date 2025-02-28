@@ -12,8 +12,8 @@ from datetime import date
 from formtools.wizard.views import SessionWizardView
 from django.urls import reverse
 
-from users.models import Staff, User, Doctor
-from users.forms import StaffForm, DoctorForm, UserEditForm
+from users.models import User
+from users.forms import UserEditForm
 
 from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart, Payment,
                      ToothRecord, Transaction, Appointment, Treatment, TreatmentDoctor, PurchasedProduct)
@@ -43,7 +43,7 @@ def dashboard(request):
 
 @login_required(login_url='login')
 def doctor(request):
-    doctor_queryset = Doctor.objects.all()
+    doctor_queryset = User.objects.filter(role='Doctor')
 
     # Add search functionality
     search_query = request.GET.get('search', '')
@@ -85,11 +85,7 @@ def doctor(request):
 @login_required(login_url='login')
 def view_doctor_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
-    doctor_profile = None
-
-    # Fetch profile data based on the user's role
-    if user_queryset.role == 'Doctor' and hasattr(user_queryset, 'doctor_profile'):
-        doctor_profile = user_queryset.doctor_profile
+    doctor_profile = user_queryset
 
     appointments = Appointment.objects.filter(
         treatments__treatment_td__doctor=user_queryset).distinct().order_by('-date', '-time')[:5]
@@ -120,48 +116,44 @@ def view_doctor_profile(request, user_id):
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['Doctor', 'Administrator'])
 def edit_doctor_profile(request, user_id):
-    user_queryset = User.objects.get(pk=user_id)
-    doctor_profile = None
+    # user_queryset = User.objects.get(pk=user_id)
+    # doctor_profile = user_queryset
 
-    # Fetch profile data based on the user's role
-    if user_queryset.role == 'Doctor' and hasattr(user_queryset, 'doctor_profile'):
-        doctor_profile = user_queryset.doctor_profile
+    # # user needs to be deleted
+    # if request.method == 'POST' and 'delete_user_id' in request.POST:
+    #     if not request.user.is_superuser and request.user.role != 'Administrator':
+    #         messages.error(request, "You do not have permission to delete.")
+    #     else:
+    #         user_id_to_delete = request.POST['delete_user_id']
+    #         user_to_delete = User.objects.get(id=user_id_to_delete)
+    #         user_to_delete.delete()
+    #         messages.success(request, f"User {
+    #             user_to_delete.username} has been deleted.")
+    #         return redirect('core:doctor')
 
-    # user needs to be deleted
-    if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'Administrator':
-            messages.error(request, "You do not have permission to delete.")
-        else:
-            user_id_to_delete = request.POST['delete_user_id']
-            user_to_delete = User.objects.get(id=user_id_to_delete)
-            user_to_delete.delete()
-            messages.success(request, f"User {
-                user_to_delete.username} has been deleted.")
-            return redirect('core:doctor')
+    # if request.method == 'POST':
+    #     user_form = UserEditForm(
+    #         request.POST, request.FILES, instance=user_queryset)
+    #     doctor_form = DoctorForm(
+    #         request.POST, instance=doctor_profile) if doctor_profile else None
 
-    if request.method == 'POST':
-        user_form = UserEditForm(
-            request.POST, request.FILES, instance=user_queryset)
-        doctor_form = DoctorForm(
-            request.POST, instance=doctor_profile) if doctor_profile else None
+    #     if user_form.is_valid():
+    #         user_form.save()
+    #         if doctor_form and doctor_form.is_valid():
+    #             doctor_form.save()
 
-        if user_form.is_valid():
-            user_form.save()
-            if doctor_form and doctor_form.is_valid():
-                doctor_form.save()
-
-            messages.success(
-                request, 'The doctor profile has been updated successfully!')
-            return redirect('core:view_doctor_profile', user_id=user_queryset.id)
-    else:
-        user_form = UserEditForm(instance=user_queryset)
-        doctor_form = DoctorForm(
-            instance=doctor_profile) if doctor_profile else None
+    #         messages.success(
+    #             request, 'The doctor profile has been updated successfully!')
+    #         return redirect('core:view_doctor_profile', user_id=user_queryset.id)
+    # else:
+    #     user_form = UserEditForm(instance=user_queryset)
+    #     doctor_form = DoctorForm(
+    #         instance=doctor_profile) if doctor_profile else None
 
     context = {
-        'user': user_queryset,
-        'user_form': user_form,
-        'doctor_form': doctor_form,
+        # 'user': user_queryset,
+        # 'user_form': user_form,
+        # 'doctor_form': doctor_form,
         'page_title': 'Doctor Management',
         'active_page': 'doctor',
     }
@@ -171,7 +163,7 @@ def edit_doctor_profile(request, user_id):
 
 @login_required(login_url='login')
 def staff(request):
-    staff_queryset = Staff.objects.all()
+    staff_queryset = User.objects.filter(role='Staff')
 
     # Add search functionality
     search_query = request.GET.get('search', '')
@@ -212,30 +204,30 @@ def staff(request):
 
 @login_required(login_url='login')
 def view_staff_profile(request, user_id):
-    user_queryset = User.objects.get(pk=user_id)
-    staff_profile = None
+    # user_queryset = User.objects.get(pk=user_id)
+    # staff_profile = None
 
-    # Fetch profile data based on the user's role
-    if user_queryset.role == 'Staff' and hasattr(user_queryset, 'staff_profile'):
-        staff_profile = user_queryset.staff_profile
+    # # Fetch profile data based on the user's role
+    # if user_queryset.role == 'Staff' and hasattr(user_queryset, 'staff_profile'):
+    #     staff_profile = user_queryset.staff_profile
 
-    # user needs to be deleted
-    if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'Administrator':
-            messages.error(request, "You do not have permission to delete.")
-        else:
-            user_id_to_delete = request.POST['delete_user_id']
-            user_to_delete = User.objects.get(id=user_id_to_delete)
-            user_to_delete.delete()
-            messages.success(request, f"User {
-                user_to_delete.username} has been deleted.")
-            return redirect('core:staff')
+    # # user needs to be deleted
+    # if request.method == 'POST' and 'delete_user_id' in request.POST:
+    #     if not request.user.is_superuser and request.user.role != 'Administrator':
+    #         messages.error(request, "You do not have permission to delete.")
+    #     else:
+    #         user_id_to_delete = request.POST['delete_user_id']
+    #         user_to_delete = User.objects.get(id=user_id_to_delete)
+    #         user_to_delete.delete()
+    #         messages.success(request, f"User {
+    #             user_to_delete.username} has been deleted.")
+    #         return redirect('core:staff')
 
     context = {
         'page_title': 'Staff Management',
         'active_page': 'staff',
-        'user': user_queryset,
-        'staff_profile': staff_profile,
+        # 'user': user_queryset,
+        # 'staff_profile': staff_profile,
     }
 
     return render(request, 'staff/view_staff_profile.html', context)
@@ -847,182 +839,6 @@ class EditAppointmentWizard(SessionWizardView):
         messages.success(
             request, 'The appointment has been updated successfully!')
         return redirect('core:appointment')
-
-    # def get_context_data(self, form, **kwargs):
-    #     context = super().get_context_data(form=form, **kwargs)
-    #     appointment_id = self.kwargs.get('appointment_id')
-
-    #     if appointment_id:
-    #         appointment = get_object_or_404(Appointment, id=appointment_id)
-    #         treatment = Treatment.objects.filter(
-    #             appointment=appointment).first()
-    #         payment = Payment.objects.filter(appointment=appointment).first()
-    #         products = PurchasedProduct.objects.filter(appointment=appointment)
-    #         products_total = sum(
-    #             product.total_amt or 0 for product in products)
-    #         if treatment:
-    #             treatment_cost = treatment.treatment_cost or 0
-    #             lab_cost = treatment.lab_cost or 0
-    #             x_ray_cost = treatment.x_ray_cost or 0
-
-    #         if payment:
-    #             additional_cost = payment.additional_cost or 0
-    #             discount_amount = payment.discount_amount or 0
-    #             paid_amount = payment.paid_amount or 0
-
-    #     context.update({
-    #         'page_title': 'Appointment Management',
-    #         'active_page': 'appointment',
-    #         'patients': Patient.objects.all(),
-    #         'doctors': User.objects.filter(role='Doctor', doctor_profile__isnull=False),
-    #         'is_editing': bool(appointment_id),
-
-    #         'treatment_cost': treatment_cost,
-    #         'lab_cost': lab_cost,
-    #         'x_ray_cost': x_ray_cost,
-    #         'products_total': products_total,
-    #         'additional_cost': additional_cost,
-    #         'discount_amount': discount_amount,
-    #         'paid_amount': paid_amount,
-    #     })
-
-    #     if self.steps.current == '2':
-    #         treatment = None
-    #         if appointment_id:
-    #             appointment = get_object_or_404(Appointment, id=appointment_id)
-    #             treatment = Treatment.objects.filter(
-    #                 appointment=appointment).first()
-
-    #         context['treatment_doctor_formset'] = form
-    #         if isinstance(form, TreatmentDoctorFormSet):
-    #             if self.storage.get_step_data('2'):
-    #                 form.initial = self.storage.get_step_data('2')
-    #             context['treatment_doctor_formset'] = form
-
-    #     elif self.steps.current == '3':
-    #         if appointment_id:
-    #             appointment = get_object_or_404(Appointment, id=appointment_id)
-    #             context['purchased_product_formset'] = form
-    #             if isinstance(form, PurchasedProductFormSet):
-    #                 if self.storage.get_step_data('3'):
-    #                     form.initial = self.storage.get_step_data('3')
-    #                 context['purchased_product_formset'] = form
-
-    #     # print("Context values:", {
-    #     #     'treatment_cost': context['treatment_cost'],
-    #     #     'lab_cost': context['lab_cost'],
-    #     #     'x_ray_cost': context['x_ray_cost'],
-    #     #     'products_total': context['products_total'],
-    #     #     'additional_cost': context['additional_cost'],
-    #     #     'discount_amount': context['discount_amount'],
-    #     #     'paid_amount': context['paid_amount']
-    #     # })
-
-    #     return context
-
-    # def get_form(self, step=None, data=None, files=None):
-    #     form = super().get_form(step, data, files)
-
-    #     appointment_id = self.kwargs.get('appointment_id')
-    #     if appointment_id:
-    #         appointment = get_object_or_404(Appointment, id=appointment_id)
-
-    #         if step == '2':
-    #             treatment = Treatment.objects.filter(
-    #                 appointment=appointment).first()
-    #             if isinstance(form, TreatmentDoctorFormSet):
-    #                 if treatment:
-    #                     form.instance = treatment
-    #         elif step == '3':
-    #             if isinstance(form, PurchasedProductFormSet):
-    #                 form.instance = appointment
-
-    #     return form
-
-    # def get_form_instance(self, step):
-    #     appointment_id = self.kwargs.get('appointment_id')
-    #     if not appointment_id:
-    #         return None
-
-    #     appointment = get_object_or_404(Appointment, id=appointment_id)
-
-    #     if step == '0':
-    #         return appointment
-    #     elif step == '1':
-    #         treatment = Treatment.objects.filter(
-    #             appointment=appointment).first()
-    #         if not treatment:
-    #             treatment = Treatment(appointment=appointment)
-    #         return treatment
-    #     elif step == '2':
-    #         treatment = Treatment.objects.filter(
-    #             appointment=appointment).first()
-    #         if not treatment:
-    #             treatment = Treatment(appointment=appointment)
-    #             treatment.save()
-    #         return treatment
-    #     elif step == '3':
-    #         return appointment
-    #     elif step == '4':
-    #         payment, created = Payment.objects.get_or_create(
-    #             appointment=appointment)
-    #         return payment
-    #     return None
-
-    # def done(self, form_list, **kwargs):
-    #     request = self.request
-    #     appointment_id = self.kwargs.get('appointment_id')
-    #     appointment = get_object_or_404(Appointment, id=appointment_id)
-
-    #     # Save Appointment data
-    #     appointment_form = form_list[0]
-    #     for field, value in appointment_form.cleaned_data.items():
-    #         setattr(appointment, field, value)
-    #     appointment.save()
-
-    #     # Save Treatment data
-    #     treatment_form = form_list[1]
-    #     treatment = Treatment.objects.filter(appointment=appointment).first()
-    #     if not treatment:
-    #         treatment = Treatment(appointment=appointment)
-
-    #     for field, value in treatment_form.cleaned_data.items():
-    #         setattr(treatment, field, value)
-    #     treatment.save()
-
-    #     # Save multiple TreatmentDoctor records
-    #     treatment_doctor_formset = form_list[2]
-    #     if treatment_doctor_formset.is_valid():
-    #         treatment_doctor_formset.instance = treatment
-    #         treatment_doctor_formset.save()
-
-    #     # Save multiple PurchasedProduct records
-    #     purchased_product_formset = form_list[3]
-    #     if purchased_product_formset.is_valid():
-    #         purchased_product_formset.instance = appointment
-    #         purchased_product_formset.save()
-
-    #     # Save Payment data
-    #     payment_form = form_list[4]
-    #     payment = Payment.objects.filter(appointment=appointment).first()
-
-    #     treatment_cost = appointment.treatment_cost
-    #     lab_cost = appointment.lab_cost
-    #     x_ray_cost = appointment.x_ray_cost
-    #     products_total = appointment.products_total
-
-    #     final_amount = (treatment_cost + lab_cost +
-    #                     x_ray_cost + products_total)
-
-    #     for field, value in payment_form.cleaned_data.items():
-    #         setattr(payment, field, value)
-
-    #     payment.final_amount = final_amount
-    #     payment.save()
-
-    #     messages.success(
-    #         request, 'The appointment has been updated successfully!')
-    #     return redirect('core:appointment')
 
 
 @login_required(login_url='login')

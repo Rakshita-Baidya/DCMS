@@ -1,16 +1,23 @@
 from django.urls import path
 from . import views
-from .views import user_login, user_logout, user_register, users_list, user_approve, user_profile, staff_form, doctor_form, edit_profile, view_user_profile, edit_user_profile
+from .views import *
 from django.contrib.auth import views as auth_views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 # app_name = 'users'
 
 urlpatterns = [
+
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
     # backend urls
     path('login/', user_login, name='login'),
-    path('register/', user_register, name='register'),
-    path('staff_form/', staff_form, name='staff_form'),
-    path('doctor_form/', doctor_form, name='doctor_form'),
+    #     path('register/', user_register, name='register'),
+    path('add_user/', add_user, name='add_user'),
+
+    #     path('staff_form/', staff_form, name='staff_form'),
+    #     path('doctor_form/', doctor_form, name='doctor_form'),
     path('logout/', user_logout, name='logout'),
 
     path('reset_password/', auth_views.PasswordResetView.as_view(template_name='password/password_reset.html'),
@@ -23,7 +30,7 @@ urlpatterns = [
          name='password_reset_complete'),
 
     path('list/', users_list, name='list'),
-    path('approve/', user_approve, name='approve'),
+#     path('approve/', user_approve, name='approve'),
     path('profile/', user_profile, name='profile'),
     path('profile/edit/', edit_profile, name='edit_profile'),
 
