@@ -22,7 +22,7 @@
                 {% csrf_token %}
                 {% comment %} User Form Fields {% endcomment %}
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.username.label_tag }}</label>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.username.label_tag }}*</label>
                     {{ user_form.username|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.username.errors %}<div class="text-dangerRed text-sm">{{ user_form.username.errors }}</div>{% endif %}
                 </div>
@@ -51,21 +51,21 @@
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.first_name.label_tag }}</label>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.first_name.label_tag }}*</label>
                     {{ user_form.first_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.first_name.errors %}
                         <div class="text-dangerRed text-sm">{{ user_form.first_name.errors }}</div>
                     {% endif %}
                 </div>
                 <div class="col-start-1">
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.last_name.label_tag }}</label>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.last_name.label_tag }}*</label>
                     {{ user_form.last_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.last_name.errors %}
                         <div class="text-dangerRed text-sm">{{ user_form.last_name.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.email.label_tag }}</label>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.email.label_tag }}*</label>
                     {{ user_form.email|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.email.errors %}<div class="text-dangerRed text-sm">{{ user_form.email.errors }}</div>{% endif %}
                 </div>

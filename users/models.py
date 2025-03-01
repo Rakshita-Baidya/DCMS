@@ -18,11 +18,13 @@ ROLE_CHOICES = [
 class User(AbstractUser):
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=50, unique=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     contact = models.CharField(
         max_length=10, blank=True, null=True, unique=True)
     role = models.CharField(
-        max_length=20, choices=ROLE_CHOICES, blank=True, null=True)
+        max_length=20, choices=ROLE_CHOICES)
     # is_active = models.BooleanField(default=False)
     # is_approved = models.CharField(
     #     choices=APPROVAL_STATUS, default="Pending"

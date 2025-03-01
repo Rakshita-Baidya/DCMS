@@ -4,16 +4,15 @@
 {% block content %}
     <div class="p-6">
         <div class="flex items-center mb-6 space-x-2">
-            <a href="{% url "core:patient" %}">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink"
-                     width="24px"
-                     fill="none"
-                     height="24px"
-                     viewBox="0 0 20 20">
-                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
-                </svg>
-            </a>
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                 width="24px"
+                 fill="none"
+                 height="24px"
+                 viewBox="0 0 20 20"
+                 onclick="history.back()">
+                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+            </svg>
             <p class="text-gray-700 text-2xl font-medium">
                 {% if is_editing %}
                     Edit
@@ -33,7 +32,7 @@
                 <div id="tooth-records-container">
                     {% for form in tooth_record_formset.forms %}
                         <div class="tooth-record-form mb-4 p-4 border border-darkerPrimary rounded-md">
-                            <label class="block text-sm font-medium text-secondaryLogo">{{ form.tooth_no.label_tag }}</label>
+                            <label class="block text-sm font-medium text-secondaryLogo">{{ form.tooth_no.label_tag }}*</label>
                             {{ form.tooth_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                             {% if form.tooth_no.errors %}<div class="text-dangerRed text-sm">{{ form.tooth_no.errors }}</div>{% endif %}
                             <label class="block text-sm font-medium text-secondaryLogo">{{ form.condition.label_tag }}</label>

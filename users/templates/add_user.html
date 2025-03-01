@@ -22,13 +22,13 @@
                 {% csrf_token %}
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo"
-                           for="{{ form.first_name.id_for_label }}">{{ form.first_name.label_tag }}</label>
+                           for="{{ form.first_name.id_for_label }}">{{ form.first_name.label_tag }}*</label>
                     {{ form.first_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.first_name.errors %}<div class="text-dangerRed text-sm">{{ form.first_name.errors }}</div>{% endif %}
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo"
-                           for="{{ form.last_name.id_for_label }}">{{ form.last_name.label_tag }}</label>
+                           for="{{ form.last_name.id_for_label }}">{{ form.last_name.label_tag }}*</label>
                     {{ form.last_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.last_name.errors %}<div class="text-dangerRed text-sm">{{ form.last_name.errors }}</div>{% endif %}
                 </div>
@@ -58,19 +58,19 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo"
-                           for="{{ form.username.id_for_label }}">{{ form.username.label_tag }}</label>
+                           for="{{ form.username.id_for_label }}">{{ form.username.label_tag }}*</label>
                     {{ form.username|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.username.errors %}<div class="text-dangerRed text-sm">{{ form.username.errors }}</div>{% endif %}
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo"
-                           for="{{ form.email.id_for_label }}">{{ form.email.label_tag }}</label>
+                           for="{{ form.email.id_for_label }}">{{ form.email.label_tag }}*</label>
                     {{ form.email|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.email.errors %}<div class="text-dangerRed text-sm">{{ form.email.errors }}</div>{% endif %}
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo"
-                           for="{{ form.password.id_for_label }}">{{ form.password.label_tag }}</label>
+                           for="{{ form.password.id_for_label }}">{{ form.password.label_tag }}*</label>
                     {{ form.password|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.password.errors %}<div class="text-dangerRed text-sm">{{ form.password.errors }}</div>{% endif %}
                 </div>
@@ -88,7 +88,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo"
-                           for="{{ form.role.id_for_label }}">{{ form.role.label_tag }}</label>
+                           for="{{ form.role.id_for_label }}">{{ form.role.label_tag }}*</label>
                     {{ form.role|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.role.errors %}<div class="text-dangerRed text-sm">{{ form.role.errors }}</div>{% endif %}
                 </div>

@@ -20,7 +20,7 @@
                     <select name="blood_group"
                             onchange="this.form.submit()"
                             class="px-3 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo">
-                        <option value="">All Blood Groupss</option>
+                        <option value="">All Blood Groups</option>
                         {% for blood_group in blood_groups %}
                             <option value="{{ blood_group }}"
                                     {% if blood_group_filter == blood_group %}selected{% endif %}>

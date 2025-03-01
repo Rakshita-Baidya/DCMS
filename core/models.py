@@ -204,8 +204,8 @@ class ToothRecord(models.Model):
     dental_chart = models.ForeignKey(
         DentalChart, on_delete=models.CASCADE, related_name='tooth_records')
     tooth_no = models.CharField(max_length=10)
-    condition = models.TextField(max_length=255, blank=True, null=True)
-    severity = models.CharField(
+    description = models.TextField(max_length=255, blank=True, null=True)
+    condition = models.CharField(
         choices=SEVERITY_CHOICES, max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -222,8 +222,8 @@ APPOINTMENT_STATUS = [
 class Appointment(models.Model):
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, related_name='patient_appointment')
-    date = models.DateField(default=now, blank=True, null=True)
-    time = models.TimeField(max_length=25, blank=True, null=True)
+    date = models.DateField(default=now)
+    time = models.TimeField(max_length=25)
     description = models.TextField(max_length=255, blank=True, null=True)
     status = models.CharField(
         choices=APPOINTMENT_STATUS, default="Pending")
@@ -240,11 +240,16 @@ LAB_CHOICES = [
     ('Other', 'Other')]
 
 
-class Treatment(models.Model):
-    appointment = models.ForeignKey(
-        Appointment, on_delete=models.CASCADE, related_name='treatments')
-    type = models.CharField(max_length=100, blank=True, null=True)
+class TreatmentPlan(models.Model):
+    patient = models.ForeignKey(
+        Patient, on_delete=models.CASCADE, related_name='patient_treatment_plan')
+    
     plan = models.TextField(max_length=255, blank=True, null=True)
+
+class TreatmentRecord(models.Model):
+    appointment = models.ForeignKey(
+        Appointment, on_delete=models.CASCADE, related_name='appointment_treatment_record')
+    type = models.CharField(max_length=100, blank=True, null=True)
     x_ray = models.BooleanField(default=False)
     x_ray_cost = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
@@ -263,11 +268,11 @@ class Treatment(models.Model):
 
 
 class TreatmentDoctor(models.Model):
-    treatment = models.ForeignKey(
-        Treatment, on_delete=models.CASCADE, related_name='treatment_td')
+    treatment_record = models.ForeignKey(
+        TreatmentRecord, on_delete=models.CASCADE, related_name='record_td')
     doctor = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='doctor_td')
-    percent = models.FloatField(blank=True, null=True, validators=[
+    percent = models.FloatField(validators=[
                                 MinValueValidator(0), MaxValueValidator(100)])
     amount = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
@@ -280,10 +285,10 @@ class TreatmentDoctor(models.Model):
 class PurchasedProduct(models.Model):
     appointment = models.ForeignKey(
         Appointment, on_delete=models.CASCADE, related_name='product_appointment')
-    name = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(max_length=100)
     rate = models.DecimalField(
-        decimal_places=2, max_digits=10, blank=True, null=True)
-    quantity = models.IntegerField(blank=True, null=True)
+        decimal_places=2, max_digits=10)
+    quantity = models.PositiveIntegerField()
     total_amt = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
     date_created = models.DateTimeField(default=now, blank=True, null=True)
