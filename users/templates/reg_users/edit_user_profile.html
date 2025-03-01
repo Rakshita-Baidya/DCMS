@@ -123,15 +123,17 @@
                     {% if user_form.nmc_no.errors %}<div class="text-dangerRed text-sm">{{ user_form.nmc_no.errors }}</div>{% endif %}
                 </div>
                 {% comment %} Submit Button {% endcomment %}
-                <div class="w-full flex space-x-6 col-span-2">
-                    <button type="submit"
-                            class="col-span-2 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                        Save Changes
-                    </button>
-                    <p onclick="history.back()"
-                       class="text-center col-span-2 w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
-                        Cancel
-                    </p>
+                <div class="w-full grid grid-cols-4 gap-6 col-start-1 col-span-2">
+                    <div class="w-full flex space-x-6 col-start-3 col-span-2">
+                        <p onclick="history.back()"
+                           class="col-span-1 w-1/2  text-center text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
+                            Cancel
+                        </p>
+                        <button type="submit"
+                                class="col-span-1 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
+                            Save Changes
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>

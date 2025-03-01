@@ -31,18 +31,18 @@
                 <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-primaryLogo">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-36 h-36 rounded-full border-2 border-primaryLogo overflow-hidden flex items-center justify-center  mb-4">
-                            <img src="{{ doctor_member.user.profile_image.url }}"
-                                 alt="{{ doctor_member.user.get_full_name }}"
+                            <img src="{{ doctor_member.profile_image.url }}"
+                                 alt="{{ doctor_member.get_full_name }}"
                                  class="object-fill"
                                  width="full"
                                  height="full" />
                         </div>
                         {% comment %} Doctor Info {% endcomment %}
-                        <h3 class="text-2xl font-semibold text-gray-800 mb-1">{{ doctor_member.user.get_full_name }}</h3>
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-1">{{ doctor_member.get_full_name }}</h3>
                         <p class="text-md text-gray-600 mb-4">{{ doctor_member.specialization }}</p>
                         <div class="flex items-center justify-center w-full space-x-3">
                             {% comment %} edit {% endcomment %}
-                            <a href="{% url 'core:edit_doctor_profile' doctor_member.user.id %}">
+                            <a href="{% url 'core:edit_doctor_profile' doctor_member.id %}">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="20"
                                      height="20"
@@ -55,7 +55,7 @@
                                 </svg>
                             </a>
                             {% comment %} view {% endcomment %}
-                            <a href="{% url 'core:view_doctor_profile' doctor_member.user.id %}">
+                            <a href="{% url 'core:view_doctor_profile' doctor_member.id %}">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="20"
                                      height="20"

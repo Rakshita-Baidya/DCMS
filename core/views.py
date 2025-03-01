@@ -14,6 +14,7 @@ from django.urls import reverse
 
 from users.models import User
 from users.forms import UserEditForm
+from users.serializers import UserSerializer
 
 from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart, Payment,
                      ToothRecord, Transaction, Appointment, Treatment, TreatmentDoctor, PurchasedProduct)
@@ -44,6 +45,7 @@ def dashboard(request):
 @login_required(login_url='login')
 def doctor(request):
     doctor_queryset = User.objects.filter(role='Doctor')
+    serializer = UserSerializer
 
     # Add search functionality
     search_query = request.GET.get('search', '')
@@ -84,11 +86,11 @@ def doctor(request):
 
 @login_required(login_url='login')
 def view_doctor_profile(request, user_id):
-    user_queryset = User.objects.get(pk=user_id)
-    doctor_profile = user_queryset
+    doctor_queryset = User.objects.get(pk=user_id)
+    serializer = UserSerializer
 
     appointments = Appointment.objects.filter(
-        treatments__treatment_td__doctor=user_queryset).distinct().order_by('-date', '-time')[:5]
+        treatments__treatment_td__doctor=doctor_queryset).distinct().order_by('-date', '-time')[:5]
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
@@ -105,8 +107,7 @@ def view_doctor_profile(request, user_id):
     context = {
         'page_title': 'Doctor Management',
         'active_page': 'doctor',
-        'user': user_queryset,
-        'doctor_profile': doctor_profile,
+        'doctor': doctor_queryset,
         'appointments': appointments,
     }
 
@@ -114,46 +115,39 @@ def view_doctor_profile(request, user_id):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Doctor', 'Administrator'])
+@allowed_users(allowed_roles=['Administrator'])
 def edit_doctor_profile(request, user_id):
-    # user_queryset = User.objects.get(pk=user_id)
-    # doctor_profile = user_queryset
+    user_queryset = User.objects.get(pk=user_id)
+    serializer = UserSerializer
 
-    # # user needs to be deleted
-    # if request.method == 'POST' and 'delete_user_id' in request.POST:
-    #     if not request.user.is_superuser and request.user.role != 'Administrator':
-    #         messages.error(request, "You do not have permission to delete.")
-    #     else:
-    #         user_id_to_delete = request.POST['delete_user_id']
-    #         user_to_delete = User.objects.get(id=user_id_to_delete)
-    #         user_to_delete.delete()
-    #         messages.success(request, f"User {
-    #             user_to_delete.username} has been deleted.")
-    #         return redirect('core:doctor')
+    # user needs to be deleted
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        if not request.user.is_superuser and request.user.role != 'Administrator':
+            messages.error(request, "You do not have permission to delete.")
+        else:
+            user_id_to_delete = request.POST['delete_user_id']
+            user_to_delete = User.objects.get(id=user_id_to_delete)
+            user_to_delete.delete()
+            messages.success(request, f"User {
+                user_to_delete.username} has been deleted.")
+            return redirect('core:doctor')
 
-    # if request.method == 'POST':
-    #     user_form = UserEditForm(
-    #         request.POST, request.FILES, instance=user_queryset)
-    #     doctor_form = DoctorForm(
-    #         request.POST, instance=doctor_profile) if doctor_profile else None
+    if request.method == 'POST':
+        user_form = UserEditForm(
+            request.POST, request.FILES, instance=user_queryset)
 
-    #     if user_form.is_valid():
-    #         user_form.save()
-    #         if doctor_form and doctor_form.is_valid():
-    #             doctor_form.save()
+        if user_form.is_valid():
+            user_form.save()
 
-    #         messages.success(
-    #             request, 'The doctor profile has been updated successfully!')
-    #         return redirect('core:view_doctor_profile', user_id=user_queryset.id)
-    # else:
-    #     user_form = UserEditForm(instance=user_queryset)
-    #     doctor_form = DoctorForm(
-    #         instance=doctor_profile) if doctor_profile else None
+            messages.success(
+                request, 'The doctor profile has been updated successfully!')
+            return redirect('core:view_doctor_profile', user_id=user_queryset.id)
+    else:
+        user_form = UserEditForm(instance=user_queryset)
 
     context = {
-        # 'user': user_queryset,
-        # 'user_form': user_form,
-        # 'doctor_form': doctor_form,
+        'user': user_queryset,
+        'user_form': user_form,
         'page_title': 'Doctor Management',
         'active_page': 'doctor',
     }
@@ -204,30 +198,24 @@ def staff(request):
 
 @login_required(login_url='login')
 def view_staff_profile(request, user_id):
-    # user_queryset = User.objects.get(pk=user_id)
-    # staff_profile = None
+    staff_queryset = User.objects.get(pk=user_id)
 
-    # # Fetch profile data based on the user's role
-    # if user_queryset.role == 'Staff' and hasattr(user_queryset, 'staff_profile'):
-    #     staff_profile = user_queryset.staff_profile
-
-    # # user needs to be deleted
-    # if request.method == 'POST' and 'delete_user_id' in request.POST:
-    #     if not request.user.is_superuser and request.user.role != 'Administrator':
-    #         messages.error(request, "You do not have permission to delete.")
-    #     else:
-    #         user_id_to_delete = request.POST['delete_user_id']
-    #         user_to_delete = User.objects.get(id=user_id_to_delete)
-    #         user_to_delete.delete()
-    #         messages.success(request, f"User {
-    #             user_to_delete.username} has been deleted.")
-    #         return redirect('core:staff')
+    # user needs to be deleted
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        if not request.user.is_superuser and request.user.role != 'Administrator':
+            messages.error(request, "You do not have permission to delete.")
+        else:
+            user_id_to_delete = request.POST['delete_user_id']
+            user_to_delete = User.objects.get(id=user_id_to_delete)
+            user_to_delete.delete()
+            messages.success(request, f"User {
+                user_to_delete.username} has been deleted.")
+            return redirect('core:staff')
 
     context = {
         'page_title': 'Staff Management',
         'active_page': 'staff',
-        # 'user': user_queryset,
-        # 'staff_profile': staff_profile,
+        'staff': staff_queryset,
     }
 
     return render(request, 'staff/view_staff_profile.html', context)

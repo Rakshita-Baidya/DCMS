@@ -79,36 +79,37 @@
                     {{ user_form.contact|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.contact.errors %}<div class="text-dangerRed text-sm">{{ user_form.contact.errors }}</div>{% endif %}
                 </div>
-                {% comment %} Doctor Form Fields {% endcomment %}
-                {% if doctor_form %}
-                    <div>
-                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.specialization.label_tag }}</label>
-                        {{ doctor_form.specialization|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                        {% if doctor_form.specialization.errors %}
-                            <div class="text-dangerRed text-sm">{{ doctor_form.specialization.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.qualification.label_tag }}</label>
-                        {{ doctor_form.qualification|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                        {% if doctor_form.qualification.errors %}
-                            <div class="text-dangerRed text-sm">{{ doctor_form.qualification.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-secondaryLogo">{{ doctor_form.nmc_no.label_tag }}</label>
-                        {{ doctor_form.nmc_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                        {% if doctor_form.nmc_no.errors %}<div class="text-dangerRed text-sm">{{ doctor_form.nmc_no.errors }}</div>{% endif %}
-                    </div>
-                {% endif %}
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.specialization.label_tag }}</label>
+                    {{ user_form.specialization|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.specialization.errors %}
+                        <div class="text-dangerRed text-sm">{{ user_form.specialization.errors }}</div>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.qualification.label_tag }}</label>
+                    {{ user_form.qualification|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.qualification.errors %}
+                        <div class="text-dangerRed text-sm">{{ user_form.qualification.errors }}</div>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.nmc_no.label_tag }}</label>
+                    {{ user_form.nmc_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.nmc_no.errors %}<div class="text-dangerRed text-sm">{{ user_form.nmc_no.errors }}</div>{% endif %}
+                </div>
                 {% comment %} Submit Button {% endcomment %}
-                <div class="w-full flex space-x-6 col-span-2">
-                    <a href="{% url 'core:view_doctor_profile' user.id %}"
-                       class="text-center col-span-2 w-1/2 text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">Back to Profile</a>
-                    <button type="submit"
-                            class="col-span-2 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                        Save Changes
-                    </button>
+                <div class="w-full grid grid-cols-4 gap-6 col-start-1 col-span-2">
+                    <div class="w-full flex space-x-6 col-start-3 col-span-2">
+                        <p onclick="history.back()"
+                           class="col-span-1 w-1/2  text-center text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
+                            Cancel
+                        </p>
+                        <button type="submit"
+                                class="col-span-1 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
+                            Save Changes
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -125,28 +126,4 @@
             }
         });
     </script>
-    {% comment %} SweetAlert2 for Messages {% endcomment %}
-    {% if messages %}
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.js"></script>
-        <script>
-        {% for message in messages %}
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: '{{ message.tags }}',
-                title: '{{ message }}',
-                showConfirmButton: false,
-                timer: 3000,
-                background: '#F5F5F5',
-                iconColor: '{% if "success" in message.tags %}#28A745{% elif "error" in message.tags %}#DC3545{% else %}#FFC107{% endif %}',
-                showClass: {
-                    popup: 'animate__animated animate__fadeInRight'
-                },
-                hideClass: {
-                    popup: 'animate__animated animate__fadeOutRight'
-                }
-            });
-        {% endfor %}
-        </script>
-    {% endif %}
 {% endblock content %}
