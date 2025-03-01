@@ -16,10 +16,8 @@ from users.models import User
 from users.forms import UserEditForm
 from users.serializers import UserSerializer
 
-from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart, Payment,
-                     ToothRecord, Transaction, Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct)
-from .forms import (AppointmentForm, PatientForm,  MedicalHistoryForm,
-                    OtherPatientHistoryForm, DentalChartForm, PaymentForm, PurchasedProductFormSet, ToothRecordFormSet, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentForm)
+from .models import *
+from .forms import *
 
 
 # Create your views here.

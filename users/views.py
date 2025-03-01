@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.models import Group
+
 from .forms import UserCreationForm, LoginForm, UserEditForm
 from .models import User
 from .serializers import UserSerializer

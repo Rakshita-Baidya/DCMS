@@ -181,6 +181,18 @@ class OtherPatientHistory(models.Model):
     others = models.BooleanField(default=False)
     specifics = models.TextField(max_length=500, blank=True, null=True)
 
+    # habits
+    smoking = models.BooleanField(default=False)
+    tobacco_chewing = models.BooleanField(default=False)
+    alcohol = models.BooleanField(default=False)
+    betel_nuts = models.BooleanField(default=False)
+    paan_chewing = models.BooleanField(default=False)
+
+    # oral hygiene
+    stain = models.BooleanField(default=False)
+    calculus = models.BooleanField(default=False)
+    halitosis = models.BooleanField(default=False)
+
     def __str__(self):
         return f"Additional History for {self.history.patient.name}"
 
@@ -241,10 +253,10 @@ LAB_CHOICES = [
 
 
 class TreatmentPlan(models.Model):
-    patient = models.ForeignKey(
+    patient = models.OneToOneField(
         Patient, on_delete=models.CASCADE, related_name='patient_treatment_plan')
-    
-    plan = models.TextField(max_length=255, blank=True, null=True)
+    treatment_plan = models.TextField(max_length=255, blank=True, null=True)
+
 
 class TreatmentRecord(models.Model):
     appointment = models.ForeignKey(

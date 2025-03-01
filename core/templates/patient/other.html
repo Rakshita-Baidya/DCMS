@@ -172,6 +172,66 @@
                         {% endif %}
                     </div>
                 </div>
+                <div class="px-4 my-4">
+                    <p class="font-bold text-xl text-darkText text-center mb-2">Habits</p>
+                    <div class="flex items-center">
+                        <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.smoking.label_tag }}</label>
+                        {{ wizard.form.smoking }}
+                        {% if wizard.form.smoking.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.smoking.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center">
+                        <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.tobacco_chewing.label_tag }}</label>
+                        {{ wizard.form.tobacco_chewing }}
+                        {% if wizard.form.tobacco_chewing.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.tobacco_chewing.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center">
+                        <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.alcohol.label_tag }}</label>
+                        {{ wizard.form.alcohol }}
+                        {% if wizard.form.alcohol.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.alcohol.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center">
+                        <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.betel_nuts.label_tag }}</label>
+                        {{ wizard.form.betel_nuts }}
+                        {% if wizard.form.betel_nuts.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.betel_nuts.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center">
+                        <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.paan_chewing.label_tag }}</label>
+                        {{ wizard.form.paan_chewing }}
+                        {% if wizard.form.paan_chewing.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.paan_chewing.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="px-4 my-4">
+                    <p class="font-bold text-xl text-darkText text-center mb-2">Oral Hygiene</p>
+                    <div class="flex items-center">
+                        <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.stain.label_tag }}</label>
+                        {{ wizard.form.stain }}
+                        {% if wizard.form.stain.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.stain.errors }}</div>{% endif %}
+                    </div>
+                    <div class="flex items-center">
+                        <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.calculus.label_tag }}</label>
+                        {{ wizard.form.calculus }}
+                        {% if wizard.form.calculus.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.calculus.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center">
+                        <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.halitosis.label_tag }}</label>
+                        {{ wizard.form.halitosis }}
+                        {% if wizard.form.halitosis.errors %}
+                            <div class="text-dangerRed text-sm">{{ wizard.form.halitosis.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
                 {% comment %} buttons {% endcomment %}
                 <div class="grid grid-cols-4 col-span-3">
                     <p onclick="history.back()"

@@ -2,8 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import dashboard, doctor, view_doctor_profile, edit_doctor_profile, staff, view_staff_profile, edit_staff_profile, patient, view_patient_profile, appointment, view_appointment, finance, statistics,  error, schedule
-from .views import PatientFormWizard, EditPatientFormWizard, AppointmentFormWizard, EditAppointmentWizard
+from .views import *
 
 app_name = 'core'
 
@@ -30,9 +29,9 @@ urlpatterns = [
 
     path('appointment/', appointment, name='appointment'),
     # path('appointment/add/', add_appointment, name='add_appointment'),
-    path('appointment/add/', AppointmentFormWizard.as_view(), name='add_appointment'),
-    path('edit-appointment/<int:appointment_id>/',
-         EditAppointmentWizard.as_view(), name='edit_appointment'),
+    #     path('appointment/add/', AppointmentFormWizard.as_view(), name='add_appointment'),
+    #     path('edit-appointment/<int:appointment_id>/',
+    #          EditAppointmentWizard.as_view(), name='edit_appointment'),
     path('appointment/<int:appointment_id>/view/',
          view_appointment, name='view_appointment'),
 

@@ -1,6 +1,5 @@
 from django import forms
-from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart, Payment,
-                     ToothRecord, Transaction, Appointment, Treatment, TreatmentDoctor, PurchasedProduct)
+from .models import *
 from users.models import User
 
 
@@ -48,9 +47,16 @@ class AppointmentForm(forms.ModelForm):
         fields = '__all__'
 
 
-class TreatmentForm(forms.ModelForm):
+class TreatmentPlanForm(forms.ModelForm):
     class Meta:
-        model = Treatment
+        model = TreatmentPlan
+        fields = '__all__'
+        exclude = ['patient']
+
+
+class TreatmentRecordForm(forms.ModelForm):
+    class Meta:
+        model = TreatmentRecord
         fields = '__all__'
         exclude = ['appointment']
 
@@ -70,7 +76,7 @@ class TreatmentDoctorForm(forms.ModelForm):
 
 
 TreatmentDoctorFormSet = forms.inlineformset_factory(
-    Treatment, TreatmentDoctor, form=TreatmentDoctorForm, extra=1, can_delete=True)
+    TreatmentRecord, TreatmentDoctor, form=TreatmentDoctorForm, extra=1, can_delete=True)
 
 
 class PurchasedProductForm(forms.ModelForm):
