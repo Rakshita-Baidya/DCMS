@@ -52,10 +52,20 @@ def doctor(request):
     search_query = request.GET.get('search', '')
     if search_query:
         doctor_queryset = doctor_queryset.filter(
-            Q(user__first_name__icontains=search_query) |
-            Q(user__last_name__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
             Q(specialization__icontains=search_query)
         )
+
+    # Add specialization filter
+    specialization_filter = request.GET.get('specialization', '')
+    if specialization_filter:
+        doctor_queryset = doctor_queryset.filter(
+            specialization__iexact=specialization_filter)
+
+    # Get unique specializations for the filter dropdown
+    specializations = User.objects.filter(role='Doctor').values_list(
+        'specialization', flat=True).distinct()
 
     # Pagination
     paginator = Paginator(doctor_queryset, 8)
@@ -80,6 +90,8 @@ def doctor(request):
         'doctor': doctor_list,
         'total_doctor': doctor_queryset.count(),
         'search_query': search_query,
+        'specialization_filter': specialization_filter,
+        'specializations': specializations,
     }
 
     return render(request, 'doctor/doctor.html', context)
@@ -167,10 +179,20 @@ def staff(request):
     search_query = request.GET.get('search', '')
     if search_query:
         staff_queryset = staff_queryset.filter(
-            Q(user__first_name__icontains=search_query) |
-            Q(user__last_name__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
             Q(position__icontains=search_query)
         )
+
+    # Add filter
+    position_filter = request.GET.get('position', '')
+    if position_filter:
+        staff_queryset = staff_queryset.filter(
+            position__iexact=position_filter)
+
+    # Get unique positions for the filter dropdown
+    positions = User.objects.filter(role='Staff').values_list(
+        'position', flat=True).distinct()
 
     # Pagination
     paginator = Paginator(staff_queryset, 8)
@@ -195,6 +217,8 @@ def staff(request):
         'staff': staff_list,
         'total_staff': staff_queryset.count(),
         'search_query': search_query,
+        'position_filter': position_filter,
+        'positions': positions,
     }
 
     return render(request, 'staff/staff.html', context)
@@ -288,6 +312,16 @@ def patient(request):
             Q(email__icontains=search_query)
         )
 
+    # Add filter
+    blood_group_filter = request.GET.get('blood_group', '')
+    if blood_group_filter:
+        patient_queryset = patient_queryset.filter(
+            blood_group__iexact=blood_group_filter)
+
+    # Get unique blood_groups for the filter dropdown
+    blood_groups = Patient.objects.all().values_list(
+        'blood_group', flat=True).distinct()
+
     # Pagination
     paginator = Paginator(patient_queryset, 8)
     page = request.GET.get('page', 1)
@@ -299,6 +333,8 @@ def patient(request):
         'patients': patient_list,
         'total_patient': patient_queryset.count(),
         'search_query': search_query,
+        'blood_group_filter': blood_group_filter,
+        'blood_groups': blood_groups,
     }
 
     return render(request, 'patient/patient.html', context)

@@ -140,6 +140,16 @@ def users_list(request):
             Q(email__icontains=search_query)
         )
 
+    # Add filter
+    role_filter = request.GET.get('role', '')
+    if role_filter:
+        user_queryset = user_queryset.filter(
+            role__iexact=role_filter)
+
+    # Get unique roles for the filter dropdown
+    roles = User.objects.all().values_list(
+        'role', flat=True).distinct()
+
     # Pagination
     paginator = Paginator(user_queryset, 8)
     page = request.GET.get('page', 1)
@@ -151,6 +161,8 @@ def users_list(request):
         'users': user_list,
         'total_user': user_queryset.count(),
         'search_query': search_query,
+        'role_filter': role_filter,
+        'roles': roles,
     }
 
     return render(request, 'reg_users/users_list.html', context)

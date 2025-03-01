@@ -8,13 +8,22 @@
                 <p class="text-gray-700 text-2xl font-medium">{{ total_staff }} Total Staff Members</p>
             </div>
             <div class="flex items-center space-x-4">
-                {% comment %} Search Bar {% endcomment %}
                 <form method="get">
+                    {% comment %} Search Bar {% endcomment %}
                     <input type="text"
                            name="search"
                            value="{{ search_query }}"
                            placeholder="Search..."
                            class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                    {% comment %} Position Filter {% endcomment %}
+                    <select name="position"
+                            onchange="this.form.submit()"
+                            class="px-3 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                        <option value="">All Positions</option>
+                        {% for pos in positions %}
+                            <option value="{{ pos }}" {% if position_filter == pos %}selected{% endif %}>{{ pos }}</option>
+                        {% endfor %}
+                    </select>
                     <button type="submit" class="hidden"></button>
                 </form>
                 {% comment %} Add Staff Button {% endcomment %}

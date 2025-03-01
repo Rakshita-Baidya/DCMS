@@ -8,13 +8,23 @@
                 <p class="text-gray-700 text-2xl font-medium">{{ total_doctor }} Total Doctor Members</p>
             </div>
             <div class="flex items-center space-x-4">
-                {% comment %} Search Bar {% endcomment %}
                 <form method="get">
+                    {% comment %} Search Bar {% endcomment %}
                     <input type="text"
                            name="search"
                            value="{{ search_query }}"
                            placeholder="Search..."
                            class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                    {% comment %} Specialization Filter {% endcomment %}
+                    <select name="specialization"
+                            onchange="this.form.submit()"
+                            class="px-3 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                        <option value="">All Specializations</option>
+                        {% for spec in specializations %}
+                            <option value="{{ spec }}"
+                                    {% if specialization_filter == spec %}selected{% endif %}>{{ spec }}</option>
+                        {% endfor %}
+                    </select>
                     <button type="submit" class="hidden"></button>
                 </form>
                 {% comment %} Add Doctor Button {% endcomment %}

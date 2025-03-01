@@ -16,6 +16,18 @@
                            value="{{ search_query }}"
                            placeholder="Search..."
                            class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                    {% comment %} Blood Groups Filter {% endcomment %}
+                    <select name="blood_group"
+                            onchange="this.form.submit()"
+                            class="px-3 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                        <option value="">All Blood Groupss</option>
+                        {% for blood_group in blood_groups %}
+                            <option value="{{ blood_group }}"
+                                    {% if blood_group_filter == blood_group %}selected{% endif %}>
+                                {{ blood_group }}
+                            </option>
+                        {% endfor %}
+                    </select>
                     <button type="submit" class="hidden"></button>
                 </form>
                 {% comment %} Add Patient Button {% endcomment %}
