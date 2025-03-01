@@ -1,5 +1,6 @@
 from django import forms
-from .models import *
+from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart, Payment,
+                     ToothRecord, Transaction, Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct)
 from users.models import User
 
 

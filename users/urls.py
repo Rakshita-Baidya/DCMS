@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import *
+from .views import add_user, edit_profile, edit_user_profile, user_login, user_logout, user_profile, users_list, view_user_profile
 from django.contrib.auth import views as auth_views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import UserViewset, UserListViewset

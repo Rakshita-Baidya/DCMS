@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import *
+from .models import Patient, MedicalHistory, OtherPatientHistory, DentalChart, ToothRecord, Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction
 
 # Register your models here.
 
