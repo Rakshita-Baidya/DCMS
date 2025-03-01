@@ -43,8 +43,8 @@ class Patient(models.Model):
     contact = models.CharField(
         validators=[phone_regex], max_length=17)
     address = models.CharField(max_length=150, blank=True, null=True)
-    dob = models.DateField(default=now,
-                           blank=True, null=True)
+    # dob = models.DateField(default=now,
+    #                        blank=True, null=True)
     gender = models.CharField(max_length=17, null=True, blank=True,
                               default="Prefer not to say", choices=GENDER_CHOICES)
     blood_group = models.CharField(choices=BLOOD_GROUP_CHOICES)
@@ -55,6 +55,7 @@ class Patient(models.Model):
     occupation = models.CharField(blank=True, null=True)
     nationality = models.CharField(blank=True, null=True)
     marital_status = models.CharField(choices=MARTIAL_STATUS, default="Single")
+    reffered_by = models.CharField(max_length=50, blank=True, null=True)
     # profile_image = models.ImageField(
     #     upload_to='images/patient/',
     #     default='images/profile/default.jpg',

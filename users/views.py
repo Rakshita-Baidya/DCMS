@@ -8,28 +8,36 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.models import Group
 
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import AllowAny
+
 from .forms import UserCreationForm, LoginForm, UserEditForm
 from .models import User
 from .serializers import UserSerializer
 from .decorators import admin_only, allowed_users, unauthenticated_user
 
 
-# def user_register(request):
-#     if request.method == 'POST':
-#         form = UserForm(request.POST)
-#         if form.is_valid():
-#             user = form.save(commit=False)
-#             user.is_active = False  # User must be approved first
-#             user.save()
-#             messages.success(
-#                 request, "Registration successful. Wait for approval.")
-#             return redirect('login')
-#         else:
-#             messages.error(
-#                 request, "There was an error with your registration.")
-#     else:
-#         form = UserForm()
-#     return render(request, 'register.html', {'form': form})
+class UserViewset(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny,]
+
+    # def user_register(request):
+    #     if request.method == 'POST':
+    #         form = UserForm(request.POST)
+    #         if form.is_valid():
+    #             user = form.save(commit=False)
+    #             user.is_active = False  # User must be approved first
+    #             user.save()
+    #             messages.success(
+    #                 request, "Registration successful. Wait for approval.")
+    #             return redirect('login')
+    #         else:
+    #             messages.error(
+    #                 request, "There was an error with your registration.")
+    #     else:
+    #         form = UserForm()
+    #     return render(request, 'register.html', {'form': form})
 
 
 def user_login(request):
@@ -128,8 +136,8 @@ def users_list(request):
         user_id_to_delete = request.POST['delete_user_id']
         user_to_delete = User.objects.get(id=user_id_to_delete)
         user_to_delete.delete()
-        messages.success(request, f"User {
-                         user_to_delete.username} has been deleted.")
+        messages.success(
+            request, f"User {user_to_delete.username} has been deleted.")
 
     # Add search functionality
     search_query = request.GET.get('search', '')
