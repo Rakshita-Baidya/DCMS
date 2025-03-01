@@ -1,53 +1,43 @@
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.shortcuts import redirect
-from functools import wraps
 
-def unauthenticated_user(view_func):
-    def wrapper_func(request, *args, **kwargs):
+
+class UnauthenticatedUser:
+    def __init__(self, view_func):
+        self.view_func = view_func
+
+    def __call__(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            messages.error(
-                request, 'You are not authorized to view this page')
+            messages.error(request, 'You are not authorized to view this page')
             return redirect('core:error')
-        else:
-            return view_func(request, *args, **kwargs)
-
-    return wrapper_func
+        return self.view_func(request, *args, **kwargs)
 
 
-def allowed_users(allowed_roles=[]):
-    def decorator(view_func):
-        def wrapper_func(request, *args, **kwargs):
+class AllowedUsers:
+    def __init__(self, allowed_roles=[]):
+        self.allowed_roles = allowed_roles
 
-            group = None
+    def __call__(self, view_func):
+        def wrapper(request, *args, **kwargs):
             if request.user.groups.exists():
-                group = request.user.groups.all()[0].name
-
-            if group in allowed_roles:
-                return view_func(request, *args, **kwargs)
-            else:
-                messages.error(
-                    request, 'You are not authorized to view this page')
-                return redirect('core:error')
-        return wrapper_func
-    return decorator
-
-
-def admin_only(view_func):
-    def wrapper_function(request, *args, **kwargs):
-        group = None
-        if request.user.groups.exists():
-            group = request.user.groups.all()[0].name
-
-        if group == 'Doctor' or group == 'Staff':
-            messages.error(
-                request, 'You are not authorized to view this page')
+                user_groups = request.user.groups.values_list(
+                    'name', flat=True)
+                if any(group in self.allowed_roles for group in user_groups):
+                    return view_func(request, *args, **kwargs)
+            messages.error(request, 'You are not authorized to view this page')
             return redirect('core:error')
+        return wrapper
 
-        if group == 'Administrator':
-            return view_func(request, *args, **kwargs)
 
+class AdminOnly:
+    def __init__(self, view_func):
+        self.view_func = view_func
+
+    def __call__(self, request, *args, **kwargs):
+        if request.user.groups.exists():
+            user_groups = request.user.groups.values_list('name', flat=True)
+            if 'Administrator' in user_groups:
+                return self.view_func(request, *args, **kwargs)
         messages.error(request, 'You are not authorized to view this page')
         return redirect('core:error')
-
-    return wrapper_function

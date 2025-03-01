@@ -1,20 +1,39 @@
-from rest_framework_simplejwt.tokens import RefreshToken
-from .forms import LoginForm
-from django.shortcuts import redirect, render
+from django.core.cache import cache
+from django.db.models import Q
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
 from django.contrib.auth.models import Group
 
+from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .forms import UserCreationForm, LoginForm, UserEditForm
 from .models import User
 from .serializers import UserSerializer
-from .decorators import admin_only, allowed_users, unauthenticated_user
+from .decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
+
+# function for user deletion
+
+
+def delete_user(request, user_to_delete, redirect_url):
+    if not request.user.is_superuser and 'Administrator' not in request.user.groups.values_list('name', flat=True):
+        messages.error(request, "You do not have permission to delete.")
+        return None
+    user_to_delete.delete()
+    messages.success(
+        request, f"User {user_to_delete.username} has been deleted.")
+    return redirect(redirect_url)
+
+
+class UserListViewset(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny,]
 
 
 class UserViewset(ModelViewSet):
@@ -22,97 +41,51 @@ class UserViewset(ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [AllowAny,]
 
-    # def user_register(request):
-    #     if request.method == 'POST':
-    #         form = UserForm(request.POST)
-    #         if form.is_valid():
-    #             user = form.save(commit=False)
-    #             user.is_active = False  # User must be approved first
-    #             user.save()
-    #             messages.success(
-    #                 request, "Registration successful. Wait for approval.")
-    #             return redirect('login')
-    #         else:
-    #             messages.error(
-    #                 request, "There was an error with your registration.")
-    #     else:
-    #         form = UserForm()
-    #     return render(request, 'register.html', {'form': form})
 
-
+@UnauthenticatedUser
 def user_login(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
-
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-
+            user = authenticate(
+                request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user:
                 login(request, user)
                 refresh = RefreshToken.for_user(user)
-
-                # Store tokens
-                access_token = str(refresh.access_token)
-                refresh_token = str(refresh)
-
-                # Set the JWT as an HTTP-only cookie
                 response = redirect('core:dashboard')
                 response.set_cookie(
                     key='jwt',
-                    value=access_token,
+                    value=str(refresh.access_token),
                     httponly=True,
                     secure=True,
                     samesite='Lax'
                 )
-                response['Authorization'] = f'Bearer {access_token}'
-
                 messages.success(request, "Login successful!")
                 return response
-            else:
-                messages.error(request, "Invalid username or password.")
-        else:
-            messages.error(request, "Form is not valid.")
+            messages.error(request, "Invalid username or password.")
     else:
         form = LoginForm()
-
     return render(request, 'login.html', {'form': form})
 
 
-@allowed_users(allowed_roles=['Administrator'])
+@AllowedUsers(allowed_roles=['Administrator'])
 def add_user(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save()
+    form = UserCreationForm(request.POST or None, request.FILES or None)
 
-            role = form.cleaned_data.get('role')
-            if role == 'Staff':
-                group = Group.objects.get(name='Staff')
-            elif role == 'Doctor':
-                group = Group.objects.get(name='Doctor')
-            elif role == 'Administrator':
-                group = Group.objects.get(name='Administrator')
-            else:
-                group = None
+    if request.method == 'POST' and form.is_valid():
+        user = form.save()
+        role = form.cleaned_data.get('role')
 
-            if group:
-                user.groups.add(group)
-
-            messages.success(
-                request, 'User created successfully.')
-            return redirect('list')
-        else:
-            messages.error(request, 'Please correct the errors below.')
-    else:
-        form = UserCreationForm()
+        if role in ['Staff', 'Doctor', 'Administrator']:
+            group = Group.objects.get(name=role)
+            user.groups.add(group)
+        messages.success(request, 'User created successfully.')
+        return redirect('list')
 
     context = {
         'page_title': 'User Management',
         'active_page': 'users',
         'form': form,
-        'title': 'Add New User'
     }
     return render(request, 'add_user.html', context)
 
@@ -126,18 +99,18 @@ def user_logout(request):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Administrator'])
+@AllowedUsers(allowed_roles=['Administrator'])
 def users_list(request):
     user_queryset = User.objects.all().order_by('role')
     serializer = UserSerializer
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
-        user_id_to_delete = request.POST['delete_user_id']
-        user_to_delete = User.objects.get(id=user_id_to_delete)
-        user_to_delete.delete()
-        messages.success(
-            request, f"User {user_to_delete.username} has been deleted.")
+        user_to_delete = get_object_or_404(
+            User, id=request.POST['delete_user_id'])
+        result = delete_user(request, user_to_delete, 'list')
+        if result:
+            return result
 
     # Add search functionality
     search_query = request.GET.get('search', '')
@@ -154,8 +127,6 @@ def users_list(request):
     if role_filter:
         user_queryset = user_queryset.filter(
             role__iexact=role_filter)
-
-    # Get unique roles for the filter dropdown
     roles = User.objects.all().values_list(
         'role', flat=True).distinct()
 
@@ -175,6 +146,76 @@ def users_list(request):
     }
 
     return render(request, 'reg_users/users_list.html', context)
+
+
+@login_required(login_url='login')
+def user_profile(request):
+    user = request.user
+    context = {
+        'page_title': 'User Profile',
+        'user': user
+    }
+    return render(request, 'profile/profile.html', context)
+
+
+@login_required(login_url='login')
+def edit_profile(request):
+    user = request.user
+    form = UserEditForm(request.POST or None,
+                        request.FILES or None, instance=user)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('profile')
+    context = {
+        'page_title': 'User Profile',
+        'user_form': form,
+        'user': user,
+    }
+    return render(request, 'profile/edit_profile.html', context)
+
+
+@login_required(login_url='login')
+def view_user_profile(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        result = delete_user(request, user, 'list')
+        if result:
+            return result
+
+    context = {
+        'page_title': 'User Management',
+        'active_page': 'users',
+        'user': user,
+    }
+    return render(request, 'reg_users/view_user_profile.html', context)
+
+
+@login_required(login_url='login')
+def edit_user_profile(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+
+    if request.method == 'POST' and 'delete_user_id' in request.POST:
+        result = delete_user(request, user, 'list')
+        if result:
+            return result
+
+    form = UserEditForm(request.POST or None,
+                        request.FILES or None, instance=user)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'The profile has been updated successfully!')
+        return redirect('view_user_profile', user_id=user.id)
+
+    context = {
+        'user': user,
+        'user_form': form,
+        'page_title': 'User Management',
+        'active_page': 'users',
+    }
+    return render(request, 'reg_users/edit_user_profile.html', context)
+
 
 # Approval View
 
@@ -250,103 +291,19 @@ def users_list(request):
 #     return render(request, 'reg_users/user_approve.html', context)
 
 
-@login_required(login_url='login')
-def user_profile(request):
-    user_queryset = User.objects.get(pk=request.user.id)
-    serializer = UserSerializer
-
-    context = {
-        'page_title': 'User Profile',
-        'user': user_queryset,
-    }
-
-    return render(request, 'profile/profile.html', context)
-
-
-@login_required(login_url='login')
-def edit_profile(request):
-    user_queryset = User.objects.get(pk=request.user.id)
-    serializer = UserSerializer
-
-    if request.method == 'POST':
-        form = UserEditForm(request.POST, request.FILES,
-                            instance=user_queryset)
-        if form.is_valid():
-            form.save()
-            return redirect('profile')
-    else:
-        form = UserEditForm(instance=user_queryset)
-
-    context = {
-        'page_title': 'User Profile',
-        'user_form': form,
-        'user': user_queryset,
-    }
-
-    return render(request, 'profile/edit_profile.html', context)
-
-
-@login_required(login_url='login')
-def view_user_profile(request, user_id):
-    user_queryset = User.objects.get(pk=user_id)
-    serializer = UserSerializer
-
-    # user needs to be deleted
-    if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'Administrator':
-            messages.error(request, "You do not have permission to delete.")
-        else:
-            user_id_to_delete = request.POST['delete_user_id']
-            user_to_delete = User.objects.get(id=user_id_to_delete)
-            user_to_delete.delete()
-            messages.success(request, f"User {
-                user_to_delete.username} has been deleted.")
-            return redirect('view_user_profile')
-
-    context = {
-        'page_title': 'User Management',
-        'active_page': 'users',
-        'user': user_queryset,
-    }
-
-    return render(request, 'reg_users/view_user_profile.html', context)
-
-
-@login_required(login_url='login')
-def edit_user_profile(request, user_id):
-    user_queryset = User.objects.get(pk=user_id)
-    serializer = UserSerializer
-
-    # user needs to be deleted
-    if request.method == 'POST' and 'delete_user_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'Administrator':
-            messages.error(request, "You do not have permission to delete.")
-        else:
-            user_id_to_delete = request.POST['delete_user_id']
-            user_to_delete = User.objects.get(id=user_id_to_delete)
-            user_to_delete.delete()
-            messages.success(request, f"User {
-                user_to_delete.username} has been deleted.")
-            return redirect('list')
-
-    if request.method == 'POST':
-        user_form = UserEditForm(
-            request.POST, request.FILES, instance=user_queryset)
-
-        if user_form.is_valid():
-            user_form.save()
-
-            messages.success(
-                request, 'The profile has been updated successfully!')
-            return redirect('view_user_profile', user_id=user_queryset.id)
-    else:
-        user_form = UserEditForm(instance=user_queryset)
-
-    context = {
-        'user': user_queryset,
-        'user_form': user_form,
-        'page_title': 'User Management',
-        'active_page': 'users',
-    }
-
-    return render(request, 'reg_users/edit_user_profile.html', context)
+# def user_register(request):
+#     if request.method == 'POST':
+#         form = UserForm(request.POST)
+#         if form.is_valid():
+#             user = form.save(commit=False)
+#             user.is_active = False  # User must be approved first
+#             user.save()
+#             messages.success(
+#                 request, "Registration successful. Wait for approval.")
+#             return redirect('login')
+#         else:
+#             messages.error(
+#                 request, "There was an error with your registration.")
+#     else:
+#         form = UserForm()
+#     return render(request, 'register.html', {'form': form})

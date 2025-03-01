@@ -3,7 +3,7 @@ from . import views
 from .views import *
 from django.contrib.auth import views as auth_views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import UserViewset
+from .views import UserViewset, UserListViewset
 
 # app_name = 'users'
 
@@ -12,8 +12,13 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    # testing api
-    path('users/user', UserViewset.as_view({'get': 'list'}), name='user'),
+    # testing apis
+    path('users/user_list', UserListViewset.as_view({'get': 'list',
+         'put': 'update', 'delete': 'destroy', 'post': 'create'}), name='user_list'),
+    path('users/user/<int:pk>/', UserViewset.as_view({'get': 'retrieve',
+         'put': 'update', 'delete': 'destroy', 'post': 'create'}), name='user'),
+
+
 
     # backend urls
     path('login/', user_login, name='login'),

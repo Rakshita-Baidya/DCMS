@@ -3,7 +3,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from users.decorators import admin_only, allowed_users, unauthenticated_user
+from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
 from django.core.files.storage import FileSystemStorage
 import os
 from django.forms import formset_factory
@@ -40,7 +40,7 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard.html', context)
 
 
-@allowed_users(allowed_roles=['Administrator'])
+@AllowedUsers(allowed_roles=['Administrator'])
 @login_required(login_url='login')
 def doctor(request):
     doctor_queryset = User.objects.filter(role='Doctor')
@@ -95,7 +95,7 @@ def doctor(request):
     return render(request, 'doctor/doctor.html', context)
 
 
-@allowed_users(allowed_roles=['Administrator'])
+@AllowedUsers(allowed_roles=['Administrator'])
 @login_required(login_url='login')
 def view_doctor_profile(request, user_id):
     doctor_queryset = User.objects.get(pk=user_id)
@@ -127,7 +127,7 @@ def view_doctor_profile(request, user_id):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Administrator'])
+@AllowedUsers(allowed_roles=['Administrator'])
 def edit_doctor_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
     serializer = UserSerializer
@@ -167,7 +167,7 @@ def edit_doctor_profile(request, user_id):
     return render(request, 'doctor/edit_doctor_profile.html', context)
 
 
-@allowed_users(allowed_roles=['Administrator', 'Staff'])
+@AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 @login_required(login_url='login')
 def staff(request):
     staff_queryset = User.objects.filter(role='Staff')
@@ -223,7 +223,7 @@ def staff(request):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Administrator', 'Staff'])
+@AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 def view_staff_profile(request, user_id):
     staff_queryset = User.objects.get(pk=user_id)
     serializer = UserSerializer
@@ -250,7 +250,7 @@ def view_staff_profile(request, user_id):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Administrator'])
+@AllowedUsers(allowed_roles=['Administrator'])
 def edit_staff_profile(request, user_id):
     staff_queryset = User.objects.get(pk=user_id)
     serializer = UserSerializer
@@ -919,7 +919,7 @@ def schedule(request):
 
 
 @login_required(login_url='login')
-@admin_only
+@AdminOnly
 def finance(request):
     context = {
         'page_title': 'Finance Management',
@@ -929,7 +929,7 @@ def finance(request):
 
 
 @login_required(login_url='login')
-@admin_only
+@AdminOnly
 def statistics(request):
     context = {
         'page_title': 'Statistics',
