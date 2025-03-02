@@ -5,8 +5,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 h-full">
             <div class="h-[188px]">
                 <p class="text-darkText text-2xl font-semibold">Good Afternoon, {{ request.user.username }}!</p>
-                <p class="text-secondary">Today is {% now "l, F j, Y" %}</p>
-                <p class="text-secondary">The time is currently {% now "g:i A" %}</p>
+                <p>Today is {% now "l, F j, Y" %}</p>
+                <p>The time is currently {% now "g:i A" %}</p>
                 <br />
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full">
                     <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center flex flex-col justify-center items-center space-y-2">
@@ -16,7 +16,7 @@
                              height="full"
                              class="w-12 h-12 object-contain mx-auto">
                         <h3 class="text-xl font-semibold">{{ total_patient }}</h3>
-                        <p class="text-secondary">Total Patients</p>
+                        <p>Total Patients</p>
                     </div>
                     <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center flex flex-col justify-center items-center space-y-1">
                         <img src="{% static 'images/dashboard/Schedule.png' %}"
@@ -25,11 +25,16 @@
                              height="full"
                              class="w-12 h-12 object-contain mx-auto">
                         <h3 class="text-xl font-semibold">{{ total_appointment }}</h3>
-                        <p class="text-secondary">Scheduled Appointments</p>
+                        <p>Scheduled Appointments</p>
                     </div>
-                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center">
-                        <h3 class="text-xl font-semibold">{{ completed_appointments }} / {{ total_appointment }}</h3>
-                        <p class="text-secondary">Appointments Completed</p>
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 relative border-primaryLogo text-center">
+                        <p class="w-full absolute top-1/2 l-0 -mt-10 -ms-6 text-center z-50 font-semibold text-xl">
+                            {{ completed_appointments }} / {{ total_appointment }}
+                        </p>
+                        <div>
+                            <canvas id="myChart"></canvas>
+                        </div>
+                        <p class="text-lg">Appointments Completed</p>
                     </div>
                 </div>
             </div>
@@ -38,7 +43,7 @@
                     <h3 class="text-xl font-semibold">Follow up</h3>
                 </div>
                 <hr class="bg-[#00B2B0] h-1 my-2 rounded-sm">
-                <div class="h-48 overflow-y-scroll no-scrollbar">
+                <div class="h-[214px] overflow-y-scroll no-scrollbar">
                     <div>
                         <p class="text-darkText font-bold">Lorem Ipsum</p>
                         <p class="text-secondary text-justify">
@@ -58,7 +63,7 @@
             </div>
             <div class="bg-white rounded-lg shadow-sm p-4 border-2 border-primaryLogo h-80 overflow-y-scroll no-scrollbar">
                 <div>
-                    <h3 class="text-xl font-semibold">Today's Appointments</h3>
+                    <h3 class="text-xl font-semibold">All Appointments</h3>
                 </div>
                 {% if appointments %}
                     <table class="min-w-full table-auto my-3">
@@ -78,7 +83,7 @@
                                     <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-4">{{ appointment.patient.name }}</td>
                                     <td class="py-2 text-nowrap">{{ appointment.date }}</td>
                                     <td class="py-2 text-nowrap">{{ appointment.time }}</td>
-                                    <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-4">{{ appointment.description }}</td>
+                                    <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-4">{{ appointment.description|default:"-" }}</td>
                                     <td class="py-2 text-nowrap {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
                                         {{ appointment.status }}
                                     </td>
@@ -143,4 +148,26 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const appointmentData = JSON.parse("{{ appointment_data|escapejs }}");
+    
+            const ctx = document.getElementById('myChart');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        label: 'Appointments Status',
+                        data: [appointmentData.Completed, appointmentData.Pending],
+                        backgroundColor: ['#4CAF50', '#FFC107'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    cutout:30,
+                    aspectRatio: 1.4,
+                },
+            });
+        });
+    </script>
 {% endblock content %}

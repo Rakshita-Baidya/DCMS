@@ -54,16 +54,15 @@ urlpatterns = [
 
     #     api urls
     # Patient URLs
-    path('patients/list/', PatientViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
-    }), name='patient_list'),
+    path('patients/list/',
+         PatientViewSet.as_view({'get': 'list'}), name='patient_list'),
     path('patients/<int:pk>/', PatientViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
     }), name='patient'),
 
     # Medical History URLs
     path('medical-histories/list/', MedicalHistoryViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='medical_history_list'),
     path('medical-histories/<int:pk>/', MedicalHistoryViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
@@ -71,7 +70,7 @@ urlpatterns = [
 
     # Other Patient History URLs
     path('other-patient-histories/list/', OtherPatientHistoryViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='other_patient_history_list'),
     path('other-patient-histories/<int:pk>/', OtherPatientHistoryViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
@@ -79,7 +78,7 @@ urlpatterns = [
 
     # Dental Chart URLs
     path('dental-charts/list/', DentalChartViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='dental_chart_list'),
     path('dental-charts/<int:pk>/', DentalChartViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
@@ -87,7 +86,7 @@ urlpatterns = [
 
     # Tooth Record URLs
     path('tooth-records/list/', ToothRecordViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='tooth_record_list'),
     path('tooth-records/<int:pk>/', ToothRecordViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
@@ -95,7 +94,7 @@ urlpatterns = [
 
     # Appointment URLs
     path('appointments/list/', AppointmentViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='appointment_list'),
     path('appointments/<int:pk>/', AppointmentViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
@@ -103,7 +102,7 @@ urlpatterns = [
 
     # Treatment Plan URLs
     path('treatment-plans/list/', TreatmentPlanViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='treatment_plan_list'),
     path('treatment-plans/<int:pk>/', TreatmentPlanViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
@@ -111,7 +110,7 @@ urlpatterns = [
 
     # Treatment Record URLs
     path('treatment-records/list/', TreatmentRecordViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='treatment_record_list'),
     path('treatment-records/<int:pk>/', TreatmentRecordViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
@@ -119,7 +118,7 @@ urlpatterns = [
 
     # Treatment Doctor URLs
     path('treatment-doctors/list/', TreatmentDoctorViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='treatment_doctor_list'),
     path('treatment-doctors/<int:pk>/', TreatmentDoctorViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
@@ -127,7 +126,7 @@ urlpatterns = [
 
     # Purchased Product URLs
     path('purchased-products/list/', PurchasedProductViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='purchased_product_list'),
     path('purchased-products/<int:pk>/', PurchasedProductViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
@@ -135,7 +134,7 @@ urlpatterns = [
 
     # Payment URLs
     path('payments/list/', PaymentViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='payment_list'),
     path('payments/<int:pk>/', PaymentViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
@@ -143,7 +142,7 @@ urlpatterns = [
 
     # Transaction URLs
     path('transactions/list/', TransactionViewSet.as_view({
-        'get': 'list', 'put': 'update', 'delete': 'destroy', 'post': 'create'
+        'get': 'list'
     }), name='transaction_list'),
     path('transactions/<int:pk>/', TransactionViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'

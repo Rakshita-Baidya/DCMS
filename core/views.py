@@ -3,24 +3,27 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
 from django.core.files.storage import FileSystemStorage
-import os
+from django.urls import reverse
 from django.forms import formset_factory
+
+import os
 from datetime import date
+import json
 
 from formtools.wizard.views import SessionWizardView
-from django.urls import reverse
 
 from users.models import User
 from users.forms import UserEditForm
 from users.serializers import UserSerializer
+from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
 
 from .models import Patient, MedicalHistory, OtherPatientHistory, DentalChart, Payment, ToothRecord, Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction
 from .forms import (AppointmentForm, PatientForm,  MedicalHistoryForm,
                     OtherPatientHistoryForm, DentalChartForm, PaymentForm, PurchasedProductFormSet, ToothRecordFormSet, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentPlanForm, TreatmentRecordForm)
 
 from .serializers import PatientSerializer, MedicalHistorySerializer, OtherPatientHistorySerializer, AppointmentSerializer, ToothRecordSerializer, DentalChartSerializer, PaymentSerializer, TransactionSerializer, TreatmentPlanSerializer, TreatmentDoctorSerializer, TreatmentRecordSerializer, PurchasedProductSerializer
+
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 
@@ -106,17 +109,29 @@ class TransactionViewSet(ModelViewSet):
 def dashboard(request):
     patient_queryset = Patient.objects.all().order_by('id')
 
-    appointment_queryset = Appointment.objects.filter(date=date.today())
-    completed_appointments = Appointment.objects.filter(
-        status='Completed')
+    appointments = Appointment.objects.all()
+
+    # Serialize the data
+    serialized_appointments = AppointmentSerializer(
+        appointments, many=True).data
+
+    # Count appointment statuses
+    status_counts = {
+        "Pending": appointments.filter(status="Pending").count(),
+        # "Cancelled": appointments.filter(status="Cancelled").count(),
+        "Completed": appointments.filter(status="Completed").count(),
+    }
 
     context = {
         'page_title': 'Dashboard',
         'active_page': 'dashboard',
         'total_patient': patient_queryset.count(),
-        'appointments': appointment_queryset,
-        'completed_appointments': completed_appointments.count(),
-        'total_appointment': appointment_queryset.count(),
+        "appointments": appointments,
+        "total_appointment": appointments.count(),
+        "completed_appointments": status_counts["Completed"],
+        "pending_appointments": status_counts["Pending"],
+        # "cancelled_appointments": status_counts["Cancelled"],
+        "appointment_data": json.dumps(status_counts),
     }
     return render(request, 'dashboard/dashboard.html', context)
 

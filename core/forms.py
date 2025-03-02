@@ -70,9 +70,8 @@ class TreatmentDoctorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Only allow users who have a doctor_profile
         self.fields['doctor'].queryset = User.objects.filter(
-            role='Doctor', doctor_profile__isnull=False)
+            role='Doctor')
         self.fields['doctor'].label_from_instance = lambda obj: obj.get_full_name()
 
 
