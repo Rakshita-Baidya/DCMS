@@ -1,46 +1,45 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-    <div class="mx-auto p-6 sm:p-2 lg:p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[25%_30%_40%] gap-6">
-            <div>
-                <p class="text-darkText text-2xl font-semibold">Good Afternoon, {{ request.user.username }}!</p>
-                <p>Today is {% now "l, F j, Y" %}</p>
-                <p>The time is currently {% now "g:i A" %}</p>
-                <br />
-                <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center flex flex-col justify-center items-center space-y-2">
+    <div class="mx-auto p-4 sm:p-2 lg:p-6 max-w-8xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1.2fr_1.6fr] gap-6 auto-rows-min">
+            <div class="space-y-6">
+                <div>
+                    <p id="greeting" class="text-darkText text-2xl font-semibold"></p>
+                    <p>Today is {% now "l, F j, Y" %}</p>
+                    <p>The time is currently {% now "g:i A" %}</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center space-y-2">
                         <img src="{% static 'images/dashboard/Patients.png' %}"
                              alt="patient"
                              width="full"
                              height="full"
-                             class="w-12 h-12 object-contain mx-auto">
+                             class="w-12 h-12 object-contain">
                         <h3 class="text-xl font-semibold">{{ total_patient }}</h3>
                         <p>Total Patients</p>
                     </div>
-                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center flex flex-col justify-center items-center space-y-1">
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center space-y-2">
                         <img src="{% static 'images/dashboard/Schedule.png' %}"
                              alt="appointment"
                              width="full"
                              height="full"
-                             class="w-12 h-12 object-contain mx-auto">
+                             class="w-12 h-12 object-contain">
                         <h3 class="text-xl font-semibold">{{ total_appointment }}</h3>
                         <p>Scheduled Appointments</p>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo text-center h-min">
-                <div>
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center">
+                <div class="w-full">
                     <canvas id="appointmentCompletion"></canvas>
                 </div>
-                <p class="mt-2">Appointments Completed</p>
+                <p class="mt-2 text-center">Appointments Completed</p>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo h-min">
-                <div class="text-center">
-                    <h3 class="text-xl font-semibold">Follow up</h3>
-                </div>
-                <hr class="bg-[#00B2B0] h-1 my-2 rounded-sm">
-                <div class="h-[190px] overflow-y-scroll no-scrollbar">
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo">
+                <h3 class="text-xl font-semibold text-center">Follow Up</h3>
+                <hr class="bg-[#00B2B0] h-0.5 my-2 rounded-sm">
+                <div class="max-h-48 overflow-y-auto no-scrollbar space-y-4">
                     <div>
                         <p class="text-darkText font-bold">Lorem Ipsum</p>
                         <p class="text-secondary text-justify">
@@ -48,7 +47,7 @@
                         </p>
                         <p class="text-secondary text-right">Date: 18/08/2024</p>
                     </div>
-                    <hr class="bg-[#00B2B0] h-1 my-2 rounded-sm">
+                    <hr class="bg-[#00B2B0] h-0.5 my-2 rounded-sm">
                     <div>
                         <p class="text-darkText font-bold">Lorem Ipsum</p>
                         <p class="text-secondary text-justify">
@@ -58,15 +57,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-3 grid grid-cols-2 gap-6">
-                <div class="bg-white rounded-lg shadow-sm p-4 border-2 border-primaryLogo h-80 overflow-y-scroll no-scrollbar">
-                    <div>
-                        <h3 class="text-xl font-semibold">All Appointments</h3>
-                    </div>
+            <div class="col-span-1 md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-sm p-4 border-2 border-primaryLogo min-h-[20rem] overflow-y-auto no-scrollbar">
+                    <h3 class="text-xl font-semibold">All Appointments</h3>
                     {% if appointments %}
                         <table class="min-w-full table-auto my-3">
                             <thead>
-                                <tr class="border-b-2 border-primaryLogo text-center pb-4">
+                                <tr class="border-b-2 border-primaryLogo text-center">
                                     <th class="pb-2">P. Name</th>
                                     <th class="pb-2">Date</th>
                                     <th class="pb-2">Time</th>
@@ -77,36 +74,25 @@
                             </thead>
                             <tbody>
                                 {% for appointment in appointments %}
-                                    <tr class="border-b text-center py-4">
+                                    <tr class="border-b text-center">
                                         <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-4">{{ appointment.patient.name }}</td>
-                                        <td class="py-2 text-nowrap">{{ appointment.date }}</td>
-                                        <td class="py-2 text-nowrap">{{ appointment.time }}</td>
+                                        <td class="py-2">{{ appointment.date }}</td>
+                                        <td class="py-2">{{ appointment.time }}</td>
                                         <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-4">{{ appointment.description|default:"-" }}</td>
-                                        <td class="py-2 text-nowrap {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
+                                        <td class="py-2 {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
                                             {{ appointment.status }}
                                         </td>
-                                        <td>
-                                            <div class="flex justify-center">
-                                                {% comment %} view {% endcomment %}
-                                                <a href="{% url 'core:view_appointment' appointment.id %}">
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                         width="20"
-                                                         height="20"
-                                                         viewBox="0 0 20 20"
-                                                         class="cursor-pointer">
-                                                        <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
-                                                    </svg>
-                                                </a>
-                                            </div>
-                                            <form id="delete-form-{{ appointment.id }}"
-                                                  method="post"
-                                                  class="hidden"
-                                                  action="{% url 'core:appointment' %}">
-                                                {% csrf_token %}
-                                                <input type="hidden"
-                                                       name="delete_appointment_id"
-                                                       value="{{ appointment.id }}">
-                                            </form>
+                                        <td class="py-2">
+                                            <a href="{% url 'core:view_appointment' appointment.id %}"
+                                               class="inline-flex">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                     width="20"
+                                                     height="20"
+                                                     viewBox="0 0 20 20"
+                                                     class="cursor-pointer">
+                                                    <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
+                                                </svg>
+                                            </a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -116,12 +102,10 @@
                         <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
                     {% endif %}
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo h-full">
-                    <div class="text-center">
-                        <h3 class="text-xl font-semibold">Treatment Summary</h3>
-                        <div>
-                            <canvas id="treatmentSummary"></canvas>
-                        </div>
+                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo h-full flex flex-col justify-center">
+                    <h3 class="text-xl font-semibold text-center">Treatment Summary</h3>
+                    <div class="w-full">
+                        <canvas id="treatmentSummary"></canvas>
                     </div>
                 </div>
             </div>
@@ -129,6 +113,39 @@
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            function updateGreetingAndTime() {
+                const now = new Date();
+                const hours = now.getHours();
+                const username = "{{ request.user.username }}"; 
+                
+                let greeting;
+                if (hours < 12) {
+                    greeting = "Good Morning";
+                } else if (hours < 17) {
+                    greeting = "Good Afternoon";
+                } else if (hours < 20) {
+                    greeting = "Good Evening";
+                } else {
+                    greeting = "Good Night";
+                }
+
+                document.getElementById("greeting").textContent = `${greeting}, ${username}!`;
+
+                const timeString = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+                document.getElementById("current-time").textContent = `The time is currently ${timeString}`;
+            }
+
+            updateGreetingAndTime();
+
+
+            setInterval(updateGreetingAndTime, 60000);
+            });
+    </script>
+    {% comment %} for charts {% endcomment %}
+    <script>
+            document.addEventListener("DOMContentLoaded", function() {
+            
+            //appointment
             const appointmentData = JSON.parse("{{ appointment_data|escapejs }}");
     
             const ctx = document.getElementById('appointmentCompletion');
@@ -179,6 +196,7 @@
                 },
                 options: {
                     responsive: true,
+                    aspectRatio: 2.1,
                     scales: {
                         y: {
                             beginAtZero: true,

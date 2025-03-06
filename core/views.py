@@ -109,7 +109,7 @@ class TransactionViewSet(ModelViewSet):
 def dashboard(request):
     patient_queryset = Patient.objects.all().order_by('id')
 
-    appointments = Appointment.objects.all()
+    appointments = Appointment.objects.all().order_by('-status')
     treatment_queryset = TreatmentRecord.objects.all()
 
     # Serialize the data
