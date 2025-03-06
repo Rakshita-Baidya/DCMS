@@ -108,16 +108,16 @@
                         </div>
                         <div class="space-y-6">
                             <div>
-                                <p class="font-semibold mb-1">Date of Birth</p>
-                                <p class="text-gray-600">{{ patient.dob }}</p>
-                            </div>
-                            <div>
                                 <p class="font-semibold mb-1">Blood Group</p>
                                 <p class="text-gray-600">{{ patient.blood_group }}</p>
                             </div>
                             <div>
                                 <p class="font-semibold mb-1">Nationality</p>
                                 <p class="text-gray-600">{{ patient.nationality }}</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold mb-1">Tel Number</p>
+                                <p class="text-gray-600">{{ patient.telephone }}</p>
                             </div>
                         </div>
                         <div class="space-y-6">
@@ -128,10 +128,6 @@
                             <div>
                                 <p class="font-semibold mb-1">Marital Status</p>
                                 <p class="text-gray-600">{{ patient.marital_status }}</p>
-                            </div>
-                            <div>
-                                <p class="font-semibold mb-1">Tel Number</p>
-                                <p class="text-gray-600">{{ patient.telephone }}</p>
                             </div>
                         </div>
                     </div>
@@ -152,8 +148,8 @@
                                 <div class="border-b mb-2">
                                     <p class="font-bold text-lg mb-2">{{ section }}</p>
                                     {% for field, value in fields.items %}
-                                        <p class="font-medium mb-2">
-                                            {{ field|title }}: <span class="font-normal  text-gray-600">{{ value }}</span>
+                                        <p class="mb-2">
+                                            {{ field|title }}: <span class="text-gray-600">{{ value }}</span>
                                         </p>
                                     {% endfor %}
                                 </div>
@@ -164,8 +160,8 @@
                                 <div class="border-b mb-2">
                                     <p class="font-bold text-lg mb-2">{{ section }}</p>
                                     {% for field, value in fields.items %}
-                                        <p class="font-semibold mb-2">
-                                            {{ field|title }}: <span class="font-normal text-gray-600">{{ value }}</span>
+                                        <p class="mb-2">
+                                            {{ field|title }}: <span class="text-gray-600">{{ value }}</span>
                                         </p>
                                     {% endfor %}
                                 </div>

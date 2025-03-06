@@ -252,6 +252,17 @@ LAB_CHOICES = [
     ('Proficient Dental Lab', 'Proficient Dental Lab'),
     ('Other', 'Other')]
 
+TREATMENT_CHOICES = [
+    ('General Checkup', 'General Checkup'),
+    ('Cleaning', 'Cleaning'),
+    ('Fillings', 'Fillings'),
+    ('Extractions', 'Extractions'),
+    ('Prosthetics', 'Prosthetics'),
+    ('Dental Implants', 'Dental Implants'),
+    ('Root Canals', 'Root Canals'),
+    ('Dental Crowns', 'Dental Crowns'),
+    ('Other', 'Other')]
+
 
 class TreatmentPlan(models.Model):
     patient = models.OneToOneField(
@@ -262,7 +273,8 @@ class TreatmentPlan(models.Model):
 class TreatmentRecord(models.Model):
     appointment = models.ForeignKey(
         Appointment, on_delete=models.CASCADE, related_name='appointment_treatment_record')
-    type = models.CharField(max_length=100, blank=True, null=True)
+    type = models.CharField(max_length=100, blank=True,
+                            null=True, choices=TREATMENT_CHOICES)
     x_ray = models.BooleanField(default=False)
     x_ray_cost = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)

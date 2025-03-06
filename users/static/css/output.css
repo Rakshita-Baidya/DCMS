@@ -712,6 +712,14 @@ video {
   margin-bottom: 1.5rem;
 }
 
+.-ms-6 {
+  margin-inline-start: -1.5rem;
+}
+
+.-mt-6 {
+  margin-top: -1.5rem;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -760,24 +768,16 @@ video {
   margin-top: auto;
 }
 
-.-mt-5 {
-  margin-top: -1.25rem;
-}
-
-.-ms-5 {
-  margin-inline-start: -1.25rem;
-}
-
-.-mt-10 {
-  margin-top: -2.5rem;
-}
-
 .-mt-8 {
   margin-top: -2rem;
 }
 
-.-ms-6 {
-  margin-inline-start: -1.5rem;
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.-mt-9 {
+  margin-top: -2.25rem;
 }
 
 .block {
@@ -832,10 +832,6 @@ video {
   height: 9rem;
 }
 
-.h-48 {
-  height: 12rem;
-}
-
 .h-6 {
   height: 1.5rem;
 }
@@ -856,6 +852,10 @@ video {
   height: 188px;
 }
 
+.h-\[214px\] {
+  height: 214px;
+}
+
 .h-full {
   height: 100%;
 }
@@ -864,89 +864,57 @@ video {
   height: 100vh;
 }
 
-.h-40 {
-  height: 10rem;
+.h-1\/2 {
+  height: 50%;
 }
 
-.h-20 {
-  height: 5rem;
+.h-1\/3 {
+  height: 33.333333%;
 }
 
-.h-10 {
-  height: 2.5rem;
+.h-min {
+  height: -moz-min-content;
+  height: min-content;
 }
 
-.h-0 {
-  height: 0px;
+.h-\[\] {
+  height: ;
 }
 
-.h-8 {
-  height: 2rem;
+.h-\[254px\] {
+  height: 254px;
 }
 
-.h-4 {
-  height: 1rem;
-}
-
-.h-max {
-  height: -moz-max-content;
-  height: max-content;
+.h-\[284px\] {
+  height: 284px;
 }
 
 .h-\[200px\] {
   height: 200px;
 }
 
-.h-\[300px\] {
-  height: 300px;
-}
-
-.h-\[170px\] {
-  height: 170px;
-}
-
-.h-\[190px\] {
-  height: 190px;
-}
-
-.h-\[1900px\] {
-  height: 1900px;
-}
-
-.h-\[00px\] {
-  height: 00px;
-}
-
-.h-\[400px\] {
-  height: 400px;
-}
-
-.h-\[250px\] {
-  height: 250px;
-}
-
-.h-\[190\] {
-  height: 190;
-}
-
 .h-\[210px\] {
   height: 210px;
 }
 
-.h-\[215px\] {
-  height: 215px;
+.h-\[180px\] {
+  height: 180px;
 }
 
-.h-\[212px\] {
-  height: 212px;
+.h-\[185px\] {
+  height: 185px;
 }
 
-.h-\[213px\] {
-  height: 213px;
+.h-\[184px\] {
+  height: 184px;
 }
 
-.h-\[214px\] {
-  height: 214px;
+.h-\[18px\] {
+  height: 18px;
+}
+
+.h-\[190px\] {
+  height: 190px;
 }
 
 .min-h-screen {
@@ -1053,14 +1021,6 @@ video {
   cursor: pointer;
 }
 
-.auto-cols-max {
-  grid-auto-columns: max-content;
-}
-
-.grid-flow-col {
-  grid-auto-flow: column;
-}
-
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
@@ -1079,6 +1039,10 @@ video {
 
 .grid-cols-5 {
   grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.grid-rows-\[auto_1fr\] {
+  grid-template-rows: auto 1fr;
 }
 
 .flex-col {
@@ -1181,6 +1145,10 @@ video {
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
 }
 
 .overflow-y-scroll {
@@ -1832,6 +1800,10 @@ video {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .md\:grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
   .md\:text-3xl {
     font-size: 1.875rem;
     line-height: 2.25rem;
@@ -1868,60 +1840,16 @@ video {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .lg\:grid-cols-\[200px_300px\] {
-    grid-template-columns: 200px 300px;
-  }
-
-  .lg\:grid-cols-\[500px_300px\] {
-    grid-template-columns: 500px 300px;
-  }
-
-  .lg\:grid-cols-\[00px_300px\] {
-    grid-template-columns: 00px 300px;
-  }
-
-  .lg\:grid-cols-\[900px_300px\] {
-    grid-template-columns: 900px 300px;
-  }
-
-  .lg\:grid-cols-\[600px_300px\] {
-    grid-template-columns: 600px 300px;
-  }
-
   .lg\:grid-cols-\[\] {
     grid-template-columns: ;
   }
 
-  .lg\:grid-cols-\[600px\] {
-    grid-template-columns: 600px;
+  .lg\:grid-cols-\[30\%_30\%_40\%\] {
+    grid-template-columns: 30% 30% 40%;
   }
 
-  .lg\:grid-cols-\[600px_\] {
-    grid-template-columns: 600px;
-  }
-
-  .lg\:grid-cols-\[600px_w\] {
-    grid-template-columns: 600px w;
-  }
-
-  .lg\:grid-cols-\[600px_500px\] {
-    grid-template-columns: 600px 500px;
-  }
-
-  .lg\:grid-cols-\[700px_500px\] {
-    grid-template-columns: 700px 500px;
-  }
-
-  .lg\:grid-cols-\[800px_500px\] {
-    grid-template-columns: 800px 500px;
-  }
-
-  .lg\:grid-cols-\[800px_400px\] {
-    grid-template-columns: 800px 400px;
-  }
-
-  .lg\:grid-cols-\[800px_450px\] {
-    grid-template-columns: 800px 450px;
+  .lg\:grid-cols-\[25\%_30\%_40\%\] {
+    grid-template-columns: 25% 30% 40%;
   }
 
   .lg\:gap-4 {

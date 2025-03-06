@@ -110,28 +110,45 @@ def dashboard(request):
     patient_queryset = Patient.objects.all().order_by('id')
 
     appointments = Appointment.objects.all()
+    treatment_queryset = TreatmentRecord.objects.all()
 
     # Serialize the data
     serialized_appointments = AppointmentSerializer(
         appointments, many=True).data
+    serialized_treatments = TreatmentRecordSerializer(
+        treatment_queryset, many=True).data
 
     # Count appointment statuses
     status_counts = {
         "Pending": appointments.filter(status="Pending").count(),
-        # "Cancelled": appointments.filter(status="Cancelled").count(),
+        "Cancelled": appointments.filter(status="Cancelled").count(),
         "Completed": appointments.filter(status="Completed").count(),
+    }
+
+    treatment_counts = {
+        "Root Canals": treatment_queryset.filter(type="Root Canals").count(),
+        "Dental Crowns": treatment_queryset.filter(type="Dental Crowns").count(),
+        "Fillings": treatment_queryset.filter(type="Fillings").count(),
+        "Cleaning": treatment_queryset.filter(type="Cleaning").count(),
+        "General Checkup": treatment_queryset.filter(type="General Checkup").count(),
+        "Extractions": treatment_queryset.filter(type="Extractions").count(),
+        "Prosthetics": treatment_queryset.filter(type="Prosthetics").count(),
+        "Dental Implants": treatment_queryset.filter(type="Dental Implants").count(),
+        "Other": treatment_queryset.filter(type="Other").count(),
     }
 
     context = {
         'page_title': 'Dashboard',
         'active_page': 'dashboard',
         'total_patient': patient_queryset.count(),
+
         "appointments": appointments,
         "total_appointment": appointments.count(),
-        "completed_appointments": status_counts["Completed"],
-        "pending_appointments": status_counts["Pending"],
-        # "cancelled_appointments": status_counts["Cancelled"],
         "appointment_data": json.dumps(status_counts),
+
+        "treatments": treatment_queryset,
+        "treatment_data": json.dumps(treatment_counts),
+
     }
     return render(request, 'dashboard/dashboard.html', context)
 
@@ -692,6 +709,14 @@ def appointment(request):
             Q(description__icontains=search_query)
         )
 
+    # Add filter
+    status_filter = request.GET.get('status', '')
+    if status_filter:
+        appointment_queryset = appointment_queryset.filter(
+            status__iexact=status_filter)
+    status = Appointment.objects.all().values_list(
+        'status', flat=True).distinct()
+
     # Pagination
     paginator = Paginator(appointment_queryset, 8)
     page = request.GET.get('page', 1)
@@ -703,6 +728,8 @@ def appointment(request):
         'appointments': appointment_list,
         'total_appointment': appointment_queryset.count(),
         'search_query': search_query,
+        'status_filter': status_filter,
+        'status': status,
     }
 
     return render(request, 'appointment/appointment.html', context)
