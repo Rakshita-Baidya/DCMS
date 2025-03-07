@@ -10,23 +10,31 @@
                     <p>The time is currently {% now "g:i A" %}</p>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center space-y-2">
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2">
                         <img src="{% static 'images/dashboard/Patients.png' %}"
                              alt="patient"
                              width="full"
                              height="full"
                              class="w-12 h-12 object-contain">
                         <h3 class="text-xl font-semibold">{{ total_patient }}</h3>
-                        <p>Total Patients</p>
+                        <p>
+                            Total
+                            <br />
+                            Patients
+                        </p>
                     </div>
-                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center space-y-2">
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center space-y-2 text-center">
                         <img src="{% static 'images/dashboard/Schedule.png' %}"
                              alt="appointment"
                              width="full"
                              height="full"
                              class="w-12 h-12 object-contain">
                         <h3 class="text-xl font-semibold">{{ total_appointment }}</h3>
-                        <p>Scheduled Appointments</p>
+                        <p>
+                            Scheduled
+                            <br />
+                            Appointments
+                        </p>
                     </div>
                 </div>
             </div>

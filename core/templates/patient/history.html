@@ -19,7 +19,7 @@
                 {% else %}
                     Add
                 {% endif %}
-                Patient / General Information
+                Patient / Medical History
             </p>
         </div>
         <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
@@ -30,7 +30,7 @@
                 {{ wizard.management_form }}
                 <div class="col-span-4">
                     <label class="block font-medium text-secondaryLogo">{{ wizard.form.chief_dental_complaint.label_tag }}</label>
-                    {{ wizard.form.chief_dental_complaint|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {{ wizard.form.chief_dental_complaint|attr:"rows:2"|add_class:"my-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.chief_dental_complaint.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.chief_dental_complaint.errors }}</div>
                     {% endif %}

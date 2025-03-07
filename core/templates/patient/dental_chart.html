@@ -36,11 +36,11 @@
                             {{ form.tooth_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                             {% if form.tooth_no.errors %}<div class="text-dangerRed text-sm">{{ form.tooth_no.errors }}</div>{% endif %}
                             <label class="block text-sm font-medium text-secondaryLogo">{{ form.condition.label_tag }}</label>
-                            {{ form.condition|attr:"rows:2" |add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                            {{ form.condition|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                             {% if form.condition.errors %}<div class="text-dangerRed text-sm">{{ form.condition.errors }}</div>{% endif %}
-                            <label class="block text-sm font-medium text-secondaryLogo">{{ form.severity.label_tag }}</label>
-                            {{ form.severity|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                            {% if form.severity.errors %}<div class="text-dangerRed text-sm">{{ form.severity.errors }}</div>{% endif %}
+                            <label class="block text-sm font-medium text-secondaryLogo">{{ form.description.label_tag }}</label>
+                            {{ form.description|attr:"rows:2"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                            {% if form.description.errors %}<div class="text-dangerRed text-sm">{{ form.description.errors }}</div>{% endif %}
                         </div>
                     {% endfor %}
                 </div>
@@ -79,15 +79,17 @@
                 newForm.innerHTML = `
                     <label for="id_tooth_records-${formCount}-tooth_no">Tooth Number:</label>
                     <input type="text" name="tooth_records-${formCount}-tooth_no" id="id_tooth_records-${formCount}-tooth_no" class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                    
                     <label for="id_tooth_records-${formCount}-condition">Condition:</label>
-                    <textarea name="tooth_records-${formCount}-condition" id="id_tooth_records-${formCount}-condition" rows="2" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"></textarea>
-                    <label for="id_tooth_records-${formCount}-severity">Severity:</label>
-                    <select name="tooth_records-${formCount}-severity" id="id_tooth_records-${formCount}-severity" class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                        <option value="">Select Severity</option>
+                    <select name="tooth_records-${formCount}-condition" id="id_tooth_records-${formCount}-condition" class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                        <option value="">---------</option>
                         <option value="Mild">Mild</option>
                         <option value="Moderate">Moderate</option>
                         <option value="Severe">Severe</option>
                     </select>
+
+                    <label for="id_tooth_records-${formCount}-description">Condition:</label>
+                    <textarea name="tooth_records-${formCount}-description" id="id_tooth_records-${formCount}-description" rows="2" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"></textarea>
                 `;
                 container.appendChild(newForm);
                 formCount++;

@@ -81,8 +81,7 @@ class Patient(models.Model):
 class MedicalHistory(models.Model):
     patient = models.OneToOneField(
         Patient, on_delete=models.CASCADE, related_name='patient_history')
-    chief_dental_complaint = models.CharField(
-        max_length=500, blank=True, null=True)
+    chief_dental_complaint = models.TextField(blank=True, null=True)
     marked_weight_change = models.BooleanField(default=False)
 
     # heart

@@ -61,31 +61,52 @@
                 <p class="text-gray-600">{{ patient.emergency_contact_contact }}</p>
             </div>
         </div>
-        {% comment %}Tabs Section {% endcomment %}
+        {% comment %} Tabs Section {% endcomment %}
         <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo overflow-hidden">
-            <div class="border-b border-gray-200">
+            <div class="border-b border-gray-200 flex justify-between items-center">
                 <nav class="flex">
                     <button data-tab="general"
+                            data-step="0"
                             class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-primaryLogo text-primaryLogo">
                         General Information
                     </button>
                     <button data-tab="dental"
+                            data-step="3"
                             class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                         Dental Chart
                     </button>
                     <button data-tab="medical"
+                            data-step="1"
                             class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                         Medical History
                     </button>
                     <button data-tab="treatment"
+                            data-step=""
                             class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                         Treatment History
                     </button>
                     <button data-tab="attachments"
+                            data-step=""
                             class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                         Attachments
                     </button>
                 </nav>
+                <div class="pr-4">
+                    <a id="edit-button"
+                       href="{% url 'core:edit_patient_profile_step' patient.id 0 %}"
+                       class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="20"
+                             height="20"
+                             viewBox="0 0 20 20">
+                            <g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
+                            <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
+                            <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
+                            </g>
+                        </svg>
+                        <p>Edit</p>
+                    </a>
+                </div>
             </div>
             {% comment %}Tab Contents {% endcomment %}
             <div class="p-6">
@@ -131,13 +152,25 @@
                             </div>
                         </div>
                     </div>
+                    <div class="mt-4">
+                        <a href="{% url 'core:edit_patient_profile_step' patient.id 0 %}"
+                           class="inline-flex items-center px-4 py-2 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                            Edit General Information
+                        </a>
+                    </div>
                 </div>
                 {% comment %}Dental Chart Tab {% endcomment %}
                 <div id="dental-tab" class="tab-content hidden">
                     <div class="space-y-4">
                         {% for tooth in tooth_records %}
-                            <p>Tooth {{ tooth.tooth_no }} - {{ tooth.condition }} ({{ tooth.severity }})</p>
+                            <p>Tooth {{ tooth.tooth_no }} - {{ tooth.description }} ({{ tooth.condition }})</p>
                         {% endfor %}
+                    </div>
+                    <div class="mt-4">
+                        <a href="{% url 'core:edit_patient_profile_step' patient.id 3 %}"
+                           class="inline-flex items-center px-4 py-2 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                            Edit Dental Chart
+                        </a>
                     </div>
                 </div>
                 {% comment %}Medical History Tab {% endcomment %}
@@ -154,6 +187,12 @@
                                     {% endfor %}
                                 </div>
                             {% endfor %}
+                            <div class="mt-4">
+                                <a href="{% url 'core:edit_patient_profile_step' patient.id 1 %}"
+                                   class="inline-flex items-center px-4 py-2 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                                    Edit Medical History
+                                </a>
+                            </div>
                         </div>
                         <div>
                             {% for section, fields in other_history_data.items %}
@@ -166,6 +205,12 @@
                                     {% endfor %}
                                 </div>
                             {% endfor %}
+                            <div class="mt-4">
+                                <a href="{% url 'core:edit_patient_profile_step' patient.id 2 %}"
+                                   class="inline-flex items-center px-4 py-2 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                                    Edit Medical History
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -181,14 +226,17 @@
         </div>
     </div>
     <script>
-        // Tab Switching
+        // Tab Switching and Edit Button Logic
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
+        const editButton = document.getElementById('edit-button');
+        const patientId = '{{ patient.id }}';
 
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabId = button.dataset.tab;
-                
+                const step = button.dataset.step || ''; // Get step or empty string if not set
+
                 // Update button styles
                 tabButtons.forEach(btn => {
                     if (btn === button) {
@@ -208,6 +256,14 @@
                         content.classList.add('hidden');
                     }
                 });
+
+                // Update edit button URL based on active tab
+                if (step) {
+                    editButton.href = `/core/patient/${patientId}/edit/${step}/`;
+                    editButton.classList.remove('hidden');
+                } else {
+                    editButton.classList.add('hidden'); // Hide edit button for tabs without steps
+                }
             });
         });
 

@@ -27,81 +27,6 @@ from .serializers import PatientSerializer, MedicalHistorySerializer, OtherPatie
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 
-# api views
-
-
-class PatientViewSet(ModelViewSet):
-    queryset = Patient.objects.all()
-    serializer_class = PatientSerializer
-    permission_classes = [AllowAny]
-
-
-class MedicalHistoryViewSet(ModelViewSet):
-    queryset = MedicalHistory.objects.select_related('patient')
-    serializer_class = MedicalHistorySerializer
-    permission_classes = [AllowAny]
-
-
-class OtherPatientHistoryViewSet(ModelViewSet):
-    queryset = OtherPatientHistory.objects.select_related('history')
-    serializer_class = OtherPatientHistorySerializer
-    permission_classes = [AllowAny]
-
-
-class DentalChartViewSet(ModelViewSet):
-    queryset = DentalChart.objects.select_related('patient')
-    serializer_class = DentalChartSerializer
-    permission_classes = [AllowAny]
-
-
-class ToothRecordViewSet(ModelViewSet):
-    queryset = ToothRecord.objects.select_related('dental_chart')
-    serializer_class = ToothRecordSerializer
-    permission_classes = [AllowAny]
-
-
-class TreatmentPlanViewSet(ModelViewSet):
-    queryset = TreatmentPlan.objects.select_related('patient')
-    serializer_class = TreatmentPlanSerializer
-    permission_classes = [AllowAny]
-
-
-class TreatmentRecordViewSet(ModelViewSet):
-    queryset = TreatmentRecord.objects.select_related('treatment_plan')
-    serializer_class = TreatmentRecordSerializer
-    permission_classes = [AllowAny]
-
-
-class TreatmentDoctorViewSet(ModelViewSet):
-    queryset = TreatmentDoctor.objects.select_related('doctor')
-    serializer_class = TreatmentDoctorSerializer
-    permission_classes = [AllowAny]
-
-
-class PurchasedProductViewSet(ModelViewSet):
-    queryset = PurchasedProduct.objects.select_related('appointment')
-    serializer_class = PurchasedProductSerializer
-    permission_classes = [AllowAny]
-
-
-class AppointmentViewSet(ModelViewSet):
-    queryset = Appointment.objects.select_related('patient')
-    serializer_class = AppointmentSerializer
-    permission_classes = [AllowAny]
-
-
-class PaymentViewSet(ModelViewSet):
-    queryset = Payment.objects.select_related('appointment')
-    serializer_class = PaymentSerializer
-    permission_classes = [AllowAny]
-
-
-class TransactionViewSet(ModelViewSet):
-    queryset = Transaction.objects.select_related('user')
-    serializer_class = TransactionSerializer
-    permission_classes = [AllowAny]
-
-
 # Create your views here.
 
 
@@ -513,6 +438,77 @@ class PatientFormWizard(SessionWizardView):
         return redirect('core:patient')
 
 
+@login_required(login_url='login')
+def edit_patient_profile(request, patient_id, step=0):
+    patient = get_object_or_404(Patient, id=patient_id)
+    step = str(step)
+
+    TEMPLATES = {
+        "0": "patient/general.html",
+        "1": "patient/history.html",
+        "2": "patient/other.html",
+        "3": "patient/dental_chart.html",
+    }
+    FORMS = {
+        "0": PatientForm,
+        "1": MedicalHistoryForm,
+        "2": OtherPatientHistoryForm,
+        "3": DentalChartForm,
+    }
+
+    if step == "0":
+        instance = patient
+    elif step == "1":
+        instance, _ = MedicalHistory.objects.get_or_create(patient=patient)
+    elif step == "2":
+        medical_history, _ = MedicalHistory.objects.get_or_create(
+            patient=patient)
+        instance, _ = OtherPatientHistory.objects.get_or_create(
+            history=medical_history)
+    elif step == "3":
+        instance, _ = DentalChart.objects.get_or_create(patient=patient)
+    else:
+        return redirect('core:view_patient_profile', patient_id=patient_id)
+
+    form_class = FORMS.get(step)
+    if request.method == "POST":
+        form = form_class(request.POST, instance=instance)
+        if form.is_valid():
+            saved_instance = form.save()
+            if step == "3":
+                tooth_record_formset = ToothRecordFormSet(
+                    request.POST, instance=saved_instance)
+                if tooth_record_formset.is_valid():
+                    tooth_record_formset.save()
+
+            messages.success(
+                request, "The patient details have been updated successfully!")
+            return redirect('core:view_patient_profile', patient_id=patient_id)
+    else:
+        form = form_class(instance=instance)
+
+    wizard = {
+        'form': form,
+        'management_form': '',
+        'steps': {
+            'current': step,
+        }
+    }
+
+    context = {
+        'page_title': 'Patient Management',
+        'active_page': 'patient',
+        'is_editing': True,
+        'patient_id': patient_id,
+        'wizard': wizard,
+    }
+    if step == "3":
+        context['tooth_record_formset'] = ToothRecordFormSet(instance=instance)
+
+    template = TEMPLATES.get(step, "patient/general.html")
+    return render(request, template, context)
+
+
 class EditPatientFormWizard(SessionWizardView):
     form_list = [PatientForm, MedicalHistoryForm,
                  OtherPatientHistoryForm, DentalChartForm]
@@ -646,6 +642,8 @@ def view_patient_profile(request, patient_id):
         "Extraction": ["prev_extraction", "date_of_last_extraction", "untoward_reaction", "untoward_reaction_specifics", "local_anesthesia_use"],
         "Hospitalization": ["hospitalized", "admission_date", "hospitalization_specifics"],
         "Allergies": ["sleeping_pills", "aspirin", "food", "penicilin", "antibiotics", "sulfa_drugs", "local_anesthesia", "others", "specifics"],
+        "Habits": ["smoking", "tobacco_chewing", "alcohol", "betel_nuts", "paan_chewing"],
+        "Oral_Hygiene": ["stain", "calculus", "halitosis"]
     }
 
     def get_sectioned_data(instance, sections):
@@ -1058,3 +1056,77 @@ def statistics(request):
 
 def error(request):
     return render(request, 'error.html')
+
+
+# api views
+
+class PatientViewSet(ModelViewSet):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
+    permission_classes = [AllowAny]
+
+
+class MedicalHistoryViewSet(ModelViewSet):
+    queryset = MedicalHistory.objects.select_related('patient')
+    serializer_class = MedicalHistorySerializer
+    permission_classes = [AllowAny]
+
+
+class OtherPatientHistoryViewSet(ModelViewSet):
+    queryset = OtherPatientHistory.objects.select_related('history')
+    serializer_class = OtherPatientHistorySerializer
+    permission_classes = [AllowAny]
+
+
+class DentalChartViewSet(ModelViewSet):
+    queryset = DentalChart.objects.select_related('patient')
+    serializer_class = DentalChartSerializer
+    permission_classes = [AllowAny]
+
+
+class ToothRecordViewSet(ModelViewSet):
+    queryset = ToothRecord.objects.select_related('dental_chart')
+    serializer_class = ToothRecordSerializer
+    permission_classes = [AllowAny]
+
+
+class TreatmentPlanViewSet(ModelViewSet):
+    queryset = TreatmentPlan.objects.select_related('patient')
+    serializer_class = TreatmentPlanSerializer
+    permission_classes = [AllowAny]
+
+
+class TreatmentRecordViewSet(ModelViewSet):
+    queryset = TreatmentRecord.objects.select_related('treatment_plan')
+    serializer_class = TreatmentRecordSerializer
+    permission_classes = [AllowAny]
+
+
+class TreatmentDoctorViewSet(ModelViewSet):
+    queryset = TreatmentDoctor.objects.select_related('doctor')
+    serializer_class = TreatmentDoctorSerializer
+    permission_classes = [AllowAny]
+
+
+class PurchasedProductViewSet(ModelViewSet):
+    queryset = PurchasedProduct.objects.select_related('appointment')
+    serializer_class = PurchasedProductSerializer
+    permission_classes = [AllowAny]
+
+
+class AppointmentViewSet(ModelViewSet):
+    queryset = Appointment.objects.select_related('patient')
+    serializer_class = AppointmentSerializer
+    permission_classes = [AllowAny]
+
+
+class PaymentViewSet(ModelViewSet):
+    queryset = Payment.objects.select_related('appointment')
+    serializer_class = PaymentSerializer
+    permission_classes = [AllowAny]
+
+
+class TransactionViewSet(ModelViewSet):
+    queryset = Transaction.objects.select_related('user')
+    serializer_class = TransactionSerializer
+    permission_classes = [AllowAny]
