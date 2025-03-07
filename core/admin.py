@@ -1,12 +1,11 @@
 from django.contrib import admin
-from .models import Patient, MedicalHistory, OtherPatientHistory, DentalChart, ToothRecord, Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction
+from .models import Patient, MedicalHistory, DentalChart, ToothRecord, Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction
 
 # Register your models here.
 
 
 admin.site.register(Patient)
 admin.site.register(MedicalHistory)
-admin.site.register(OtherPatientHistory)
 
 admin.site.register(DentalChart)
 admin.site.register(ToothRecord)

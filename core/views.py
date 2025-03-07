@@ -18,11 +18,11 @@ from users.forms import UserEditForm
 from users.serializers import UserSerializer
 from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
 
-from .models import Patient, MedicalHistory, OtherPatientHistory, DentalChart, Payment, ToothRecord, Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction
+from .models import Patient, MedicalHistory, DentalChart, Payment, ToothRecord, Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction
 from .forms import (AppointmentForm, PatientForm,  MedicalHistoryForm,
-                    OtherPatientHistoryForm, DentalChartForm, PaymentForm, PurchasedProductFormSet, ToothRecordFormSet, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentPlanForm, TreatmentRecordForm)
+                    DentalChartForm, PaymentForm, PurchasedProductFormSet, ToothRecordFormSet, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentPlanForm, TreatmentRecordForm)
 
-from .serializers import PatientSerializer, MedicalHistorySerializer, OtherPatientHistorySerializer, AppointmentSerializer, ToothRecordSerializer, DentalChartSerializer, PaymentSerializer, TransactionSerializer, TreatmentPlanSerializer, TreatmentDoctorSerializer, TreatmentRecordSerializer, PurchasedProductSerializer
+from .serializers import PatientSerializer, MedicalHistorySerializer,  AppointmentSerializer, ToothRecordSerializer, DentalChartSerializer, PaymentSerializer, TransactionSerializer, TreatmentPlanSerializer, TreatmentDoctorSerializer, TreatmentRecordSerializer, PurchasedProductSerializer
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
@@ -371,16 +371,14 @@ def patient(request):
 
 
 class PatientFormWizard(SessionWizardView):
-    form_list = [PatientForm, MedicalHistoryForm,
-                 OtherPatientHistoryForm, DentalChartForm]
+    form_list = [PatientForm, MedicalHistoryForm, DentalChartForm]
     file_storage = FileSystemStorage(
         location=os.path.join("media", "patient"))
 
     TEMPLATES = {
         "0": "patient/general.html",
         "1": "patient/history.html",
-        "2": "patient/other.html",
-        '3': 'patient/dental_chart.html',
+        '2': 'patient/dental_chart.html',
     }
 
     def get_template_names(self):
@@ -393,7 +391,7 @@ class PatientFormWizard(SessionWizardView):
             'page_title': 'Patient Management',
             'active_page': 'patient',
         })
-        if self.steps.current == '3':  # Dental Chart step
+        if self.steps.current == '2':  # Dental Chart step
             context['tooth_record_formset'] = ToothRecordFormSet()
         return context
 
@@ -402,9 +400,7 @@ class PatientFormWizard(SessionWizardView):
             return Patient()
         elif step == '1':  # Medical History Form
             return MedicalHistory()
-        elif step == '2':  # remaining
-            return OtherPatientHistory()
-        elif step == '3':  # Dental Chart Form
+        elif step == '2':  # Dental Chart Form
             return DentalChart()
         return None
 
@@ -418,13 +414,8 @@ class PatientFormWizard(SessionWizardView):
         medical_history.patient = patient
         medical_history.save()
 
-        # Save other history
-        other_history = form_list[2].save(commit=False)
-        other_history.history = medical_history
-        other_history.save()
-
         # Save dental chart
-        dental_chart = form_list[3].save(commit=False)
+        dental_chart = form_list[2].save(commit=False)
         dental_chart.patient = patient
         dental_chart.save()
 
@@ -446,14 +437,12 @@ def edit_patient_profile(request, patient_id, step=0):
     TEMPLATES = {
         "0": "patient/general.html",
         "1": "patient/history.html",
-        "2": "patient/other.html",
-        "3": "patient/dental_chart.html",
+        "2": "patient/dental_chart.html",
     }
     FORMS = {
         "0": PatientForm,
         "1": MedicalHistoryForm,
-        "2": OtherPatientHistoryForm,
-        "3": DentalChartForm,
+        "2": DentalChartForm,
     }
 
     if step == "0":
@@ -461,11 +450,6 @@ def edit_patient_profile(request, patient_id, step=0):
     elif step == "1":
         instance, _ = MedicalHistory.objects.get_or_create(patient=patient)
     elif step == "2":
-        medical_history, _ = MedicalHistory.objects.get_or_create(
-            patient=patient)
-        instance, _ = OtherPatientHistory.objects.get_or_create(
-            history=medical_history)
-    elif step == "3":
         instance, _ = DentalChart.objects.get_or_create(patient=patient)
     else:
         return redirect('core:view_patient_profile', patient_id=patient_id)
@@ -475,7 +459,7 @@ def edit_patient_profile(request, patient_id, step=0):
         form = form_class(request.POST, instance=instance)
         if form.is_valid():
             saved_instance = form.save()
-            if step == "3":
+            if step == "2":
                 tooth_record_formset = ToothRecordFormSet(
                     request.POST, instance=saved_instance)
                 if tooth_record_formset.is_valid():
@@ -510,16 +494,14 @@ def edit_patient_profile(request, patient_id, step=0):
 
 
 class EditPatientFormWizard(SessionWizardView):
-    form_list = [PatientForm, MedicalHistoryForm,
-                 OtherPatientHistoryForm, DentalChartForm]
+    form_list = [PatientForm, MedicalHistoryForm, DentalChartForm]
     file_storage = FileSystemStorage(
         location=os.path.join("media", "patient"))
 
     TEMPLATES = {
         "0": "patient/general.html",
         "1": "patient/history.html",
-        "2": "patient/other.html",
-        '3': 'patient/dental_chart.html',
+        '2': 'patient/dental_chart.html',
     }
 
     def get_template_names(self):
@@ -554,16 +536,7 @@ class EditPatientFormWizard(SessionWizardView):
                 patient=patient)
 
             return medical_history
-        elif step == '2':
-            medical_history, created = MedicalHistory.objects.get_or_create(
-                patient=patient)
-            other_history, created = OtherPatientHistory.objects.get_or_create(
-                history=medical_history)
-            # Add this debug line
-            print("Retrieved date:", other_history.date_of_last_extraction)
-
-            return other_history
-        elif step == '3':  # Dental Chart Form
+        elif step == '2':  # Dental Chart Form
             dental_chart, created = DentalChart.objects.get_or_create(
                 patient=patient)
             return dental_chart
@@ -586,14 +559,8 @@ class EditPatientFormWizard(SessionWizardView):
             patient=patient, defaults=medical_history_form.cleaned_data
         )
 
-        # Update or create other patient history
-        other_history_form = form_list[2]
-        OtherPatientHistory.objects.update_or_create(
-            history=medical_history, defaults=other_history_form.cleaned_data
-        )
-
         # Update or create dental chart
-        dental_chart_form = form_list[3]
+        dental_chart_form = form_list[2]
         dental_chart, created = DentalChart.objects.update_or_create(
             patient=patient, defaults=dental_chart_form.cleaned_data
         )
@@ -614,8 +581,6 @@ def view_patient_profile(request, patient_id):
     patient_queryset = Patient.objects.get(pk=patient_id)
 
     patient_history = getattr(patient_queryset, 'patient_history', None)
-    history_other_patients = getattr(
-        patient_history, 'history_other_patients', None)
     dental_chart = getattr(patient_queryset, 'dental_chart')
 
     exclude_fields = {'id', 'patient', 'history'}
@@ -635,10 +600,6 @@ def view_patient_profile(request, patient_id):
         "Diabetes": ["delayed_healing", "increased_appetite", "family_history"],
         "Radiography": ["radiography_therapy"],
         "Urinary": ["increased_frequency", "burning"],
-    }
-
-    # Define sections for other patient history
-    other_history_sections = {
         "Extraction": ["prev_extraction", "date_of_last_extraction", "untoward_reaction", "untoward_reaction_specifics", "local_anesthesia_use"],
         "Hospitalization": ["hospitalized", "admission_date", "hospitalization_specifics"],
         "Allergies": ["sleeping_pills", "aspirin", "food", "penicilin", "antibiotics", "sulfa_drugs", "local_anesthesia", "others", "specifics"],
@@ -658,8 +619,6 @@ def view_patient_profile(request, patient_id):
 
     medical_history_data = get_sectioned_data(
         patient_history, medical_history_sections)
-    other_history_data = get_sectioned_data(
-        history_other_patients, other_history_sections)
 
     # patient needs to be deleted
     if request.method == 'POST' and 'delete_patient_id' in request.POST:
@@ -678,7 +637,6 @@ def view_patient_profile(request, patient_id):
         'active_page': 'patient',
         'patient': patient_queryset,
         'medical_history_data': medical_history_data,
-        'other_history_data': other_history_data,
         'dental_chart': dental_chart,
         'tooth_records': dental_chart.tooth_records.all() if dental_chart else None,
     }
@@ -1069,12 +1027,6 @@ class PatientViewSet(ModelViewSet):
 class MedicalHistoryViewSet(ModelViewSet):
     queryset = MedicalHistory.objects.select_related('patient')
     serializer_class = MedicalHistorySerializer
-    permission_classes = [AllowAny]
-
-
-class OtherPatientHistoryViewSet(ModelViewSet):
-    queryset = OtherPatientHistory.objects.select_related('history')
-    serializer_class = OtherPatientHistorySerializer
     permission_classes = [AllowAny]
 
 

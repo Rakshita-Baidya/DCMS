@@ -1,5 +1,5 @@
 from django import forms
-from .models import (Patient, MedicalHistory, OtherPatientHistory, DentalChart, Payment,
+from .models import (Patient, MedicalHistory, DentalChart, Payment,
                      ToothRecord, Transaction, Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct)
 from users.models import User
 
@@ -15,13 +15,6 @@ class MedicalHistoryForm(forms.ModelForm):
         model = MedicalHistory
         fields = '__all__'
         exclude = ['patient']
-
-
-class OtherPatientHistoryForm(forms.ModelForm):
-    class Meta:
-        model = OtherPatientHistory
-        fields = '__all__'
-        exclude = ['history']
 
 
 class DentalChartForm(forms.ModelForm):

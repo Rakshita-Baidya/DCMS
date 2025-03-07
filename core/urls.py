@@ -7,7 +7,7 @@ from .views import (dashboard, doctor, view_doctor_profile, edit_doctor_profile,
 from .views import PatientFormWizard, EditPatientFormWizard, AppointmentFormWizard, EditAppointmentWizard
 
 from .views import (
-    PatientViewSet, MedicalHistoryViewSet, OtherPatientHistoryViewSet,
+    PatientViewSet, MedicalHistoryViewSet,
     DentalChartViewSet, ToothRecordViewSet, AppointmentViewSet,
     TreatmentPlanViewSet, TreatmentRecordViewSet, TreatmentDoctorViewSet,
     PurchasedProductViewSet, PaymentViewSet, TransactionViewSet
@@ -69,14 +69,6 @@ urlpatterns = [
     path('medical-histories/<int:pk>/', MedicalHistoryViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
     }), name='medical_history'),
-
-    # Other Patient History URLs
-    path('other-patient-histories/list/', OtherPatientHistoryViewSet.as_view({
-        'get': 'list'
-    }), name='other_patient_history_list'),
-    path('other-patient-histories/<int:pk>/', OtherPatientHistoryViewSet.as_view({
-        'get': 'retrieve', 'put': 'update', 'delete': 'destroy', 'post': 'create'
-    }), name='other_patient_history'),
 
     # Dental Chart URLs
     path('dental-charts/list/', DentalChartViewSet.as_view({

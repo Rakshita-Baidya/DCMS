@@ -148,14 +148,6 @@ class MedicalHistory(models.Model):
     increased_frequency = models.BooleanField(default=False)
     burning = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"Medical History for {self.patient.name}"
-
-
-class OtherPatientHistory(models.Model):
-    history = models.OneToOneField(
-        MedicalHistory, on_delete=models.CASCADE, related_name='history_other_patients')
-
     # extraction
     prev_extraction = models.BooleanField(default=False)
     date_of_last_extraction = models.DateField(blank=True, null=True)
@@ -194,7 +186,7 @@ class OtherPatientHistory(models.Model):
     halitosis = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Additional History for {self.history.patient.name}"
+        return f"Medical History for {self.patient.name}"
 
 
 class DentalChart(models.Model):

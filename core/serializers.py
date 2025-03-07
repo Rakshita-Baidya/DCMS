@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.core.validators import MinValueValidator, MaxValueValidator
 from .models import (
-    Patient, MedicalHistory, OtherPatientHistory, DentalChart, ToothRecord,
+    Patient, MedicalHistory, DentalChart, ToothRecord,
     Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct,
     Payment, Transaction, User
 )
@@ -48,7 +48,12 @@ class MedicalHistorySerializer(serializers.ModelSerializer):
             'shortness_of_breath', 'asthma', 'hearing_loss', 'ringing_of_ears', 'bruise_easy',
             'anemia', 'perspire_easy', 'apprehension', 'palpitation', 'goiter', 'bulging_eyes',
             'delayed_healing', 'increased_appetite', 'family_history', 'radiography_therapy',
-            'increased_frequency', 'burning'
+            'increased_frequency', 'burning', 'prev_extraction', 'date_of_last_extraction', 'untoward_reaction',
+            'untoward_reaction_specifics', 'local_anesthesia_use', 'hospitalized', 'admission_date',
+            'hospitalization_specifics', 'sleeping_pills', 'aspirin', 'food', 'penicilin',
+            'antibiotics', 'sulfa_drugs', 'local_anesthesia', 'others', 'specifics', 'smoking',
+            'tobacco_chewing', 'alcohol', 'betel_nuts', 'paan_chewing', 'stain', 'calculus',
+            'halitosis'
         ]
 
     def validate_rheumatic_fever_age(self, value):
@@ -57,22 +62,6 @@ class MedicalHistorySerializer(serializers.ModelSerializer):
                 "Rheumatic fever age cannot exceed 100.")
         return value
 
-# Other Patient History Serializer
-
-
-class OtherPatientHistorySerializer(serializers.ModelSerializer):
-    history = MedicalHistorySerializer(read_only=True)
-
-    class Meta:
-        model = OtherPatientHistory
-        fields = [
-            'id', 'history', 'prev_extraction', 'date_of_last_extraction', 'untoward_reaction',
-            'untoward_reaction_specifics', 'local_anesthesia_use', 'hospitalized', 'admission_date',
-            'hospitalization_specifics', 'sleeping_pills', 'aspirin', 'food', 'penicilin',
-            'antibiotics', 'sulfa_drugs', 'local_anesthesia', 'others', 'specifics', 'smoking',
-            'tobacco_chewing', 'alcohol', 'betel_nuts', 'paan_chewing', 'stain', 'calculus',
-            'halitosis'
-        ]
 
 # Dental Chart Serializer
 
