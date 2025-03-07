@@ -486,7 +486,7 @@ def edit_patient_profile(request, patient_id, step=0):
         'patient_id': patient_id,
         'wizard': wizard,
     }
-    if step == "3":
+    if step == "2":
         context['tooth_record_formset'] = ToothRecordFormSet(instance=instance)
 
     template = TEMPLATES.get(step, "patient/general.html")
@@ -515,8 +515,8 @@ class EditPatientFormWizard(SessionWizardView):
             'active_page': 'patient',
             'is_editing': bool(patient_id),
         })
-        if self.steps.current == '3':  # Dental Chart step
-            dental_chart = self.get_form_instance('3')
+        if self.steps.current == '2':  # Dental Chart step
+            dental_chart = self.get_form_instance('2')
             context['tooth_record_formset'] = ToothRecordFormSet(
                 instance=dental_chart)
 
@@ -975,14 +975,6 @@ def schedule(request):
         }
         for app in appointments
     ]
-
-    # # Add search functionality
-    # search_query = request.GET.get('search', '')
-    # if search_query:
-    #     appointment_queryset = appointments.filter(
-    #         Q(patient__name__icontains=search_query) |
-    #         Q(description__icontains=search_query)
-    #     )
 
     context = {
         'page_title': 'Schedule Management',

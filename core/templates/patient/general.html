@@ -48,22 +48,22 @@
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.dob.label_tag }}</label>
-                    {{ wizard.form.dob|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.dob.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.dob.errors }}</div>{% endif %}
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.gender.label_tag }}</label>
-                    {{ wizard.form.gender|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.gender.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.gender.errors }}</div>{% endif %}
-                </div>
-                <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.blood_group.label_tag }}*</label>
                     {{ wizard.form.blood_group|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.blood_group.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.blood_group.errors }}</div>
                     {% endif %}
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.gender.label_tag }}</label>
+                    {{ wizard.form.gender|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.gender.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.gender.errors }}</div>{% endif %}
+                </div>
+                {% comment %} <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.dob.label_tag }}</label>
+                    {{ wizard.form.dob|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.dob.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.dob.errors }}</div>{% endif %}
+                </div> {% endcomment %}
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.age.label_tag }}</label>
                     {{ wizard.form.age|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
@@ -135,7 +135,11 @@
                 </div>
                 <button type="submit"
                         class="col-start-4 mt-4 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                    Next
+                    {% if is_editing %}
+                        Save Changes
+                    {% else %}
+                        Next
+                    {% endif %}
                 </button>
             </form>
         </div>
