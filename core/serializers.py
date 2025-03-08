@@ -111,7 +111,7 @@ class TreatmentRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = TreatmentRecord
         fields = [
-            'id', 'appointment', 'type', 'x_ray', 'x_ray_cost', 'lab', 'lab_sent',
+            'id', 'appointment', 'treatment_type', 'x_ray', 'x_ray_cost', 'lab', 'lab_sent',
             'lab_order_date', 'lab_cost', 'treatment_cost', 'date_created'
         ]
         read_only_fields = ['date_created']
@@ -190,7 +190,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ['id', 'user', 'title',
                   'description', 'amount', 'date', 'type']
-        read_only_fields = ['date']
+        read_only_fields = ['date_created']
 
     def validate_amount(self, value):
         if value <= 0:

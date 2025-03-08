@@ -1,3 +1,5 @@
+from django.forms import ValidationError
+from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db.models import Sum, F
 from django.db.models.functions import Coalesce
@@ -225,17 +227,26 @@ APPOINTMENT_STATUS = [
 
 class Appointment(models.Model):
     patient = models.ForeignKey(
-        Patient, on_delete=models.CASCADE, related_name='patient_appointment')
-    date = models.DateField(default=now)
-    time = models.TimeField(max_length=25)
+        'Patient', on_delete=models.CASCADE, related_name='appointments')
+    date = models.DateField(default=timezone.now)
+    time = models.TimeField()
     description = models.TextField(max_length=255, blank=True, null=True)
     status = models.CharField(
-        choices=APPOINTMENT_STATUS, default="Pending")
-    date_created = models.DateTimeField(default=now,
-                                        blank=True, null=True)
+        max_length=20, choices=APPOINTMENT_STATUS, default="Pending")
+    date_created = models.DateTimeField(
+        auto_now_add=True, blank=True, null=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['patient', 'date', 'time']),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['patient', 'date', 'time'], name='unique_patient_appointment')
+        ]
 
     def __str__(self):
-        return f"Appointment for {self.patient.name} on {self.date.strftime('%Y-%m-%d %H:%M')}"
+        return f"{self.patient.name} - {self.date} {self.time} ({self.status})"
 
 
 LAB_CHOICES = [
@@ -257,57 +268,76 @@ TREATMENT_CHOICES = [
 
 class TreatmentPlan(models.Model):
     patient = models.OneToOneField(
-        Patient, on_delete=models.CASCADE, related_name='patient_treatment_plan')
+        'Patient', on_delete=models.CASCADE, related_name='treatment_plan')
     treatment_plan = models.TextField(max_length=255, blank=True, null=True)
+    last_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    def __str__(self):
+        return f"Treatment Plan for {self.patient.name}"
 
 
 class TreatmentRecord(models.Model):
     appointment = models.ForeignKey(
-        Appointment, on_delete=models.CASCADE, related_name='appointment_treatment_record')
-    type = models.CharField(max_length=100, blank=True,
-                            null=True, choices=TREATMENT_CHOICES)
+        Appointment, on_delete=models.CASCADE, related_name='treatment_records')
+    treatment_type = models.CharField(
+        max_length=100, blank=True, null=True, choices=TREATMENT_CHOICES)
     x_ray = models.BooleanField(default=False)
     x_ray_cost = models.DecimalField(
-        decimal_places=2, max_digits=10, blank=True, null=True)
+        decimal_places=2, max_digits=10, blank=True, null=True, validators=[MinValueValidator(0)])
     lab = models.BooleanField(default=False)
-    lab_sent = models.CharField(choices=LAB_CHOICES, blank=True, null=True)
+    lab_sent = models.CharField(
+        max_length=50, choices=LAB_CHOICES, blank=True, null=True)
     lab_order_date = models.DateTimeField(blank=True, null=True)
     lab_cost = models.DecimalField(
-        decimal_places=2, max_digits=10, blank=True, null=True)
+        decimal_places=2, max_digits=10, blank=True, null=True, validators=[MinValueValidator(0)])
     treatment_cost = models.DecimalField(
-        decimal_places=2, max_digits=10, blank=True, null=True)
-    date_created = models.DateTimeField(default=now,
-                                        blank=True, null=True)
+        decimal_places=2, max_digits=10, blank=True, null=True, validators=[MinValueValidator(0)])
+    date_created = models.DateTimeField(
+        default=timezone.now, blank=True, null=True)
+
+    def clean(self):
+        if self.lab and not self.lab_sent:
+            raise ValidationError("Lab sent must be specified if lab is True.")
+        if not self.lab and self.lab_sent:
+            self.lab_sent = None
 
     def __str__(self):
-        return f"Treatment for {self.appointment.patient.name}"
+        return f"{self.treatment_type or 'Treatment'} for {self.appointment.patient.name} on {self.appointment.date}"
 
 
 class TreatmentDoctor(models.Model):
     treatment_record = models.ForeignKey(
-        TreatmentRecord, on_delete=models.CASCADE, related_name='record_td')
+        TreatmentRecord, on_delete=models.CASCADE, related_name='doctors')
     doctor = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='doctor_td')
-    percent = models.FloatField(validators=[
-                                MinValueValidator(0), MaxValueValidator(100)])
+        User, on_delete=models.CASCADE, related_name='treatment_assignments')
+    percent = models.FloatField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)])
     amount = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
-    date_created = models.DateTimeField(default=now, blank=True, null=True)
+    date_created = models.DateTimeField(
+        default=timezone.now, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.treatment_record.treatment_cost and self.percent:
+            self.amount = (self.treatment_record.treatment_cost *
+                           self.percent) / 100
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Dr. {self.doctor.username} - {self.treatment.appointment.patient.name}"
+        return f"Dr. {self.doctor.username} - {self.treatment_record.appointment.patient.name} ({self.percent}%)"
 
 
 class PurchasedProduct(models.Model):
     appointment = models.ForeignKey(
-        Appointment, on_delete=models.CASCADE, related_name='product_appointment')
+        Appointment, on_delete=models.CASCADE, related_name='purchased_products')
     name = models.CharField(max_length=100)
     rate = models.DecimalField(
-        decimal_places=2, max_digits=10)
-    quantity = models.PositiveIntegerField()
+        decimal_places=2, max_digits=10, validators=[MinValueValidator(0)])
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     total_amt = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True)
-    date_created = models.DateTimeField(default=now, blank=True, null=True)
+    date_created = models.DateTimeField(
+        auto_now_add=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.rate is not None and self.quantity is not None:
@@ -315,7 +345,7 @@ class PurchasedProduct(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.name} - {self.quantity} pcs"
+        return f"{self.name} ({self.quantity} pcs) for {self.appointment.patient.name} on {self.appointment.date}"
 
 
 PAYMENT_METHOD_CHOICES = [
@@ -328,44 +358,53 @@ PAYMENT_METHOD_CHOICES = [
 
 
 class Payment(models.Model):
-    appointment = models.ForeignKey(
-        Appointment, on_delete=models.CASCADE, related_name='payments'
-    )
+    appointment = models.OneToOneField(
+        Appointment, on_delete=models.CASCADE, related_name='payment')
     additional_cost = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0)
+        max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(0)])
     discount_amount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0)
+        max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(0)])
     paid_amount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0)
+        max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(0)])
     final_amount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0)
+        max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(0)])
     remaining_balance = models.DecimalField(
         max_digits=10, decimal_places=2, default=0)
-
     payment_status = models.CharField(max_length=15, default="Unpaid")
     payment_method = models.CharField(
-        max_length=15, choices=PAYMENT_METHOD_CHOICES, default="Cash", blank=True, null=True
-    )
+        max_length=15, choices=PAYMENT_METHOD_CHOICES, default="Cash", blank=True, null=True)
     payment_date = models.DateTimeField(blank=True, null=True)
     payment_notes = models.TextField(blank=True, null=True)
+    date_created = models.DateTimeField(
+        default=timezone.now, blank=True, null=True)
 
-    date_created = models.DateTimeField(default=now, blank=True, null=True)
+    def calculate_final_amount(self):
+        treatment_cost = sum(
+            tr.treatment_cost or 0 for tr in self.appointment.treatment_records.all()
+        ) + sum(
+            tr.x_ray_cost or 0 for tr in self.appointment.treatment_records.all() if tr.x_ray
+        ) + sum(
+            tr.lab_cost or 0 for tr in self.appointment.treatment_records.all() if tr.lab
+        )
+        product_cost = sum(
+            pp.total_amt or 0 for pp in self.appointment.purchased_products.all()
+        )
+        return (treatment_cost + product_cost + self.additional_cost) - self.discount_amount
 
     def save(self, *args, **kwargs):
-        if self.appointment:
-            self.remaining_balance = self.final_amount - self.paid_amount
-
-            if self.remaining_balance > 0:
-                self.payment_status = 'Pending'
-            elif self.remaining_balance == 0:
-                self.payment_status = 'Paid'
-            else:
-                self.payment_status = 'Overpaid'
-
+        if not self.pk or self.final_amount == 0:
+            self.final_amount = self.calculate_final_amount()
+        self.remaining_balance = self.final_amount - self.paid_amount
+        if self.remaining_balance > 0:
+            self.payment_status = 'Pending'
+        elif self.remaining_balance == 0:
+            self.payment_status = 'Paid'
+        else:
+            self.payment_status = 'Overpaid'
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Appointment - {self.appointment.patient.name}"
+        return f"Payment for {self.appointment.patient.name} - {self.appointment.date} ({self.payment_status})"
 
 
 TRANSACTION_TYPE = [
@@ -382,6 +421,7 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(default=now)
     type = models.CharField(choices=TRANSACTION_TYPE, default="Income")
+    date_created = models.DateTimeField(default=now, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user} - {self.title} ({self.type})"

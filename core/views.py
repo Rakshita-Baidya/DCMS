@@ -51,15 +51,15 @@ def dashboard(request):
     }
 
     treatment_counts = {
-        "Root Canals": treatment_queryset.filter(type="Root Canals").count(),
-        "Dental Crowns": treatment_queryset.filter(type="Dental Crowns").count(),
-        "Fillings": treatment_queryset.filter(type="Fillings").count(),
-        "Cleaning": treatment_queryset.filter(type="Cleaning").count(),
-        "General Checkup": treatment_queryset.filter(type="General Checkup").count(),
-        "Extractions": treatment_queryset.filter(type="Extractions").count(),
-        "Prosthetics": treatment_queryset.filter(type="Prosthetics").count(),
-        "Dental Implants": treatment_queryset.filter(type="Dental Implants").count(),
-        "Other": treatment_queryset.filter(type="Other").count(),
+        "Root Canals": treatment_queryset.filter(treatment_type="Root Canals").count(),
+        "Dental Crowns": treatment_queryset.filter(treatment_type="Dental Crowns").count(),
+        "Fillings": treatment_queryset.filter(treatment_type="Fillings").count(),
+        "Cleaning": treatment_queryset.filter(treatment_type="Cleaning").count(),
+        "General Checkup": treatment_queryset.filter(treatment_type="General Checkup").count(),
+        "Extractions": treatment_queryset.filter(treatment_type="Extractions").count(),
+        "Prosthetics": treatment_queryset.filter(treatment_type="Prosthetics").count(),
+        "Dental Implants": treatment_queryset.filter(treatment_type="Dental Implants").count(),
+        "Other": treatment_queryset.filter(treatment_type="Other").count(),
     }
 
     context = {

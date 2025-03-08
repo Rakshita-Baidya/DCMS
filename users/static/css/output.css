@@ -776,6 +776,10 @@ video {
   margin-left: 4rem;
 }
 
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
 .block {
   display: block;
 }
@@ -934,6 +938,10 @@ video {
 
 .max-w-md {
   max-width: 28rem;
+}
+
+.max-w-full {
+  max-width: 100%;
 }
 
 .flex-1 {
@@ -1104,6 +1112,12 @@ video {
 
 .overflow-y-auto {
   overflow-y: auto;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .text-ellipsis {
@@ -1766,8 +1780,20 @@ video {
     grid-column: span 3 / span 3;
   }
 
+  .md\:mr-2 {
+    margin-right: 0.5rem;
+  }
+
+  .md\:inline {
+    display: inline;
+  }
+
   .md\:w-2\/4 {
     width: 50%;
+  }
+
+  .md\:w-\[12\.5\%\] {
+    width: 12.5%;
   }
 
   .md\:grid-cols-2 {
