@@ -455,21 +455,28 @@ def edit_patient_profile(request, patient_id, step=0):
         return redirect('core:view_patient_profile', patient_id=patient_id)
 
     form_class = FORMS.get(step)
+    tooth_record_formset = None
     if request.method == "POST":
         form = form_class(request.POST, instance=instance)
-        if form.is_valid():
-            saved_instance = form.save()
-            if step == "2":
-                tooth_record_formset = ToothRecordFormSet(
-                    request.POST, instance=saved_instance)
-                if tooth_record_formset.is_valid():
-                    tooth_record_formset.save()
-
+        if step == "2":
+            tooth_record_formset = ToothRecordFormSet(
+                request.POST, instance=instance)
+            if form.is_valid() and tooth_record_formset.is_valid():
+                saved_instance = form.save()
+                tooth_record_formset.instance = saved_instance
+                tooth_record_formset.save()
+                messages.success(
+                    request, "The patient details have been updated successfully!")
+                return redirect('core:view_patient_profile', patient_id=patient_id)
+        elif form.is_valid():
+            form.save()
             messages.success(
                 request, "The patient details have been updated successfully!")
             return redirect('core:view_patient_profile', patient_id=patient_id)
     else:
         form = form_class(instance=instance)
+        if step == "2":
+            tooth_record_formset = ToothRecordFormSet(instance=instance)
 
     wizard = {
         'form': form,
@@ -486,8 +493,8 @@ def edit_patient_profile(request, patient_id, step=0):
         'patient_id': patient_id,
         'wizard': wizard,
     }
-    if step == "2":
-        context['tooth_record_formset'] = ToothRecordFormSet(instance=instance)
+    if step == "2" and tooth_record_formset:
+        context['tooth_record_formset'] = tooth_record_formset
 
     template = TEMPLATES.get(step, "patient/general.html")
     return render(request, template, context)

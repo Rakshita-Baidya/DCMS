@@ -11,7 +11,7 @@
                  height="24px"
                  viewBox="0 0 20 20"
                  onclick="history.back()">
-                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" stroke-miterlimit="10" d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
             </svg>
             <p class="text-gray-700 text-2xl font-medium">
                 {% if is_editing %}
@@ -26,12 +26,13 @@
             <form method="post" enctype="multipart/form-data" class="text-md">
                 {% csrf_token %}
                 {{ wizard.management_form }}
-                {{ wizard.form }}
+                {{ wizard.form.as_p }}
                 <h3 class="font-bold text-xl text-darkText text-center mb-4">Tooth Records</h3>
                 {{ tooth_record_formset.management_form }}
                 <div id="tooth-records-container">
-                    {% for form in tooth_record_formset.forms %}
+                    {% for form in tooth_record_formset %}
                         <div class="tooth-record-form mb-4 p-4 border border-darkerPrimary rounded-md">
+                            {{ form.id }} <!-- Hidden field for existing records -->
                             <label class="block text-sm font-medium text-secondaryLogo">{{ form.tooth_no.label_tag }}*</label>
                             {{ form.tooth_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                             {% if form.tooth_no.errors %}<div class="text-dangerRed text-sm">{{ form.tooth_no.errors }}</div>{% endif %}
@@ -77,18 +78,16 @@
                 const newForm = document.createElement("div");
                 newForm.classList.add("tooth-record-form", "mb-4", "p-4", "border", "border-darkerPrimary", "rounded-md");
                 newForm.innerHTML = `
-                    <label for="id_tooth_records-${formCount}-tooth_no">Tooth Number:</label>
-                    <input type="text" name="tooth_records-${formCount}-tooth_no" id="id_tooth_records-${formCount}-tooth_no" class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                    
-                    <label for="id_tooth_records-${formCount}-condition">Condition:</label>
-                    <select name="tooth_records-${formCount}-condition" id="id_tooth_records-${formCount}-condition" class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                    <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-tooth_no">Tooth Number:*</label>
+                    <input type="text" name="tooth_records-${formCount}-tooth_no" id="id_tooth_records-${formCount}-tooth_no" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                    <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-condition">Condition:</label>
+                    <select name="tooth_records-${formCount}-condition" id="id_tooth_records-${formCount}-condition" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
                         <option value="">---------</option>
                         <option value="Mild">Mild</option>
                         <option value="Moderate">Moderate</option>
                         <option value="Severe">Severe</option>
                     </select>
-
-                    <label for="id_tooth_records-${formCount}-description">Condition:</label>
+                    <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-description">Description:</label>
                     <textarea name="tooth_records-${formCount}-description" id="id_tooth_records-${formCount}-description" rows="2" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"></textarea>
                 `;
                 container.appendChild(newForm);
