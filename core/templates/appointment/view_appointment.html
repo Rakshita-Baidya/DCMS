@@ -76,6 +76,12 @@
                     </div>
                 </div>
             </div>
+            {% if treatment_plan %}
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold mb-4">Treatment Plan</h2>
+                    <p>{{ treatment_plan.treatment_plan|default:"Not specified" }}</p>
+                </div>
+            {% endif %}
             {% if treatment_records %}
                 <div class="p-6 border-b border-gray-200">
                     <h2 class="text-xl font-semibold mb-4">Treatment Information</h2>

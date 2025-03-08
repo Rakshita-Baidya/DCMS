@@ -389,7 +389,8 @@ def patient(request):
 
 
 class PatientFormWizard(SessionWizardView):
-    form_list = [PatientForm, MedicalHistoryForm, DentalChartForm]
+    form_list = [PatientForm, MedicalHistoryForm,
+                 DentalChartForm, TreatmentPlanForm]
     file_storage = FileSystemStorage(
         location=os.path.join("media", "patient"))
 
@@ -397,6 +398,7 @@ class PatientFormWizard(SessionWizardView):
         "0": "patient/general.html",
         "1": "patient/history.html",
         '2': 'patient/dental_chart.html',
+        '3': 'patient/treatment_plan.html',
     }
 
     def get_template_names(self):
@@ -420,6 +422,8 @@ class PatientFormWizard(SessionWizardView):
             return MedicalHistory()
         elif step == '2':  # Dental Chart Form
             return DentalChart()
+        elif step == '3':  # Treatment Plan Form
+            return TreatmentPlan()
         return None
 
     def done(self, form_list, **kwargs):
@@ -443,6 +447,11 @@ class PatientFormWizard(SessionWizardView):
         if tooth_record_formset.is_valid():
             tooth_record_formset.save()
 
+        # Save treatment plan
+        treatment_plan = form_list[3].save(commit=False)
+        treatment_plan.patient = patient
+        treatment_plan.save()
+
         messages.success(request, 'The patient has been added successfully!')
         return redirect('core:patient')
 
@@ -456,11 +465,13 @@ def edit_patient_profile(request, patient_id, step=0):
         "0": "patient/general.html",
         "1": "patient/history.html",
         "2": "patient/dental_chart.html",
+        "3": "patient/treatment_plan.html",
     }
     FORMS = {
         "0": PatientForm,
         "1": MedicalHistoryForm,
         "2": DentalChartForm,
+        "3": TreatmentPlanForm,
     }
 
     if step == "0":
@@ -469,6 +480,8 @@ def edit_patient_profile(request, patient_id, step=0):
         instance, _ = MedicalHistory.objects.get_or_create(patient=patient)
     elif step == "2":
         instance, _ = DentalChart.objects.get_or_create(patient=patient)
+    elif step == "3":
+        instance, _ = TreatmentPlan.objects.get_or_create(patient=patient)
     else:
         return redirect('core:view_patient_profile', patient_id=patient_id)
 
@@ -519,7 +532,8 @@ def edit_patient_profile(request, patient_id, step=0):
 
 
 class EditPatientFormWizard(SessionWizardView):
-    form_list = [PatientForm, MedicalHistoryForm, DentalChartForm]
+    form_list = [PatientForm, MedicalHistoryForm,
+                 DentalChartForm, TreatmentPlanForm]
     file_storage = FileSystemStorage(
         location=os.path.join("media", "patient"))
 
@@ -527,6 +541,7 @@ class EditPatientFormWizard(SessionWizardView):
         "0": "patient/general.html",
         "1": "patient/history.html",
         '2': 'patient/dental_chart.html',
+        '3': 'patient/treatment_plan.html',
     }
 
     def get_template_names(self):
@@ -565,6 +580,10 @@ class EditPatientFormWizard(SessionWizardView):
             dental_chart, created = DentalChart.objects.get_or_create(
                 patient=patient)
             return dental_chart
+        elif step == '3':  # Treatment Plan Form
+            treatment_plan, created = TreatmentPlan.objects.update_or_create(
+                patient=patient)
+            return treatment_plan
         return None
 
     def done(self, form_list, **kwargs):
@@ -595,6 +614,12 @@ class EditPatientFormWizard(SessionWizardView):
             request.POST, instance=dental_chart)
         if tooth_record_formset.is_valid():
             tooth_record_formset.save()
+
+        # Update or create treatment plan
+        treatment_plan_form = form_list[3]
+        treatment_plan, created = TreatmentPlan.objects.update_or_create(
+            patient=patient, defaults=treatment_plan_form.cleaned_data
+        )
 
         messages.success(
             request, 'The patient details have been updated successfully!')
@@ -956,6 +981,9 @@ class EditAppointmentWizard(SessionWizardView):
 @login_required(login_url='login')
 def view_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, pk=appointment_id)
+
+    treatment_plan = appointment.patient.treatment_plan if hasattr(
+        appointment.patient, 'treatment_plan') else None
     treatment_records = TreatmentRecord.objects.filter(appointment=appointment)
     treatment_doctors = TreatmentDoctor.objects.filter(
         treatment_record__appointment=appointment)
@@ -978,6 +1006,7 @@ def view_appointment(request, appointment_id):
         'page_title': 'Appointment Management',
         'active_page': 'appointment',
         'appointment': appointment,
+        'treatment_plan': treatment_plan,
         'treatment_records': treatment_records,
         'treatment_doctors': treatment_doctors,
         'purchased_products': purchased_products,
