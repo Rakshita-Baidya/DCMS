@@ -79,48 +79,46 @@
             {% if treatment_records %}
                 <div class="p-6 border-b border-gray-200">
                     <h2 class="text-xl font-semibold mb-4">Treatment Information</h2>
-                    <div class="grid grid-cols-4 gap-4">
-                        <div>
-                            <p class="text-gray-600">Treatment Type</p>
-                            <p class="font-medium">{{ treatment_records.treatment_type|default:"Not specified" }}</p>
-                        </div>
-                        {% comment %} <div class="col-span-2">
-                            <p class="text-gray-600">Treatment Plan</p>
-                            <p class="font-medium">{{ treatment_records.plan|default:"No plan specified" }}</p>
-                        </div> {% endcomment %}
-                        <div>
-                            <p class="text-gray-600">Treatment Cost</p>
-                            <p class="font-medium">Rs. {{ treatment_records.treatment_cost|default:"0.00"|floatformat:2 }}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-600">X-Ray Required</p>
-                            <p class="font-medium">{{ treatment_records.x_ray|yesno:"Yes,No" }}</p>
-                        </div>
-                        {% if treatment_records.x_ray %}
+                    {% for record in treatment_records %}
+                        <div class="grid grid-cols-4 gap-4 mb-4">
                             <div>
-                                <p class="text-gray-600">X-Ray Cost</p>
-                                <p class="font-medium">Rs. {{ treatment_records.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
-                            </div>
-                        {% endif %}
-                        <div class="col-start-1">
-                            <p class=" text-gray-600">Lab Required</p>
-                            <p class="font-medium">{{ treatment_records.lab|yesno:"Yes,No" }}</p>
-                        </div>
-                        {% if treatment_records.lab %}
-                            <div>
-                                <p class="text-gray-600">Lab Sent To</p>
-                                <p class="font-medium">{{ treatment_records.lab_sent|default:"Not specified" }}</p>
+                                <p class="text-gray-600">Treatment Type</p>
+                                <p class="font-medium">{{ record.treatment_type|default:"Not specified" }}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Lab Order Date</p>
-                                <p class="font-medium">{{ treatment_records.lab_order_date|default:"Not specified" }}</p>
+                                <p class="text-gray-600">Treatment Cost</p>
+                                <p class="font-medium">Rs. {{ record.treatment_cost|default:"0.00"|floatformat:2 }}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Lab Cost</p>
-                                <p class="font-medium">Rs. {{ treatment_records.lab_cost|default:"0.00"|floatformat:2 }}</p>
+                                <p class="text-gray-600">X-Ray Required</p>
+                                <p class="font-medium">{{ record.x_ray|yesno:"Yes,No" }}</p>
                             </div>
-                        {% endif %}
-                    </div>
+                            {% if record.x_ray %}
+                                <div>
+                                    <p class="text-gray-600">X-Ray Cost</p>
+                                    <p class="font-medium">Rs. {{ record.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
+                                </div>
+                            {% endif %}
+                            <div class="col-start-1">
+                                <p class="text-gray-600">Lab Required</p>
+                                <p class="font-medium">{{ record.lab|yesno:"Yes,No" }}</p>
+                            </div>
+                            {% if record.lab %}
+                                <div>
+                                    <p class="text-gray-600">Lab Sent To</p>
+                                    <p class="font-medium">{{ record.lab_sent|default:"Not specified" }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Lab Order Date</p>
+                                    <p class="font-medium">{{ record.lab_order_date|default:"Not specified" }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Lab Cost</p>
+                                    <p class="font-medium">Rs. {{ record.lab_cost|default:"0.00"|floatformat:2 }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
                 </div>
             {% endif %}
             {% if treatment_doctors %}
@@ -129,7 +127,7 @@
                     <div class="grid grid-cols-1 gap-4">
                         {% for td in treatment_doctors %}
                             <div class="bg-gray-50 p-4 rounded-md">
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-3 gap-4">
                                     <div>
                                         <p class="text-gray-600">Doctor</p>
                                         <p class="font-medium">{{ td.doctor.get_full_name }}</p>
@@ -137,6 +135,10 @@
                                     <div>
                                         <p class="text-gray-600">Percentage</p>
                                         <p class="font-medium">{{ td.percent }}%</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-600">Amount</p>
+                                        <p class="font-medium">Rs. {{ td.amount|default:"0.00"|floatformat:2 }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -150,7 +152,7 @@
                     <div class="grid grid-cols-1 gap-4">
                         {% for product in purchased_products %}
                             <div class="bg-gray-50 p-4 rounded-md">
-                                <div class="grid grid-cols-3 gap-4">
+                                <div class="grid grid-cols-4 gap-4">
                                     <div>
                                         <p class="text-gray-600">Product Name</p>
                                         <p class="font-medium">{{ product.name }}</p>
@@ -162,6 +164,10 @@
                                     <div>
                                         <p class="text-gray-600">Quantity</p>
                                         <p class="font-medium">{{ product.quantity }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-600">Total Amount</p>
+                                        <p class="font-medium">Rs. {{ product.total_amt|default:"0.00"|floatformat:2 }}</p>
                                     </div>
                                 </div>
                             </div>

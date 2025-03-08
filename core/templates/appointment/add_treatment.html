@@ -30,9 +30,11 @@
                 {% csrf_token %}
                 {{ wizard.management_form }}
                 <div>
-                    <label class="block font-medium text-secondaryLogo">{{ form.type.label_tag }}</label>
-                    {{ form.type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if form.type.errors %}<div class="text-dangerRed text-sm">{{ form.type.errors }}</div>{% endif %}
+                    <label class="block font-medium text-secondaryLogo">{{ form.treatment_type.label_tag }}</label>
+                    {{ form.treatment_type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if form.treatment_type.errors %}
+                        <div class="text-dangerRed text-sm">{{ form.treatment_type.errors }}</div>
+                    {% endif %}
                 </div>
                 <div class="col-start-1 col-span-4">
                     <label class="block font-medium text-secondaryLogo">{{ form.plan.label_tag }}</label>
