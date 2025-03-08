@@ -31,8 +31,21 @@
                 {{ tooth_record_formset.management_form }}
                 <div id="tooth-records-container">
                     {% for form in tooth_record_formset %}
-                        <div class="tooth-record-form mb-4 p-4 border border-darkerPrimary rounded-md">
-                            {{ form.id }} <!-- Hidden field for existing records -->
+                        <div class="tooth-record-form mb-4 p-4 border border-darkerPrimary rounded-md relative">
+                            {{ form.id }}
+                            {{ form.DELETE|add_class:"hidden" }}
+                            <button type="button"
+                                    class="delete-tooth-record absolute top-2 right-2 text-dangerRed hover:text-darkerDangerRed"
+                                    title="Delete this record">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="20"
+                                     height="20"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
                             <label class="block text-sm font-medium text-secondaryLogo">{{ form.tooth_no.label_tag }}*</label>
                             {{ form.tooth_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                             {% if form.tooth_no.errors %}<div class="text-dangerRed text-sm">{{ form.tooth_no.errors }}</div>{% endif %}
@@ -74,10 +87,16 @@
             const totalForms = document.getElementById("id_tooth_records-TOTAL_FORMS");
             let formCount = parseInt(totalForms.value);
 
+            //add new records
             addButton.addEventListener("click", function () {
                 const newForm = document.createElement("div");
-                newForm.classList.add("tooth-record-form", "mb-4", "p-4", "border", "border-darkerPrimary", "rounded-md");
+                newForm.classList.add("tooth-record-form", "mb-4", "p-4", "border", "border-darkerPrimary", "rounded-md", "relative");
                 newForm.innerHTML = `
+                    <button type="button" class="delete-tooth-record absolute top-2 right-2 text-dangerRed hover:text-darkerDangerRed" title="Delete this record">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                     <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-tooth_no">Tooth Number:*</label>
                     <input type="text" name="tooth_records-${formCount}-tooth_no" id="id_tooth_records-${formCount}-tooth_no" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
                     <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-condition">Condition:</label>
@@ -93,7 +112,30 @@
                 container.appendChild(newForm);
                 formCount++;
                 totalForms.value = formCount;
+
+                newForm.querySelector('.delete-tooth-record').addEventListener('click', function () {
+                    newForm.remove();
+                    formCount--;
+                    totalForms.value = formCount;
+                });
+            });
+
+            // Handle deletion of existing forms
+            document.querySelectorAll('.delete-tooth-record').forEach(button => {
+                button.addEventListener('click', function () {
+                    const formDiv = this.closest('.tooth-record-form');
+                    const deleteInput = formDiv.querySelector('input[type="checkbox"][name$="-DELETE"]');
+                    if (deleteInput) {
+                        deleteInput.checked = true; 
+                        formDiv.style.display = 'none'; 
+                    } else {
+                        formDiv.remove(); 
+                        formCount--;
+                        totalForms.value = formCount;
+                    }
+                });
             });
         });
     </script>
 {% endblock content %}
+Key Changes
