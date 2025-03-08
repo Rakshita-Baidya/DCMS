@@ -76,48 +76,48 @@
                     </div>
                 </div>
             </div>
-            {% if treatment %}
+            {% if treatment_records %}
                 <div class="p-6 border-b border-gray-200">
                     <h2 class="text-xl font-semibold mb-4">Treatment Information</h2>
                     <div class="grid grid-cols-4 gap-4">
                         <div>
                             <p class="text-gray-600">Treatment Type</p>
-                            <p class="font-medium">{{ treatment.type|default:"Not specified" }}</p>
+                            <p class="font-medium">{{ treatment_records.treatment_type|default:"Not specified" }}</p>
                         </div>
+                        {% comment %} <div class="col-span-2">
+                            <p class="text-gray-600">Treatment Plan</p>
+                            <p class="font-medium">{{ treatment_records.plan|default:"No plan specified" }}</p>
+                        </div> {% endcomment %}
                         <div>
                             <p class="text-gray-600">Treatment Cost</p>
-                            <p class="font-medium">Rs. {{ treatment.treatment_cost|default:"0.00"|floatformat:2 }}</p>
-                        </div>
-                        <div class="col-span-2">
-                            <p class="text-gray-600">Treatment Plan</p>
-                            <p class="font-medium">{{ treatment.plan|default:"No plan specified" }}</p>
+                            <p class="font-medium">Rs. {{ treatment_records.treatment_cost|default:"0.00"|floatformat:2 }}</p>
                         </div>
                         <div>
                             <p class="text-gray-600">X-Ray Required</p>
-                            <p class="font-medium">{{ treatment.x_ray|yesno:"Yes,No" }}</p>
+                            <p class="font-medium">{{ treatment_records.x_ray|yesno:"Yes,No" }}</p>
                         </div>
-                        {% if treatment.x_ray %}
+                        {% if treatment_records.x_ray %}
                             <div>
                                 <p class="text-gray-600">X-Ray Cost</p>
-                                <p class="font-medium">Rs. {{ treatment.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
+                                <p class="font-medium">Rs. {{ treatment_records.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
                             </div>
                         {% endif %}
                         <div class="col-start-1">
                             <p class=" text-gray-600">Lab Required</p>
-                            <p class="font-medium">{{ treatment.lab|yesno:"Yes,No" }}</p>
+                            <p class="font-medium">{{ treatment_records.lab|yesno:"Yes,No" }}</p>
                         </div>
-                        {% if treatment.lab %}
+                        {% if treatment_records.lab %}
                             <div>
                                 <p class="text-gray-600">Lab Sent To</p>
-                                <p class="font-medium">{{ treatment.lab_sent|default:"Not specified" }}</p>
+                                <p class="font-medium">{{ treatment_records.lab_sent|default:"Not specified" }}</p>
                             </div>
                             <div>
                                 <p class="text-gray-600">Lab Order Date</p>
-                                <p class="font-medium">{{ treatment.lab_order_date|default:"Not specified" }}</p>
+                                <p class="font-medium">{{ treatment_records.lab_order_date|default:"Not specified" }}</p>
                             </div>
                             <div>
                                 <p class="text-gray-600">Lab Cost</p>
-                                <p class="font-medium">Rs. {{ treatment.lab_cost|default:"0.00"|floatformat:2 }}</p>
+                                <p class="font-medium">Rs. {{ treatment_records.lab_cost|default:"0.00"|floatformat:2 }}</p>
                             </div>
                         {% endif %}
                     </div>

@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.shortcuts import get_object_or_404, render, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -138,7 +139,23 @@ def view_doctor_profile(request, user_id):
     doctor_queryset = User.objects.get(pk=user_id)
 
     appointments = Appointment.objects.filter(
-        treatments__treatment_td__doctor=doctor_queryset).distinct().order_by('-date', '-time')[:5]
+        treatment_records__doctors__doctor=doctor_queryset).distinct().order_by('-date', '-time')[:5]
+    treatment_queryset = TreatmentRecord.objects.filter(
+        doctors__doctor=doctor_queryset
+    )
+
+    # Define treatment counts similar to dashboard
+    treatment_counts = {
+        "Root Canals": treatment_queryset.filter(treatment_type="Root Canals").count(),
+        "Dental Crowns": treatment_queryset.filter(treatment_type="Dental Crowns").count(),
+        "Fillings": treatment_queryset.filter(treatment_type="Fillings").count(),
+        "Cleaning": treatment_queryset.filter(treatment_type="Cleaning").count(),
+        "General Checkup": treatment_queryset.filter(treatment_type="General Checkup").count(),
+        "Extractions": treatment_queryset.filter(treatment_type="Extractions").count(),
+        "Prosthetics": treatment_queryset.filter(treatment_type="Prosthetics").count(),
+        "Dental Implants": treatment_queryset.filter(treatment_type="Dental Implants").count(),
+        "Other": treatment_queryset.filter(treatment_type="Other").count(),
+    }
 
     # user needs to be deleted
     if request.method == 'POST' and 'delete_user_id' in request.POST:
@@ -157,6 +174,7 @@ def view_doctor_profile(request, user_id):
         'active_page': 'doctor',
         'doctor': doctor_queryset,
         'appointments': appointments,
+        'treatment_data': json.dumps(treatment_counts),
     }
 
     return render(request, 'doctor/view_doctor_profile.html', context)
@@ -938,8 +956,9 @@ class EditAppointmentWizard(SessionWizardView):
 @login_required(login_url='login')
 def view_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, pk=appointment_id)
-
-    # Get related data
+    treatment_records = TreatmentRecord.objects.filter(appointment=appointment)
+    treatment_doctors = TreatmentDoctor.objects.filter(
+        treatment_record__appointment=appointment)
     purchased_products = PurchasedProduct.objects.filter(
         appointment=appointment)
 
@@ -959,8 +978,8 @@ def view_appointment(request, appointment_id):
         'page_title': 'Appointment Management',
         'active_page': 'appointment',
         'appointment': appointment,
-        # 'treatment': treatment,
-        # 'treatment_doctors': treatment_doctors,
+        'treatment_records': treatment_records,
+        'treatment_doctors': treatment_doctors,
         'purchased_products': purchased_products,
     }
 
