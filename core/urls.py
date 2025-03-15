@@ -43,7 +43,7 @@ urlpatterns = [
     path('appointment/', appointment, name='appointment'),
     #     path('appointment/add/', add_appointment, name='add_appointment'),
     path('appointment/add/', AppointmentFormWizard.as_view(), name='add_appointment'),
-    path('edit-appointment/<int:appointment_id>/',
+    path('appointment/<int:appointment_id>/edit/',
          EditAppointmentWizard.as_view(), name='edit_appointment'),
     path('appointment/<int:appointment_id>/view/',
          view_appointment, name='view_appointment'),

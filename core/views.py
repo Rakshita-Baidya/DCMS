@@ -731,12 +731,14 @@ def appointment(request):
     appointments_schedule = Appointment.objects.all()
     appointments_data = [
         {
+            'id': app.id,
             'title': f"Appointment - {app.patient.name}",
             'start': f"{app.date.isoformat()}T{app.time}",
             'extendedProps': {
                 'patient_name': app.patient.name,
                 'description': app.description or 'No description provided',
                 'status': app.status,
+                'appointment_id': app.id,
             }
         }
         for app in appointments_schedule

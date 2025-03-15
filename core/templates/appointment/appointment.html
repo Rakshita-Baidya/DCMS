@@ -214,16 +214,7 @@
                             <p id="modalAmount" class="mt-1 text-gray-900"></p>
                         </div>
                     </div>
-                    <div class="mt-6 flex justify-end space-x-3">
-                        <button onclick="closeAppointmentModal()"
-                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                            Close
-                        </button>
-                        <button onclick="editAppointment()"
-                                class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors">
-                            Edit
-                        </button>
-                    </div>
+                    <div class="mt-6 flex justify-end space-x-3" id="modalActions"></div>
                 </div>
             </div>
         </div>
@@ -317,7 +308,7 @@
                 eventClick: function(info) {
                     showAppointmentDetails(info.event);
                 },
-                height: 'calc(100vh - 225px)',
+                height: 'calc(100vh - 240px)',
                 businessHours: {
                     daysOfWeek: [0, 1, 2, 3, 4, 5],
                     startTime: '08:00',
@@ -350,6 +341,53 @@
             statusElement.className = `inline-block px-2 py-1 rounded-full text-sm font-medium ${statusClass}`;
             statusElement.textContent = status;
             document.getElementById('modalAmount').textContent = event.extendedProps.total_amt ? `Rs. ${parseFloat(event.extendedProps.total_amt).toFixed(2)}` : 'Not specified';
+
+            const modalActions = document.getElementById('modalActions');
+            modalActions.innerHTML = ''; 
+
+            // View Button
+            const viewBtn = document.createElement('a');
+            viewBtn.className = 'px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600';
+            viewBtn.href = `/core/appointment/${event.extendedProps.appointment_id}/view/`;
+            viewBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer">
+                    <path fill="none" stroke="#ffffff" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
+                </svg>
+            `;
+            modalActions.appendChild(viewBtn);
+
+            // Edit Button
+            const editBtn = document.createElement('a');
+            editBtn.className = 'px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600';
+            editBtn.href = `/core/appointment/${event.extendedProps.appointment_id}/edit/`;
+            editBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer">
+                    <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
+                        <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
+                        <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
+                    </g>
+                </svg>
+            `;
+            modalActions.appendChild(editBtn);
+
+            // Delete Button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600';
+            deleteBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer">
+                    <path fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
+                </svg>
+            `;
+            deleteBtn.onclick = function() {
+                confirmDelete(
+                    event.extendedProps.appointment_id,
+                    event.extendedProps.patient_name,
+                    event.start.toISOString().split('T')[0],
+                    event.start.toLocaleTimeString()
+                );
+            };
+            modalActions.appendChild(deleteBtn);
+
             document.getElementById('appointmentModal').classList.remove('hidden');
         }
 
@@ -370,7 +408,16 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('delete-form-' + appointmentId).submit();
+                    const deleteForm = document.createElement('form');
+                    deleteForm.method = 'POST';
+                    deleteForm.action = "{% url 'core:appointment' %}";
+                    deleteForm.className = 'hidden';
+                    deleteForm.innerHTML = `
+                        {% csrf_token %}
+                        <input type="hidden" name="delete_appointment_id" value="${appointmentId}">
+                    `;
+                    document.body.appendChild(deleteForm);
+                    deleteForm.submit();
                 }
             });
         }
