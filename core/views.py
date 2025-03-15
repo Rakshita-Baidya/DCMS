@@ -728,6 +728,20 @@ def appointment(request):
     page = request.GET.get('page', 1)
     appointment_list = paginator.get_page(page)
 
+    appointments_schedule = Appointment.objects.all()
+    appointments_data = [
+        {
+            'title': f"Appointment - {app.patient.name}",
+            'start': f"{app.date.isoformat()}T{app.time}",
+            'extendedProps': {
+                'patient_name': app.patient.name,
+                'description': app.description or 'No description provided',
+                'status': app.status,
+            }
+        }
+        for app in appointments_schedule
+    ]
+
     context = {
         'page_title': 'Appointment Management',
         'active_page': 'appointment',
@@ -736,6 +750,7 @@ def appointment(request):
         'search_query': search_query,
         'status_filter': status_filter,
         'status': status,
+        'appointments_schedule': appointments_data,
     }
 
     return render(request, 'appointment/appointment.html', context)
@@ -1015,36 +1030,69 @@ def view_appointment(request, appointment_id):
     return render(request, 'appointment/view_appointment.html', context)
 
 
-@login_required(login_url='login')
-def schedule(request):
-    appointments = Appointment.objects.all()
-    appointments_data = [
-        {
-            'title': f"Appointment - {app.patient.name}",
-            'start': f"{app.date.isoformat()}T{app.time}",
-            'extendedProps': {
-                'patient_name': app.patient.name,
-                'description': app.description or 'No description provided',
-                'status': app.status,
-            }
-        }
-        for app in appointments
-    ]
+# @login_required(login_url='login')
+# def schedule(request):
+#     appointments = Appointment.objects.all()
+#     appointments_data = [
+#         {
+#             'title': f"Appointment - {app.patient.name}",
+#             'start': f"{app.date.isoformat()}T{app.time}",
+#             'extendedProps': {
+#                 'patient_name': app.patient.name,
+#                 'description': app.description or 'No description provided',
+#                 'status': app.status,
+#             }
+#         }
+#         for app in appointments
+#     ]
 
-    context = {
-        'page_title': 'Schedule Management',
-        'active_page': 'schedule',
-        'appointments': appointments_data,
-    }
-    return render(request, 'schedule/schedule.html', context)
+#     context = {
+#         'page_title': 'Schedule Management',
+#         'active_page': 'schedule',
+#         'appointments': appointments_data,
+#     }
+#     return render(request, 'schedule/schedule.html', context)
 
 
 @login_required(login_url='login')
 @AdminOnly
 def finance(request):
+    transaction_queryset = Transaction.objects.all()
+    income_queryset = transaction_queryset.filter(type="Income")
+    expense_queryset = transaction_queryset.filter(type="Expense")
+
+    # Add search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        transaction_queryset = transaction_queryset.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
+    # Pagination
+    paginator = Paginator(transaction_queryset, 8)
+    page = request.GET.get('page', 1)
+    transaction_list = paginator.get_page(page)
+
+    # transaction needs to be deleted
+    if request.method == 'POST' and 'delete_transaction_id' in request.POST:
+        if not request.user.is_superuser and request.user.role != 'Administrator':
+            messages.error(request, "You do not have permission to delete.")
+        else:
+            transaction_id_to_delete = request.POST['delete_transaction_id']
+            transaction_to_delete = Transaction.objects.get(
+                id=transaction_id_to_delete)
+            transaction_to_delete.delete()
+            messages.success(request, f"Transaction {
+                transaction_to_delete.title} has been deleted.")
+            return redirect('core:finance')
+
     context = {
         'page_title': 'Finance Management',
         'active_page': 'finance',
+        'transaction': transaction_list,
+        'total_transactions': transaction_queryset.count(),
+        'search_query': search_query,
     }
     return render(request, 'finance/finance.html', context)
 

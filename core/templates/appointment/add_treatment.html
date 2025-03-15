@@ -36,12 +36,14 @@
                         <div class="text-dangerRed text-sm">{{ form.treatment_type.errors }}</div>
                     {% endif %}
                 </div>
-                <div class="col-start-1 col-span-4">
-                    <label class="block font-medium text-secondaryLogo">{{ form.plan.label_tag }}</label>
-                    {{ form.plan|attr:"rows:2" |add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if form.plan.errors %}<div class="text-dangerRed text-sm">{{ form.plan.errors }}</div>{% endif %}
+                <div>
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.treatment_cost.label_tag }}</label>
+                    {{ wizard.form.treatment_cost|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.treatment_cost.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.treatment_cost.errors }}</div>
+                    {% endif %}
                 </div>
-                <div class="flex items-center">
+                <div class="col-start-1 flex items-center">
                     <label class="block font-medium text-secondaryLogo w-36">{{ wizard.form.x_ray.label_tag }}</label>
                     {{ wizard.form.x_ray |attr:"id:x_ray" }}
                     {% if wizard.form.x_ray.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.x_ray.errors }}</div>{% endif %}
@@ -98,13 +100,6 @@
                            value="{{ wizard.form.lab_cost.value|default_if_none:'' }}">
                     {% if wizard.form.lab_cost.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.lab_cost.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="col-span-4">
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.treatment_cost.label_tag }}</label>
-                    {{ wizard.form.treatment_cost|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.treatment_cost.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.treatment_cost.errors }}</div>
                     {% endif %}
                 </div>
                 <p onclick="history.back()"

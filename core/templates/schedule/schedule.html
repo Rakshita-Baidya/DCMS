@@ -8,6 +8,18 @@
             </div>
             <div class="flex items-center space-x-4">
                 <div>
+                    <a href="{% url 'core:appointment_list_view' %}"
+                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                        List view
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'core:appointment_calender_view' %}"
+                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                        Schedule view
+                    </a>
+                </div>
+                <div>
                     <a href="{% url 'core:add_appointment' %}"
                        class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
                         + Add Appointment

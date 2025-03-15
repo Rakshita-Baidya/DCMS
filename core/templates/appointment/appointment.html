@@ -4,19 +4,18 @@
 {% block content %}
     <div class="p-8">
         {% comment %} Header Section {% endcomment %}
-        <div class="flex justify-between items-center mb-6 ">
+        <div class="flex justify-between items-center mb-6">
             <div>
                 <p class="text-gray-700 text-2xl font-medium">{{ total_appointment }} Total Appointments</p>
             </div>
             <div class="flex items-center space-x-4">
-                {% comment %} Search Bar {% endcomment %}
+                {% comment %} Search Bar and Status Filter {% endcomment %}
                 <form method="get">
                     <input type="text"
                            name="search"
                            value="{{ search_query }}"
                            placeholder="Search..."
                            class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                    {% comment %} Statu Filter {% endcomment %}
                     <select name="status"
                             onchange="this.form.submit()"
                             class="px-3 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo">
@@ -27,6 +26,29 @@
                     </select>
                     <button type="submit" class="hidden"></button>
                 </form>
+                {% comment %} Toggle Switch for List/Schedule View {% endcomment %}
+                <div class="flex items-center space-x-2">
+                    <button id="list-view-btn"
+                            class="p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo bg-gray-200 hover:bg-gray-300">
+                        <svg width="20"
+                             height="20"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 7a1 1 0 0 1 1-1h1a1 1 0 0 1 0 2H5a1 1 0 0 1-1-1m5 0a1 1 0 0 1 1-1h9a1 1 0 1 1 0 2h-9a1 1 0 0 1-1-1m-5 5a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1m5 0a1 1 0 0 1 1-1h9a1 1 0 1 1 0 2h-9a1 1 0 0 1-1-1m-5 5a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1m5 0a1 1 0 0 1 1-1h9a1 1 0 1 1 0 2h-9a1 1 0 0 1-1-1" fill="#000000" />
+                        </svg>
+                    </button>
+                    <button id="schedule-view-btn"
+                            class="p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo bg-gray-200 hover:bg-gray-300">
+                        <svg fill="#000000"
+                             width="20"
+                             height="20"
+                             viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 14a1 1 0 1 0-1-1 1 1 0 0 0 1 1m5 0a1 1 0 1 0-1-1 1 1 0 0 0 1 1m-5 4a1 1 0 1 0-1-1 1 1 0 0 0 1 1m5 0a1 1 0 1 0-1-1 1 1 0 0 0 1 1M7 14a1 1 0 1 0-1-1 1 1 0 0 0 1 1M19 4h-1V3a1 1 0 0 0-2 0v1H8V3a1 1 0 0 0-2 0v1H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3m1 15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9h16Zm0-11H4V7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1ZM7 18a1 1 0 1 0-1-1 1 1 0 0 0 1 1" />
+                        </svg>
+                    </button>
+                </div>
                 {% comment %} Add Appointment Button {% endcomment %}
                 <div>
                     <a href="{% url 'core:add_appointment' %}"
@@ -36,7 +58,9 @@
                 </div>
             </div>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2]">
+        {% comment %} List View {% endcomment %}
+        <div id="list-view"
+             class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2]">
             {% if appointments %}
                 <table class="min-w-full table-auto">
                     <thead>
@@ -63,7 +87,6 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">
-                                        {% comment %} edit {% endcomment %}
                                         <a href="{% url 'core:edit_appointment' appointment.id %}">
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                  width="20"
@@ -76,7 +99,6 @@
                                                 </g>
                                             </svg>
                                         </a>
-                                        {% comment %} view {% endcomment %}
                                         <a href="{% url 'core:view_appointment' appointment.id %}">
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                  width="20"
@@ -86,7 +108,6 @@
                                                 <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
                                             </svg>
                                         </a>
-                                        {% comment %} delete {% endcomment %}
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
@@ -111,11 +132,11 @@
                     </tbody>
                 </table>
                 {% comment %} Pagination {% endcomment %}
-                {% if appointment.has_other_pages %}
+                {% if appointments.has_other_pages %}
                     <div class="flex justify-center mt-8">
                         <div class="flex items-center space-x-2">
-                            {% if appointment.has_previous %}
-                                <a href="?page={{ appointment.previous_page_number }}&search={{ search_query }}">
+                            {% if appointments.has_previous %}
+                                <a href="?page={{ appointments.previous_page_number }}&search={{ search_query }}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
                                          height="20"
@@ -128,9 +149,9 @@
                                     </svg>
                                 </a>
                             {% endif %}
-                            <p class="px-3 py-2">Page {{ appointment.number }} of {{ appointment.paginator.num_pages }}</p>
-                            {% if appointment.has_next %}
-                                <a href="?page={{ appointment.next_page_number }}&search={{ search_query }}">
+                            <p class="px-3 py-2">Page {{ appointments.number }} of {{ appointments.paginator.num_pages }}</p>
+                            {% if appointments.has_next %}
+                                <a href="?page={{ appointments.next_page_number }}&search={{ search_query }}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
                                          height="20"
@@ -150,12 +171,196 @@
                 <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
             {% endif %}
         </div>
+        {% comment %} Schedule View {% endcomment %}
+        <div id="schedule-view" class="bg-white rounded-lg shadow-lg p-6 hidden">
+            <div id="calendar"
+                 class="fc fc-media-screen fc-direction-ltr fc-theme-standard"></div>
+        </div>
+    </div>
+    {% comment %} Appointment Modal for Schedule View {% endcomment %}
+    <div id="appointmentModal"
+         class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex justify-center items-center h-screen">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900" id="modalTitle"></h3>
+                        <button onclick="closeAppointmentModal()"
+                                class="text-gray-400 hover:text-gray-500">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Patient</label>
+                            <p id="modalPatient" class="mt-1 text-gray-900"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Date & Time</label>
+                            <p id="modalDateTime" class="mt-1 text-gray-900"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Description</label>
+                            <p id="modalDescription" class="mt-1 text-gray-900"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Status</label>
+                            <p id="modalStatus" class="mt-1"></p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Total Amount</label>
+                            <p id="modalAmount" class="mt-1 text-gray-900"></p>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button onclick="closeAppointmentModal()"
+                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                            Close
+                        </button>
+                        <button onclick="editAppointment()"
+                                class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors">
+                            Edit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script>
+        const listViewBtn = document.getElementById('list-view-btn');
+        const scheduleViewBtn = document.getElementById('schedule-view-btn');
+        const listView = document.getElementById('list-view');
+        const scheduleView = document.getElementById('schedule-view');
+
+        function showListView() {
+            listView.classList.remove('hidden');
+            scheduleView.classList.add('hidden');
+            listViewBtn.classList.add('bg-primaryLogo', 'text-white');
+            listViewBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            scheduleViewBtn.classList.remove('bg-primaryLogo', 'text-white');
+            scheduleViewBtn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+        }
+
+        function showScheduleView() {
+            listView.classList.add('hidden');
+            scheduleView.classList.remove('hidden');
+            scheduleViewBtn.classList.add('bg-primaryLogo', 'text-white');
+            scheduleViewBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            listViewBtn.classList.remove('bg-primaryLogo', 'text-white');
+            listViewBtn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            initializeCalendar();
+        }
+
+        showListView();
+
+        listViewBtn.addEventListener('click', showListView);
+        scheduleViewBtn.addEventListener('click', showScheduleView);
+
+        let calendarInitialized = false;
+        function initializeCalendar() {
+            if (calendarInitialized) return;
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'dayGridMonth,timeGridWeek,timeGridDay',
+                    center: 'title',
+                    right: 'prev,next today',
+                },
+                events: {{ appointments_schedule|safe }},
+                dayCellDidMount: function(arg) {
+                    if (arg.date.toDateString() === new Date().toDateString()) {
+                        arg.el.style.backgroundColor = 'white';
+                        arg.el.style.boxShadow = 'inset 0 0 0 1.5px #00b2b2';
+                    }
+                },
+                eventClassNames: function(info) {
+                    switch (info.event.extendedProps.status) {
+                        case 'Pending':
+                            return ['bg-yellow-100', 'border-yellow-200'];
+                        case 'Cancelled':
+                            return ['bg-red-100', 'border-red-200'];
+                        case 'Completed':
+                            return ['bg-green-100', 'border-green-200'];
+                        default:
+                            return ['bg-white', 'border-gray-200'];
+                    }
+                },
+                eventContent: function(info) {
+                    const statusDot = document.createElement('div');
+                    switch (info.event.extendedProps.status) {
+                        case 'Pending':
+                            statusDot.className = 'w-2 h-2 rounded-full bg-yellow-400 mx-2 flex-shrink-0';
+                            break;
+                        case 'Cancelled':
+                            statusDot.className = 'w-2 h-2 rounded-full bg-red-400 mx-2 flex-shrink-0';
+                            break;
+                        case 'Completed':
+                            statusDot.className = 'w-2 h-2 rounded-full bg-green-400 mx-2 flex-shrink-0';
+                            break;
+                    }
+                    const timeEl = document.createElement('div');
+                    timeEl.textContent = info.timeText;
+                    timeEl.className = 'text-gray-700 mr-1 whitespace-nowrap overflow-hidden text-ellipsis flex-shrink-0';
+                    const titleEl = document.createElement('div');
+                    titleEl.textContent = info.event.title;
+                    titleEl.className = 'text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis flex-grow';
+                    const content = document.createElement('div');
+                    content.className = 'flex items-center w-full';
+                    content.appendChild(statusDot);
+                    content.appendChild(timeEl);
+                    content.appendChild(titleEl);
+                    return { domNodes: [content] };
+                },
+                eventClick: function(info) {
+                    showAppointmentDetails(info.event);
+                },
+                height: 'calc(100vh - 225px)',
+                businessHours: {
+                    daysOfWeek: [0, 1, 2, 3, 4, 5],
+                    startTime: '08:00',
+                    endTime: '18:00',
+                }
+            });
+            calendar.render();
+            calendarInitialized = true;
+        }
+
+        function showAppointmentDetails(event) {
+            document.getElementById('modalTitle').textContent = event.title;
+            document.getElementById('modalPatient').textContent = event.extendedProps.patient_name;
+            document.getElementById('modalDateTime').textContent = new Date(event.start).toLocaleString();
+            document.getElementById('modalDescription').textContent = event.extendedProps.description || 'No description provided';
+            const statusElement = document.getElementById('modalStatus');
+            const status = event.extendedProps.status;
+            let statusClass = '';
+            switch (status) {
+                case 'Pending':
+                    statusClass = 'bg-yellow-100 text-yellow-800';
+                    break;
+                case 'Cancelled':
+                    statusClass = 'bg-red-100 text-red-800';
+                    break;
+                case 'Completed':
+                    statusClass = 'bg-green-100 text-green-800';
+                    break;
+            }
+            statusElement.className = `inline-block px-2 py-1 rounded-full text-sm font-medium ${statusClass}`;
+            statusElement.textContent = status;
+            document.getElementById('modalAmount').textContent = event.extendedProps.total_amt ? `Rs. ${parseFloat(event.extendedProps.total_amt).toFixed(2)}` : 'Not specified';
+            document.getElementById('appointmentModal').classList.remove('hidden');
+        }
+
+        function closeAppointmentModal() {
+            document.getElementById('appointmentModal').classList.add('hidden');
+        }
+
         function confirmDelete(appointmentId, appointmentPatient, appointmentDate, appointmentTime) {
             Swal.fire({
                 title: 'Are you sure?',
-                text: "This action will permanently delete the appointment for "+ appointmentPatient + " on " + appointmentDate + " at " + appointmentTime + ".",
+                text: "This action will permanently delete the appointment for " + appointmentPatient + " on " + appointmentDate + " at " + appointmentTime + ".",
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Delete',
                 cancelButtonText: 'Cancel',
