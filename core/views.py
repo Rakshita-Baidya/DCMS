@@ -632,12 +632,13 @@ def view_patient_profile(request, patient_id):
 
     patient_history = getattr(patient_queryset, 'patient_history', None)
     dental_chart = getattr(patient_queryset, 'dental_chart')
+    treatment_plan = getattr(patient_queryset, 'treatment_plan')
 
     exclude_fields = {'id', 'patient', 'history'}
 
     # Define sections for medical history
     medical_history_sections = {
-        "General": ["chief_dental_complaint", "marked_weight_change"],
+        "General": ["marked_weight_change"],
         "Heart": ["chest_pain", "hypertention", "ankle_edema", "rheumatic_fever", "rheumatic_fever_age", "stroke_history", "stroke_date"],
         "Arthritis": ["joint_pain", "joint_swelling"],
         "Nervous System": ["headaches", "convulsions_or_epilepsy", "numbness_or_tingles", "dizziness_or_fainting"],
@@ -686,7 +687,9 @@ def view_patient_profile(request, patient_id):
         'page_title': 'Patient Management',
         'active_page': 'patient',
         'patient': patient_queryset,
+        'patient_history': patient_history,
         'medical_history_data': medical_history_data,
+        'treatment_plan': treatment_plan,
         'dental_chart': dental_chart,
         'tooth_records': dental_chart.tooth_records.all() if dental_chart else None,
     }

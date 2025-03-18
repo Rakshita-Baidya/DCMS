@@ -43,7 +43,7 @@
             </div>
         </div>
         {% comment %}Patient Info Card {% endcomment %}
-        <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo p-8 mb-6 grid grid-cols-2 gap-6">
+        <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo p-8 mb-6 grid grid-cols-4 gap-6">
             <div class="space-y-2">
                 <p class="text-3xl font-semibold">{{ patient.name }}</p>
                 <p class="text-gray-600">{{ patient.contact }}</p>
@@ -55,6 +55,14 @@
                     {{ patient.emergency_contact_name }} ({{ patient.emergency_contact_relation }}) at {{ patient.emergency_contact_address }}
                 </p>
                 <p class="text-gray-600">{{ patient.emergency_contact_contact }}</p>
+            </div>
+            <div class="space-y-2">
+                <p class="font-semibold text-xl col-span-2">Chief Complaint</p>
+                <p class="text-gray-600">{{ patient_history.chief_dental_complaint }}</p>
+            </div>
+            <div class="space-y-2">
+                <p class="font-semibold text-xl col-span-2">Treatment Plan</p>
+                <p class="text-gray-600">{{ treatment_plan.treatment_plan }}</p>
             </div>
         </div>
         {% comment %} Tabs Section {% endcomment %}
