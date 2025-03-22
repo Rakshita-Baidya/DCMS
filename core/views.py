@@ -946,7 +946,7 @@ def edit_appointment(request, appointment_id, step=0):
                     request, "The appointment details have been updated successfully!")
                 return redirect('core:view_appointment', appointment_id=appointment_id)
             else:
-                print(f"Form errors: {form.errors}")  # Debugging
+                print(f"Form errors for step {step}: {form.errors}")
 
     else:
         form = form_class(instance=instance)
@@ -1144,6 +1144,7 @@ def view_appointment(request, appointment_id):
         treatment_record__appointment=appointment)
     purchased_products = PurchasedProduct.objects.filter(
         appointment=appointment)
+    payment = Payment.objects.filter(appointment=appointment).first()
 
     # Handle deletion
     if request.method == 'POST' and 'delete_appointment_id' in request.POST:
@@ -1165,6 +1166,7 @@ def view_appointment(request, appointment_id):
         'treatment_records': treatment_records,
         'treatment_doctors': treatment_doctors,
         'purchased_products': purchased_products,
+        'payment': payment,
     }
 
     return render(request, 'appointment/view_appointment.html', context)

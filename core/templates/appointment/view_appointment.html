@@ -123,7 +123,6 @@
             <div class="p-6">
                 {% comment %} appointment {% endcomment %}
                 <div id="appointment-info-tab" class="tab-content">
-                    <h2 class="text-xl font-semibold mb-4">Appointment Information</h2>
                     <div class="grid grid-cols-4 gap-4">
                         <div class="col-span-4">
                             <p class="text-gray-600">Description</p>
@@ -139,7 +138,6 @@
                 </div>
                 {% comment %} Treatment Record Tab {% endcomment %}
                 <div id="treatment-record-tab" class="tab-content hidden">
-                    <h2 class="text-xl font-semibold mb-4">Treatment Record</h2>
                     {% if treatment_records %}
                         {% for record in treatment_records %}
                             <div class="grid grid-cols-4 gap-4 mb-4 bg-gray-50 p-4 rounded-md">
@@ -187,7 +185,6 @@
                 </div>
                 {% comment %} Treatment Doctors Tab {% endcomment %}
                 <div id="treatment-doctors-tab" class="tab-content hidden">
-                    <h2 class="text-xl font-semibold mb-4">Treatment Doctors</h2>
                     {% if treatment_doctors %}
                         <div class="grid grid-cols-1 gap-4">
                             {% for td in treatment_doctors %}
@@ -215,7 +212,6 @@
                 </div>
                 {% comment %} Purchased Products Tab {% endcomment %}
                 <div id="purchased-products-tab" class="tab-content hidden">
-                    <h2 class="text-xl font-semibold mb-4">Purchased Products</h2>
                     {% if purchased_products %}
                         <div class="grid grid-cols-1 gap-4">
                             {% for product in purchased_products %}
@@ -247,8 +243,63 @@
                 </div>
                 {% comment %} Payment Tab {% endcomment %}
                 <div id="payment-tab" class="tab-content hidden">
-                    <h2 class="text-xl font-semibold mb-4">Payment</h2>
-                    <p class="text-center text-gray-500 py-4">Payment information will be displayed here.</p>
+                    {% if payment %}
+                        <div class="grid grid-cols-4 gap-4 text-gray-700">
+                            <div>
+                                <p class="text-gray-600">Treatment Cost</p>
+                                <p class="font-medium">Rs. {{ record.treatment_cost|default:"0.00"|floatformat:2 }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">X-Ray Cost</p>
+                                <p class="font-medium">Rs. {{ record.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Lab Cost</p>
+                                <p class="font-medium">Rs. {{ record.lab_cost|default:"0.00"|floatformat:2 }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Additional Cost</p>
+                                <p class="font-medium">Rs. {{ payment.additional_cost|floatformat:2 }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Discount Amount</p>
+                                <p class="font-medium">Rs. {{ payment.discount_amount|floatformat:2 }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Final Amount</p>
+                                <p class="font-medium">Rs. {{ payment.final_amount|floatformat:2 }}</p>
+                            </div>
+                            <div class="col-start-1">
+                                <p class="text-gray-600">Paid Amount</p>
+                                <p class="font-medium">Rs. {{ payment.paid_amount|floatformat:2 }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Payment Date</p>
+                                <p class="font-medium">{{ payment.payment_date|date:"Y-m-d H:i"|default:"Not specified" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Payment Method</p>
+                                <p class="font-medium">{{ payment.payment_method|default:"Not specified" }}</p>
+                            </div>
+                            <div class="col-start-1 col-span-3">
+                                <p class="text-gray-600">Payment Notes</p>
+                                <p class="font-medium">{{ payment.payment_notes|default:"None" }}</p>
+                            </div>
+                            <div class="col-start-1">
+                                <p class="text-gray-600">Remaining Balance</p>
+                                <p class="font-medium">Rs. {{ payment.remaining_balance|floatformat:2 }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Payment Status</p>
+                                <p class="font-medium">{{ payment.payment_status }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-center text-gray-500 py-4">
+                            No payment information available. <a href="{% url 'core:edit_appointment' appointment.id 4 %}"
+    class="text-primaryLogo hover:underline">Add payment details</a>
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         </div>
