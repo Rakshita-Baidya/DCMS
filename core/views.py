@@ -1145,7 +1145,8 @@ def view_appointment(request, appointment_id):
     purchased_products = PurchasedProduct.objects.filter(
         appointment=appointment)
     payment = Payment.objects.filter(appointment=appointment).first()
-
+    products_total = sum(
+        pp.total_amt or 0 for pp in appointment.purchased_products.all())
     # Handle deletion
     if request.method == 'POST' and 'delete_appointment_id' in request.POST:
         if not request.user.is_superuser and request.user.role != 'Administrator':
@@ -1166,6 +1167,7 @@ def view_appointment(request, appointment_id):
         'treatment_records': treatment_records,
         'treatment_doctors': treatment_doctors,
         'purchased_products': purchased_products,
+        'products_total': products_total,
         'payment': payment,
     }
 
