@@ -30,10 +30,10 @@
                 {% csrf_token %}
                 {{ wizard.management_form }}
                 <div>
-                    <label class="block font-medium text-secondaryLogo">{{ form.treatment_type.label_tag }}</label>
-                    {{ form.treatment_type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if form.treatment_type.errors %}
-                        <div class="text-dangerRed text-sm">{{ form.treatment_type.errors }}</div>
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.treatment_type.label_tag }}</label>
+                    {{ wizard.form.treatment_type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.treatment_type.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.treatment_type.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
@@ -108,7 +108,11 @@
                 </p>
                 <button type="submit"
                         class="text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                    Next
+                    {% if is_editing %}
+                        Save Changes
+                    {% else %}
+                        Next
+                    {% endif %}
                 </button>
             </form>
         </div>

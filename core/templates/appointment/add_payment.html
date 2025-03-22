@@ -72,40 +72,46 @@
                 </div>
                 {% comment %} end debugggg {% endcomment %}
                 <div>
-                    <label class="block font-medium text-secondaryLogo">{{ form.additional_cost.label_tag }}</label>
-                    {{ form.additional_cost|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if form.additional_cost.errors %}
-                        <div class="text-dangerRed text-sm">{{ form.additional_cost.errors }}</div>
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.additional_cost.label_tag }}</label>
+                    {{ wizard.form.additional_cost|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.additional_cost.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.additional_cost.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block font-medium text-secondaryLogo">{{ form.discount_amount.label_tag }}</label>
-                    {{ form.discount_amount|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if form.discount_amount.errors %}
-                        <div class="text-dangerRed text-sm">{{ form.discount_amount.errors }}</div>
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.discount_amount.label_tag }}</label>
+                    {{ wizard.form.discount_amount|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.discount_amount.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.discount_amount.errors }}</div>
                     {% endif %}
                 </div>
                 <div class="col-start-1">
-                    <label class="block font-medium text-secondaryLogo">{{ form.paid_amount.label_tag }}</label>
-                    {{ form.paid_amount|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if form.paid_amount.errors %}<div class="text-dangerRed text-sm">{{ form.paid_amount.errors }}</div>{% endif %}
-                </div>
-                <div>
-                    <label class="block font-medium text-secondaryLogo">{{ form.payment_method.label_tag }}</label>
-                    {{ form.payment_method|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if form.payment_method.errors %}
-                        <div class="text-dangerRed text-sm">{{ form.payment_method.errors }}</div>
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.paid_amount.label_tag }}</label>
+                    {{ wizard.form.paid_amount|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.paid_amount.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.paid_amount.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block font-medium text-secondaryLogo">{{ form.payment_date.label_tag }}</label>
-                    {{ form.payment_date|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if form.payment_date.errors %}<div class="text-dangerRed text-sm">{{ form.payment_date.errors }}</div>{% endif %}
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.payment_method.label_tag }}</label>
+                    {{ wizard.form.payment_method|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.payment_method.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.payment_method.errors }}</div>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.payment_date.label_tag }}</label>
+                    {{ wizard.form.payment_date|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.payment_date.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.payment_date.errors }}</div>
+                    {% endif %}
                 </div>
                 <div class="col-start-1 col-span-4">
-                    <label class="block font-medium text-secondaryLogo">{{ form.payment_notes.label_tag }}</label>
-                    {{ form.payment_notes|attr:"rows:2" |add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if form.payment_notes.errors %}<div class="text-dangerRed text-sm">{{ form.payment_notes.errors }}</div>{% endif %}
+                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.payment_notes.label_tag }}</label>
+                    {{ wizard.form.payment_notes|attr:"rows:2" |add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.payment_notes.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.payment_notes.errors }}</div>
+                    {% endif %}
                 </div>
                 <p onclick="history.back()"
                    class="col-start-3 text-center text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">

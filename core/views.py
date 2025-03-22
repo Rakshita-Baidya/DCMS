@@ -1,3 +1,6 @@
+from .models import Appointment, TreatmentRecord, Payment
+from .forms import AppointmentForm, TreatmentRecordForm, TreatmentDoctorFormSet, PurchasedProductFormSet, PaymentForm
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render, redirect
@@ -785,14 +788,13 @@ def appointment(request):
 class AppointmentFormWizard(SessionWizardView):
     form_list = [AppointmentForm, TreatmentRecordForm,
                  TreatmentDoctorFormSet, PurchasedProductFormSet]
-    file_storage = FileSystemStorage(
-        location=os.path.join("media", "appointment"))
 
     TEMPLATES = {
         '0': 'appointment/add_appointment.html',
         '1': 'appointment/add_treatment.html',
         '2': 'appointment/add_treatment_doctor.html',
         '3': 'appointment/add_purchased_product.html',
+        # '4': 'appointment/add_payment.html',
     }
 
     def get_template_names(self):
@@ -889,7 +891,7 @@ def edit_appointment(request, appointment_id, step=0):
         "0": "appointment/add_appointment.html",
         "1": "appointment/add_treatment.html",
         "2": "appointment/add_treatment_doctor.html",
-        "3": "appointment/add_purchased product.html",
+        "3": "appointment/add_purchased_product.html",
         "4": "appointment/add_payment.html",
     }
     FORMS = {
@@ -906,11 +908,10 @@ def edit_appointment(request, appointment_id, step=0):
         instance, _ = TreatmentRecord.objects.get_or_create(
             appointment=appointment)
     elif step == "2":
-        instance, _ = TreatmentDoctor.objects.get_or_create(
+        instance, _ = TreatmentRecord.objects.get_or_create(
             appointment=appointment)
     elif step == "3":
-        instance, _ = PurchasedProduct.objects.get_or_create(
-            appointment=appointment)
+        instance = appointment
     elif step == "4":
         instance, _ = Payment.objects.get_or_create(appointment=appointment)
     else:
@@ -918,39 +919,52 @@ def edit_appointment(request, appointment_id, step=0):
 
     form_class = FORMS.get(step)
     treatment_doctor_formset = None
+    purchased_product_formset = None
+
     if request.method == "POST":
-        form = form_class(request.POST, instance=instance)
         if step == "2":
             treatment_doctor_formset = TreatmentDoctorFormSet(
                 request.POST, instance=instance)
-            if form.is_valid() and treatment_doctor_formset.is_valid():
-                saved_instance = form.save()
-                treatment_doctor_formset.instance = saved_instance
+            if treatment_doctor_formset.is_valid():
                 treatment_doctor_formset.save()
+                messages.success(
+                    request, "The treatment doctors have been updated successfully!")
+                return redirect('core:view_appointment', appointment_id=appointment_id)
+        elif step == "3":
+            purchased_product_formset = PurchasedProductFormSet(
+                request.POST, instance=instance)
+            if purchased_product_formset.is_valid():
+                purchased_product_formset.save()
+                messages.success(
+                    request, "The purchased products have been updated successfully!")
+                return redirect('core:view_appointment', appointment_id=appointment_id)
+        else:
+            form = form_class(request.POST, instance=instance)
+            if form.is_valid():
+                form.save()
                 messages.success(
                     request, "The appointment details have been updated successfully!")
                 return redirect('core:view_appointment', appointment_id=appointment_id)
-        elif form.is_valid():
-            form.save()
-            messages.success(
-                request, "The appointment details have been updated successfully!")
-            return redirect('core:view_appointment', appointment_id=appointment_id)
+            else:
+                print(f"Form errors: {form.errors}")  # Debugging
+
     else:
         form = form_class(instance=instance)
         if step == "2":
             treatment_doctor_formset = TreatmentDoctorFormSet(
                 instance=instance)
+        elif step == "3":
+            purchased_product_formset = PurchasedProductFormSet(
+                instance=instance)
 
     wizard = {
         'form': form,
         'management_form': '',
-        'steps': {
-            'current': step,
-        }
+        'steps': {'current': step}
     }
 
     context = {
-        'page_title': 'Appointnment Management',
+        'page_title': 'Appointment Management',
         'active_page': 'appointment',
         'is_editing': True,
         'appointment_id': appointment_id,
@@ -958,6 +972,24 @@ def edit_appointment(request, appointment_id, step=0):
     }
     if step == "2" and treatment_doctor_formset:
         context['treatment_doctor_formset'] = treatment_doctor_formset
+    elif step == "3" and purchased_product_formset:
+        context['purchased_product_formset'] = purchased_product_formset
+    elif step == "4":
+        payment = instance
+        treatment_cost = sum(
+            tr.treatment_cost or 0 for tr in appointment.treatment_records.all())
+        lab_cost = sum(
+            tr.lab_cost or 0 for tr in appointment.treatment_records.all() if tr.lab)
+        x_ray_cost = sum(
+            tr.x_ray_cost or 0 for tr in appointment.treatment_records.all() if tr.x_ray)
+        products_total = sum(
+            pp.total_amt or 0 for pp in appointment.purchased_products.all())
+        context.update({
+            'treatment_cost': treatment_cost,
+            'lab_cost': lab_cost,
+            'x_ray_cost': x_ray_cost,
+            'products_total': products_total,
+        })
 
     template = TEMPLATES.get(step, "appointment/add_appointment.html")
     return render(request, template, context)

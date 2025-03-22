@@ -62,7 +62,11 @@
                     </p>
                     <button type="submit"
                             class="text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                        Next
+                        {% if is_editing %}
+                            Save Changes
+                        {% else %}
+                            Next
+                        {% endif %}
                     </button>
                 </div>
             </form>

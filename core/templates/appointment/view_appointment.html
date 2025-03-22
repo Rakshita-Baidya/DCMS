@@ -48,35 +48,27 @@
             </div>
         </div>
         <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo p-8 mb-6">
-            <div class="space-y-4">
-                <p class="text-3xl font-semibold">{{ appointment.patient.name }}</p>
-                <div class="grid grid-cols-4 gap-4">
-                    <div>
-                        <p class="text-gray-600">Date</p>
-                        <p class="font-medium">{{ appointment.date }}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Time</p>
-                        <p class="font-medium">{{ appointment.time }}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Status</p>
-                        <p class="font-medium">{{ appointment.status }}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Total Amount</p>
-                        <p class="font-medium">Rs. {{ appointment.total_amt|default:"0.00"|floatformat:2 }}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Description</p>
-                        <p class="font-medium">{{ appointment.description|default:"No description" }}</p>
-                    </div>
+            <p class="text-3xl font-semibold mb-4">{{ appointment.patient.name }}</p>
+            <div class="grid lg:grid-cols-5 md:grid-cols-3 gap-4">
+                <div>
+                    <p class="text-gray-600">Date</p>
+                    <p class="font-medium">{{ appointment.date }}</p>
                 </div>
-                <div class="space-y-4">
-                    <div>
-                        <p class="font-semibold text-xl">Treatment Plan</p>
-                        <p class="text-gray-600">{{ treatment_plan.treatment_plan|default:"Not specified" }}</p>
-                    </div>
+                <div>
+                    <p class="text-gray-600">Time</p>
+                    <p class="font-medium">{{ appointment.time }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">Status</p>
+                    <p class="font-medium">{{ appointment.status }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">Total Amount</p>
+                    <p class="font-medium">Rs. {{ appointment.total_amt|default:"0.00"|floatformat:2 }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">Follow up days</p>
+                    <p class="font-medium">{{ appointment.follow_up_days|default:"None" }}</p>
                 </div>
             </div>
         </div>
@@ -84,28 +76,117 @@
         <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo overflow-hidden">
             <div class="border-b border-gray-200 flex justify-between items-center">
                 <nav class="flex">
-                    <button data-tab="treatment-doctors"
+                    <button data-tab="appointment-info"
+                            data-step="0"
                             class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-primaryLogo text-primaryLogo">
-                        Treatment Doctors
-                    </button>
-                    <button data-tab="purchased-products"
-                            class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
-                        Purchased Products
+                        Appointment Information
                     </button>
                     <button data-tab="treatment-record"
+                            data-step="1"
                             class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                         Treatment Record
                     </button>
+                    <button data-tab="treatment-doctors"
+                            data-step="2"
+                            class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                        Treatment Doctors
+                    </button>
+                    <button data-tab="purchased-products"
+                            data-step="3"
+                            class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                        Purchased Products
+                    </button>
                     <button data-tab="payment"
+                            data-step="4"
                             class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                         Payment
                     </button>
                 </nav>
+                <div class="pr-4">
+                    <a id="edit-button"
+                       href="{% url 'core:edit_appointment' appointment.id 0 %}"
+                       class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="20"
+                             height="20"
+                             viewBox="0 0 20 20">
+                            <g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
+                            <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
+                            <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
+                            </g>
+                        </svg>
+                        <p>Edit</p>
+                    </a>
+                </div>
             </div>
             {% comment %} Tab Contents {% endcomment %}
             <div class="p-6">
+                {% comment %} appointment {% endcomment %}
+                <div id="appointment-info-tab" class="tab-content">
+                    <h2 class="text-xl font-semibold mb-4">Appointment Information</h2>
+                    <div class="grid grid-cols-4 gap-4">
+                        <div class="col-span-4">
+                            <p class="text-gray-600">Description</p>
+                            <p class="font-medium">{{ appointment.description|default:"No description" }}</p>
+                        </div>
+                        {% if treatment_plan %}
+                            <div class="col-span-4 mt-4">
+                                <p class="text-gray-600">Treatment Plan</p>
+                                <p class="font-medium">{{ treatment_plan.treatment_plan|default:"Not specified" }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% comment %} Treatment Record Tab {% endcomment %}
+                <div id="treatment-record-tab" class="tab-content hidden">
+                    <h2 class="text-xl font-semibold mb-4">Treatment Record</h2>
+                    {% if treatment_records %}
+                        {% for record in treatment_records %}
+                            <div class="grid grid-cols-4 gap-4 mb-4 bg-gray-50 p-4 rounded-md">
+                                <div>
+                                    <p class="text-gray-600">Treatment Type</p>
+                                    <p class="font-medium">{{ record.treatment_type|default:"Not specified" }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Treatment Cost</p>
+                                    <p class="font-medium">Rs. {{ record.treatment_cost|default:"0.00"|floatformat:2 }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">X-Ray Required</p>
+                                    <p class="font-medium">{{ record.x_ray|yesno:"Yes,No" }}</p>
+                                </div>
+                                {% if record.x_ray %}
+                                    <div>
+                                        <p class="text-gray-600">X-Ray Cost</p>
+                                        <p class="font-medium">Rs. {{ record.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
+                                    </div>
+                                {% endif %}
+                                <div class="col-start-1">
+                                    <p class="text-gray-600">Lab Required</p>
+                                    <p class="font-medium">{{ record.lab|yesno:"Yes,No" }}</p>
+                                </div>
+                                {% if record.lab %}
+                                    <div>
+                                        <p class="text-gray-600">Lab Sent To</p>
+                                        <p class="font-medium">{{ record.lab_sent|default:"Not specified" }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-600">Lab Order Date</p>
+                                        <p class="font-medium">{{ record.lab_order_date|default:"Not specified" }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-600">Lab Cost</p>
+                                        <p class="font-medium">Rs. {{ record.lab_cost|default:"0.00"|floatformat:2 }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center text-gray-500 py-4">No treatment records available.</p>
+                    {% endif %}
+                </div>
                 {% comment %} Treatment Doctors Tab {% endcomment %}
-                <div id="treatment-doctors-tab" class="tab-content">
+                <div id="treatment-doctors-tab" class="tab-content hidden">
                     <h2 class="text-xl font-semibold mb-4">Treatment Doctors</h2>
                     {% if treatment_doctors %}
                         <div class="grid grid-cols-1 gap-4">
@@ -164,59 +245,10 @@
                         <p class="text-center text-gray-500 py-4">No purchased products recorded.</p>
                     {% endif %}
                 </div>
-                {% comment %} Treatment Record Tab {% endcomment %}
-                <div id="treatment-record-tab" class="tab-content hidden">
-                    <h2 class="text-xl font-semibold mb-4">Treatment Record</h2>
-                    {% if treatment_records %}
-                        {% for record in treatment_records %}
-                            <div class="grid grid-cols-4 gap-4 mb-4 bg-gray-50 p-4 rounded-md">
-                                <div>
-                                    <p class="text-gray-600">Treatment Type</p>
-                                    <p class="font-medium">{{ record.treatment_type|default:"Not specified" }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600">Treatment Cost</p>
-                                    <p class="font-medium">Rs. {{ record.treatment_cost|default:"0.00"|floatformat:2 }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600">X-Ray Required</p>
-                                    <p class="font-medium">{{ record.x_ray|yesno:"Yes,No" }}</p>
-                                </div>
-                                {% if record.x_ray %}
-                                    <div>
-                                        <p class="text-gray-600">X-Ray Cost</p>
-                                        <p class="font-medium">Rs. {{ record.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
-                                    </div>
-                                {% endif %}
-                                <div class="col-start-1">
-                                    <p class="text-gray-600">Lab Required</p>
-                                    <p class="font-medium">{{ record.lab|yesno:"Yes,No" }}</p>
-                                </div>
-                                {% if record.lab %}
-                                    <div>
-                                        <p class="text-gray-600">Lab Sent To</p>
-                                        <p class="font-medium">{{ record.lab_sent|default:"Not specified" }}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-600">Lab Order Date</p>
-                                        <p class="font-medium">{{ record.lab_order_date|default:"Not specified" }}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-600">Lab Cost</p>
-                                        <p class="font-medium">Rs. {{ record.lab_cost|default:"0.00"|floatformat:2 }}</p>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-center text-gray-500 py-4">No treatment records available.</p>
-                    {% endif %}
-                </div>
                 {% comment %} Payment Tab {% endcomment %}
                 <div id="payment-tab" class="tab-content hidden">
                     <h2 class="text-xl font-semibold mb-4">Payment</h2>
                     <p class="text-center text-gray-500 py-4">Payment information will be displayed here.</p>
-                    <!-- Placeholder for future payment data -->
                 </div>
             </div>
         </div>
@@ -225,10 +257,13 @@
         // Tab Switching Logic
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
+        const editButton = document.getElementById('edit-button');
+        const appointmentId = '{{ appointment.id }}';
 
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabId = button.dataset.tab;
+                const step = button.dataset.step || '';
 
                 // Update button styles
                 tabButtons.forEach(btn => {
@@ -249,6 +284,13 @@
                         content.classList.add('hidden');
                     }
                 });
+
+                if (step) {
+                    editButton.href = `/core/appointment/${appointmentId}/edit/${step}/`;
+                    editButton.classList.remove('hidden');
+                } else {
+                    editButton.classList.add('hidden');
+                }
             });
         });
 
