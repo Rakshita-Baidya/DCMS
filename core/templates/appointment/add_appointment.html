@@ -25,7 +25,7 @@
         <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
             <form method="post"
                   enctype="multipart/form-data"
-                  class="grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 lg:gap-6 gap-4">
+                  class="grid grid-cols-4 lg:grid-cols-5 md:grid-cols-3 lg:gap-6 gap-4">
                 {% csrf_token %}
                 {{ wizard.management_form }}
                 <div>
@@ -54,7 +54,14 @@
                     {{ wizard.form.status|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.status.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.status.errors }}</div>{% endif %}
                 </div>
-                <div class="col-span-4">
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.follow_up_days.label_tag }}</label>
+                    {{ wizard.form.follow_up_days|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.follow_up_days.errors %}
+                        <div class="text-dangerRed text-sm">{{ wizard.form.follow_up_days.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="lg:col-span-5 md:col-span-3">
                     <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.description.label_tag }}</label>
                     {{ wizard.form.description|attr:"rows:3"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.description.errors %}
@@ -62,7 +69,7 @@
                     {% endif %}
                 </div>
                 <button type="submit"
-                        class="col-start-4 mt-4 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
+                        class="lg:col-start-5 md:col-start-3 mt-4 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
                     Next
                 </button>
             </form>

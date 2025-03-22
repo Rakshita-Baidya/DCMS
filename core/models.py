@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.forms import ValidationError
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
@@ -233,6 +234,9 @@ class Appointment(models.Model):
     description = models.TextField(max_length=255, blank=True, null=True)
     status = models.CharField(
         max_length=20, choices=APPOINTMENT_STATUS, default="Pending")
+    follow_up_days = models.PositiveIntegerField(
+        blank=True, null=True, validators=[MaxValueValidator(365)],
+    )
     date_created = models.DateTimeField(
         auto_now_add=True, blank=True, null=True)
 
@@ -244,6 +248,11 @@ class Appointment(models.Model):
             models.UniqueConstraint(
                 fields=['patient', 'date', 'time'], name='unique_patient_appointment')
         ]
+
+    def get_follow_up_date(self):
+        if self.follow_up_days is not None:
+            return self.date + timedelta(days=self.follow_up_days)
+        return None
 
     def __str__(self):
         return f"{self.patient.name} - {self.date} {self.time} ({self.status})"

@@ -1,17 +1,18 @@
 from django.db.models import Count
-from django.shortcuts import get_object_or_404, render, redirect
-from django.core.paginator import Paginator
 from django.db.models import Q
+from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
 from django.forms import formset_factory
+from django.utils import timezone
 
 import os
-from datetime import date
+from datetime import date, timedelta
 import json
-
 from formtools.wizard.views import SessionWizardView
 
 from users.models import User
@@ -63,6 +64,24 @@ def dashboard(request):
         "Other": treatment_queryset.filter(treatment_type="Other").count(),
     }
 
+    # follow up
+    today = timezone.now().date()
+    two_weeks_later = today + timedelta(days=14)
+    one_week_earlier = today - timedelta(days=7)
+
+    completed_appointments = Appointment.objects.filter(
+        follow_up_days__isnull=False,
+        status="Completed"
+    )
+
+    follow_ups = []
+    for appointment in completed_appointments:
+        follow_up_date = appointment.get_follow_up_date()
+        if follow_up_date and one_week_earlier <= follow_up_date <= two_weeks_later:
+            follow_ups.append(appointment)
+
+    follow_ups.sort(key=lambda x: x.get_follow_up_date() or today)
+
     context = {
         'page_title': 'Dashboard',
         'active_page': 'dashboard',
@@ -71,9 +90,11 @@ def dashboard(request):
         "appointments": appointments,
         "total_appointment": appointments.count(),
         "appointment_data": json.dumps(status_counts),
+        "follow_ups": follow_ups,
 
         "treatments": treatment_queryset,
         "treatment_data": json.dumps(treatment_counts),
+
 
     }
     return render(request, 'dashboard/dashboard.html', context)
@@ -858,6 +879,88 @@ class AppointmentFormWizard(SessionWizardView):
         messages.success(
             request, 'The appointment has been added successfully!')
         return redirect('core:appointment')
+
+
+def edit_appointment(request, appointment_id, step=0):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    step = str(step)
+
+    TEMPLATES = {
+        "0": "appointment/add_appointment.html",
+        "1": "appointment/add_treatment.html",
+        "2": "appointment/add_treatment_doctor.html",
+        "3": "appointment/add_purchased product.html",
+        "4": "appointment/add_payment.html",
+    }
+    FORMS = {
+        "0": AppointmentForm,
+        "1": TreatmentRecordForm,
+        "2": TreatmentDoctorFormSet,
+        "3": PurchasedProductFormSet,
+        "4": PaymentForm,
+    }
+
+    if step == "0":
+        instance = appointment
+    elif step == "1":
+        instance, _ = TreatmentRecord.objects.get_or_create(
+            appointment=appointment)
+    elif step == "2":
+        instance, _ = TreatmentDoctor.objects.get_or_create(
+            appointment=appointment)
+    elif step == "3":
+        instance, _ = PurchasedProduct.objects.get_or_create(
+            appointment=appointment)
+    elif step == "4":
+        instance, _ = Payment.objects.get_or_create(appointment=appointment)
+    else:
+        return redirect('core:view_appointment', appointment_id=appointment_id)
+
+    form_class = FORMS.get(step)
+    treatment_doctor_formset = None
+    if request.method == "POST":
+        form = form_class(request.POST, instance=instance)
+        if step == "2":
+            treatment_doctor_formset = TreatmentDoctorFormSet(
+                request.POST, instance=instance)
+            if form.is_valid() and treatment_doctor_formset.is_valid():
+                saved_instance = form.save()
+                treatment_doctor_formset.instance = saved_instance
+                treatment_doctor_formset.save()
+                messages.success(
+                    request, "The appointment details have been updated successfully!")
+                return redirect('core:view_appointment', appointment_id=appointment_id)
+        elif form.is_valid():
+            form.save()
+            messages.success(
+                request, "The appointment details have been updated successfully!")
+            return redirect('core:view_appointment', appointment_id=appointment_id)
+    else:
+        form = form_class(instance=instance)
+        if step == "2":
+            treatment_doctor_formset = TreatmentDoctorFormSet(
+                instance=instance)
+
+    wizard = {
+        'form': form,
+        'management_form': '',
+        'steps': {
+            'current': step,
+        }
+    }
+
+    context = {
+        'page_title': 'Appointnment Management',
+        'active_page': 'appointment',
+        'is_editing': True,
+        'appointment_id': appointment_id,
+        'wizard': wizard,
+    }
+    if step == "2" and treatment_doctor_formset:
+        context['treatment_doctor_formset'] = treatment_doctor_formset
+
+    template = TEMPLATES.get(step, "appointment/add_appointment.html")
+    return render(request, template, context)
 
 
 class EditAppointmentWizard(SessionWizardView):

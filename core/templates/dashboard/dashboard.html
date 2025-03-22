@@ -46,23 +46,23 @@
             </div>
             <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo">
                 <h3 class="text-xl font-semibold text-center">Follow Up</h3>
-                <hr class="bg-[#00B2B0] h-0.5 my-2 rounded-sm">
+                <hr class="bg-[#00B2B0] h-1 my-2 rounded-sm">
                 <div class="max-h-48 overflow-y-auto no-scrollbar space-y-4">
-                    <div>
-                        <p class="text-darkText font-bold">Lorem Ipsum</p>
-                        <p class="text-secondary text-justify">
-                            Lorem ipsum dolor sit amet consectetur. Non risus nec viverra sagittis tempus. Commodo ullamcorper nec tortor augue sed aliquet. Mattis blandit eget nisl porta et convallis.
-                        </p>
-                        <p class="text-secondary text-right">Date: 18/08/2024</p>
-                    </div>
-                    <hr class="bg-[#00B2B0] h-0.5 my-2 rounded-sm">
-                    <div>
-                        <p class="text-darkText font-bold">Lorem Ipsum</p>
-                        <p class="text-secondary text-justify">
-                            Lorem ipsum dolor sit amet consectetur. Non risus nec viverra sagittis tempus. Commodo ullamcorper nec tortor augue sed aliquet. Mattis blandit eget nisl porta et convallis.
-                        </p>
-                        <p class="text-secondary text-right">Date: 18/08/2024</p>
-                    </div>
+                    {% if follow_ups %}
+                        {% for follow_up in follow_ups %}
+                            <div>
+                                <p class="text-secondary text-justify">
+                                    Follow-up upcoming for appointment of <span class="font-bold">{{ follow_up.patient.name }}</span> on {{ follow_up.get_follow_up_date }}: {{ follow_up.description|default:"No description" }}
+                                </p>
+                                <p class="text-secondary text-right">
+                                    <span class="font-semibold">Follow-up Date:</span> {{ follow_up.get_follow_up_date|date:"d/m/Y" }}
+                                </p>
+                            </div>
+                            {% if not forloop.last %}<hr class="bg-[#00B2B0] h-0.5 my-2 rounded-sm">{% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center text-gray-500 py-4">No upcoming follow-ups within the next week.</p>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-span-1 md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
