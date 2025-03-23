@@ -75,7 +75,6 @@
                                     <th class="pb-2">P. Name</th>
                                     <th class="pb-2">Date</th>
                                     <th class="pb-2">Time</th>
-                                    <th class="pb-2">Description</th>
                                     <th class="pb-2">Status</th>
                                     <th class="pb-2">Actions</th>
                                 </tr>
@@ -83,10 +82,9 @@
                             <tbody>
                                 {% for appointment in appointments %}
                                     <tr class="border-b text-center">
-                                        <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-4">{{ appointment.patient.name }}</td>
+                                        <td class="py-2 text-nowrap overflow-hidden text-ellipsis">{{ appointment.patient.name }}</td>
                                         <td class="py-2">{{ appointment.date }}</td>
                                         <td class="py-2">{{ appointment.time }}</td>
-                                        <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-4">{{ appointment.description|default:"-" }}</td>
                                         <td class="py-2 {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
                                             {{ appointment.status }}
                                         </td>

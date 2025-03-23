@@ -381,7 +381,7 @@ class Payment(models.Model):
         max_digits=10, decimal_places=2, default=0)
     payment_status = models.CharField(max_length=15, default="Unpaid")
     payment_method = models.CharField(
-        max_length=15, choices=PAYMENT_METHOD_CHOICES, default="Cash", blank=True, null=True)
+        max_length=15, choices=PAYMENT_METHOD_CHOICES, default="Other", blank=True, null=True)
     payment_date = models.DateTimeField(blank=True, null=True)
     payment_notes = models.TextField(blank=True, null=True)
     date_created = models.DateTimeField(
@@ -401,6 +401,8 @@ class Payment(models.Model):
         return (treatment_cost + product_cost + self.additional_cost) - self.discount_amount
 
     def save(self, *args, **kwargs):
+        self.final_amount = self.calculate_final_amount()
+        self.remaining_balance = self.final_amount - self.paid_amount
         if self.appointment.status == 'Cancelled' or self.appointment.status == 'Pending':
             self.payment_status = '-'
         elif self.appointment.status == 'Completed':

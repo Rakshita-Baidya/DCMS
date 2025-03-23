@@ -943,6 +943,8 @@ def edit_appointment(request, appointment_id, step=0):
             form = form_class(request.POST, instance=instance)
             if form.is_valid():
                 payment = form.save()
+                print(
+                    f"Saved Payment - final_amount: {payment.final_amount}, additional_cost: {payment.additional_cost}, discount_amount: {payment.discount_amount}")
                 messages.success(
                     request, "The appointment details have been updated successfully!")
                 return redirect('core:view_appointment', appointment_id=appointment_id)
