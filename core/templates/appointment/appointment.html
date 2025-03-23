@@ -71,6 +71,7 @@
                             <th class="pb-2">Time</th>
                             <th class="pb-2">Description</th>
                             <th class="pb-2">Status</th>
+                            <th class="pb-2">Payment Status</th>
                             <th class="pb-2">Actions</th>
                         </tr>
                     </thead>
@@ -84,6 +85,9 @@
                                 <td>{{ appointment.description|default:"-" }}</td>
                                 <td class="py-2 text-nowrap {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
                                     {{ appointment.status }}
+                                </td>
+                                <td class="py-2 text-nowrap {% if appointment.payment.payment_status == 'Paid' %}text-green-700{% elif appointment.payment.payment_status == 'Pending' %}text-red-700{% endif %}">
+                                    {{ appointment.payment.payment_status }}
                                 </td>
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">

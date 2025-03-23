@@ -401,14 +401,15 @@ class Payment(models.Model):
         return (treatment_cost + product_cost + self.additional_cost) - self.discount_amount
 
     def save(self, *args, **kwargs):
-        self.final_amount = self.calculate_final_amount()
-        self.remaining_balance = self.final_amount - self.paid_amount
-        if self.remaining_balance > 0:
-            self.payment_status = 'Pending'
-        elif self.remaining_balance == 0:
-            self.payment_status = 'Paid'
-        else:
-            self.payment_status = 'Overpaid'
+        if self.appointment.status == 'Cancelled' or self.appointment.status == 'Pending':
+            self.payment_status = '-'
+        elif self.appointment.status == 'Completed':
+            if self.remaining_balance > 0:
+                self.payment_status = 'Pending'
+            elif self.remaining_balance == 0:
+                self.payment_status = 'Paid'
+            else:
+                self.payment_status = 'Overpaid'
         super().save(*args, **kwargs)
 
     def __str__(self):

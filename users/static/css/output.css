@@ -1689,6 +1689,21 @@ video {
   background-color: rgb(13 148 136 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-dangerRed:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(178 0 3 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-\[\#B20000\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(178 0 0 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-secondaryLogo:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(124 124 124 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:text-darkerDangerRed:hover {
   --tw-text-opacity: 1;
   color: rgb(102 0 2 / var(--tw-text-opacity, 1));
@@ -1702,6 +1717,11 @@ video {
 .hover\:text-gray-700:hover {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-white:hover {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
 .hover\:underline:hover {
