@@ -401,8 +401,7 @@ class Payment(models.Model):
         return (treatment_cost + product_cost + self.additional_cost) - self.discount_amount
 
     def save(self, *args, **kwargs):
-        if not self.pk or self.final_amount == 0:
-            self.final_amount = self.calculate_final_amount()
+        self.final_amount = self.calculate_final_amount()
         self.remaining_balance = self.final_amount - self.paid_amount
         if self.remaining_balance > 0:
             self.payment_status = 'Pending'

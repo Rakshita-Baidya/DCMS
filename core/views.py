@@ -941,7 +941,9 @@ def edit_appointment(request, appointment_id, step=0):
         else:
             form = form_class(request.POST, instance=instance)
             if form.is_valid():
-                form.save()
+                payment = form.save()
+                print(
+                    f"Saved Payment - final_amount: {payment.final_amount}, additional_cost: {payment.additional_cost}, discount_amount: {payment.discount_amount}")
                 messages.success(
                     request, "The appointment details have been updated successfully!")
                 return redirect('core:view_appointment', appointment_id=appointment_id)
@@ -1145,6 +1147,13 @@ def view_appointment(request, appointment_id):
     purchased_products = PurchasedProduct.objects.filter(
         appointment=appointment)
     payment = Payment.objects.filter(appointment=appointment).first()
+
+    treatment_cost = sum(
+        tr.treatment_cost or 0 for tr in appointment.treatment_records.all())
+    lab_cost = sum(
+        tr.lab_cost or 0 for tr in appointment.treatment_records.all() if tr.lab)
+    x_ray_cost = sum(
+        tr.x_ray_cost or 0 for tr in appointment.treatment_records.all() if tr.x_ray)
     products_total = sum(
         pp.total_amt or 0 for pp in appointment.purchased_products.all())
     # Handle deletion
@@ -1166,6 +1175,10 @@ def view_appointment(request, appointment_id):
         'treatment_plan': treatment_plan,
         'treatment_records': treatment_records,
         'treatment_doctors': treatment_doctors,
+        'lab_cost': lab_cost,
+        'x_ray_cost': x_ray_cost,
+        'treatment_cost': treatment_cost,
+        'total_cost': lab_cost + x_ray_cost + treatment_cost,
         'purchased_products': purchased_products,
         'products_total': products_total,
         'payment': payment,

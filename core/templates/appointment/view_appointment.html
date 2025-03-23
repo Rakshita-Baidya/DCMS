@@ -247,15 +247,15 @@
                         <div class="grid grid-cols-4 gap-4 text-gray-700">
                             <div>
                                 <p class="text-gray-600">Treatment Cost</p>
-                                <p class="font-medium">Rs. {{ record.treatment_cost|default:"0.00"|floatformat:2 }}</p>
+                                <p class="font-medium">Rs. {{ treatment_cost|default:"0.00"|floatformat:2 }}</p>
                             </div>
                             <div>
                                 <p class="text-gray-600">X-Ray Cost</p>
-                                <p class="font-medium">Rs. {{ record.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
+                                <p class="font-medium">Rs. {{ x_ray_cost|default:"0.00"|floatformat:2 }}</p>
                             </div>
                             <div>
                                 <p class="text-gray-600">Lab Cost</p>
-                                <p class="font-medium">Rs. {{ record.lab_cost|default:"0.00"|floatformat:2 }}</p>
+                                <p class="font-medium">Rs. {{ lab_cost|default:"0.00"|floatformat:2 }}</p>
                             </div>
                             <div>
                                 <p class="text-gray-600">Products Total</p>
