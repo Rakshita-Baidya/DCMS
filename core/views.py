@@ -943,7 +943,7 @@ def edit_appointment(request, appointment_id, step=0):
     if request.method == "POST":
         if step == "2":
             treatment_doctor_formset = TreatmentDoctorFormSet(
-                request.POST, instance=instance)
+                request.POST, instance=instance, prefix='treatment_doctors')
             if treatment_doctor_formset.is_valid():
                 treatment_doctor_formset.save()
                 payment, _ = Payment.objects.get_or_create(
@@ -954,7 +954,7 @@ def edit_appointment(request, appointment_id, step=0):
                 return redirect('core:view_appointment', appointment_id=appointment_id)
         elif step == "3":
             purchased_product_formset = PurchasedProductFormSet(
-                request.POST, instance=instance)
+                request.POST, instance=instance, prefix='purchased_products')
             if purchased_product_formset.is_valid():
                 purchased_product_formset.save()
                 payment, _ = Payment.objects.get_or_create(
@@ -980,10 +980,10 @@ def edit_appointment(request, appointment_id, step=0):
         form = form_class(instance=instance)
         if step == "2":
             treatment_doctor_formset = TreatmentDoctorFormSet(
-                instance=instance)
+                instance=instance, prefix='treatment_doctors')
         elif step == "3":
             purchased_product_formset = PurchasedProductFormSet(
-                instance=instance)
+                instance=instance, prefix='purchased_products')
 
     wizard = {
         'form': form,
@@ -997,6 +997,7 @@ def edit_appointment(request, appointment_id, step=0):
         'is_editing': True,
         'appointment_id': appointment_id,
         'wizard': wizard,
+        'doctors': User.objects.filter(role='Doctor'),
     }
     if step == "2" and treatment_doctor_formset:
         context['treatment_doctor_formset'] = treatment_doctor_formset
