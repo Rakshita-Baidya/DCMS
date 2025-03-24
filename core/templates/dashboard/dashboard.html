@@ -69,41 +69,43 @@
                 <div class="bg-white rounded-lg shadow-sm p-4 border-2 border-primaryLogo min-h-[20rem] overflow-y-auto no-scrollbar">
                     <h3 class="text-xl font-semibold">Pending Appointments</h3>
                     {% if pending_appointments %}
-                        <table class="min-w-full table-auto my-3">
-                            <thead>
-                                <tr class="border-b-2 border-primaryLogo text-center">
-                                    <th class="pb-2">P. Name</th>
-                                    <th class="pb-2">Date</th>
-                                    <th class="pb-2">Time</th>
-                                    <th class="pb-2">Status</th>
-                                    <th class="pb-2">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="max-h-48 overflow-y-auto no-scrollbar">
-                                {% for appointment in pending_appointments %}
-                                    <tr class="border-b text-center">
-                                        <td class="py-2 text-nowrap overflow-hidden text-ellipsis">{{ appointment.patient.name }}</td>
-                                        <td class="py-2">{{ appointment.date }}</td>
-                                        <td class="py-2">{{ appointment.time }}</td>
-                                        <td class="py-2 {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
-                                            {{ appointment.status }}
-                                        </td>
-                                        <td class="py-2">
-                                            <a href="{% url 'core:view_appointment' appointment.id %}"
-                                               class="inline-flex">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                     width="20"
-                                                     height="20"
-                                                     viewBox="0 0 20 20"
-                                                     class="cursor-pointer">
-                                                    <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
-                                                </svg>
-                                            </a>
-                                        </td>
+                        <div class="relative overflow-x-auto">
+                            <table class="min-w-full my-3 table-fixed">
+                                <thead class="sticky top-0 bg-white border-b-2 border-primaryLogo">
+                                    <tr class="text-center table w-full table-fixed">
+                                        <th class="w-2/5 pb-2 px-2">P. Name</th>
+                                        <th class="w-2/5 pb-2 px-2">Date</th>
+                                        <th class="w-2/5 pb-2 px-2">Time</th>
+                                        <th class="w-1/5 pb-2 px-2">Status</th>
+                                        <th class="w-1/5 pb-2 px-2">Actions</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="block max-h-64 overflow-y-auto">
+                                    {% for appointment in pending_appointments %}
+                                        <tr class="border-b text-center table w-full table-fixed">
+                                            <td class="w-2/5 py-2 px-2 text-nowrap overflow-hidden text-ellipsis">{{ appointment.patient.name }}</td>
+                                            <td class="w-2/5 py-2 px-2">{{ appointment.date }}</td>
+                                            <td class="w-2/5 py-2 px-2">{{ appointment.time }}</td>
+                                            <td class="w-1/5 py-2 px-2 {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
+                                                {{ appointment.status }}
+                                            </td>
+                                            <td class="w-1/5 py-2 px-2">
+                                                <a href="{% url 'core:view_appointment' appointment.id %}"
+                                                   class="inline-flex">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                         width="20"
+                                                         height="20"
+                                                         viewBox="0 0 20 20"
+                                                         class="cursor-pointer">
+                                                        <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
+                                                    </svg>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     {% else %}
                         <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
                     {% endif %}
