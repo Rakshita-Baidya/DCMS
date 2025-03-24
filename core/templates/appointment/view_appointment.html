@@ -47,31 +47,6 @@
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo p-8 mb-6">
-            <p class="text-3xl font-semibold mb-4">{{ appointment.patient.name }}</p>
-            <div class="grid lg:grid-cols-5 md:grid-cols-3 gap-4">
-                <div>
-                    <p class="text-gray-600">Date</p>
-                    <p class="font-medium">{{ appointment.date }}</p>
-                </div>
-                <div>
-                    <p class="text-gray-600">Time</p>
-                    <p class="font-medium">{{ appointment.time }}</p>
-                </div>
-                <div>
-                    <p class="text-gray-600">Status</p>
-                    <p class="font-medium">{{ appointment.status }}</p>
-                </div>
-                <div>
-                    <p class="text-gray-600">Total Amount</p>
-                    <p class="font-medium">Rs. {{ appointment.total_amt|default:"0.00"|floatformat:2 }}</p>
-                </div>
-                <div>
-                    <p class="text-gray-600">Follow up days</p>
-                    <p class="font-medium">{{ appointment.follow_up_days|default:"None" }}</p>
-                </div>
-            </div>
-        </div>
         {% comment %} Tabs Section {% endcomment %}
         <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo overflow-hidden">
             <div class="border-b border-gray-200 flex justify-between items-center">
@@ -124,61 +99,69 @@
                 {% comment %} appointment {% endcomment %}
                 <div id="appointment-info-tab" class="tab-content">
                     <div class="grid grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-gray-600">Date</p>
+                            <p class="font-medium">{{ appointment.date }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Time</p>
+                            <p class="font-medium">{{ appointment.time }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Status</p>
+                            <p class="font-medium">{{ appointment.status }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Follow up days</p>
+                            <p class="font-medium">{{ appointment.follow_up_days|default:"None" }}</p>
+                        </div>
                         <div class="col-span-4">
                             <p class="text-gray-600">Description</p>
                             <p class="font-medium">{{ appointment.description|default:"No description" }}</p>
                         </div>
-                        {% if treatment_plan %}
-                            <div class="col-span-4 mt-4">
-                                <p class="text-gray-600">Treatment Plan</p>
-                                <p class="font-medium">{{ treatment_plan.treatment_plan|default:"Not specified" }}</p>
-                            </div>
-                        {% endif %}
+                        <div class="col-span-4">
+                            <p class="text-gray-600">Treatment Plan</p>
+                            <p class="font-medium">{{ treatment_plan.treatment_plan|default:"Not specified" }}</p>
+                        </div>
                     </div>
                 </div>
                 {% comment %} Treatment Record Tab {% endcomment %}
                 <div id="treatment-record-tab" class="tab-content hidden">
                     {% if treatment_records %}
-                        {% for record in treatment_records %}
-                            <div class="grid grid-cols-4 gap-4 mb-4 bg-gray-50 p-4 rounded-md">
-                                <div>
-                                    <p class="text-gray-600">Treatment Type</p>
-                                    <p class="font-medium">{{ record.treatment_type|default:"Not specified" }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600">Treatment Cost</p>
-                                    <p class="font-medium">Rs. {{ record.treatment_cost|default:"0.00"|floatformat:2 }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-gray-600">X-Ray Required</p>
-                                    <p class="font-medium">{{ record.x_ray|yesno:"Yes,No" }}</p>
-                                </div>
-                                {% if record.x_ray %}
-                                    <div>
-                                        <p class="text-gray-600">X-Ray Cost</p>
-                                        <p class="font-medium">Rs. {{ record.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
-                                    </div>
-                                {% endif %}
-                                <div class="col-start-1">
-                                    <p class="text-gray-600">Lab Required</p>
-                                    <p class="font-medium">{{ record.lab|yesno:"Yes,No" }}</p>
-                                </div>
-                                {% if record.lab %}
-                                    <div>
-                                        <p class="text-gray-600">Lab Sent To</p>
-                                        <p class="font-medium">{{ record.lab_sent|default:"Not specified" }}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-600">Lab Order Date</p>
-                                        <p class="font-medium">{{ record.lab_order_date|default:"Not specified" }}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-600">Lab Cost</p>
-                                        <p class="font-medium">Rs. {{ record.lab_cost|default:"0.00"|floatformat:2 }}</p>
-                                    </div>
-                                {% endif %}
+                        <div class="grid grid-cols-4 gap-4">
+                            <div>
+                                <p class="text-gray-600">Treatment Type</p>
+                                <p class="font-medium">{{ treatment_records.treatment_type|default:"Not specified" }}</p>
                             </div>
-                        {% endfor %}
+                            <div>
+                                <p class="text-gray-600">Treatment Cost</p>
+                                <p class="font-medium">Rs. {{ treatment_records.treatment_cost|default:"0.00"|floatformat:2 }}</p>
+                            </div>
+                            <div class="col-start-1">
+                                <p class="text-gray-600">X-Ray Required</p>
+                                <p class="font-medium">{{ treatment_records.x_ray|yesno:"Yes,No" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">X-Ray Cost</p>
+                                <p class="font-medium">Rs. {{ treatment_records.x_ray_cost|default:"0.00"|floatformat:2 }}</p>
+                            </div>
+                            <div class="col-start-1">
+                                <p class="text-gray-600">Lab Required</p>
+                                <p class="font-medium">{{ treatment_records.lab|yesno:"Yes,No" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Lab Sent To</p>
+                                <p class="font-medium">{{ treatment_records.lab_sent|default:"Not specified" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Lab Order Date</p>
+                                <p class="font-medium">{{ treatment_records.lab_order_date|default:"Not specified" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Lab Cost</p>
+                                <p class="font-medium">Rs. {{ treatment_records.lab_cost|default:"0.00"|floatformat:2 }}</p>
+                            </div>
+                        </div>
                     {% else %}
                         <p class="text-center text-gray-500 py-4">No treatment records available.</p>
                     {% endif %}

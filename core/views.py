@@ -40,6 +40,7 @@ def dashboard(request):
     patient_queryset = Patient.objects.all().order_by('id')
 
     appointments = Appointment.objects.all().order_by('-status')
+    pending_appointments = Appointment.objects.filter(status="Pending")
     treatment_queryset = TreatmentRecord.objects.all()
 
     # Serialize the data
@@ -92,6 +93,7 @@ def dashboard(request):
 
         "appointments": appointments,
         "total_appointment": appointments.count(),
+        "pending_appointments": pending_appointments,
         "appointment_data": json.dumps(status_counts),
         "follow_ups": follow_ups,
 
@@ -943,8 +945,7 @@ def edit_appointment(request, appointment_id, step=0):
             form = form_class(request.POST, instance=instance)
             if form.is_valid():
                 payment = form.save()
-                print(
-                    f"Saved Payment - final_amount: {payment.final_amount}, additional_cost: {payment.additional_cost}, discount_amount: {payment.discount_amount}")
+
                 messages.success(
                     request, "The appointment details have been updated successfully!")
                 return redirect('core:view_appointment', appointment_id=appointment_id)
@@ -1142,7 +1143,8 @@ def view_appointment(request, appointment_id):
 
     treatment_plan = appointment.patient.treatment_plan if hasattr(
         appointment.patient, 'treatment_plan') else None
-    treatment_records = TreatmentRecord.objects.filter(appointment=appointment)
+    treatment_records = TreatmentRecord.objects.filter(
+        appointment=appointment).first()
     treatment_doctors = TreatmentDoctor.objects.filter(
         treatment_record__appointment=appointment)
     purchased_products = PurchasedProduct.objects.filter(

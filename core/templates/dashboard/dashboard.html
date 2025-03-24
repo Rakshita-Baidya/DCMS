@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-    <div class="mx-auto p-4 sm:p-2 lg:p-6 max-w-8xl">
+    <div class="mx-auto p-4 sm:p-2 lg:p-5 max-w-8xl">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1.2fr_1.6fr] gap-6 auto-rows-min">
             <div class="space-y-6">
                 <div>
@@ -47,7 +47,7 @@
             <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo">
                 <h3 class="text-xl font-semibold text-center">Follow Up</h3>
                 <hr class="bg-[#00B2B0] h-1 my-2 rounded-sm">
-                <div class="max-h-48 overflow-y-auto no-scrollbar space-y-4">
+                <div class="max-h-48 overflow-y-auto pr-2 space-y-4">
                     {% if follow_ups %}
                         {% for follow_up in follow_ups %}
                             <div>
@@ -67,8 +67,8 @@
             </div>
             <div class="col-span-1 md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-lg shadow-sm p-4 border-2 border-primaryLogo min-h-[20rem] overflow-y-auto no-scrollbar">
-                    <h3 class="text-xl font-semibold">All Appointments</h3>
-                    {% if appointments %}
+                    <h3 class="text-xl font-semibold">Pending Appointments</h3>
+                    {% if pending_appointments %}
                         <table class="min-w-full table-auto my-3">
                             <thead>
                                 <tr class="border-b-2 border-primaryLogo text-center">
@@ -79,8 +79,8 @@
                                     <th class="pb-2">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {% for appointment in appointments %}
+                            <tbody class="max-h-48 overflow-y-auto no-scrollbar">
+                                {% for appointment in pending_appointments %}
                                     <tr class="border-b text-center">
                                         <td class="py-2 text-nowrap overflow-hidden text-ellipsis">{{ appointment.patient.name }}</td>
                                         <td class="py-2">{{ appointment.date }}</td>
