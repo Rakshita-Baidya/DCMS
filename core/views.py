@@ -37,11 +37,26 @@ from rest_framework.permissions import AllowAny
 
 @login_required(login_url='login')
 def dashboard(request):
-    patient_queryset = Patient.objects.all().order_by('id')
+    time_filter = request.GET.get('filter', 'overall')
+    today = timezone.now().date()
 
+    patient_queryset = Patient.objects.all().order_by('id')
     appointments = Appointment.objects.all().order_by('-status')
-    pending_appointments = Appointment.objects.filter(status="Pending")
     treatment_queryset = TreatmentRecord.objects.all()
+
+    # filter
+    if time_filter == 'monthly':
+        start_date = today.replace(day=1)
+        appointments = appointments.filter(date__gte=start_date)
+        treatment_queryset = treatment_queryset.filter(
+            date_created__gte=start_date)
+    elif time_filter == 'quarterly':
+        start_date = today - timedelta(days=90)
+        appointments = appointments.filter(date__gte=start_date)
+        treatment_queryset = treatment_queryset.filter(
+            date_created__gte=start_date)
+
+    pending_appointments = appointments.filter(status="Pending")
 
     # Serialize the data
     serialized_appointments = AppointmentSerializer(
@@ -51,9 +66,9 @@ def dashboard(request):
 
     # Count appointment statuses
     status_counts = {
+        "Completed": appointments.filter(status="Completed").count(),
         "Pending": appointments.filter(status="Pending").count(),
         "Cancelled": appointments.filter(status="Cancelled").count(),
-        "Completed": appointments.filter(status="Completed").count(),
     }
 
     treatment_counts = {
@@ -100,7 +115,7 @@ def dashboard(request):
         "treatments": treatment_queryset,
         "treatment_data": json.dumps(treatment_counts),
 
-
+        "time_filter": time_filter,
     }
     return render(request, 'dashboard/dashboard.html', context)
 
