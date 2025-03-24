@@ -11,7 +11,7 @@
                      fill="none"
                      height="24px"
                      viewBox="0 0 20 20">
-                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" stroke-miterlimit="10" d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
                 </svg>
             </a>
             <p class="text-gray-700 text-2xl font-medium">
@@ -34,7 +34,7 @@
                     {{ treatment_doctor_formset.management_form }}
                     <div id="treatment-doctors-container">
                         {% for form in treatment_doctor_formset.forms %}
-                            <div class="treatment-doctor-form mb-4 p-4 border border-darkerPrimary rounded-md grid grid-cols-2 gap-6">
+                            <div class="treatment-doctor-form mb-4 p-4 border border-darkerPrimary rounded-md grid grid-cols-2 gap-6 relative">
                                 {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
                                 <div>
                                     <label class="block text-sm font-medium text-secondaryLogo">{{ form.doctor.label_tag }}*</label>
@@ -46,6 +46,18 @@
                                     {{ form.percent|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                                     {% if form.percent.errors %}<div class="text-dangerRed text-sm">{{ form.percent.errors }}</div>{% endif %}
                                 </div>
+                                <button type="button"
+                                        class="delete-treatment-doctor absolute top-2 right-2 text-dangerRed hover:text-red-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="20"
+                                         height="20"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                                {{ form.DELETE|add_class:"hidden" }}
                             </div>
                         {% endfor %}
                     </div>
@@ -55,7 +67,7 @@
                         class="bg-primaryLogo text-white px-4 py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo">
                     Add Treatment Doctor
                 </button>
-                <div class="grid grid-cols-4 gap-6">
+                <div class="grid grid-cols-4 gap-6 mt-6">
                     <p onclick="history.back()"
                        class="col-start-3 text-center text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
                         Previous
@@ -72,112 +84,107 @@
             </form>
         </div>
     </div>
+    <div id="empty-form-template"
+         class="hidden treatment-doctor-form mb-4 p-4 border border-darkerPrimary rounded-md grid-cols-2 gap-6 relative">
+        <div>
+            <label class="block text-sm font-medium text-secondaryLogo">Doctor*</label>
+            <select name="treatment_doctors-__prefix__-doctor"
+                    class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                <option value="">---------</option>
+                {% for doctor in doctors %}<option value="{{ doctor.id }}">{{ doctor.get_full_name }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-secondaryLogo">Percent</label>
+            <input type="number"
+                   name="treatment_doctors-__prefix__-percent"
+                   class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+        </div>
+        <input type="hidden" name="treatment_doctors-__prefix__-id">
+        <input type="checkbox"
+               name="treatment_doctors-__prefix__-DELETE"
+               class="hidden">
+        <button type="button"
+                class="delete-treatment-doctor absolute top-2 right-2 text-dangerRed hover:text-red-700">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="20"
+                 height="20"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
     <script>
-        {% comment %} document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {
             const container = document.getElementById("treatment-doctors-container");
             const addButton = document.getElementById("add-treatment-doctor");
-            const totalForms = document.querySelector("[name$='-TOTAL_FORMS']");
-            
+            const totalForms = document.querySelector("[name='treatment_doctors-TOTAL_FORMS']");
             let formCount = parseInt(totalForms.value);
-            const formsetPrefix = totalForms.name.replace('-TOTAL_FORMS', '');
 
+            // Add new treatment doctor form
             addButton.addEventListener("click", function () {
-                const newForm = document.createElement("div");
-                newForm.classList.add("treatment-doctor-form", "mb-4", "p-4", "border", "border-darkerPrimary", "rounded-md");
-                
-                newForm.innerHTML = `
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-secondaryLogo" for="id_${formsetPrefix}-${formCount}-doctor">Doctor:</label>
-                        <select name="${formsetPrefix}-${formCount}-doctor" id="id_${formsetPrefix}-${formCount}-doctor" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                            <option value="">---------</option>
-                            {% for doctor in doctors %}
-                                <option value="{{ doctor.id }}">{{ doctor.get_full_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-secondaryLogo" for="id_${formsetPrefix}-${formCount}-percent">Percent:</label>
-                        <input type="number" name="${formsetPrefix}-${formCount}-percent" id="id_${formsetPrefix}-${formCount}-percent" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                    </div>
-                    
-                    <input type="hidden" name="${formsetPrefix}-${formCount}-id" id="id_${formsetPrefix}-${formCount}-id">
-                `;
+                let emptyForm = document.querySelector(".treatment-doctor-form:not(.deleted)") || 
+                               document.getElementById("empty-form-template").cloneNode(true);
+
+                if (!emptyForm) {
+                    console.error("No form or template found to clone.");
+                    return;
+                }
+
+                if (emptyForm.id === "empty-form-template") {
+                    emptyForm.id = "";
+                    emptyForm.classList.remove("hidden");
+                }
+
+                let newForm = emptyForm.cloneNode(true);
+                newForm.classList.remove("deleted");
+
+                newForm.querySelectorAll("input, select").forEach(input => {
+                    if (input.name) {
+                        let oldName = input.name;
+                        let oldId = input.id || ""; 
+                        let newName = oldName.replace(/(-__prefix__-|-(\d+)-)/, `-${formCount}-`);
+                        let newId = oldId.replace(/(-__prefix__-|-(\d+)-)/, `-${formCount}-`);
+
+                        input.name = newName;
+                        input.id = newId;
+
+                        // Clear values for new form
+                        if (input.name.includes("-doctor") || input.name.includes("-percent")) {
+                            input.value = "";
+                        }
+                        if (input.name.includes("-id")) {
+                            input.value = "";
+                        }
+                        if (input.name.includes("-DELETE")) {
+                            input.checked = false;
+                        }
+                    }
+                });
 
                 container.appendChild(newForm);
                 formCount++;
                 totalForms.value = formCount;
             });
-}); {% endcomment %}
-            {% comment %} document.addEventListener("DOMContentLoaded", function () {
-                const container = document.getElementById("treatment-doctors-container");
-                const addButton = document.getElementById("add-treatment-doctor");
-                const totalForms = document.querySelector("[name='treatment_doctors-TOTAL_FORMS']");
-        
-                let formCount = parseInt(totalForms.value);
-        
-                addButton.addEventListener("click", function () {
-                    const newForm = document.createElement("div");
-                    newForm.classList.add("treatment-doctor-form", "mb-4", "p-4", "border", "border-darkerPrimary", "rounded-md");
-        
-                    newForm.innerHTML = `
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-secondaryLogo" for="id_treatment_doctors-${formCount}-doctor">Doctor:</label>
-                            <select name="treatment_doctors-${formCount}-doctor" id="id_treatment_doctors-${formCount}-doctor" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                                <option value="">---------</option>
-                                {% for doctor in doctors %}
-                                    <option value="{{ doctor.id }}">{{ doctor.get_full_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-secondaryLogo" for="id_treatment_doctors-${formCount}-percent">Percent:</label>
-                            <input type="number" name="treatment_doctors-${formCount}-percent" id="id_treatment_doctors-${formCount}-percent" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                        </div>
-        
-                        <input type="hidden" name="treatment_doctors-${formCount}-id" id="id_treatment_doctors-${formCount}-id">
-                    `;
-        
-                    container.appendChild(newForm);
-                    formCount++;
-                    totalForms.value = formCount;
-                });
-            });
-{% endcomment %}
-        document.addEventListener("DOMContentLoaded", function () {
-            const container = document.getElementById("treatment-doctors-container");
-            const addButton = document.getElementById("add-treatment-doctor");
-            const totalForms = document.querySelector("[name='treatment_doctors-TOTAL_FORMS']");
-    
-            addButton.addEventListener("click", function () {
-                let formCount = parseInt(totalForms.value); 
-                let emptyForm = document.querySelector(".treatment-doctor-form"); 
-                
-                if (!emptyForm) {
-                    console.error("No form found to clone.");
-                    return;
-                }
-    
-                let newForm = emptyForm.cloneNode(true);
-                newForm.querySelectorAll("input, select").forEach(input => {
-                    if (input.name) {
-                        let oldName = input.name;
-                        let oldId = input.id;
-    
-                        let newName = oldName.replace(/\d+/, formCount);
-                        let newId = oldId.replace(/\d+/, formCount);
-    
-                        input.name = newName;
-                        input.id = newId;
-                        input.value = ""; 
+
+            // Handle delete button clicks
+            container.addEventListener("click", function (e) {
+                const deleteButton = e.target.closest(".delete-treatment-doctor");
+                if (deleteButton) {
+                    const formDiv = deleteButton.closest(".treatment-doctor-form");
+                    const deleteInput = formDiv.querySelector("input[name$='-DELETE']");
+
+                    if (deleteInput) {
+                        deleteInput.checked = true;
+                        formDiv.classList.add("hidden"); 
+                        formDiv.classList.add("deleted"); 
+                    } else {
+                        formDiv.remove();
                     }
-                });
-    
-                container.appendChild(newForm); 
-                totalForms.value = formCount + 1; 
+                }
             });
         });
-        
     </script>
 {% endblock content %}

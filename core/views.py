@@ -977,16 +977,19 @@ def edit_appointment(request, appointment_id, step=0):
                 print(f"Form errors for step {step}: {form.errors}")
 
     else:
-        form = form_class(instance=instance)
         if step == "2":
             treatment_doctor_formset = TreatmentDoctorFormSet(
                 instance=instance, prefix='treatment_doctors')
+            form = None
         elif step == "3":
             purchased_product_formset = PurchasedProductFormSet(
                 instance=instance, prefix='purchased_products')
+            form = None
+        else:
+            form = form_class(instance=instance)
 
     wizard = {
-        'form': form,
+        'form': form if 'form' in locals() else None,
         'management_form': '',
         'steps': {'current': step}
     }
