@@ -901,6 +901,7 @@ class AppointmentFormWizard(SessionWizardView):
         return redirect('core:appointment')
 
 
+@login_required(login_url='login')
 def edit_appointment(request, appointment_id, step=0):
     appointment = get_object_or_404(Appointment, id=appointment_id)
     step = str(step)
@@ -945,6 +946,9 @@ def edit_appointment(request, appointment_id, step=0):
                 request.POST, instance=instance)
             if treatment_doctor_formset.is_valid():
                 treatment_doctor_formset.save()
+                payment, _ = Payment.objects.get_or_create(
+                    appointment=appointment)
+                payment.save()
                 messages.success(
                     request, "The treatment doctors have been updated successfully!")
                 return redirect('core:view_appointment', appointment_id=appointment_id)
@@ -953,14 +957,19 @@ def edit_appointment(request, appointment_id, step=0):
                 request.POST, instance=instance)
             if purchased_product_formset.is_valid():
                 purchased_product_formset.save()
+                payment, _ = Payment.objects.get_or_create(
+                    appointment=appointment)
+                payment.save()
                 messages.success(
                     request, "The purchased products have been updated successfully!")
                 return redirect('core:view_appointment', appointment_id=appointment_id)
         else:
             form = form_class(request.POST, instance=instance)
             if form.is_valid():
-                payment = form.save()
-
+                saved_instance = form.save()
+                payment, _ = Payment.objects.get_or_create(
+                    appointment=appointment)
+                payment.save()
                 messages.success(
                     request, "The appointment details have been updated successfully!")
                 return redirect('core:view_appointment', appointment_id=appointment_id)
