@@ -382,7 +382,7 @@ class Payment(models.Model):
     payment_status = models.CharField(max_length=15, default="Unpaid")
     payment_method = models.CharField(
         max_length=15, choices=PAYMENT_METHOD_CHOICES, default="Other", blank=True, null=True)
-    payment_date = models.DateTimeField(blank=True, null=True)
+    payment_date = models.DateField(blank=True, null=True)
     payment_notes = models.TextField(blank=True, null=True)
     date_created = models.DateTimeField(
         default=timezone.now, blank=True, null=True)

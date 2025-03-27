@@ -1,3 +1,4 @@
+from decimal import Decimal
 from .models import Appointment, TreatmentRecord, Payment
 from .forms import AppointmentForm, TreatmentRecordForm, TreatmentDoctorFormSet, PurchasedProductFormSet, PaymentForm
 from django.shortcuts import render, redirect, get_object_or_404
@@ -1027,142 +1028,311 @@ def edit_appointment(request, appointment_id, step=0):
     return render(request, template, context)
 
 
+# class EditAppointmentWizard(SessionWizardView):
+#     form_list = [AppointmentForm, TreatmentRecordForm,
+#                  TreatmentDoctorFormSet, PurchasedProductFormSet, PaymentForm]
+#     file_storage = FileSystemStorage(
+#         location=os.path.join("media", "appointment"))
+#     TEMPLATES = {
+#         '0': 'appointment/add_appointment.html',
+#         '1': 'appointment/add_treatment.html',
+#         '2': 'appointment/add_treatment_doctor.html',
+#         '3': 'appointment/add_purchased_product.html',
+#         '4': 'appointment/add_payment.html',
+#     }
+
+#     def get_template_names(self):
+#         return [self.TEMPLATES.get(str(self.steps.current), "appointment/add_appointment.html")]
+
+#     def get_context_data(self, form, **kwargs):
+#         context = super().get_context_data(form=form, **kwargs)
+#         appointment_id = self.kwargs.get('appointment_id')
+#         appointment = get_object_or_404(Appointment, id=appointment_id)
+
+#         context.update({
+#             'page_title': 'Appointment Management',
+#             'active_page': 'appointment',
+#             'is_editing': True,
+#             'appointment_id': appointment_id,
+#             'doctors': User.objects.filter(role='Doctor'),
+#             'patients': Patient.objects.all(),
+#         })
+
+#         if self.steps.current == '2':
+#             # For TreatmentDoctorFormSet
+#             treatment = None
+#             if appointment_id:
+#                 appointment = get_object_or_404(Appointment, id=appointment_id)
+#                 treatment = TreatmentRecord.objects.filter(
+#                     appointment=appointment).first()
+
+#             context['treatment_doctor_formset'] = form
+#             if isinstance(form, TreatmentDoctorFormSet):
+#                 if self.storage.get_step_data('2'):
+#                     form.initial = self.storage.get_step_data('2')
+#                 context['treatment_doctor_formset'] = form
+
+#         elif self.steps.current == '3':
+#             # For PurchasedProductFormSet
+#             if appointment_id:
+#                 appointment = get_object_or_404(Appointment, id=appointment_id)
+#                 context['purchased_product_formset'] = form
+#                 if isinstance(form, PurchasedProductFormSet):
+#                     if self.storage.get_step_data('3'):
+#                         form.initial = self.storage.get_step_data('3')
+#                     context['purchased_product_formset'] = form
+
+#         return context
+
+#     def get_form(self, step=None, data=None, files=None):
+#         form = super().get_form(step, data, files)
+
+#         appointment_id = self.kwargs.get('appointment_id')
+#         if appointment_id:
+#             appointment = get_object_or_404(Appointment, id=appointment_id)
+
+#             if step == '2':
+#                 treatment = TreatmentRecord.objects.filter(
+#                     appointment=appointment).first()
+#                 if isinstance(form, TreatmentDoctorFormSet):
+#                     if treatment:
+#                         form.instance = treatment
+#             elif step == '3':
+#                 if isinstance(form, PurchasedProductFormSet):
+#                     form.instance = appointment
+
+#         return form
+
+#     def get_form_instance(self, step):
+#         appointment_id = self.kwargs.get('appointment_id')
+#         if not appointment_id:
+#             return None
+
+#         appointment = get_object_or_404(Appointment, id=appointment_id)
+
+#         if step == '0':
+#             return appointment
+#         elif step == '1':
+#             treatment = TreatmentRecord.objects.filter(
+#                 appointment=appointment).first()
+#             if not treatment:
+#                 treatment = TreatmentRecord(appointment=appointment)
+#             return treatment
+#         elif step == '2':
+#             treatment = TreatmentRecord.objects.filter(
+#                 appointment=appointment).first()
+#             if not treatment:
+#                 treatment = TreatmentRecord(appointment=appointment)
+#                 treatment.save()
+#             return treatment
+#         elif step == '3':
+#             return appointment
+#         return None
+
+#     def done(self, form_list, **kwargs):
+#         request = self.request
+#         appointment_id = self.kwargs.get('appointment_id')
+#         appointment = get_object_or_404(Appointment, id=appointment_id)
+
+#         # Save Appointment data
+#         appointment_form = form_list[0]
+#         for field, value in appointment_form.cleaned_data.items():
+#             setattr(appointment, field, value)
+#         appointment.save()
+
+#         # Save Treatment data
+#         treatment_form = form_list[1]
+#         treatment = TreatmentRecord.objects.filter(
+#             appointment=appointment).first()
+#         if not treatment:
+#             treatment = TreatmentRecord(appointment=appointment)
+
+#         for field, value in treatment_form.cleaned_data.items():
+#             setattr(treatment, field, value)
+#         treatment.save()
+
+#         # Save multiple TreatmentDoctor records
+#         treatment_doctor_formset = form_list[2]
+#         if treatment_doctor_formset.is_valid():
+#             treatment_doctor_formset.instance = treatment
+#             treatment_doctor_formset.save()
+
+#         # Save multiple PurchasedProduct records
+#         purchased_product_formset = form_list[3]
+#         if purchased_product_formset.is_valid():
+#             purchased_product_formset.instance = appointment
+#             purchased_product_formset.save()
+
+#         messages.success(
+#             request, 'The appointment has been updated successfully!')
+#         return redirect('core:appointment')
+
+
 class EditAppointmentWizard(SessionWizardView):
     form_list = [AppointmentForm, TreatmentRecordForm,
-                 TreatmentDoctorFormSet, PurchasedProductFormSet]
+                 TreatmentDoctorFormSet, PurchasedProductFormSet, PaymentForm]
     file_storage = FileSystemStorage(
         location=os.path.join("media", "appointment"))
-    TEMPLATES = {
-        '0': 'appointment/add_appointment.html',
-        '1': 'appointment/add_treatment.html',
-        '2': 'appointment/add_treatment_doctor.html',
-        '3': 'appointment/add_purchased_product.html',
-    }
+    TEMPLATES = {str(i): f'appointment/add_{name}.html' for i, name in enumerate([
+        'appointment', 'treatment', 'treatment_doctor', 'purchased_product', 'payment'
+    ])}
 
     def get_template_names(self):
-        return [self.TEMPLATES.get(str(self.steps.current), "appointment/add_appointment.html")]
+        return [self.TEMPLATES.get(self.steps.current, "appointment/add_appointment.html")]
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
         appointment_id = self.kwargs.get('appointment_id')
+        appointment = get_object_or_404(Appointment, id=appointment_id)
 
         context.update({
             'page_title': 'Appointment Management',
             'active_page': 'appointment',
-            'patients': Patient.objects.all(),
+            'is_editing': True,
+            'appointment_id': appointment_id,
             'doctors': User.objects.filter(role='Doctor'),
-            'is_editing': bool(appointment_id),
+            'patients': Patient.objects.all(),
         })
 
-        # Handle formsets directly in context
-        if self.steps.current == '2':
-            # For TreatmentDoctorFormSet
-            treatment = None
-            if appointment_id:
-                appointment = get_object_or_404(Appointment, id=appointment_id)
-                treatment = TreatmentRecord.objects.filter(
-                    appointment=appointment).first()
-
+        step = self.steps.current
+        if step == '2':
             context['treatment_doctor_formset'] = form
-            if isinstance(form, TreatmentDoctorFormSet):
-                if self.storage.get_step_data('2'):
-                    form.initial = self.storage.get_step_data('2')
-                context['treatment_doctor_formset'] = form
+        elif step == '3':
+            context['purchased_product_formset'] = form
+        elif step == '4':
+            treatment_data = self.storage.get_step_data('1') or {}
+            product_data = self.storage.get_step_data('3') or {}
+            payment_data = self.storage.get_step_data('4') or {}
 
-        elif self.steps.current == '3':
-            # For PurchasedProductFormSet
-            if appointment_id:
-                appointment = get_object_or_404(Appointment, id=appointment_id)
-                context['purchased_product_formset'] = form
-                if isinstance(form, PurchasedProductFormSet):
-                    if self.storage.get_step_data('3'):
-                        form.initial = self.storage.get_step_data('3')
-                    context['purchased_product_formset'] = form
+            # Treatment costs from Step 1
+            treatment_cost = Decimal(
+                treatment_data.get('treatment_cost', '0') or '0')
+            x_ray_cost = Decimal(treatment_data.get(
+                'x_ray_cost', '0') or '0')
+            lab_cost = Decimal(treatment_data.get(
+                'lab_cost', '0') or '0')
+
+            product_cost = Decimal('0')
+            if product_data:
+                total_forms = int(product_data.get(
+                    'purchased_products-TOTAL_FORMS', 0))
+                for i in range(total_forms):
+                    # Skip deleted products
+                    if f'purchased_products-{i}-DELETE' not in product_data:
+                        rate = Decimal(product_data.get(
+                            f'purchased_products-{i}-rate', '0') or '0')
+                        quantity = Decimal(product_data.get(
+                            f'purchased_products-{i}-quantity', '0') or '0')
+                        product_cost += rate * quantity
+
+            additional_cost = Decimal(
+                payment_data.get('additional_cost', '0') or '0')
+            discount_amount = Decimal(
+                payment_data.get('discount_amount', '0') or '0')
+            paid_amount = Decimal(payment_data.get('paid_amount', '0') or '0')
+
+            final_amount = (treatment_cost + x_ray_cost + lab_cost +
+                            product_cost + additional_cost) - discount_amount
+            remaining_balance = final_amount - paid_amount
+
+            context.update({
+                'payment': None,
+                'treatment_cost': treatment_cost,
+                'x_ray_cost': x_ray_cost,
+                'lab_cost': lab_cost,
+                'products_total': product_cost,
+                'additional_cost': additional_cost,
+                'discount_amount': discount_amount,
+                'final_amount': final_amount,
+                'remaining_balance': remaining_balance,
+                'paid_amount': paid_amount,
+            })
 
         return context
 
     def get_form(self, step=None, data=None, files=None):
-        form = super().get_form(step, data, files)
+        if step is None:
+            step = self.steps.current
 
-        appointment_id = self.kwargs.get('appointment_id')
-        if appointment_id:
-            appointment = get_object_or_404(Appointment, id=appointment_id)
-
-            if step == '2':
-                treatment = TreatmentRecord.objects.filter(
-                    appointment=appointment).first()
-                if isinstance(form, TreatmentDoctorFormSet):
-                    if treatment:
-                        form.instance = treatment
-            elif step == '3':
-                if isinstance(form, PurchasedProductFormSet):
-                    form.instance = appointment
-
-        return form
-
-    def get_form_instance(self, step):
         appointment_id = self.kwargs.get('appointment_id')
         if not appointment_id:
-            return None
+            return super().get_form(step=step, data=data, files=files)
 
         appointment = get_object_or_404(Appointment, id=appointment_id)
+        instances = {
+            '0': appointment,
+            '1': TreatmentRecord.objects.filter(appointment=appointment).first() or TreatmentRecord(appointment=appointment),
+            '2': TreatmentRecord.objects.filter(appointment=appointment).first() or TreatmentRecord(appointment=appointment),
+            '3': appointment,
+            '4': Payment.objects.filter(appointment=appointment).first() or Payment(appointment=appointment),
+        }
+        form_classes = {
+            '0': AppointmentForm,
+            '1': TreatmentRecordForm,
+            '2': lambda *args, **kwargs: TreatmentDoctorFormSet(*args, prefix='treatment_doctors', **kwargs),
+            '3': lambda *args, **kwargs: PurchasedProductFormSet(*args, prefix='purchased_products', **kwargs),
+            '4': PaymentForm,
+        }
 
-        if step == '0':
-            return appointment
-        elif step == '1':
-            treatment = TreatmentRecord.objects.filter(
-                appointment=appointment).first()
-            if not treatment:
-                treatment = TreatmentRecord(appointment=appointment)
-            return treatment
-        elif step == '2':
-            treatment = TreatmentRecord.objects.filter(
-                appointment=appointment).first()
-            if not treatment:
-                treatment = TreatmentRecord(appointment=appointment)
-                treatment.save()
-            return treatment
-        elif step == '3':
-            return appointment
-        return None
+        instance = instances.get(step)
+        form_class = form_classes.get(step)
+        if not instance or not form_class:
+            return super().get_form(step=step, data=data, files=files)
+
+        if data is None and not self.request.POST:
+            data = self.storage.get_step_data(step)
+
+        return form_class(data=data, files=files, instance=instance)
+
+    def process_step(self, form):
+        if form.is_valid():
+            return self.get_form_step_data(form)
+        else:
+            print(f"Form errors at step {self.steps.current}: {form.errors}")
+            return self.get_form_step_data(form)
 
     def done(self, form_list, **kwargs):
-        request = self.request
         appointment_id = self.kwargs.get('appointment_id')
         appointment = get_object_or_404(Appointment, id=appointment_id)
 
-        # Save Appointment data
         appointment_form = form_list[0]
-        for field, value in appointment_form.cleaned_data.items():
-            setattr(appointment, field, value)
-        appointment.save()
+        if appointment_form.is_valid():
+            for field, value in appointment_form.cleaned_data.items():
+                setattr(appointment, field, value)
+            appointment.save()
 
-        # Save Treatment data
         treatment_form = form_list[1]
-        treatment = TreatmentRecord.objects.filter(
-            appointment=appointment).first()
-        if not treatment:
-            treatment = TreatmentRecord(appointment=appointment)
+        if treatment_form.is_valid():
+            treatment = TreatmentRecord.objects.filter(
+                appointment=appointment).first() or TreatmentRecord(appointment=appointment)
+            for field, value in treatment_form.cleaned_data.items():
+                setattr(treatment, field, value)
+            treatment.save()
 
-        for field, value in treatment_form.cleaned_data.items():
-            setattr(treatment, field, value)
-        treatment.save()
-
-        # Save multiple TreatmentDoctor records
         treatment_doctor_formset = form_list[2]
         if treatment_doctor_formset.is_valid():
-            treatment_doctor_formset.instance = treatment
-            treatment_doctor_formset.save()
+            treatment = TreatmentRecord.objects.filter(
+                appointment=appointment).first()
+            if treatment:
+                treatment_doctor_formset.instance = treatment
+                treatment_doctor_formset.save()
 
-        # Save multiple PurchasedProduct records
         purchased_product_formset = form_list[3]
         if purchased_product_formset.is_valid():
             purchased_product_formset.instance = appointment
             purchased_product_formset.save()
 
+        payment_form = form_list[4]
+        if payment_form.is_valid():
+            payment = Payment.objects.filter(
+                appointment=appointment).first() or Payment(appointment=appointment)
+            for field, value in payment_form.cleaned_data.items():
+                setattr(payment, field, value)
+            payment.save()
+
         messages.success(
-            request, 'The appointment has been updated successfully!')
-        return redirect('core:appointment')
+            self.request, 'The appointment has been updated successfully!')
+        return redirect('core:view_appointment', appointment_id=appointment_id)
 
 
 @login_required(login_url='login')

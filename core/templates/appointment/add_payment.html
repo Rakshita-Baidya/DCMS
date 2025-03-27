@@ -4,16 +4,15 @@
 {% block content %}
     <div class="p-6">
         <div class="flex items-center mb-6 space-x-2">
-            <a href="{% url "core:appointment" %}">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink"
-                     width="24px"
-                     fill="none"
-                     height="24px"
-                     viewBox="0 0 20 20">
-                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
-                </svg>
-            </a>
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                 width="24px"
+                 fill="none"
+                 height="24px"
+                 viewBox="0 0 20 20"
+                 onclick="history.back()">
+                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+            </svg>
             <p class="text-gray-700 text-2xl font-medium">
                 {% if is_editing %}
                     Edit
@@ -31,42 +30,45 @@
                 {% csrf_token %}
                 {{ wizard.management_form }}
                 {% comment %} debuggggggggg {% endcomment %}
-                <div class="col-span-4 grid grid-cols-5 gap-6 bg-gray-100 p-4 border border-primaryLogo">
+                <div class="col-span-4 grid grid-cols-5 gap-x-6 gap-y-3 bg-gray-100 p-4 border border-primaryLogo">
+                    <label class="col-span-5 text-red-700 text-sm text-center">
+                        **The following text have been displayed for reference only, and cannot be altered.**
+                    </label>
                     <div>
                         <label class="block font-medium text-gray-700">Treatment Cost</label>
                         <input type="text"
-                               readonly
                                value="{{ treatment_cost }}"
-                               class="mt-1 block w-full px-2 py-1 bg-white">
+                               class="mt-1 block w-full px-2 py-1 bg-white rounded"
+                               disabled>
                     </div>
                     <div>
                         <label class="block font-medium text-gray-700">Lab Cost</label>
                         <input type="text"
-                               readonly
+                               disabled
                                value="{{ lab_cost }}"
-                               class="mt-1 block w-full px-2 py-1 bg-white">
+                               class="mt-1 block w-full px-2 py-1 bg-white rounded">
                     </div>
                     <div>
                         <label class="block font-medium text-gray-700">X-Ray Cost</label>
                         <input type="text"
-                               readonly
+                               disabled
                                value="{{ x_ray_cost }}"
-                               class="mt-1 block w-full px-2 py-1 bg-white">
+                               class="mt-1 block w-full px-2 py-1 bg-white rounded">
                     </div>
                     <div>
                         <label class="block font-medium text-gray-700">Products Total</label>
                         <input type="text"
-                               readonly
+                               disabled
                                value="{{ products_total }}"
-                               class="mt-1 block w-full px-2 py-1 bg-white">
+                               class="mt-1 block w-full px-2 py-1 bg-white rounded">
                     </div>
                     <div>
                         <label class="block font-medium text-gray-700">Total Amount</label>
                         <input type="text"
                                id="final_total"
                                name="final_total"
-                               readonly
-                               class="mt-1 block w-full px-2 py-1 bg-white"
+                               disabled
+                               class="mt-1 block w-full px-2 py-1 bg-white rounded"
                                value="{{ treatment_cost|add:lab_cost|add:x_ray_cost|add:products_total }}">
                     </div>
                 </div>
