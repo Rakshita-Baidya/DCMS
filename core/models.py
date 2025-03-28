@@ -296,7 +296,7 @@ class TreatmentRecord(models.Model):
     lab = models.BooleanField(default=False)
     lab_sent = models.CharField(
         max_length=50, choices=LAB_CHOICES, blank=True, null=True)
-    lab_order_date = models.DateTimeField(blank=True, null=True)
+    lab_order_date = models.DateField(blank=True, null=True)
     lab_cost = models.DecimalField(
         decimal_places=2, max_digits=10, blank=True, null=True, validators=[MinValueValidator(0)])
     treatment_cost = models.DecimalField(

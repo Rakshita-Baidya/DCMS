@@ -58,11 +58,11 @@
             </div>
             <div class="space-y-2">
                 <p class="font-semibold text-xl col-span-2">Chief Complaint</p>
-                <p class="text-gray-600">{{ patient_history.chief_dental_complaint }}</p>
+                <p class="text-gray-600">{{ patient_history.chief_dental_complaint|default:"Not specified" }}</p>
             </div>
             <div class="space-y-2">
                 <p class="font-semibold text-xl col-span-2">Treatment Plan</p>
-                <p class="text-gray-600">{{ treatment_plan.treatment_plan }}</p>
+                <p class="text-gray-600">{{ treatment_plan.treatment_plan|default:"Not specified" }}</p>
             </div>
         </div>
         {% comment %} Tabs Section {% endcomment %}
@@ -89,11 +89,9 @@
                             class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                         Treatment History
                     </button>
-                    <button data-tab="attachments"
-                            data-step=""
-                            class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                    {% comment %} <button data-tab="attachments" data-step="" class="tab-button px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                         Attachments
-                    </button>
+                    </button> {% endcomment %}
                 </nav>
                 <div class="pr-4">
                     <a id="edit-button"
@@ -182,13 +180,68 @@
                 </div>
                 {% comment %}Treatment History Tab {% endcomment %}
                 <div id="treatment-tab" class="tab-content hidden">
-                    <div class="text-center text-gray-500 py-8">Treatment history content will be displayed here</div>
-                </div>
-                {% comment %}Attachments Tab {% endcomment %}
-                <div id="attachments-tab" class="tab-content hidden">
-                    <div class="text-center text-gray-500 py-8">Attachments content will be displayed here</div>
+                    {% if treatment_history %}
+                        <table class="w-full text-left border-collapse">
+                            <thead class="border-b-2 border-primaryLogo">
+                                <tr>
+                                    <th class="pb-2 px-2">Date</th>
+                                    <th class="pb-2 px-2">Treatment Type</th>
+                                    <th class="pb-2 px-2">Cost</th>
+                                    <th class="pb-2 px-2">X-Ray</th>
+                                    <th class="pb-2 px-2">Lab</th>
+                                    <th class="pb-2 px-2">Lab Sent</th>
+                                    <th class="pb-2 px-2">Lab Order Date</th>
+                                    <th class="pb-2 px-2">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in treatment_history %}
+                                    {% with record=entry.treatment_record %}
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="py-2 px-2 border-b">{{ entry.appointment_date }}</td>
+                                            <td class="py-2 px-2 border-b">{{ record.treatment_type|default:"N/A" }}</td>
+                                            <td class="py-2 px-2 border-b">Rs. {{ record.treatment_cost|default:"0" }}</td>
+                                            <td class="py-2 px-2 border-b">
+                                                {% if record.x_ray %}
+                                                    Yes (Rs. {{ record.x_ray_cost|default:"0" }})
+                                                {% else %}
+                                                    No
+                                                {% endif %}
+                                            </td>
+                                            <td class="py-2 px-2 border-b">
+                                                {% if record.lab %}
+                                                    Yes (Rs. {{ record.lab_cost|default:"0" }})
+                                                {% else %}
+                                                    No
+                                                {% endif %}
+                                            </td>
+                                            <td class="py-2 px-2 border-b">{{ record.lab_sent|default:"N/A" }}</td>
+                                            <td class="py-2 px-2 border-b">{{ record.lab_order_date|default:"N/A" }}</td>
+                                            <td class="justify-center">
+                                                <a href="{% url 'core:view_appointment' entry.appointment_id %}">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                         width="20"
+                                                         height="20"
+                                                         viewBox="0 0 20 20"
+                                                         class="cursor-pointer">
+                                                        <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
+                                                    </svg>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endwith %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
+                    {% endif %}
                 </div>
             </div>
+            {% comment %}Attachments Tab {% endcomment %}
+            {% comment %} <div id="attachments-tab" class="tab-content hidden">
+                    <div class="text-center text-gray-500 py-8">Attachments content will be displayed here</div>
+            </div> {% endcomment %}
         </div>
     </div>
     <script>
@@ -201,7 +254,7 @@
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabId = button.dataset.tab;
-                const step = button.dataset.step || ''; // Get step or empty string if not set
+                const step = button.dataset.step || '';
 
                 // Update button styles
                 tabButtons.forEach(btn => {

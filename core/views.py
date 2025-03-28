@@ -674,7 +674,20 @@ def view_patient_profile(request, patient_id):
 
     patient_history = getattr(patient_queryset, 'patient_history', None)
     dental_chart = getattr(patient_queryset, 'dental_chart')
-    treatment_plan = getattr(patient_queryset, 'treatment_plan')
+    treatment_plan = getattr(patient_queryset, 'treatment_plan', None)
+    completed_appointments = Appointment.objects.filter(
+        patient=patient_queryset, status='Completed'
+    ).prefetch_related('treatment_records')
+
+    treatment_history = [
+        {
+            'appointment_id': appointment.id,
+            'appointment_date': appointment.date,
+            'treatment_record': appointment.treatment_records.first()
+        }
+        for appointment in completed_appointments
+        if appointment.treatment_records.exists()
+    ]
 
     exclude_fields = {'id', 'patient', 'history'}
 
@@ -734,6 +747,7 @@ def view_patient_profile(request, patient_id):
         'treatment_plan': treatment_plan,
         'dental_chart': dental_chart,
         'tooth_records': dental_chart.tooth_records.all() if dental_chart else None,
+        'treatment_history': treatment_history,
     }
 
     return render(request, 'patient/view_patient_profile.html', context)
