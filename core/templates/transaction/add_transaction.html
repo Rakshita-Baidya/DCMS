@@ -1,0 +1,73 @@
+{% extends "index.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="p-6">
+        <div class="flex items-center mb-6 space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                 width="24px"
+                 fill="none"
+                 height="24px"
+                 viewBox="0 0 20 20"
+                 onclick="history.back()">
+                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+            </svg>
+            <p class="text-gray-700 text-2xl font-medium">
+                {% if is_editing %}
+                    Edit
+                {% else %}
+                    Add
+                {% endif %}
+                Transaction
+            </p>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo p-6">
+            <form method="post" class="grid grid-cols-3 md:grid-cols-2 gap-6">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.title.label_tag }}</label>
+                    {{ form.title|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if form.title.errors %}<p class="text-red-500 text-sm">{{ form.title.errors }}</p>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.amount.label_tag }}</label>
+                    {{ form.amount|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if form.amount.errors %}<p class="text-red-500 text-sm">{{ form.amount.errors }}</p>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.type.label_tag }}</label>
+                    {{ form.type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if form.type.errors %}<p class="text-red-500 text-sm">{{ form.type.errors }}</p>{% endif %}
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ form.date.label_tag }}</label>
+                        {{ form.date|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        {% if form.date.errors %}<p class="text-red-500 text-sm">{{ form.date.errors }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ form.time.label_tag }}</label>
+                        {{ form.time|attr:"type:time"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        {% if form.time.errors %}<p class="text-red-500 text-sm">{{ form.time.errors }}</p>{% endif %}
+                    </div>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.description.label_tag }}</label>
+                    {{ form.description|attr:"rows:2"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if form.description.errors %}<p class="text-red-500 text-sm">{{ form.description.errors }}</p>{% endif %}
+                </div>
+                <div class="flex space-x-4 justify-end col-span-full">
+                    <button type="submit"
+                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90 transition duration-300">
+                        Add Transaction
+                    </button>
+                    <a href="{% url 'core:view_transaction' %}"
+                       class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 transition duration-300">
+                        Cancel
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

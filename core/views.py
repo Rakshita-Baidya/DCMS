@@ -1,6 +1,6 @@
 from decimal import Decimal
 from .models import Appointment, TreatmentRecord, Payment
-from .forms import AppointmentForm, TreatmentRecordForm, TreatmentDoctorFormSet, PurchasedProductFormSet, PaymentForm
+from .forms import AppointmentForm, TransactionForm, TreatmentRecordForm, TreatmentDoctorFormSet, PurchasedProductFormSet, PaymentForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count
 from django.db.models import Q
@@ -1428,7 +1428,7 @@ def view_appointment(request, appointment_id):
 
 @login_required(login_url='login')
 @AdminOnly
-def finance(request):
+def view_transaction(request):
     transaction_queryset = Transaction.objects.all()
     income_queryset = transaction_queryset.filter(type="Income")
     expense_queryset = transaction_queryset.filter(type="Expense")
@@ -1448,25 +1448,70 @@ def finance(request):
 
     # transaction needs to be deleted
     if request.method == 'POST' and 'delete_transaction_id' in request.POST:
-        if not request.user.is_superuser and request.user.role != 'Administrator':
-            messages.error(request, "You do not have permission to delete.")
-        else:
-            transaction_id_to_delete = request.POST['delete_transaction_id']
-            transaction_to_delete = Transaction.objects.get(
-                id=transaction_id_to_delete)
-            transaction_to_delete.delete()
-            messages.success(request, f"Transaction {
-                transaction_to_delete.title} has been deleted.")
-            return redirect('core:finance')
+        transaction_id_to_delete = request.POST['delete_transaction_id']
+        transaction_to_delete = Transaction.objects.get(
+            id=transaction_id_to_delete)
+        transaction_to_delete.delete()
+        messages.success(
+            request, f"Transaction {transaction_to_delete.title}  has been deleted.")
 
     context = {
-        'page_title': 'Finance Management',
-        'active_page': 'finance',
+        'page_title': 'Transaction Management',
+        'active_page': 'transaction',
         'transaction': transaction_list,
         'total_transactions': transaction_queryset.count(),
+        'income_transactions': income_queryset,
+        'expense_transactions': expense_queryset,
         'search_query': search_query,
     }
-    return render(request, 'finance/finance.html', context)
+    return render(request, 'transaction/view_transaction.html', context)
+
+
+@login_required(login_url='login')
+@AdminOnly
+def add_transaction(request):
+    if request.method == 'POST':
+        form = TransactionForm(request.POST)
+        if form.is_valid():
+            transaction = form.save(commit=False)
+            transaction.user = request.user
+            transaction.save()
+            messages.success(request, 'Transaction added successfully!')
+            return redirect('core:view_transaction')
+    else:
+        form = TransactionForm()
+
+    context = {
+        'page_title': 'Transaction Management',
+        'active_page': 'transaction',
+        'form': form,
+    }
+    return render(request, 'transaction/add_transaction.html', context)
+
+
+@login_required(login_url='login')
+@AdminOnly
+def edit_transaction(request, transaction_id):
+    transaction = get_object_or_404(
+        Transaction, id=transaction_id, user=request.user
+    )
+
+    if request.method == 'POST':
+        form = TransactionForm(request.POST, instance=transaction)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Transaction updated successfully!')
+            return redirect('core:view_transaction')
+    else:
+        form = TransactionForm(instance=transaction)
+
+    context = {
+        'page_title': 'Edit Transaction',
+        'active_page': 'transaction',
+        'form': form,
+        'transaction': transaction,
+    }
+    return render(request, 'transaction/add_transaction.html', context)
 
 
 @login_required(login_url='login')

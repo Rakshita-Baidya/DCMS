@@ -2,8 +2,8 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import (dashboard, doctor, edit_appointment, view_doctor_profile, edit_doctor_profile, staff, view_staff_profile, edit_staff_profile,
-                    patient, view_patient_profile, appointment, view_appointment, finance, statistics,  error,
+from .views import (add_transaction, dashboard, doctor, edit_appointment, edit_transaction, view_doctor_profile, edit_doctor_profile, staff, view_staff_profile, edit_staff_profile,
+                    patient, view_patient_profile, appointment, view_appointment, view_transaction, statistics,  error,
                     # schedule,
                     edit_patient_profile)
 from .views import PatientFormWizard, EditPatientFormWizard, AppointmentFormWizard, EditAppointmentWizard
@@ -53,7 +53,11 @@ urlpatterns = [
 
     # path('schedule/', schedule, name='schedule'),
 
-    path('finance/', finance, name='finance',),
+    path('transaction/', view_transaction, name='view_transaction',),
+    path('transaction/add/',
+         add_transaction, name='add_transaction'),
+    path('transaction/<int:transaction_id>/edit/',
+         edit_transaction, name='edit_transaction'),
     path('statistics/', statistics, name='statistics'),
 
     path('error/', error, name='error'),

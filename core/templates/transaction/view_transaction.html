@@ -1,0 +1,269 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+    <div class="p-6">
+        <nav class="flex bg-white rounded-t-lg border-t-2 border-x-2 border-primaryLogo z-50 absolute">
+            <button data-tab="income"
+                    class="tab-button px-6 py-3 font-medium border-b-2 border-primaryLogo text-primaryLogo">
+                Income
+            </button>
+            <button data-tab="expense"
+                    class="tab-button px-6 py-3 font-medium text-gray-500 hover:text-gray-700">Expense</button>
+        </nav>
+        <div class="flex justify-end pr-2 ">
+            <a href="{% url 'core:add_transaction' %}"
+               class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                + Add transaction
+            </a>
+        </div>
+        <div class="bg-white rounded-b-lg rounded-r-lg shadow-sm border-2 border-primaryLogo p-6 relative mt-[13.5px]">
+            <div id="income-tab" class="tab-content">
+                {% if income_transactions %}
+                    <table class="min-w-full table-auto">
+                        <thead>
+                            <tr class="border-b-2 border-primaryLogo text-center pb-4">
+                                <th class="pb-2">ID</th>
+                                <th class="pb-2">Title</th>
+                                <th class="pb-2">Description</th>
+                                <th class="pb-2">Amount</th>
+                                <th class="pb-2">Date</th>
+                                <th class="pb-2">User</th>
+                                <th class="pb-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in income_transactions %}
+                                <tr class="border-b text-center">
+                                    <td class="py-2">{{ transaction.id }}</td>
+                                    <td>{{ transaction.title }}</td>
+                                    <td class="w-82">{{ transaction.description|default:"-" }}</td>
+                                    <td>NPR {{ transaction.amount }}</td>
+                                    <td>{{ transaction.date|date:"M d, Y" }}</td>
+                                    <td>{{ transaction.user.username }}</td>
+                                    <td class="flex justify-center space-x-2 py-2">
+                                        <a href="{% url 'core:edit_transaction' transaction.id %}">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 width="20"
+                                                 height="20"
+                                                 viewBox="0 0 20 20"
+                                                 class="cursor-pointer">
+                                                <g fill="none" stroke="#00B2B2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
+                                                <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
+                                                <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
+                                                </g>
+                                            </svg>
+                                        </a>
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="20"
+                                             height="20"
+                                             viewBox="0 0 20 20"
+                                             class="cursor-pointer"
+                                             onclick="confirmDelete('{{ transaction.id }}' , '{{ transaction.title }}')">
+                                            <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
+                                        </svg>
+                                        <form id="delete-form-{{ transaction.id }}"
+                                              method="post"
+                                              class="hidden"
+                                              action="{% url 'core:view_transaction' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden"
+                                                   name="delete_transaction_id"
+                                                   value="{{ transaction.id }}">
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% comment %} Pagination {% endcomment %}
+                    {% if transaction.has_other_pages %}
+                        <div class="flex justify-center mt-8">
+                            <div class="flex items-center space-x-2">
+                                {% if transaction.has_previous %}
+                                    <a href="?page={{ transaction.previous_page_number }}&search={{ search_query }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="20"
+                                             height="20"
+                                             viewBox="0 0 20 20"
+                                             class="cursor-pointer">
+                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                            <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                            <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
+                                            </g>
+                                        </svg>
+                                    </a>
+                                {% endif %}
+                                <p class="px-3 py-2">Page {{ transaction.number }} of {{ transaction.paginator.num_pages }}</p>
+                                {% if transaction.has_next %}
+                                    <a href="?page={{ transaction.next_page_number }}&search={{ search_query }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="20"
+                                             height="20"
+                                             viewBox="0 0 20 20"
+                                             class="cursor-pointer">
+                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                            <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                            <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
+                                            </g>
+                                        </svg>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-gray-500 text-center">No income transactions found.</p>
+                {% endif %}
+            </div>
+            <div id="expense-tab" class="tab-content hidden">
+                {% if expense_transactions %}
+                    <table class="min-w-full table-auto">
+                        <thead>
+                            <tr class="border-b-2 border-primaryLogo text-center pb-4">
+                                <th class="pb-2">ID</th>
+                                <th class="pb-2">Title</th>
+                                <th class="pb-2">Description</th>
+                                <th class="pb-2">Amount</th>
+                                <th class="pb-2">Date</th>
+                                <th class="pb-2">User</th>
+                                <th class="pb-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in expense_transactions %}
+                                <tr class="border-b text-center">
+                                    <td class="py-2">{{ transaction.id }}</td>
+                                    <td>{{ transaction.title }}</td>
+                                    <td class="w-82">{{ transaction.description|default:"-" }}</td>
+                                    <td>NPR {{ transaction.amount }}</td>
+                                    <td>{{ transaction.date|date:"M d, Y" }}</td>
+                                    <td>{{ transaction.user.username }}</td>
+                                    <td class="flex justify-center space-x-2 py-2">
+                                        <a href="{% url 'core:edit_transaction' transaction.id %}">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 width="20"
+                                                 height="20"
+                                                 viewBox="0 0 20 20"
+                                                 class="cursor-pointer">
+                                                <g fill="none" stroke="#00B2B2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
+                                                <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
+                                                <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
+                                                </g>
+                                            </svg>
+                                        </a>
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="20"
+                                             height="20"
+                                             viewBox="0 0 20 20"
+                                             class="cursor-pointer"
+                                             onclick="confirmDelete('{{ transaction.id }}' , '{{ transaction.title }}')">
+                                            <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
+                                        </svg>
+                                        <form id="delete-form-{{ transaction.id }}"
+                                              method="post"
+                                              class="hidden"
+                                              action="{% url 'core:view_transaction' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden"
+                                                   name="delete_transaction_id"
+                                                   value="{{ transaction.id }}">
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% comment %} Pagination {% endcomment %}
+                    {% if transaction.has_other_pages %}
+                        <div class="flex justify-center mt-8">
+                            <div class="flex items-center space-x-2">
+                                {% if transaction.has_previous %}
+                                    <a href="?page={{ transaction.previous_page_number }}&search={{ search_query }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="20"
+                                             height="20"
+                                             viewBox="0 0 20 20"
+                                             class="cursor-pointer">
+                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                            <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                            <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
+                                            </g>
+                                        </svg>
+                                    </a>
+                                {% endif %}
+                                <p class="px-3 py-2">Page {{ transaction.number }} of {{ transaction.paginator.num_pages }}</p>
+                                {% if transaction.has_next %}
+                                    <a href="?page={{ transaction.next_page_number }}&search={{ search_query }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="20"
+                                             height="20"
+                                             viewBox="0 0 20 20"
+                                             class="cursor-pointer">
+                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                            <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                            <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
+                                            </g>
+                                        </svg>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-gray-500 text-center">No expense transactions found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+        
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+        
+                    // Update button styles
+                    tabButtons.forEach(btn => {
+                        if (btn === button) {
+                            btn.classList.add('border-b-2', 'border-primaryLogo', 'text-primaryLogo');
+                            btn.classList.remove('text-gray-500', 'hover:text-gray-700');
+                        } else {
+                            btn.classList.remove('border-b-2', 'border-primaryLogo', 'text-primaryLogo');
+                            btn.classList.add('text-gray-500', 'hover:text-gray-700');
+                        }
+                    });
+        
+                    // Show/hide tab contents
+                    tabContents.forEach(content => {
+                        if (content.id === `${tabId}-tab`) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        });
+
+        // Delete Confirmation
+        function confirmDelete(transactionId, transactionTitle) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action will permanently delete the transaction " + transactionTitle + ".",
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'bg-dangerRed text-white hover:bg-darkerDangerRed py-2 w-32',
+                    cancelButton: 'bg-[#444444] text-white hover:bg-gray-400 py-2 w-32',
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + transactionId).submit();
+                }
+            });
+        }
+    </script>
+{% endblock content %}

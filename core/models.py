@@ -425,12 +425,14 @@ TRANSACTION_TYPE = [
 
 
 class Transaction(models.Model):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='transaction_user')
     title = models.CharField(max_length=100)
-    description = models.CharField(max_length=500)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateTimeField(default=now)
+    description = models.TextField(max_length=500, null=True, blank=True)
+    amount = models.DecimalField(
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    date = models.DateField(default=now)
+    time = models.TimeField()
     type = models.CharField(choices=TRANSACTION_TYPE, default="Income")
     date_created = models.DateTimeField(default=now, null=True, blank=True)
 

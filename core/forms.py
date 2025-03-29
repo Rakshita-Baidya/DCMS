@@ -89,3 +89,10 @@ class PaymentForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['appointment', 'final_amount',
                    'remaining_balance', 'payment_status']
+
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = '__all__'
+        exclude = ['user', 'date_created']
