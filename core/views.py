@@ -1462,6 +1462,9 @@ def view_transaction(request):
         'total_transactions': transaction_queryset.count(),
         'income_transactions': income_queryset,
         'expense_transactions': expense_queryset,
+        'total_income': sum([income.amount for income in income_queryset]),
+        'total_expense': sum([expense.amount for expense in expense_queryset]),
+        'net_profit': sum([income.amount for income in income_queryset]) - sum([expense.amount for expense in expense_queryset]),
         'search_query': search_query,
     }
     return render(request, 'transaction/view_transaction.html', context)
