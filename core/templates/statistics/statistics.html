@@ -1,6 +1,9 @@
-
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-    <div>Statistics</div>
+    <div class="mx-auto p-4 sm:p-2 lg:p-5 max-w-8xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1.2fr_1.6fr] gap-6 auto-rows-min">
+            Total transactions: {{ total_transactions }}
+        </div>
+    </div>
 {% endblock content %}

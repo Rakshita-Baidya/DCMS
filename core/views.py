@@ -1517,9 +1517,18 @@ def edit_transaction(request, transaction_id):
 @login_required(login_url='login')
 @AdminOnly
 def statistics(request):
+    income_queryset = Transaction.objects.filter(type="Income")
+    expense_queryset = Transaction.objects.filter(type="Expense")
+
     context = {
         'page_title': 'Statistics',
         'active_page': 'statistics',
+        'income': income_queryset,
+        'expense': expense_queryset,
+        'total_income': sum([income.amount for income in income_queryset]),
+        'total_expense': sum([expense.amount for expense in expense_queryset]),
+        'net_profit': sum([income.amount for income in income_queryset]) - sum([expense.amount for expense in expense_queryset]),
+        'total_transactions': Transaction.objects.all().count(),
     }
     return render(request, 'statistics/statistics.html', context)
 

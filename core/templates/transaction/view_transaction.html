@@ -37,8 +37,8 @@
                                     <td class="py-2">{{ transaction.id }}</td>
                                     <td>{{ transaction.title }}</td>
                                     <td class="w-82">{{ transaction.description|default:"-" }}</td>
-                                    <td>NPR {{ transaction.amount }}</td>
-                                    <td>{{ transaction.date|date:"M d, Y" }}</td>
+                                    <td>Rs. {{ transaction.amount }}</td>
+                                    <td>{{ transaction.date }}</td>
                                     <td>{{ transaction.user.username }}</td>
                                     <td class="flex justify-center space-x-2 py-2">
                                         <a href="{% url 'core:edit_transaction' transaction.id %}">
@@ -135,8 +135,8 @@
                                     <td class="py-2">{{ transaction.id }}</td>
                                     <td>{{ transaction.title }}</td>
                                     <td class="w-82">{{ transaction.description|default:"-" }}</td>
-                                    <td>NPR {{ transaction.amount }}</td>
-                                    <td>{{ transaction.date|date:"M d, Y" }}</td>
+                                    <td>Rs. {{ transaction.amount }}</td>
+                                    <td>{{ transaction.date }}</td>
                                     <td>{{ transaction.user.username }}</td>
                                     <td class="flex justify-center space-x-2 py-2">
                                         <a href="{% url 'core:edit_transaction' transaction.id %}">
