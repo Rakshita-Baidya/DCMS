@@ -15,7 +15,7 @@ from django.forms import formset_factory
 from django.utils import timezone
 
 import os
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 import json
 from formtools.wizard.views import SessionWizardView
 
@@ -782,12 +782,32 @@ def appointment(request):
     status = Appointment.objects.all().values_list(
         'status', flat=True).distinct()
 
+    # Date range filter
+    date_range = request.GET.get('date_range', '')
+    if date_range:
+        try:
+            dates = date_range.split(' to ')
+            if len(dates) == 1:  # Single date selected
+                selected_date = datetime.strptime(
+                    dates[0].strip(), '%Y-%m-%d').date()
+                appointment_queryset = appointment_queryset.filter(
+                    date=selected_date)
+            elif len(dates) == 2:  # Date range selected
+                start_date = datetime.strptime(
+                    dates[0].strip(), '%Y-%m-%d').date()
+                end_date = datetime.strptime(
+                    dates[1].strip(), '%Y-%m-%d').date()
+                appointment_queryset = appointment_queryset.filter(
+                    date__range=[start_date, end_date]
+                )
+        except (ValueError, AttributeError):
+            pass
+
     # Pagination
     paginator = Paginator(appointment_queryset, 8)
     page = request.GET.get('page', 1)
     appointment_list = paginator.get_page(page)
 
-    appointments_schedule = Appointment.objects.all()
     appointments_data = [
         {
             'id': app.id,
@@ -800,7 +820,7 @@ def appointment(request):
                 'appointment_id': app.id,
             }
         }
-        for app in appointments_schedule
+        for app in appointment_queryset
     ]
 
     context = {
@@ -812,6 +832,7 @@ def appointment(request):
         'status_filter': status_filter,
         'status': status,
         'appointments_schedule': appointments_data,
+        'date_range': date_range,
     }
 
     return render(request, 'appointment/appointment.html', context)
