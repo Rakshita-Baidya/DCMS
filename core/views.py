@@ -1451,8 +1451,6 @@ def view_appointment(request, appointment_id):
 @AdminOnly
 def view_transaction(request):
     transaction_queryset = Transaction.objects.all()
-    income_queryset = transaction_queryset.filter(type="Income")
-    expense_queryset = transaction_queryset.filter(type="Expense")
 
     # Add search functionality
     search_query = request.GET.get('search', '')
@@ -1461,6 +1459,27 @@ def view_transaction(request):
             Q(title__icontains=search_query) |
             Q(description__icontains=search_query)
         )
+
+    # date range
+    date_range = request.GET.get('date_range', '')
+    if date_range:
+        try:
+            dates = date_range.split(' to ')
+            if len(dates) == 1:  # Single date selected
+                selected_date = datetime.strptime(
+                    dates[0].strip(), '%Y-%m-%d').date()
+                transaction_queryset = transaction_queryset.filter(
+                    date=selected_date)
+            elif len(dates) == 2:  # Date range selected
+                start_date = datetime.strptime(
+                    dates[0].strip(), '%Y-%m-%d').date()
+                end_date = datetime.strptime(
+                    dates[1].strip(), '%Y-%m-%d').date()
+                transaction_queryset = transaction_queryset.filter(
+                    date__range=[start_date, end_date]
+                )
+        except (ValueError, AttributeError):
+            pass
 
     # Pagination
     paginator = Paginator(transaction_queryset, 8)
@@ -1476,6 +1495,9 @@ def view_transaction(request):
         messages.success(
             request, f"Transaction {transaction_to_delete.title}  has been deleted.")
 
+    income_queryset = transaction_queryset.filter(type="Income")
+    expense_queryset = transaction_queryset.filter(type="Expense")
+
     context = {
         'page_title': 'Transaction Management',
         'active_page': 'transaction',
@@ -1487,6 +1509,7 @@ def view_transaction(request):
         'total_expense': sum([expense.amount for expense in expense_queryset]),
         'net_profit': sum([income.amount for income in income_queryset]) - sum([expense.amount for expense in expense_queryset]),
         'search_query': search_query,
+        'date_range': date_range,
     }
     return render(request, 'transaction/view_transaction.html', context)
 

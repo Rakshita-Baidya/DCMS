@@ -6,9 +6,25 @@
             <div class="text-2xl mb-4">
                 <span class="font-bold">Net Balance:</span> Rs. {{ net_profit }}
             </div>
-            <div class="justify-end pr-2">
+            <div class="flex pr-2 space-x-4 h-max items-center">
+                <form method="get" id="filter-form">
+                    <div class="flex items-center space-x-4">
+                        <input type="text"
+                               name="search"
+                               value="{{ search_query }}"
+                               placeholder="Search..."
+                               class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                        <input type="text"
+                               name="date_range"
+                               id="date-range-picker"
+                               value="{{ date_range }}"
+                               placeholder="Select date or range"
+                               class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                        <button type="submit" class="hidden"></button>
+                    </div>
+                </form>
                 <a href="{% url 'core:add_transaction' %}"
-                   class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                   class="px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
                     + Add transaction
                 </a>
             </div>
@@ -255,6 +271,36 @@
                         }
                     });
                 });
+            });
+
+            flatpickr("#date-range-picker", {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                onClose: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 1) {
+                        instance.element.value = selectedDates[0].toISOString().split('T')[0];
+                    }
+                    document.getElementById('filter-form').submit();
+                },
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 1) {
+                        instance.element.value = selectedDates[0].toISOString().split('T')[0];
+                    }
+                }
+            });
+    
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    filterForm.submit();
+                }
+            });
+
+            dateRangePicker.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    filterForm.submit();
+                }
             });
         });
 

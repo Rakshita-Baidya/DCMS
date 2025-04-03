@@ -59,13 +59,16 @@
                 </div>
                 <div class="flex space-x-4 justify-end col-span-full">
                     <button type="submit"
-                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90 transition duration-300">
-                        Add Transaction
+                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
+                        {% if is_editing %}
+                            Update
+                        {% else %}
+                            Add
+                        {% endif %}
+                        Transaction
                     </button>
                     <a href="{% url 'core:view_transaction' %}"
-                       class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 transition duration-300">
-                        Cancel
-                    </a>
+                       class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</a>
                 </form>
             </div>
         </div>
