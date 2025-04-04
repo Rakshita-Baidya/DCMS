@@ -30,6 +30,7 @@
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+                <p class="mb-6 text-xl text-center font-semibold">Appointments Completed</p>
                 <div class="w-full relative">
                     <canvas id="appointmentCompletion"></canvas>
                     <div id="no-data-message"
@@ -37,7 +38,6 @@
                         No Data Available
                     </div>
                 </div>
-                <p class="mt-6 text-center font-semibold">Appointments Completed</p>
             </div>
             <div>
                 <form method="get" class="text-right mb-6">
@@ -139,12 +139,6 @@
                         {% endif %}
                     </div>
                 </div>
-                {% comment %} <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo h-full flex flex-col justify-center">
-                    <h3 class="text-xl font-semibold text-center">Treatment Summary</h3>
-                    <div class="w-full">
-                        <canvas id="treatmentSummary"></canvas>
-                    </div>
-                </div> {% endcomment %}
             </div>
         </div>
     </div>
@@ -231,42 +225,5 @@
                 });
             }
         });
-
-            // treatment Summary
-            const treatmentData = JSON.parse("{{ treatment_data|escapejs }}");
-
-            const ctx2 = document.getElementById('treatmentSummary');
-            new Chart(ctx2, {
-                type: 'line',
-                data: {
-                    labels: Object.keys(treatmentData),  
-                    datasets: [{
-                        label: 'Treatment Summary',
-                        data: Object.values(treatmentData),
-                        borderColor: '#00B2B2',
-                        backgroundColor: 'rgba(0, 178, 178, 0.2)',
-                        borderWidth: 2,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    aspectRatio: 2.1,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 8,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false 
-                        },
-                    }
-                },
-            });
     </script>
 {% endblock content %}

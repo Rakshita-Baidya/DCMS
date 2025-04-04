@@ -1597,89 +1597,120 @@ def edit_transaction(request, transaction_id):
 @login_required(login_url='login')
 @AdminOnly
 def statistics(request):
+    time_filter = request.GET.get('filter', 'quarterly')
     today = timezone.now().date()
-    time_filter = request.GET.get('filter', 'monthly')  # Default to monthly
-    date_range = request.GET.get('date_range', '')
 
-    # Base querysets
-    appointments = Appointment.objects.all()
     transactions = Transaction.objects.all()
     treatments = TreatmentRecord.objects.all()
+    payments = Payment.objects.all()
+    purchased_products = PurchasedProduct.objects.all()
+    patients = Patient.objects.all()
+    users = User.objects.all()
+    products = PurchasedProduct.objects.all()
 
-    # Date filtering logic
+    # Date range from picker (takes priority)
+    date_range = request.GET.get('date_range', '')
+
     if date_range:
         try:
             dates = date_range.split(' to ')
-            if len(dates) == 1:  # Single date
-                selected_date = timezone.datetime.strptime(
+            if len(dates) == 1:
+                start_date = datetime.strptime(
                     dates[0].strip(), '%Y-%m-%d').date()
-                appointments = appointments.filter(date=selected_date)
-                transactions = transactions.filter(date=selected_date)
-                treatments = treatments.filter(date_created=selected_date)
-            elif len(dates) == 2:  # Date range
-                start_date = timezone.datetime.strptime(
+                end_date = start_date
+            elif len(dates) == 2:
+                start_date = datetime.strptime(
                     dates[0].strip(), '%Y-%m-%d').date()
-                end_date = timezone.datetime.strptime(
-                    dates[1].strip(), '%Y-%m-%d').date()
-                appointments = appointments.filter(
-                    date__range=[start_date, end_date])
-                transactions = transactions.filter(
-                    date__range=[start_date, end_date])
-                treatments = treatments.filter(
-                    date_created__range=[start_date, end_date])
+                end_date = datetime.strptime(
+                    dates[1].strip(), '%Y-m-%d').date()
         except (ValueError, AttributeError):
-            pass
-    elif time_filter == 'daily':
-        appointments = appointments.filter(date=today)
-        transactions = transactions.filter(date=today)
-        treatments = treatments.filter(date_created=today)
-    elif time_filter == 'weekly':
-        # Start of week (Monday)
-        start_date = today - timedelta(days=today.weekday())
-        appointments = appointments.filter(date__gte=start_date)
-        transactions = transactions.filter(date__gte=start_date)
-        treatments = treatments.filter(date_created__gte=start_date)
-    elif time_filter == 'monthly':
-        start_date = today.replace(day=1)  # Start of month
-        appointments = appointments.filter(date__gte=start_date)
-        transactions = transactions.filter(date__gte=start_date)
-        treatments = treatments.filter(date_created__gte=start_date)
+            start_date = today - timedelta(days=90)
+            end_date = today
+    else:
+        # Predefined filter logic (only if no date_range)
+        if time_filter == 'daily':
+            start_date = today
+            end_date = today
+        elif time_filter == 'weekly':
+            days_since_sunday = (today.weekday() + 1) % 7
+            start_date = today - timedelta(days=days_since_sunday)
+            end_date = start_date + timedelta(days=5)
+        elif time_filter == 'monthly':
+            start_date = today.replace(day=1)
+            end_date = today
+        elif time_filter == 'quarterly':
+            start_date = today - timedelta(days=90)
+            end_date = today
+        elif time_filter == 'yearly':
+            start_date = today.replace(month=1, day=1)
+            end_date = today
 
-    # Appointment statistics
-    appointment_counts = {
-        'Completed': appointments.filter(status='Completed').count(),
-        'Pending': appointments.filter(status='Pending').count(),
-        'Cancelled': appointments.filter(status='Cancelled').count(),
+    # Apply filters based on start_date and end_date
+    transactions = transactions.filter(date__range=[start_date, end_date])
+    treatments = treatments.filter(
+        date_created__date__range=[start_date, end_date])
+    payments = payments.filter(appointment__date__range=[start_date, end_date])
+    purchased_products = purchased_products.filter(
+        appointment__date__range=[start_date, end_date])
+    patients = patients.filter(date_created__date__range=[
+                               start_date, end_date])
+    users = users.filter(date_joined__date__range=[
+        start_date, end_date])
+    products = products.filter(appointment__date__range=[
+        start_date, end_date])
+
+    total_products_sold = purchased_products.aggregate(
+        total_quantity=Sum('quantity'))['total_quantity'] or 0
+
+    # Income (Top 5 by amount)
+    income_data = transactions.filter(type="Income").values(
+        'title').annotate(total=Sum('amount')).order_by('-total')[:5]
+    income_dict = {item['title']: float(item['total']) for item in income_data}
+
+    # Expenses (Top 5 by amount)
+    expense_data = transactions.filter(type="Expense").values(
+        'title').annotate(total=Sum('amount')).order_by('-total')[:5]
+    expense_dict = {item['title']: float(
+        item['total']) for item in expense_data}
+
+    # Treatment Counts
+    treatment_counts = {
+        "Root Canals": treatments.filter(treatment_type="Root Canals").count(),
+        "Dental Crowns": treatments.filter(treatment_type="Dental Crowns").count(),
+        "Fillings": treatments.filter(treatment_type="Fillings").count(),
+        "Cleaning": treatments.filter(treatment_type="Cleaning").count(),
+        "General Checkup": treatments.filter(treatment_type="General Checkup").count(),
+        "Extractions": treatments.filter(treatment_type="Extractions").count(),
+        "Prosthetics": treatments.filter(treatment_type="Prosthetics").count(),
+        "Dental Implants": treatments.filter(treatment_type="Dental Implants").count(),
+        "Other": treatments.filter(treatment_type="Other").count(),
     }
 
-    # Transaction statistics (Top 5 by amount)
-    income_data = transactions.filter(type='Income').values('title').annotate(
-        total_amount=Sum('amount')).order_by('-total_amount')[:5]
-    expense_data = transactions.filter(type='Expense').values('title').annotate(
-        total_amount=Sum('amount')).order_by('-total_amount')[:5]
+    top_treatments = sorted(treatment_counts.items(),
+                            key=lambda x: x[1], reverse=True)[:3]
+    top_treatments_dict = dict(top_treatments)
 
-    income_chart_data = {item['title']: float(
-        item['total_amount']) for item in income_data}
-    expense_chart_data = {item['title']: float(
-        item['total_amount']) for item in expense_data}
-
-    # Treatment statistics (Top 3 by count)
-    treatment_counts = treatments.values('treatment_type').annotate(
-        count=Count('id')).order_by('-count')[:3]
-    treatment_chart_data = {item['treatment_type']                            : item['count'] for item in treatment_counts}
+    gender_counts = patients.values('gender').annotate(count=Count('id'))
+    gender_dict = {item['gender']: item['count'] for item in gender_counts}
 
     context = {
         'page_title': 'Statistics',
         'active_page': 'statistics',
-        'appointment_counts': json.dumps(appointment_counts),
-        'income_chart_data': json.dumps(income_chart_data),
-        'expense_chart_data': json.dumps(expense_chart_data),
-        'treatment_chart_data': json.dumps(treatment_chart_data),
-        'total_appointments': appointments.count(),
-        'total_income': float(transactions.filter(type='Income').aggregate(Sum('amount'))['amount__sum'] or 0),
-        'total_expense': float(transactions.filter(type='Expense').aggregate(Sum('amount'))['amount__sum'] or 0),
         'time_filter': time_filter,
         'date_range': date_range,
+        'income_data': json.dumps(income_dict),
+        'expense_data': json.dumps(expense_dict),
+        'treatment_data': json.dumps(treatment_counts),
+        'top_treatments': top_treatments_dict,
+        'gender_data': json.dumps(gender_dict),
+        'transactions': transactions,
+        'treatments': treatments,
+        'payments': payments,
+        'purchased_products': purchased_products,
+        'patients': patients,
+        'users': users,
+        'products': products,
+        'total_products_sold': total_products_sold,
     }
     return render(request, 'statistics/statistics.html', context)
 

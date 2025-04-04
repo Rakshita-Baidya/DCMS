@@ -2,77 +2,118 @@
 {% load static %}
 {% block content %}
     <div class="mx-auto p-4 sm:p-2 lg:p-5 max-w-8xl">
-        <div class="space-y-6">
-            {% comment %} filter {% endcomment %}
-            <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-semibold">Statistics</h1>
-                <div class="flex space-x-4">
-                    <form method="get" id="filter-form">
-                        <div class="flex items-center space-x-4">
-                            <select name="filter"
-                                    id="time-filter"
-                                    class="px-2 py-1 border-2 border-primaryLogo rounded-lg focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                                <option value="daily" {% if time_filter == 'daily' %}selected{% endif %}>Daily</option>
-                                <option value="weekly" {% if time_filter == 'weekly' %}selected{% endif %}>Weekly</option>
-                                <option value="monthly" {% if time_filter == 'monthly' %}selected{% endif %}>Monthly</option>
-                            </select>
-                            <input type="text"
-                                   name="date_range"
-                                   id="date-range-picker"
-                                   value="{{ date_range }}"
-                                   placeholder="Custom Date Range"
-                                   class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                            <button type="submit" class="hidden"></button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="grid grid-cols-3 md:grid-cols-2 gap-6">
+        <form method="get"
+              id="filter-form"
+              class="flex flex-col sm:flex-row justify-end items-center gap-4 mb-6">
+            <select name="filter"
+                    id="timeFilter"
+                    class="px-4 py-2 border-2 border-primaryLogo rounded-lg focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                <option value="daily" {% if time_filter == 'daily' %}selected{% endif %}>Daily</option>
+                <option value="weekly" {% if time_filter == 'weekly' %}selected{% endif %}>Weekly</option>
+                <option value="monthly" {% if time_filter == 'monthly' %}selected{% endif %}>Monthly</option>
+                <option value="quarterly"
+                        {% if time_filter == 'quarterly' %}selected{% endif %}>Quarterly</option>
+                <option value="yearly" {% if time_filter == 'yearly' %}selected{% endif %}>Yearly</option>
+            </select>
+            <input type="text"
+                   name="date_range"
+                   id="date-range-picker"
+                   value="{{ date_range }}"
+                   placeholder="Select date or range"
+                   class="px-4 py-2 border-2 border-primaryLogo rounded-lg focus:outline-none focus:ring-1 focus:ring-primaryLogo" />
+        </form>
+        <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2">
-                    <img src="{% static 'images/dashboard/Schedule.png' %}"
-                         alt="appointment"
+                    <img src="{% static 'images/statistics/user.png' %}"
+                         alt="user"
                          width="full"
                          height="full"
                          class="w-12 h-12 object-contain">
-                    <h3 class="text-xl font-semibold">{{ total_appointments }}</h3>
-                    <p>Total Appointments</p>
+                    <h3 class="text-xl font-semibold">{{ users.count }}</h3>
+                    <p>Total Registered Users</p>
                 </div>
                 <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2">
-                    <img src="{% static 'images/dashboard/Patients.png' %}"
-                         alt="profit"
+                    <img src="{% static 'images/statistics/wallet.png' %}"
+                         alt="transaction"
                          width="full"
                          height="full"
                          class="w-12 h-12 object-contain">
-                    <h3 class="text-xl font-semibold">Rs. {{ total_income|floatformat:2 }}</h3>
-                    <p>Total Income</p>
+                    <h3 class="text-xl font-semibold">{{ transactions.count }}</h3>
+                    <p>Total Transactions</p>
                 </div>
-            </div>
-            <div class="grid grid-cols-3 md:grid-cols-4 gap-6">
-                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center">
-                    <canvas id="appointmentChart"></canvas>
-                    <p class="mt-2 text-center">Appointment Status</p>
+                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2">
+                    <img src="{% static 'images/statistics/shop.png' %}"
+                         alt="patient"
+                         width="full"
+                         height="full"
+                         class="w-12 h-12 object-contain">
+                    <h3 class="text-xl font-semibold">{{ total_products_sold }}</h3>
+                    <p>Products sold</p>
                 </div>
                 <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo">
-                    <h3 class="text-xl font-semibold text-center">Top 5 Income Sources</h3>
+                    <h3 class="text-xl font-semibold text-center mb-4">Top 3 Treatments</h3>
+                    <ul class="space-y-2">
+                        {% for treatment, count in top_treatments.items %}
+                            <li class="flex justify-between">
+                                <span>{{ treatment }}</span>
+                                <span class="font-semibold">{{ count }}</span>
+                            </li>
+                        {% empty %}
+                            <p class="text-center text-gray-500">No treatments recorded.</p>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+                <p class="mb-6 text-xl text-center font-semibold">Top 5 Income Sources</p>
+                <div class="w-full relative">
                     <canvas id="incomeChart"></canvas>
+                    <div id="no-income-message"
+                         class="absolute inset-0 items-center justify-center text-gray-500 font-semibold hidden">
+                        No Income Data
+                    </div>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo">
-                    <h3 class="text-xl font-semibold text-center">Top 5 Expenses</h3>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+                <p class="mb-6 text-xl text-center font-semibold">Top 5 Expenses</p>
+                <div class="w-full relative">
                     <canvas id="expenseChart"></canvas>
+                    <div id="no-expense-message"
+                         class="absolute inset-0 items-center justify-center text-gray-500 font-semibold hidden">
+                        No Expense Data
+                    </div>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo">
-                    <h3 class="text-xl font-semibold text-center">Top 3 Treatment Types</h3>
-                    <canvas id="treatmentChart"></canvas>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+                <p class="mb-6 text-xl text-center font-semibold">Treatment Summary</p>
+                <div class="w-full relative">
+                    <canvas id="treatmentSummary"></canvas>
+                    <div id="no-treatment-message"
+                         class="absolute inset-0 items-center justify-center text-gray-500 font-semibold hidden">
+                        No Treatment Data
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+                <p class="mb-12 text-xl text-center font-semibold">Patient Gender Distribution</p>
+                <div class="w-full relative">
+                    <canvas id="genderChart"></canvas>
+                    <div id="no-gender-message"
+                         class="absolute inset-0 items-center justify-center text-gray-500 font-semibold hidden">
+                        No Patient Data
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Flatpickr initialization
+            // Flatpickr initialization for date range
             flatpickr("#date-range-picker", {
                 mode: "range",
                 dateFormat: "Y-m-d",
+                maxDate: "today",
                 onClose: function(selectedDates, dateStr, instance) {
                     if (selectedDates.length === 1) {
                         instance.element.value = selectedDates[0].toISOString().split('T')[0];
@@ -86,102 +127,158 @@
                 }
             });
 
-            // Submit on filter change
-            document.getElementById('time-filter').addEventListener('change', function() {
-                document.getElementById('date-range-picker').value = ''; // Clear custom range
-                document.getElementById('filter-form').submit();
-            });
-
-            // Chart.js configurations
-            const colors = ['#00B2B2', '#7c7c7c', '#B20003', '#FFD700', '#FF69B4'];
-
-            // Appointment Chart
-            const appointmentData = JSON.parse('{{ appointment_counts|escapejs }}');
-            new Chart(document.getElementById('appointmentChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(appointmentData),
-                    datasets: [{
-                        data: Object.values(appointmentData),
-                        backgroundColor: colors.slice(0, 3),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    cutout: '50%',
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: { callbacks: { label: (item) => `${item.raw} appointments` } }
-                    }
-                }
+            // Auto-submit on filter change
+            const timeFilter = document.getElementById("timeFilter");
+            timeFilter.addEventListener("change", function() {
+                document.getElementById("date-range-picker").value = ""; 
+                this.form.submit();
             });
 
             // Income Chart
-            const incomeData = JSON.parse('{{ income_chart_data|escapejs }}');
-            new Chart(document.getElementById('incomeChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(incomeData),
-                    datasets: [{
-                        data: Object.values(incomeData),
-                        backgroundColor: colors,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    cutout: '50%',
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: { callbacks: { label: (item) => `Rs. ${item.raw.toFixed(2)}` } }
+            const incomeData = JSON.parse("{{ income_data|escapejs }}");
+            const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+            const noIncomeMessage = document.getElementById('no-income-message');
+            const hasIncome = Object.values(incomeData).some(value => value > 0);
+            if (!hasIncome) {
+                noIncomeMessage.classList.remove('hidden');
+            } else {
+                noIncomeMessage.classList.add('hidden');
+                new Chart(incomeCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(incomeData),
+                        datasets: [{
+                            label: 'Income',
+                            data: Object.values(incomeData),
+                            backgroundColor: ['#00B2B2', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        cutout: 40,
+                        responsive: true,
+                        aspectRatio: 2.5,
+                        plugins: {
+                            legend: { position: 'right', labels: { boxWidth: 20, padding: 15, font: { size: 14 } } },
+                            tooltip: { callbacks: { label: function(tooltipItem) { return ` Rs. ${tooltipItem.raw.toFixed(2)}`; } } }
+                        }
                     }
-                }
-            });
+                });
+            }
 
             // Expense Chart
-            const expenseData = JSON.parse('{{ expense_chart_data|escapejs }}');
-            new Chart(document.getElementById('expenseChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(expenseData),
-                    datasets: [{
-                        data: Object.values(expenseData),
-                        backgroundColor: colors,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    cutout: '50%',
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: { callbacks: { label: (item) => `Rs. ${item.raw.toFixed(2)}` } }
+            const expenseData = JSON.parse("{{ expense_data|escapejs }}");
+            const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+            const noExpenseMessage = document.getElementById('no-expense-message');
+            const hasExpense = Object.values(expenseData).some(value => value > 0);
+            if (!hasExpense) {
+                noExpenseMessage.classList.remove('hidden');
+            } else {
+                noExpenseMessage.classList.add('hidden');
+                new Chart(expenseCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(expenseData),
+                        datasets: [{
+                            label: 'Expenses',
+                            data: Object.values(expenseData),
+                            backgroundColor: ['#B20003', '#F44336', '#FF5722', '#E91E63', '#D81B60'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        cutout: 40,
+                        responsive: true,
+                        aspectRatio: 2.5,
+                        plugins: {
+                            legend: { position: 'right', labels: { boxWidth: 20, padding: 15, font: { size: 14 } } },
+                            tooltip: { callbacks: { label: function(tooltipItem) { return ` Rs. ${tooltipItem.raw.toFixed(2)}`; } } }
+                        }
                     }
-                }
-            });
+                });
+            }
 
-            // Treatment Chart
-            const treatmentData = JSON.parse('{{ treatment_chart_data|escapejs }}');
-            new Chart(document.getElementById('treatmentChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(treatmentData),
-                    datasets: [{
-                        data: Object.values(treatmentData),
-                        backgroundColor: colors.slice(0, 3),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    cutout: '50%',
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: { callbacks: { label: (item) => `${item.raw} treatments` } }
+            // Treatment Summary
+            const treatmentData = JSON.parse("{{ treatment_data|escapejs }}");
+            const treatmentCtx = document.getElementById('treatmentSummary').getContext('2d');
+            const noTreatmentMessage = document.getElementById('no-treatment-message');
+            const hasTreatment = Object.values(treatmentData).some(value => value > 0);
+            if (!hasTreatment) {
+                noTreatmentMessage.classList.remove('hidden');
+            } else {
+                noTreatmentMessage.classList.add('hidden');
+                new Chart(treatmentCtx, {
+                    type: 'line',
+                    data: {
+                        labels: Object.keys(treatmentData),
+                        datasets: [{
+                            label: 'Treatment Types',
+                            data: Object.values(treatmentData),
+                            backgroundColor: 'rgba(0, 178, 178, 0.2)',
+                            borderColor: '#00B2B2',
+                            borderWidth: 2,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 8,
+                            }
+                        },
+                        plugins: {
+                            legend: { 
+                                display: false 
+                            },
+                            tooltip: { 
+                                callbacks: { 
+                                    label: function(tooltipItem) { return ` ${tooltipItem.raw} treatments`; } 
+                                } 
+                            }
+                        }
                     }
-                }
-            });
+                });
+            }
+
+            // Gender Distribution
+            const genderData = JSON.parse("{{ gender_data|escapejs }}");
+            const genderCtx = document.getElementById('genderChart').getContext('2d');
+            const noGenderMessage = document.getElementById('no-gender-message');
+            const hasGender = Object.values(genderData).some(value => value > 0);
+            if (!hasGender) {
+                noGenderMessage.classList.remove('hidden');
+            } else {
+                noGenderMessage.classList.add('hidden');
+                new Chart(genderCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(genderData),
+                        datasets: [{
+                            label: 'Patients',
+                            data: Object.values(genderData),
+                            backgroundColor: ['#2196F3', '#F06292', '#9E9E9E', '#4CAF50'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 6,
+                            }
+                        },
+                        responsive: true,
+                        aspectRatio: 2.5,
+                        plugins: {
+                            legend: false,
+                            tooltip: { callbacks: { label: function(tooltipItem) { return ` ${tooltipItem.raw} patients`; } } }
+                        }
+                    }
+                });
+            }
         });
     </script>
 {% endblock content %}
