@@ -1,3 +1,6 @@
+from .models import Appointment, Transaction, TreatmentRecord
+from datetime import timedelta
+from django.db.models import Count, Sum
 from decimal import Decimal
 from .models import Appointment, TreatmentRecord, Payment
 from .forms import AppointmentForm, TransactionForm, TreatmentRecordForm, TreatmentDoctorFormSet, PurchasedProductFormSet, PaymentForm
@@ -38,7 +41,7 @@ from rest_framework.permissions import AllowAny
 
 @login_required(login_url='login')
 def dashboard(request):
-    time_filter = request.GET.get('filter', 'overall')
+    time_filter = request.GET.get('filter', 'quarterly')
     today = timezone.now().date()
 
     patient_queryset = Patient.objects.all().order_by('id')
@@ -46,18 +49,44 @@ def dashboard(request):
     treatment_queryset = TreatmentRecord.objects.all()
 
     # filter
-    if time_filter == 'monthly':
+    if time_filter == 'daily':
+        appointments = appointments.filter(date=today)
+        patient_queryset = patient_queryset.filter(date_created=today)
+        treatment_queryset = treatment_queryset.filter(date_created=today)
+    elif time_filter == 'weekly':
+        days_since_sunday = (today.weekday() + 1) % 7
+        start_date = today - timedelta(days=days_since_sunday)
+        end_date = start_date + timedelta(days=5)
+        appointments = appointments.filter(date__range=[start_date, end_date])
+        patient_queryset = patient_queryset.filter(
+            date_created__range=[start_date, end_date])
+        treatment_queryset = treatment_queryset.filter(
+            date_created__range=[start_date, end_date])
+    elif time_filter == 'monthly':
         start_date = today.replace(day=1)
         appointments = appointments.filter(date__gte=start_date)
+        patient_queryset = patient_queryset.filter(
+            date_created__gte=start_date)
         treatment_queryset = treatment_queryset.filter(
             date_created__gte=start_date)
     elif time_filter == 'quarterly':
         start_date = today - timedelta(days=90)
         appointments = appointments.filter(date__gte=start_date)
+        patient_queryset = patient_queryset.filter(
+            date_created__gte=start_date)
+        treatment_queryset = treatment_queryset.filter(
+            date_created__gte=start_date)
+    elif time_filter == 'yearly':
+        start_date = today.replace(month=1, day=1)
+        appointments = appointments.filter(date__gte=start_date)
+        patient_queryset = patient_queryset.filter(
+            date_created__gte=start_date)
         treatment_queryset = treatment_queryset.filter(
             date_created__gte=start_date)
 
     pending_appointments = appointments.filter(status="Pending")
+    lab_orders = treatment_queryset.filter(lab=True).count()
+    x_rays_taken = treatment_queryset.filter(x_ray=True).count()
 
     # Serialize the data
     serialized_appointments = AppointmentSerializer(
@@ -87,7 +116,7 @@ def dashboard(request):
     # follow up
     today = timezone.now().date()
     two_weeks_later = today + timedelta(days=14)
-    one_week_earlier = today - timedelta(days=7)
+    two_weeks_earlier = today - timedelta(days=14)
 
     completed_appointments = Appointment.objects.filter(
         follow_up_days__isnull=False,
@@ -97,7 +126,7 @@ def dashboard(request):
     follow_ups = []
     for appointment in completed_appointments:
         follow_up_date = appointment.get_follow_up_date()
-        if follow_up_date and one_week_earlier <= follow_up_date <= two_weeks_later:
+        if follow_up_date and two_weeks_earlier <= follow_up_date <= two_weeks_later:
             follow_ups.append(appointment)
 
     follow_ups.sort(key=lambda x: x.get_follow_up_date() or today)
@@ -115,6 +144,9 @@ def dashboard(request):
 
         "treatments": treatment_queryset,
         "treatment_data": json.dumps(treatment_counts),
+
+        'lab_orders': lab_orders,
+        'x_rays_taken': x_rays_taken,
 
         "time_filter": time_filter,
     }
@@ -1555,6 +1587,7 @@ def edit_transaction(request, transaction_id):
     context = {
         'page_title': 'Edit Transaction',
         'active_page': 'transaction',
+        'is_editing': True,
         'form': form,
         'transaction': transaction,
     }
@@ -1564,18 +1597,89 @@ def edit_transaction(request, transaction_id):
 @login_required(login_url='login')
 @AdminOnly
 def statistics(request):
-    income_queryset = Transaction.objects.filter(type="Income")
-    expense_queryset = Transaction.objects.filter(type="Expense")
+    today = timezone.now().date()
+    time_filter = request.GET.get('filter', 'monthly')  # Default to monthly
+    date_range = request.GET.get('date_range', '')
+
+    # Base querysets
+    appointments = Appointment.objects.all()
+    transactions = Transaction.objects.all()
+    treatments = TreatmentRecord.objects.all()
+
+    # Date filtering logic
+    if date_range:
+        try:
+            dates = date_range.split(' to ')
+            if len(dates) == 1:  # Single date
+                selected_date = timezone.datetime.strptime(
+                    dates[0].strip(), '%Y-%m-%d').date()
+                appointments = appointments.filter(date=selected_date)
+                transactions = transactions.filter(date=selected_date)
+                treatments = treatments.filter(date_created=selected_date)
+            elif len(dates) == 2:  # Date range
+                start_date = timezone.datetime.strptime(
+                    dates[0].strip(), '%Y-%m-%d').date()
+                end_date = timezone.datetime.strptime(
+                    dates[1].strip(), '%Y-%m-%d').date()
+                appointments = appointments.filter(
+                    date__range=[start_date, end_date])
+                transactions = transactions.filter(
+                    date__range=[start_date, end_date])
+                treatments = treatments.filter(
+                    date_created__range=[start_date, end_date])
+        except (ValueError, AttributeError):
+            pass
+    elif time_filter == 'daily':
+        appointments = appointments.filter(date=today)
+        transactions = transactions.filter(date=today)
+        treatments = treatments.filter(date_created=today)
+    elif time_filter == 'weekly':
+        # Start of week (Monday)
+        start_date = today - timedelta(days=today.weekday())
+        appointments = appointments.filter(date__gte=start_date)
+        transactions = transactions.filter(date__gte=start_date)
+        treatments = treatments.filter(date_created__gte=start_date)
+    elif time_filter == 'monthly':
+        start_date = today.replace(day=1)  # Start of month
+        appointments = appointments.filter(date__gte=start_date)
+        transactions = transactions.filter(date__gte=start_date)
+        treatments = treatments.filter(date_created__gte=start_date)
+
+    # Appointment statistics
+    appointment_counts = {
+        'Completed': appointments.filter(status='Completed').count(),
+        'Pending': appointments.filter(status='Pending').count(),
+        'Cancelled': appointments.filter(status='Cancelled').count(),
+    }
+
+    # Transaction statistics (Top 5 by amount)
+    income_data = transactions.filter(type='Income').values('title').annotate(
+        total_amount=Sum('amount')).order_by('-total_amount')[:5]
+    expense_data = transactions.filter(type='Expense').values('title').annotate(
+        total_amount=Sum('amount')).order_by('-total_amount')[:5]
+
+    income_chart_data = {item['title']: float(
+        item['total_amount']) for item in income_data}
+    expense_chart_data = {item['title']: float(
+        item['total_amount']) for item in expense_data}
+
+    # Treatment statistics (Top 3 by count)
+    treatment_counts = treatments.values('treatment_type').annotate(
+        count=Count('id')).order_by('-count')[:3]
+    treatment_chart_data = {item['treatment_type']                            : item['count'] for item in treatment_counts}
 
     context = {
         'page_title': 'Statistics',
         'active_page': 'statistics',
-        'income': income_queryset,
-        'expense': expense_queryset,
-        'total_income': sum([income.amount for income in income_queryset]),
-        'total_expense': sum([expense.amount for expense in expense_queryset]),
-        'net_profit': sum([income.amount for income in income_queryset]) - sum([expense.amount for expense in expense_queryset]),
-        'total_transactions': Transaction.objects.all().count(),
+        'appointment_counts': json.dumps(appointment_counts),
+        'income_chart_data': json.dumps(income_chart_data),
+        'expense_chart_data': json.dumps(expense_chart_data),
+        'treatment_chart_data': json.dumps(treatment_chart_data),
+        'total_appointments': appointments.count(),
+        'total_income': float(transactions.filter(type='Income').aggregate(Sum('amount'))['amount__sum'] or 0),
+        'total_expense': float(transactions.filter(type='Expense').aggregate(Sum('amount'))['amount__sum'] or 0),
+        'time_filter': time_filter,
+        'date_range': date_range,
     }
     return render(request, 'statistics/statistics.html', context)
 

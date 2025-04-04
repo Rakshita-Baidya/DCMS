@@ -2,24 +2,57 @@
 {% load static %}
 {% block content %}
     <div class="mx-auto p-4 sm:p-2 lg:p-5 max-w-8xl">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1.2fr_1.6fr] gap-6 auto-rows-min">
-            <div class="space-y-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-min">
+            <div class="flex flex-col h-full ">
                 <div>
                     <p id="greeting" class="text-darkText text-2xl font-semibold"></p>
-                    <p>Today is {% now "l, F j, Y" %}</p>
-                    {% comment %} <p>The time is currently {% now "g:i A" %}</p> {% endcomment %}
+                    <p class="my-2">Today is {% now "l, F j, Y" %}</p>
                 </div>
-                <form method="get">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow">
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2 h-full">
+                        <img src="{% static 'images/dashboard/Lab.png' %}"
+                             alt="lab"
+                             width="full"
+                             height="full"
+                             class="w-12 h-12 object-contain">
+                        <h3 class="text-xl font-semibold">{{ lab_orders|default:"0" }}</h3>
+                        <p>Lab Orders</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center space-y-2 text-center h-full">
+                        <img src="{% static 'images/dashboard/Xray.png' %}"
+                             alt="xray"
+                             width="full"
+                             height="full"
+                             class="w-12 h-12 object-contain">
+                        <h3 class="text-xl font-semibold">{{ x_rays_taken }}</h3>
+                        <p>X-Rays Taken</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+                <div class="w-full relative">
+                    <canvas id="appointmentCompletion"></canvas>
+                    <div id="no-data-message"
+                         class="absolute inset-0 items-center text-center justify-center text-gray-500 font-semibold hidden">
+                        No Data Available
+                    </div>
+                </div>
+                <p class="mt-6 text-center font-semibold">Appointments Completed</p>
+            </div>
+            <div>
+                <form method="get" class="text-right mb-6">
                     <select name="filter"
                             onchange="this.form.submit()"
-                            class="px-2 py-1 border-2 border-primaryLogo rounded-lg focus:outline-none focus:ring-1 focus:ring-primaryLogo">
-                        <option value="overall" {% if time_filter == 'overall' %}selected{% endif %}>Overall</option>
+                            class="px-4 py-2 border-2 border-primaryLogo rounded-lg focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                        <option value="daily" {% if time_filter == 'daily' %}selected{% endif %}>Daily</option>
+                        <option value="weekly" {% if time_filter == 'weekly' %}selected{% endif %}>Weekly</option>
                         <option value="monthly" {% if time_filter == 'monthly' %}selected{% endif %}>Monthly</option>
                         <option value="quarterly"
                                 {% if time_filter == 'quarterly' %}selected{% endif %}>Quarterly</option>
+                        <option value="yearly" {% if time_filter == 'yearly' %}selected{% endif %}>Yearly</option>
                     </select>
                 </form>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-max">
                     <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2">
                         <img src="{% static 'images/dashboard/Patients.png' %}"
                              alt="patient"
@@ -27,11 +60,7 @@
                              height="full"
                              class="w-12 h-12 object-contain">
                         <h3 class="text-xl font-semibold">{{ total_patient }}</h3>
-                        <p>
-                            Total
-                            <br />
-                            Patients
-                        </p>
+                        <p>Registered Patients</p>
                     </div>
                     <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center space-y-2 text-center">
                         <img src="{% static 'images/dashboard/Schedule.png' %}"
@@ -40,43 +69,12 @@
                              height="full"
                              class="w-12 h-12 object-contain">
                         <h3 class="text-xl font-semibold">{{ total_appointment }}</h3>
-                        <p>
-                            Scheduled
-                            <br />
-                            Appointments
-                        </p>
+                        <p>Scheduled Appointments</p>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center">
-                <div class="w-full">
-                    <canvas id="appointmentCompletion"></canvas>
-                </div>
-                <p class="mt-2 text-center">Appointments Completed</p>
-            </div>
-            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo">
-                <h3 class="text-xl font-semibold text-center">Follow Up</h3>
-                <hr class="bg-[#00B2B0] h-1 my-2 rounded-sm">
-                <div class="max-h-48 overflow-y-auto pr-2 space-y-4">
-                    {% if follow_ups %}
-                        {% for follow_up in follow_ups %}
-                            <div>
-                                <p class="text-secondary text-justify">
-                                    Follow-up upcoming for appointment of <span class="font-bold">{{ follow_up.patient.name }}</span> on {{ follow_up.get_follow_up_date }}: {{ follow_up.description|default:"No description" }}
-                                </p>
-                                <p class="text-secondary text-right">
-                                    <span class="font-semibold">Follow-up Date:</span> {{ follow_up.get_follow_up_date|date:"d/m/Y" }}
-                                </p>
-                            </div>
-                            {% if not forloop.last %}<hr class="bg-[#00B2B0] h-0.5 my-2 rounded-sm">{% endif %}
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-center text-gray-500 py-4">No upcoming follow-ups within the next week.</p>
-                    {% endif %}
-                </div>
-            </div>
             <div class="col-span-1 md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white rounded-lg shadow-sm p-4 border-2 border-primaryLogo min-h-[20rem] overflow-y-auto no-scrollbar">
+                <div class="bg-white rounded-lg shadow-sm p-4 border-2 border-primaryLogo min-h-[24rem] overflow-y-auto no-scrollbar">
                     <h3 class="text-xl font-semibold">Pending Appointments</h3>
                     {% if pending_appointments %}
                         <div class="relative overflow-x-auto">
@@ -120,12 +118,33 @@
                         <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
                     {% endif %}
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo h-full flex flex-col justify-center">
+                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo">
+                    <h3 class="text-xl font-semibold text-center">Follow Up Appointments</h3>
+                    <hr class="bg-[#00B2B0] h-1 my-2 rounded-sm">
+                    <div class="max-h-72 overflow-y-auto pr-2 space-y-4">
+                        {% if follow_ups %}
+                            {% for follow_up in follow_ups %}
+                                <div class="px-2">
+                                    <p class="text-secondary text-justify mb-2">
+                                        Follow-up for appointment of <span class="font-bold">{{ follow_up.patient.name }}</span> [Contact: {{ follow_up.patient.contact }}] on for: {{ follow_up.description|default:"No description" }}
+                                    </p>
+                                    <p class="text-secondary text-right">
+                                        <span class="font-semibold">Follow-up Date:</span> {{ follow_up.get_follow_up_date|date:"l, F j, Y" }}
+                                    </p>
+                                </div>
+                                {% if not forloop.last %}<hr class="bg-[#00B2B0] h-0.5 my-2 rounded-sm">{% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-center text-gray-500 py-4">No upcoming follow-ups within the next week.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% comment %} <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo h-full flex flex-col justify-center">
                     <h3 class="text-xl font-semibold text-center">Treatment Summary</h3>
                     <div class="w-full">
                         <canvas id="treatmentSummary"></canvas>
                     </div>
-                </div>
+                </div> {% endcomment %}
             </div>
         </div>
     </div>
@@ -161,39 +180,57 @@
     </script>
     {% comment %} for charts {% endcomment %}
     <script>
-            document.addEventListener("DOMContentLoaded", function() {
-            
-            //appointment
+        document.addEventListener("DOMContentLoaded", function() {
             const appointmentData = JSON.parse("{{ appointment_data|escapejs }}");
-    
-            const ctx = document.getElementById('appointmentCompletion');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(appointmentData),  
-                    datasets: [{
-                        label: 'Appointments Status',
-                        data: Object.values(appointmentData), 
-                        backgroundColor: ['#00B2B2', '#7c7c7c', '#B20003' ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    cutout: 40, 
-                    responsive: true,
-                    aspectRatio: 1.6, 
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(tooltipItem) {
-                                    let value = tooltipItem.raw;
-                                    return ` ${value} appointments`;
+            const ctx = document.getElementById('appointmentCompletion').getContext('2d');
+            const noDataMessage = document.getElementById('no-data-message');
+
+            // Check if there's no data
+            const hasData = Object.values(appointmentData).some(value => value > 0);
+
+            if (!hasData) {
+                noDataMessage.classList.remove('hidden');
+            } else {
+                noDataMessage.classList.add('hidden');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(appointmentData),  
+                        datasets: [{
+                            label: 'Appointments Status',
+                            data: Object.values(appointmentData), 
+                            backgroundColor: ['#00B2B2', '#7c7c7c', '#B20003'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        cutout: 40, 
+                        responsive: true,
+                        aspectRatio: 2.5, 
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    boxWidth: 20,
+                                    padding: 15,
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        let value = tooltipItem.raw;
+                                        return ` ${value} appointments`;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
+        });
 
             // treatment Summary
             const treatmentData = JSON.parse("{{ treatment_data|escapejs }}");
@@ -231,6 +268,5 @@
                     }
                 },
             });
-        });
     </script>
 {% endblock content %}
