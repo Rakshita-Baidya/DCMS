@@ -21,8 +21,8 @@
                 Patient / Dental Chart
             </p>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo grid grid-cols-2 gap-4">
-            <div class="w-full flex justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo grid grid-cols-2 gap-4 h-4/5">
+            <div class="w-full flex justify-center sticky top-0 h-fit mt-4">
                 <svg xmlns:svg="http://www.w3.org/2000/svg"
                      xmlns="http://www.w3.org/2000/svg"
                      version="1.1"
@@ -457,7 +457,7 @@
                     <path d="M 0,185.27199 H 289.61084" style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
                 </svg>
             </div>
-            <div>
+            <div class="max-h-[60vh] overflow-y-auto">
                 <form method="post" enctype="multipart/form-data" class="text-md">
                     {% csrf_token %}
                     {{ wizard.management_form }}
