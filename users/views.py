@@ -101,7 +101,7 @@ def user_logout(request):
 @login_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator'])
 def users_list(request):
-    user_queryset = User.objects.all().order_by('role')
+    user_queryset = User.objects.all().order_by('date_joined')
     serializer = UserSerializer
 
     # user needs to be deleted

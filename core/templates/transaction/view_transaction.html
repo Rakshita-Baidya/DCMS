@@ -276,6 +276,7 @@
             flatpickr("#date-range-picker", {
                 mode: "range",
                 dateFormat: "Y-m-d",
+                
                 onClose: function(selectedDates, dateStr, instance) {
                     if (selectedDates.length === 1) {
                         instance.element.value = selectedDates[0].toISOString().split('T')[0];

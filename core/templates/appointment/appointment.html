@@ -238,6 +238,7 @@
         flatpickr("#date-range-picker", {
             mode: "range",
             dateFormat: "Y-m-d",
+            maxDate: "today",
             onClose: function(selectedDates, dateStr, instance) {
                 if (selectedDates.length === 1) {
                     instance.element.value = selectedDates[0].toISOString().split('T')[0];
@@ -251,10 +252,10 @@
             }
         });
 
-        document.getElementById('date-range-picker').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('filter-form').submit();
-            }
+        const timeFilter = document.getElementById("timeFilter");
+        timeFilter.addEventListener("change", function() {
+            document.getElementById("date-range-picker").value = ""; 
+            this.form.submit();
         });
 
         
