@@ -27,7 +27,7 @@
                 {% csrf_token %}
                 {{ wizard.management_form }}
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.treatment_plan.label_tag }}*</label>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.treatment_plan.label_tag }}</label>
                     {{ wizard.form.treatment_plan|attr:"rows:5"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if wizard.form.treatment_plan.errors %}
                         <div class="text-dangerRed text-sm">{{ wizard.form.treatment_plan.errors }}</div>

@@ -58,8 +58,8 @@
                                 <td class="py-3">{{ patient.id }}</td>
                                 <td>{{ patient.name }}</td>
                                 <td>{{ patient.contact }}</td>
-                                <td>{{ patient.address }}</td>
-                                <td>{{ patient.email }}</td>
+                                <td>{{ patient.address|default:"-" }}</td>
+                                <td>{{ patient.email|default:"-" }}</td>
                                 <td>{{ patient.blood_group }}</td>
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">
@@ -109,18 +109,36 @@
                     </tbody>
                 </table>
                 {% comment %} Pagination {% endcomment %}
-                {% if patient.has_other_pages %}
+                {% if patients.has_other_pages %}
                     <div class="flex justify-center mt-8">
                         <div class="flex items-center space-x-2">
-                            {% if patient.has_previous %}
-                                <a href="?page={{ patient.previous_page_number }}&search={{ search_query }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer"><g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0"/><path d="M11.05 12.941 8.118 10l2.934-2.941"/></g></svg>
+                            {% if patients.has_previous %}
+                                <a href="?page={{ patients.previous_page_number }}&search={{ search_query }}&blood_group={{ blood_group_filter }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="20"
+                                         height="20"
+                                         viewBox="0 0 20 20"
+                                         class="cursor-pointer">
+                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0" />
+                                        <path d="M11.05 12.941 8.118 10l2.934-2.941" />
+                                        </g>
+                                    </svg>
                                 </a>
                             {% endif %}
-                            <p class="px-3 py-2">Page {{ patient.number }} of {{ patient.paginator.num_pages }}</p>
-                            {% if patient.has_next %}
-                                <a href="?page={{ patient.next_page_number }}&search={{ search_query }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer"><g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0"/><path d="M8.95 12.941 11.882 10 8.949 7.059"/></g></svg>
+                            <p class="px-3 py-2">Page {{ patients.number }} of {{ patients.paginator.num_pages }}</p>
+                            {% if patients.has_next %}
+                                <a href="?page={{ patients.next_page_number }}&search={{ search_query }}&blood_group={{ blood_group_filter }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="20"
+                                         height="20"
+                                         viewBox="0 0 20 20"
+                                         class="cursor-pointer">
+                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0" />
+                                        <path d="M8.95 12.941 11.882 10 8.949 7.059" />
+                                        </g>
+                                    </svg>
                                 </a>
                             {% endif %}
                         </div>

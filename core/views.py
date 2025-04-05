@@ -418,14 +418,6 @@ def edit_staff_profile(request, user_id):
 def patient(request):
     patient_queryset = Patient.objects.all().order_by('id')
 
-    # patient needs to be deleted
-    if request.method == 'POST' and 'delete_patient_id' in request.POST:
-        patient_id_to_delete = request.POST['delete_patient_id']
-        patient_to_delete = Patient.objects.get(id=patient_id_to_delete)
-        patient_to_delete.delete()
-        messages.success(request, f"Patient {
-                         patient_to_delete.name} has been deleted.")
-
     # Add search functionality
     search_query = request.GET.get('search', '')
     if search_query:
@@ -448,6 +440,14 @@ def patient(request):
     paginator = Paginator(patient_queryset, 8)
     page = request.GET.get('page', 1)
     patient_list = paginator.get_page(page)
+
+    # patient needs to be deleted
+    if request.method == 'POST' and 'delete_patient_id' in request.POST:
+        patient_id_to_delete = request.POST['delete_patient_id']
+        patient_to_delete = Patient.objects.get(id=patient_id_to_delete)
+        patient_to_delete.delete()
+        messages.success(request, f"Patient {
+                         patient_to_delete.name} has been deleted.")
 
     context = {
         'page_title': 'Patient Management',
@@ -486,7 +486,11 @@ class PatientFormWizard(SessionWizardView):
             'active_page': 'patient',
         })
         if self.steps.current == '2':  # Dental Chart step
-            context['tooth_record_formset'] = ToothRecordFormSet()
+            if self.request.method == 'POST' and self.steps.current == self.get_step_index():
+                context['tooth_record_formset'] = ToothRecordFormSet(
+                    self.request.POST)
+            else:
+                context['tooth_record_formset'] = ToothRecordFormSet()
         return context
 
     def get_form_instance(self, step):
@@ -500,26 +504,65 @@ class PatientFormWizard(SessionWizardView):
             return TreatmentPlan()
         return None
 
+    def post(self, *args, **kwargs):
+        current_step = self.steps.current
+
+        if current_step == '0':  # Save patient in step 0
+            form = self.get_form(step=current_step, data=self.request.POST)
+            if form.is_valid():
+                patient = form.save()
+                self.storage.extra_data['patient_id'] = patient.id
+                self.storage.set_step_data(
+                    current_step, self.process_step(form))
+                return self.render_next_step(form)
+            return self.render(form)
+
+        if current_step == '2':  # Dental Chart step
+            form = self.get_form(step=current_step, data=self.request.POST)
+            tooth_record_formset = ToothRecordFormSet(self.request.POST)
+
+            if form.is_valid() and tooth_record_formset.is_valid():
+                self.storage.set_step_data(
+                    current_step, self.process_step(form))
+                dental_chart = form.save(commit=False)
+                dental_chart.patient = self.get_patient_instance()
+                dental_chart.save()
+
+                tooth_record_formset.instance = dental_chart
+                tooth_record_formset.save()
+
+                return self.render_next_step(form)
+            else:
+                return self.render(form, tooth_record_formset=tooth_record_formset)
+
+        return super().post(*args, **kwargs)
+
+    def get_patient_instance(self):
+
+        patient_id = self.storage.extra_data.get('patient_id')
+        if patient_id:
+            return Patient.objects.get(id=patient_id)
+        patient_data = self.get_cleaned_data_for_step('0')
+        if patient_data:
+            patient = Patient(**patient_data)
+            patient.save()
+            self.storage.extra_data['patient_id'] = patient.id
+            return patient
+        return None
+
     def done(self, form_list, **kwargs):
         request = self.request
-        # Save patient info
-        patient = form_list[0].save()
+
+        patient = self.get_patient_instance()
+        if not patient:
+            patient = form_list[0].save()
 
         # Save medical history
         medical_history = form_list[1].save(commit=False)
         medical_history.patient = patient
         medical_history.save()
 
-        # Save dental chart
-        dental_chart = form_list[2].save(commit=False)
-        dental_chart.patient = patient
-        dental_chart.save()
-
-        # Save tooth records
-        tooth_record_formset = ToothRecordFormSet(
-            request.POST, instance=dental_chart)
-        if tooth_record_formset.is_valid():
-            tooth_record_formset.save()
+        dental_chart = DentalChart.objects.filter(patient=patient).first()
 
         # Save treatment plan
         treatment_plan = form_list[3].save(commit=False)

@@ -619,18 +619,22 @@
                 </div>
                 {% comment %}Medical History Tab {% endcomment %}
                 <div id="medical-tab" class="tab-content hidden">
-                    <div class="grid grid-cols-4 gap-8">
-                        {% for section, fields in medical_history_data.items %}
-                            <div class="mb-2">
-                                <p class="font-bold text-lg mb-2">{{ section }}</p>
-                                {% for field, value in fields.items %}
-                                    <p class="mb-2">
-                                        {{ field|title }}: <span class="text-gray-600">{{ value }}</span>
-                                    </p>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                    </div>
+                    {% if medical_history_data %}
+                        <div class="grid grid-cols-4 gap-8">
+                            {% for section, fields in medical_history_data.items %}
+                                <div class="mb-2">
+                                    <p class="font-bold text-lg mb-2">{{ section }}</p>
+                                    {% for field, value in fields.items %}
+                                        <p class="mb-2">
+                                            {{ field|title }}: <span class="text-gray-600">{{ value }}</span>
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-center text-gray-500 py-4">No medical history data available.</p>
+                    {% endif %}
                 </div>
                 {% comment %}Treatment History Tab {% endcomment %}
                 <div id="treatment-tab" class="tab-content hidden">
