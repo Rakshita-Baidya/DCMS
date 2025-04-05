@@ -1513,11 +1513,6 @@ def view_transaction(request):
         except (ValueError, AttributeError):
             pass
 
-    # Pagination
-    paginator = Paginator(transaction_queryset, 8)
-    page = request.GET.get('page', 1)
-    transaction_list = paginator.get_page(page)
-
     # transaction needs to be deleted
     if request.method == 'POST' and 'delete_transaction_id' in request.POST:
         transaction_id_to_delete = request.POST['delete_transaction_id']
@@ -1530,10 +1525,20 @@ def view_transaction(request):
     income_queryset = transaction_queryset.filter(type="Income")
     expense_queryset = transaction_queryset.filter(type="Expense")
 
+    # Pagination
+    income_paginator = Paginator(income_queryset, 8)
+    income_page = request.GET.get('income_page', 1)
+    income_transaction_list = income_paginator.get_page(income_page)
+
+    expense_paginator = Paginator(expense_queryset, 8)
+    expense_page = request.GET.get('expense_page', 1)
+    expense_transaction_list = expense_paginator.get_page(expense_page)
+
     context = {
         'page_title': 'Transaction Management',
         'active_page': 'transaction',
-        'transaction': transaction_list,
+        'income_transaction': income_transaction_list,
+        'expense_transaction': expense_transaction_list,
         'total_transactions': transaction_queryset.count(),
         'income_transactions': income_queryset,
         'expense_transactions': expense_queryset,
