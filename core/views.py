@@ -674,9 +674,12 @@ class EditPatientFormWizard(SessionWizardView):
         })
         if self.steps.current == '2':  # Dental Chart step
             dental_chart = self.get_form_instance('2')
-            context['tooth_record_formset'] = ToothRecordFormSet(
-                instance=dental_chart)
-
+            if self.request.method == 'POST' and self.steps.current == self.get_step_index():
+                context['tooth_record_formset'] = ToothRecordFormSet(
+                    self.request.POST, instance=dental_chart)
+            else:
+                context['tooth_record_formset'] = ToothRecordFormSet(
+                    instance=dental_chart)
         return context
 
     def get_form_instance(self, step):
@@ -691,48 +694,60 @@ class EditPatientFormWizard(SessionWizardView):
         elif step == '1':  # Medical History Form
             medical_history, created = MedicalHistory.objects.get_or_create(
                 patient=patient)
-
             return medical_history
         elif step == '2':  # Dental Chart Form
             dental_chart, created = DentalChart.objects.get_or_create(
                 patient=patient)
             return dental_chart
         elif step == '3':  # Treatment Plan Form
-            treatment_plan, created = TreatmentPlan.objects.update_or_create(
+            treatment_plan, created = TreatmentPlan.objects.get_or_create(
                 patient=patient)
             return treatment_plan
         return None
+
+    def post(self, *args, **kwargs):
+        current_step = self.steps.current
+
+        if current_step == '0':  # Patient info step
+            form = self.get_form(step=current_step, data=self.request.POST)
+            if form.is_valid():
+                form.save()  # Update patient directly
+                self.storage.set_step_data(
+                    current_step, self.process_step(form))
+                return self.render_next_step(form)
+            return self.render(form)
+
+        if current_step == '2':  # Dental Chart step
+            form = self.get_form(step=current_step, data=self.request.POST)
+            dental_chart = self.get_form_instance('2')
+            tooth_record_formset = ToothRecordFormSet(
+                self.request.POST, instance=dental_chart)
+
+            if form.is_valid() and tooth_record_formset.is_valid():
+                self.storage.set_step_data(
+                    current_step, self.process_step(form))
+                form.save()  # Update dental chart
+                tooth_record_formset.save()  # Save tooth records
+                return self.render_next_step(form)
+            else:
+                return self.render(form, tooth_record_formset=tooth_record_formset)
+
+        return super().post(*args, **kwargs)
 
     def done(self, form_list, **kwargs):
         request = self.request
         patient_id = self.kwargs.get('patient_id')
         patient = get_object_or_404(Patient, id=patient_id)
 
-        # Update patient info
-        patient_form = form_list[0]
-        for field, value in patient_form.cleaned_data.items():
-            setattr(patient, field, value)
-        patient.save()
-
-        # Update or create medical history
+        # Medical history
         medical_history_form = form_list[1]
         medical_history, created = MedicalHistory.objects.update_or_create(
             patient=patient, defaults=medical_history_form.cleaned_data
         )
 
-        # Update or create dental chart
-        dental_chart_form = form_list[2]
-        dental_chart, created = DentalChart.objects.update_or_create(
-            patient=patient, defaults=dental_chart_form.cleaned_data
-        )
+        dental_chart = DentalChart.objects.filter(patient=patient).first()
 
-        # Update or create tooth records
-        tooth_record_formset = ToothRecordFormSet(
-            request.POST, instance=dental_chart)
-        if tooth_record_formset.is_valid():
-            tooth_record_formset.save()
-
-        # Update or create treatment plan
+        # Treatment plan
         treatment_plan_form = form_list[3]
         treatment_plan, created = TreatmentPlan.objects.update_or_create(
             patient=patient, defaults=treatment_plan_form.cleaned_data
