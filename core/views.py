@@ -1,9 +1,17 @@
-from .models import Appointment, Transaction, TreatmentRecord
 from datetime import timedelta
 from django.db.models import Count, Sum
 from decimal import Decimal
-from .models import Appointment, TreatmentRecord, Payment
-from .forms import AppointmentForm, TransactionForm, TreatmentRecordForm, TreatmentDoctorFormSet, PurchasedProductFormSet, PaymentForm
+
+from django.http import FileResponse
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, FrameBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from django.conf import settings
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count
 from django.db.models import Q
@@ -27,11 +35,13 @@ from users.forms import UserEditForm
 from users.serializers import UserSerializer
 from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
 
-from .models import Patient, MedicalHistory, DentalChart, Payment, ToothRecord, Appointment, TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction
+from .models import (Patient, MedicalHistory, DentalChart, Payment, ToothRecord, Appointment,
+                     TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction)
 from .forms import (AppointmentForm, PatientForm,  MedicalHistoryForm,
-                    DentalChartForm, PaymentForm, PurchasedProductFormSet, ToothRecordFormSet, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentPlanForm, TreatmentRecordForm)
+                    DentalChartForm, PaymentForm, PurchasedProductFormSet, ToothRecordFormSet, TransactionForm, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentPlanForm, TreatmentRecordForm)
 
-from .serializers import PatientSerializer, MedicalHistorySerializer,  AppointmentSerializer, ToothRecordSerializer, DentalChartSerializer, PaymentSerializer, TransactionSerializer, TreatmentPlanSerializer, TreatmentDoctorSerializer, TreatmentRecordSerializer, PurchasedProductSerializer
+from .serializers import (PatientSerializer, MedicalHistorySerializer,  AppointmentSerializer, ToothRecordSerializer, DentalChartSerializer,
+                          PaymentSerializer, TransactionSerializer, TreatmentPlanSerializer, TreatmentDoctorSerializer, TreatmentRecordSerializer, PurchasedProductSerializer)
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
@@ -739,15 +749,14 @@ class EditPatientFormWizard(SessionWizardView):
         return redirect('core:patient')
 
 
-@login_required(login_url='login')
-def view_patient_profile(request, patient_id):
-    patient_queryset = Patient.objects.get(pk=patient_id)
+def get_patient_data(patient_id):
+    patient = get_object_or_404(Patient, pk=patient_id)
 
-    patient_history = getattr(patient_queryset, 'patient_history', None)
-    dental_chart = getattr(patient_queryset, 'dental_chart')
-    treatment_plan = getattr(patient_queryset, 'treatment_plan', None)
+    patient_history = getattr(patient, 'patient_history', None)
+    dental_chart = getattr(patient, 'dental_chart', None)
+    treatment_plan = getattr(patient, 'treatment_plan', None)
     completed_appointments = Appointment.objects.filter(
-        patient=patient_queryset, status='Completed'
+        patient=patient, status='Completed'
     ).prefetch_related('treatment_records')
 
     treatment_history = [
@@ -760,9 +769,6 @@ def view_patient_profile(request, patient_id):
         if appointment.treatment_records.exists()
     ]
 
-    exclude_fields = {'id', 'patient', 'history'}
-
-    # Define sections for medical history
     medical_history_sections = {
         "General": ["marked_weight_change"],
         "Heart": ["chest_pain", "hypertention", "ankle_edema", "rheumatic_fever", "rheumatic_fever_age", "stroke_history", "stroke_date"],
@@ -797,7 +803,22 @@ def view_patient_profile(request, patient_id):
     medical_history_data = get_sectioned_data(
         patient_history, medical_history_sections)
 
-    # patient needs to be deleted
+    return {
+        'patient': patient,
+        'patient_history': patient_history,
+        'dental_chart': dental_chart,
+        'treatment_plan': treatment_plan,
+        'treatment_history': treatment_history,
+        'medical_history_data': medical_history_data,
+        'tooth_records': dental_chart.tooth_records.all() if dental_chart else None
+    }
+
+
+@login_required(login_url='login')
+def view_patient_profile(request, patient_id):
+    data = get_patient_data(patient_id)
+
+    # Handle patient deletion
     if request.method == 'POST' and 'delete_patient_id' in request.POST:
         if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
@@ -805,23 +826,253 @@ def view_patient_profile(request, patient_id):
             patient_id_to_delete = request.POST['delete_patient_id']
             patient_to_delete = Patient.objects.get(id=patient_id_to_delete)
             patient_to_delete.delete()
-            messages.success(request, f"Patient {
-                patient_to_delete.name} has been deleted.")
+            messages.success(
+                request, f"Patient {patient_to_delete.name} has been deleted.")
             return redirect('core:patient')
 
     context = {
         'page_title': 'Patient Management',
         'active_page': 'patient',
-        'patient': patient_queryset,
-        'patient_history': patient_history,
-        'medical_history_data': medical_history_data,
-        'treatment_plan': treatment_plan,
-        'dental_chart': dental_chart,
-        'tooth_records': dental_chart.tooth_records.all() if dental_chart else None,
-        'treatment_history': treatment_history,
+        **data
     }
 
     return render(request, 'patient/view_patient_profile.html', context)
+
+
+def generate_patient_pdf(request, patient_id):
+    data = get_patient_data(patient_id)
+    patient = data['patient']
+    patient_history = data['patient_history']
+    dental_chart = data['dental_chart']
+    treatment_plan = data['treatment_plan']
+    treatment_history = data['treatment_history']
+    medical_history_data = data['medical_history_data']
+    tooth_records = data['tooth_records']
+
+    # Create a PDF buffer
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+
+    # Custom styles
+    section_style = ParagraphStyle(
+        'Section',
+        parent=styles['Heading2'],
+        spaceAfter=10,
+        fontSize=14,
+        underline=True,
+        underlineColor=colors.HexColor('#000000'),
+    )
+    sub_section_style = ParagraphStyle(
+        'SubSection',
+        parent=styles['Heading3'],
+        textColor=colors.HexColor('#000000'),
+        spaceAfter=8,
+        fontSize=14,
+    )
+    normal_colored_style = ParagraphStyle(
+        'NormalColored',
+        parent=styles['Normal'],
+        textColor=colors.HexColor('#000000'),
+        spaceAfter=6,
+        fontSize=11,
+    )
+
+    elements = []
+
+    logo_path = None
+    logo_relative_path = 'images/logo/logo.png'
+
+    if hasattr(settings, 'STATIC_ROOT') and settings.STATIC_ROOT:
+        logo_path = os.path.join(settings.STATIC_ROOT, logo_relative_path)
+
+    if not logo_path or not os.path.exists(logo_path):
+        for static_dir in settings.STATICFILES_DIRS:
+            potential_path = os.path.join(static_dir, logo_relative_path)
+            if os.path.exists(potential_path):
+                logo_path = potential_path
+                break
+
+    clinic_details = {
+        'name': 'Smile by Dr. Kareen',
+        'address': 'Pulchowk-3, Damkal Chowk, Lalitpur, Nepal',
+        'address2': '(Opposite to Sumeru Hospital)',
+        'tel': '1 5920775',
+        'contact': '+977 9851359775',
+        'email': 'smilebydrkareen@gmail.com'
+    }
+
+    header_data = [
+        [
+            Image(logo_path, width=100, height=100) if logo_path and os.path.exists(
+                logo_path) else Paragraph("Logo not found", styles['Normal']),
+            [
+                Paragraph(f"{clinic_details['name']}", styles['Heading1']),
+                Paragraph(
+                    f"{clinic_details['address']}<br/>{clinic_details['address2']}<br/>Tel: {clinic_details['tel']}<br/>Contact: {clinic_details['contact']}<br/>Email: {clinic_details['email']}", styles['Normal'])
+            ]
+        ]
+    ]
+    header_table = Table(header_data, colWidths=[3*inch])
+    header_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (0, 0), 'LEFT'),
+        ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('BACKGROUND', (0, 0), (-1, -1), colors.white),
+        ('GRID', (0, 0), (-1, -1), 0, colors.white)
+    ]))
+    elements.append(header_table)
+
+    # Solid line after header
+    elements.append(Spacer(1, 6))
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                    style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
+    elements.append(Spacer(1, 12))
+
+    # Patient Name (Highlighted)
+    elements.append(Paragraph(f"{patient.name}", style=styles['Heading1']))
+
+    # Patient Information (Grid)
+    elements.append(Paragraph("Patient Information", section_style))
+    patient_data = [
+        ["ID:", str(patient.id), "Contact:", patient.contact],
+        ["Address:", patient.address or "N/A", "Gender:", patient.gender],
+        ["Blood Group:", patient.blood_group, "Age:",
+            str(patient.age) if patient.age else "N/A"],
+        ["Email:", patient.email or "N/A", "Telephone:", patient.telephone or "N/A"],
+        ["Occupation:", patient.occupation or "N/A",
+            "Nationality:", patient.nationality or "N/A"],
+        ["Marital Status:", patient.marital_status,
+            "Referred By:", patient.reffered_by or "N/A"],
+        ["Date Created:", patient.date_created.strftime(
+            '%Y-%m-%d') if patient.date_created else "N/A", "", ""]
+    ]
+    patient_grid = Table(patient_data, colWidths=[
+                         1.5*inch, 1.5*inch, 1.5*inch, 1.5*inch])
+    patient_grid.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTNAME', (2, 0), (2, -1), 'Helvetica-Bold'),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTSIZE', (0, 0), (-1, -1), 11),
+        ('GRID', (0, 0), (-1, -1), 0, colors.white),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP')
+    ]))
+    elements.append(patient_grid)
+
+    elements.append(Spacer(1, 12))
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                    style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
+    elements.append(Spacer(1, 12))
+
+    # Emergency Contact
+    elements.append(Paragraph("Emergency Contact", section_style))
+    elements.append(
+        Paragraph(f"Name: {patient.emergency_contact_name}", normal_colored_style))
+    elements.append(Paragraph(
+        f"Contact: {patient.emergency_contact_contact}", normal_colored_style))
+    elements.append(Paragraph(
+        f"Address: {patient.emergency_contact_address or 'N/A'}", normal_colored_style))
+    elements.append(Paragraph(
+        f"Relation: {patient.emergency_contact_relation or 'N/A'}", normal_colored_style))
+
+    elements.append(Spacer(1, 12))
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                    style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
+
+    # Medical History
+    elements.append(FrameBreak())
+    elements.append(Paragraph("Medical History", section_style))
+    for section, data in medical_history_data.items():
+        elements.append(Paragraph(section, sub_section_style))
+        for key, value in data.items():
+            elements.append(
+                Paragraph(f"{key.replace('_', ' ').title()}: {value}", normal_colored_style))
+        elements.append(Spacer(1, 6))
+    elements.append(Spacer(1, 6))
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                    style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
+    elements.append(Spacer(1, 12))
+
+    # Dental Chart
+    elements.append(Paragraph("Dental Chart", section_style))
+    if tooth_records:
+        tooth_data = [["Tooth No", "Condition", "Description"]] + [
+            [record.tooth_no, record.condition or "N/A", record.description or "N/A"]
+            for record in tooth_records
+        ]
+        tooth_table = Table(tooth_data, colWidths=[2*inch, 2*inch, 2*inch])
+        tooth_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#7c7c7c')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 13),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('FONTSIZE', (0, 1), (-1, -1), 12),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor('#000000')),
+            ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#7c7c7c'))
+        ]))
+        elements.append(tooth_table)
+    else:
+        elements.append(
+            Paragraph("No dental records available", normal_colored_style))
+
+    elements.append(Spacer(1, 12))
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                    style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
+
+    # Treatment Plan
+    elements.append(FrameBreak())
+    elements.append(Paragraph("Treatment Plan", section_style))
+    elements.append(Paragraph(
+        treatment_plan.treatment_plan if treatment_plan and treatment_plan.treatment_plan else "No treatment plan specified",
+        normal_colored_style
+    ))
+
+    elements.append(Spacer(1, 12))
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                    style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
+    elements.append(Spacer(1, 12))
+
+    # Treatment History
+    elements.append(Paragraph("Treatment History", section_style))
+    if treatment_history:
+        treatment_data = [["Appt. ID", "Date", "Treatment Type", "T.Cost"]] + [
+            [
+                treatment['appointment_id'],
+                treatment['appointment_date'].strftime('%Y-%m-%d'),
+                treatment['treatment_record'].treatment_type or "N/A",
+                str(treatment['treatment_record'].treatment_cost or 0)
+            ]
+            for treatment in treatment_history
+        ]
+        treatment_table = Table(treatment_data, colWidths=[
+                                1.5*inch, 1.5*inch, 2*inch, 1*inch])
+        treatment_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#7c7c7c')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 13),
+            ('FONTSIZE', (0, 1), (-1, -1), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor('#000000')),
+            ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#7c7c7c'))
+        ]))
+        elements.append(treatment_table)
+    else:
+        elements.append(
+            Paragraph("No treatment history available", normal_colored_style))
+
+    elements.append(Spacer(1, 12))
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                    style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
+
+    # Build PDF
+    doc.build(elements)
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f"{patient.name}_Report_{timezone.now().date()}.pdf")
 
 
 @login_required(login_url='login')

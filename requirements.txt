@@ -1,6 +1,7 @@
 argcomplete==3.5.3
 asgiref==3.8.1
 attrs==24.3.0
+chardet==5.2.0
 charset-normalizer==3.4.1
 click==8.1.7
 colorama==0.4.6
@@ -37,6 +38,7 @@ questionary==2.1.0
 rcssmin==1.1.2
 referencing==0.36.1
 regex==2024.11.6
+reportlab==4.3.1
 rjsmin==1.2.2
 rpds-py==0.22.3
 six==1.17.0

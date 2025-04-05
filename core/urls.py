@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import (add_transaction, dashboard, doctor, edit_appointment, edit_transaction, view_doctor_profile, edit_doctor_profile, staff, view_staff_profile, edit_staff_profile,
+from .views import (add_transaction, dashboard, doctor, edit_appointment, edit_transaction, generate_patient_pdf, view_doctor_profile, edit_doctor_profile, staff, view_staff_profile, edit_staff_profile,
                     patient, view_patient_profile, appointment, view_appointment, view_transaction, statistics,  error,
                     # schedule,
                     edit_patient_profile)
@@ -38,7 +38,8 @@ urlpatterns = [
          EditPatientFormWizard.as_view(), name='edit_patient_profile'),
     path('patient/<int:patient_id>/edit/<int:step>/',
          edit_patient_profile, name='edit_patient_profile_step'),
-
+    path('patient/<int:patient_id>/pdf/',
+         generate_patient_pdf, name='generate_patient_pdf'),
 
     path('appointment/', appointment, name='appointment'),
     #     path('appointment/add/', add_appointment, name='add_appointment'),
