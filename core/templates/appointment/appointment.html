@@ -1,15 +1,11 @@
 {% extends "index.html" %}
-{% load static %}
-{% load widget_tweaks %}
+{% load static widget_tweaks %}
 {% block content %}
     <div class="p-8">
         {% comment %} Header Section {% endcomment %}
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <p class="text-gray-700 text-2xl font-medium">{{ total_appointment }} Total Appointments</p>
-            </div>
+        <header class="flex justify-between items-center mb-6">
+            <p class="text-gray-700 text-2xl font-medium">{{ total_appointment }} Total Appointments</p>
             <div class="flex items-center space-x-4">
-                {% comment %} Toggle Switch for List/Schedule View {% endcomment %}
                 <div class="flex items-center space-x-2">
                     <button id="list-view-btn"
                             class="p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo bg-gray-200 hover:bg-gray-300">
@@ -17,59 +13,56 @@
                              height="20"
                              viewBox="0 0 24 24"
                              fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
+                             xmlns="http://www.w3.org/2000/svg"
+                             class="list-svg">
                             <path d="M4 7a1 1 0 0 1 1-1h1a1 1 0 0 1 0 2H5a1 1 0 0 1-1-1m5 0a1 1 0 0 1 1-1h9a1 1 0 1 1 0 2h-9a1 1 0 0 1-1-1m-5 5a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1m5 0a1 1 0 0 1 1-1h9a1 1 0 1 1 0 2h-9a1 1 0 0 1-1-1m-5 5a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1m5 0a1 1 0 0 1 1-1h9a1 1 0 1 1 0 2h-9a1 1 0 0 1-1-1" fill="#000000" />
                         </svg>
                     </button>
                     <button id="schedule-view-btn"
                             class="p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo bg-gray-200 hover:bg-gray-300">
-                        <svg fill="#000000"
-                             width="20"
+                        <svg width="20"
                              height="20"
                              viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 14a1 1 0 1 0-1-1 1 1 0 0 0 1 1m5 0a1 1 0 1 0-1-1 1 1 0 0 0 1 1m-5 4a1 1 0 1 0-1-1 1 1 0 0 0 1 1m5 0a1 1 0 1 0-1-1 1 1 0 0 0 1 1M7 14a1 1 0 1 0-1-1 1 1 0 0 0 1 1M19 4h-1V3a1 1 0 0 0-2 0v1H8V3a1 1 0 0 0-2 0v1H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3m1 15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9h16Zm0-11H4V7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1ZM7 18a1 1 0 1 0-1-1 1 1 0 0 0 1 1" />
+                             xmlns="http://www.w3.org/2000/svg"
+                             class="schedule-svg">
+                            <path d="M12 14a1 1 0 1 0-1-1 1 1 0 0 0 1 1m5 0a1 1 0 1 0-1-1 1 1 0 0 0 1 1m-5 4a1 1 0 1 0-1-1 1 1 0 0 0 1 1m5 0a1 1 0 1 0-1-1 1 1 0 0 0 1 1M7 14a1 1 0 1 0-1-1 1 1 0 0 0 1 1M19 4h-1V3a1 1 0 0 0-2 0v1H8V3a1 1 0 0 0-2 0v1H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3m1 15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9h16Zm0-11H4V7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1ZM7 18a1 1 0 0 0-1-1 1 1 0 0 0 1 1" fill="#000000" />
                         </svg>
                     </button>
                 </div>
-                {% comment %} Add Appointment Button {% endcomment %}
-                <div>
-                    <a href="{% url 'core:add_appointment' %}"
-                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
-                        + Add Appointment
-                    </a>
-                </div>
+                <a href="{% url 'core:add_appointment' %}"
+                   class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">+ Add Appointment</a>
             </div>
-        </div>
-        <div class="flex items-center justify-end mb-4 space-x-4">
-            {% comment %} Search Bar and Status Filter {% endcomment %}
-            <form method="get">
-                <div class="space-x-4">
-                    <input type="text"
-                           name="search"
-                           value="{{ search_query }}"
-                           placeholder="Search..."
-                           class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                    <input type="text"
-                           name="date_range"
-                           id="date-range-picker"
-                           value="{{ date_range }}"
-                           placeholder="Select date range"
-                           class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                    <select name="status"
-                            onchange="this.form.submit()"
-                            class="px-3 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo">
-                        <option value="">All Status</option>
-                        {% for stat in status %}
-                            <option value="{{ stat }}" {% if status_filter == stat %}selected{% endif %}>{{ stat }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button type="submit" class="hidden"></button>
+        </header>
+        {% comment %} Filter Section {% endcomment %}
+        <section class="flex items-center justify-end mb-4 space-x-4">
+            <form method="get" id="filter-form" class="space-x-2">
+                <input type="text"
+                       name="search"
+                       value="{{ search_query }}"
+                       placeholder="Search..."
+                       class="px-4 py-1 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                <input type="text"
+                       name="date_range"
+                       id="date-range-picker"
+                       value="{{ date_range }}"
+                       placeholder="Select date range"
+                       class="px-4 py-1 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                <select name="status"
+                        class="px-3 py-1 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                    <option value="">All Status</option>
+                    {% for stat in status %}
+                        <option value="{{ stat }}" {% if status_filter == stat %}selected{% endif %}>{{ stat }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit"
+                        class="px-4 py-1 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                <button type="button"
+                        onclick="resetFilters()"
+                        class="px-4 py-1 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</button>
             </form>
-        </div>
+        </section>
         {% comment %} List View {% endcomment %}
-        <div id="list-view">
+        <section id="list-view">
             <div class="bg-white p-6 rounded-lg shadow-sm border-2 border-[#00B2B2]">
                 {% if appointments %}
                     <table class="min-w-full table-auto">
@@ -101,24 +94,24 @@
                                     </td>
                                     <td>
                                         <div class="flex items-center justify-center space-x-3">
-                                            <a href="{% url 'core:edit_appointment' appointment.id %}">
+                                            <a href="{% url 'core:edit_appointment' appointment.id %}"
+                                               aria-label="Edit Appointment">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                      width="20"
                                                      height="20"
-                                                     viewBox="0 0 20 20"
-                                                     class="cursor-pointer">
+                                                     viewBox="0 0 20 20">
                                                     <g fill="none" stroke="#00B2B2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
                                                     <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
                                                     <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
                                                     </g>
                                                 </svg>
                                             </a>
-                                            <a href="{% url 'core:view_appointment' appointment.id %}">
+                                            <a href="{% url 'core:view_appointment' appointment.id %}"
+                                               aria-label="View Appointment">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                      width="20"
                                                      height="20"
-                                                     viewBox="0 0 20 20"
-                                                     class="cursor-pointer">
+                                                     viewBox="0 0 20 20">
                                                     <path fill="none" stroke="#7c7c7c" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
                                                 </svg>
                                             </a>
@@ -127,7 +120,8 @@
                                                  height="20"
                                                  viewBox="0 0 20 20"
                                                  class="cursor-pointer"
-                                                 onclick="confirmDelete('{{ appointment.id }}', '{{ appointment.patient.name }}','{{ appointment.date }}', '{{ appointment.time }}')">
+                                                 onclick="confirmDelete('{{ appointment.id }}', '{{ appointment.patient.name|escapejs }}', '{{ appointment.date }}', '{{ appointment.time }}')"
+                                                 aria-label="Delete Appointment">
                                                 <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
                                             </svg>
                                         </div>
@@ -145,17 +139,16 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                    {% comment %} Pagination {% endcomment %}
                     {% if appointments.has_other_pages %}
-                        <div class="flex justify-center mt-8">
+                        <nav class="flex justify-center mt-8" aria-label="Pagination">
                             <div class="flex items-center space-x-2">
                                 {% if appointments.has_previous %}
-                                    <a href="?page={{ appointments.previous_page_number }}&search={{ search_query }}">
+                                    <a href="?page={{ appointments.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_range %}&date_range={{ date_range }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}"
+                                       aria-label="Previous Page">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
-                                             viewBox="0 0 20 20"
-                                             class="cursor-pointer">
+                                             viewBox="0 0 20 20">
                                             <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                             <path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0" />
                                             <path d="M11.05 12.941 8.118 10l2.934-2.941" />
@@ -165,12 +158,12 @@
                                 {% endif %}
                                 <p class="px-3 py-2">Page {{ appointments.number }} of {{ appointments.paginator.num_pages }}</p>
                                 {% if appointments.has_next %}
-                                    <a href="?page={{ appointments.next_page_number }}&search={{ search_query }}">
+                                    <a href="?page={{ appointments.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_range %}&date_range={{ date_range }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}"
+                                       aria-label="Next Page">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
-                                             viewBox="0 0 20 20"
-                                             class="cursor-pointer">
+                                             viewBox="0 0 20 20">
                                             <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                             <path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0" />
                                             <path d="M8.95 12.941 11.882 10 8.949 7.059" />
@@ -179,20 +172,20 @@
                                     </a>
                                 {% endif %}
                             </div>
-                        </div>
+                        </nav>
                     {% endif %}
                 {% else %}
                     <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
                 {% endif %}
             </div>
-        </div>
+        </section>
         {% comment %} Schedule View {% endcomment %}
-        <div id="schedule-view" class="bg-white rounded-lg shadow-lg p-6 hidden">
+        <section id="schedule-view" class="bg-white rounded-lg shadow-lg p-6 hidden">
             <div id="calendar"
                  class="fc fc-media-screen fc-direction-ltr fc-theme-standard"></div>
-        </div>
+        </section>
     </div>
-    {% comment %} Appointment Modal for Schedule View {% endcomment %}
+    {% comment %} Appointment Modal {% endcomment %}
     <div id="appointmentModal"
          class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
         <div class="flex justify-center items-center h-screen">
@@ -201,34 +194,40 @@
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold text-gray-900" id="modalTitle"></h3>
                         <button onclick="closeAppointmentModal()"
-                                class="text-gray-400 hover:text-gray-500">
+                                class="text-gray-400 hover:text-gray-500"
+                                aria-label="Close Modal">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
-                    <div class="space-y-4">
+                    <dl class="space-y-4">
                         <div>
-                            <label class="text-sm font-medium text-gray-500">Patient</label>
-                            <p id="modalPatient" class="mt-1 text-gray-900"></p>
+                            <dt class="text-sm font-medium text-gray-500">Patient</dt>
+                            <dd id="modalPatient" class="mt-1 text-gray-900">
+                            </dd>
                         </div>
                         <div>
-                            <label class="text-sm font-medium text-gray-500">Date & Time</label>
-                            <p id="modalDateTime" class="mt-1 text-gray-900"></p>
+                            <dt class="text-sm font-medium text-gray-500">Date & Time</dt>
+                            <dd id="modalDateTime" class="mt-1 text-gray-900">
+                            </dd>
                         </div>
                         <div>
-                            <label class="text-sm font-medium text-gray-500">Description</label>
-                            <p id="modalDescription" class="mt-1 text-gray-900"></p>
+                            <dt class="text-sm font-medium text-gray-500">Description</dt>
+                            <dd id="modalDescription" class="mt-1 text-gray-900">
+                            </dd>
                         </div>
                         <div>
-                            <label class="text-sm font-medium text-gray-500">Status</label>
-                            <p id="modalStatus" class="mt-1"></p>
+                            <dt class="text-sm font-medium text-gray-500">Status</dt>
+                            <dd id="modalStatus" class="mt-1">
+                            </dd>
                         </div>
                         <div>
-                            <label class="text-sm font-medium text-gray-500">Total Amount</label>
-                            <p id="modalAmount" class="mt-1 text-gray-900"></p>
+                            <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
+                            <dd id="modalAmount" class="mt-1 text-gray-900">
+                            </dd>
                         </div>
-                    </div>
+                    </dl>
                     <div class="mt-6 flex justify-end space-x-3" id="modalActions"></div>
                 </div>
             </div>
@@ -238,99 +237,70 @@
         flatpickr("#date-range-picker", {
             mode: "range",
             dateFormat: "Y-m-d",
-            maxDate: "today",
-            onClose: function(selectedDates, dateStr, instance) {
-                if (selectedDates.length === 1) {
-                    instance.element.value = selectedDates[0].toISOString().split('T')[0];
-                }
-                document.getElementById('filter-form').submit();
-            },
-            onChange: function(selectedDates, dateStr, instance) {
-                if (selectedDates.length === 1) {
-                    instance.element.value = selectedDates[0].toISOString().split('T')[0];
-                }
+            onChange: (selectedDates, dateStr, instance) => {
+                if (selectedDates.length === 1) instance.element.value = selectedDates[0].toISOString().split('T')[0];
             }
         });
 
-        const timeFilter = document.getElementById("timeFilter");
-        timeFilter.addEventListener("change", function() {
-            document.getElementById("date-range-picker").value = ""; 
-            this.form.submit();
-        });
-
-        
-        const listViewBtn = document.getElementById('list-view-btn');
-        const scheduleViewBtn = document.getElementById('schedule-view-btn');
-        const listView = document.getElementById('list-view');
-        const scheduleView = document.getElementById('schedule-view');
-
-        function showListView() {
-            listView.classList.remove('hidden');
-            scheduleView.classList.add('hidden');
-            listViewBtn.classList.add('bg-primaryLogo', 'text-white');
-            listViewBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-            scheduleViewBtn.classList.remove('bg-primaryLogo', 'text-white');
-            scheduleViewBtn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+        // Filter reset function
+        function resetFilters() {
+            const form = document.getElementById('filter-form');
+            form.querySelector('input[name="search"]').value = '';
+            form.querySelector('input[name="date_range"]').value = '';
+            form.querySelector('select[name="status"]').value = '';
+            form.submit();
         }
 
-        function showScheduleView() {
-            listView.classList.add('hidden');
-            scheduleView.classList.remove('hidden');
-            scheduleViewBtn.classList.add('bg-primaryLogo', 'text-white');
-            scheduleViewBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-            listViewBtn.classList.remove('bg-primaryLogo', 'text-white');
-            listViewBtn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-            initializeCalendar();
+        // View toggle logic
+        const views = {
+            list: { btn: document.getElementById('list-view-btn'), view: document.getElementById('list-view'), svg: document.querySelector('.list-svg path') },
+            schedule: { btn: document.getElementById('schedule-view-btn'), view: document.getElementById('schedule-view'), svg: document.querySelector('.schedule-svg path') }
+        };
+
+        function toggleView(activeView) {
+            Object.keys(views).forEach(view => {
+                const { btn, view: el, svg } = views[view];
+                const isActive = view === activeView;
+                el.classList.toggle('hidden', !isActive);
+                btn.classList.toggle('bg-primaryLogo', isActive);
+                btn.classList.toggle('text-white', isActive);
+                btn.classList.toggle('bg-gray-200', !isActive);
+                btn.classList.toggle('hover:bg-gray-300', !isActive);
+                svg.setAttribute('fill', isActive ? '#ffffff' : '#000000');
+                if (isActive && view === 'schedule') initializeCalendar();
+            });
         }
 
-        showListView();
+        views.list.btn.addEventListener('click', () => toggleView('list'));
+        views.schedule.btn.addEventListener('click', () => toggleView('schedule'));
+        toggleView('list'); 
 
-        listViewBtn.addEventListener('click', showListView);
-        scheduleViewBtn.addEventListener('click', showScheduleView);
-
+        // Calendar initialization
         let calendarInitialized = false;
         function initializeCalendar() {
             if (calendarInitialized) return;
-            const calendarEl = document.getElementById('calendar');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
+            const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
                 initialView: 'dayGridMonth',
-                headerToolbar: {
-                    left: 'dayGridMonth,timeGridWeek,timeGridDay',
-                    center: 'title',
-                    right: 'prev,next today',
-                },
+                headerToolbar: { left: 'dayGridMonth,timeGridWeek,timeGridDay', center: 'title', right: 'prev,next today' },
                 events: {{ appointments_schedule|safe }},
-                dayCellDidMount: function(arg) {
+                dayCellDidMount: arg => {
                     if (arg.date.toDateString() === new Date().toDateString()) {
                         arg.el.style.backgroundColor = 'white';
                         arg.el.style.boxShadow = 'inset 0 0 0 1.5px #00b2b2';
                     }
                 },
-                eventClassNames: function(info) {
-                    switch (info.event.extendedProps.status) {
-                        case 'Pending':
-                            return ['bg-yellow-100', 'border-yellow-200'];
-                        case 'Cancelled':
-                            return ['bg-red-100', 'border-red-200'];
-                        case 'Completed':
-                            return ['bg-green-100', 'border-green-200'];
-                        default:
-                            return ['bg-white', 'border-gray-200'];
-                    }
-                },
-                eventContent: function(info) {
+                eventClassNames: info => ({
+                    'Pending': ['bg-yellow-100', 'border-yellow-200'],
+                    'Cancelled': ['bg-red-100', 'border-red-200'],
+                    'Completed': ['bg-green-100', 'border-green-200']
+                }[info.event.extendedProps.status] || ['bg-white', 'border-gray-200']),
+                eventContent: info => {
                     const statusDot = document.createElement('div');
-                    switch (info.event.extendedProps.status) {
-                        case 'Pending':
-                            statusDot.className = 'w-2 h-2 rounded-full bg-yellow-400 mx-2 flex-shrink-0';
-                            break;
-                        case 'Cancelled':
-                            statusDot.className = 'w-2 h-2 rounded-full bg-red-400 mx-2 flex-shrink-0';
-                            break;
-                        case 'Completed':
-                            statusDot.className = 'w-2 h-2 rounded-full bg-green-400 mx-2 flex-shrink-0';
-                            break;
-                    }
+                    statusDot.className = `w-2 h-2 rounded-full mx-2 flex-shrink-0 ${{
+                        'Pending': 'bg-yellow-400',
+                        'Cancelled': 'bg-red-400',
+                        'Completed': 'bg-green-400'
+                    }[info.event.extendedProps.status] || ''}`;
                     const timeEl = document.createElement('div');
                     timeEl.textContent = info.timeText;
                     timeEl.className = 'text-gray-700 mr-1 whitespace-nowrap overflow-hidden text-ellipsis flex-shrink-0';
@@ -339,124 +309,72 @@
                     titleEl.className = 'text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis flex-grow';
                     const content = document.createElement('div');
                     content.className = 'flex items-center w-full';
-                    content.appendChild(statusDot);
-                    content.appendChild(timeEl);
-                    content.appendChild(titleEl);
+                    [statusDot, timeEl, titleEl].forEach(el => content.appendChild(el));
                     return { domNodes: [content] };
                 },
-                eventClick: function(info) {
-                    showAppointmentDetails(info.event);
-                },
+                eventClick: info => showAppointmentDetails(info.event),
                 height: 'calc(100vh - 240px)',
-                businessHours: {
-                    daysOfWeek: [0, 1, 2, 3, 4, 5],
-                    startTime: '08:00',
-                    endTime: '18:00',
-                }
+                businessHours: { daysOfWeek: [0, 1, 2, 3, 4, 5], startTime: '08:00', endTime: '18:00' }
             });
             calendar.render();
             calendarInitialized = true;
         }
 
+        // Modal functions
         function showAppointmentDetails(event) {
+            const modal = document.getElementById('appointmentModal');
             document.getElementById('modalTitle').textContent = event.title;
             document.getElementById('modalPatient').textContent = event.extendedProps.patient_name;
             document.getElementById('modalDateTime').textContent = new Date(event.start).toLocaleString();
             document.getElementById('modalDescription').textContent = event.extendedProps.description || 'No description provided';
             const statusElement = document.getElementById('modalStatus');
-            const status = event.extendedProps.status;
-            let statusClass = '';
-            switch (status) {
-                case 'Pending':
-                    statusClass = 'bg-yellow-100 text-yellow-800';
-                    break;
-                case 'Cancelled':
-                    statusClass = 'bg-red-100 text-red-800';
-                    break;
-                case 'Completed':
-                    statusClass = 'bg-green-100 text-green-800';
-                    break;
-            }
-            statusElement.className = `inline-block px-2 py-1 rounded-full text-sm font-medium ${statusClass}`;
-            statusElement.textContent = status;
+            statusElement.textContent = event.extendedProps.status;
+            statusElement.className = `inline-block px-2 py-1 rounded-full text-sm font-medium ${{
+                'Pending': 'bg-yellow-100 text-yellow-800',
+                'Cancelled': 'bg-red-100 text-red-800',
+                'Completed': 'bg-green-100 text-green-800'
+            }[event.extendedProps.status] || ''}`;
             document.getElementById('modalAmount').textContent = event.extendedProps.total_amt ? `Rs. ${parseFloat(event.extendedProps.total_amt).toFixed(2)}` : 'Not specified';
 
-            const modalActions = document.getElementById('modalActions');
-            modalActions.innerHTML = ''; 
+            const actions = document.getElementById('modalActions');
+            actions.innerHTML = '';
+            [
+                { href: `/core/appointment/${event.extendedProps.appointment_id}/view/`, class: 'bg-gray-500 hover:bg-gray-600', icon: '<path fill="none" stroke="#ffffff" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />' },
+                { href: `/core/appointment/${event.extendedProps.appointment_id}/edit/`, class: 'bg-teal-500 hover:bg-teal-600', icon: '<g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" /><path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" /></g>' },
+                { onclick: () => confirmDelete(event.extendedProps.appointment_id, event.extendedProps.patient_name, event.start.toISOString().split('T')[0], event.start.toLocaleTimeString()), class: 'bg-red-500 hover:bg-red-600', icon: '<path fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />', tag: 'button' }
+            ].forEach(({ href, onclick, class: cls, icon, tag = 'a' }) => {
+                const el = document.createElement(tag);
+                el.className = `px-4 py-2 text-white rounded-lg ${cls}`;
+                if (href) el.href = href;
+                if (onclick) el.onclick = onclick;
+                el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer">${icon}</svg>`;
+                actions.appendChild(el);
+            });
 
-            // View Button
-            const viewBtn = document.createElement('a');
-            viewBtn.className = 'px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600';
-            viewBtn.href = `/core/appointment/${event.extendedProps.appointment_id}/view/`;
-            viewBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer">
-                    <path fill="none" stroke="#ffffff" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
-                </svg>
-            `;
-            modalActions.appendChild(viewBtn);
-
-            // Edit Button
-            const editBtn = document.createElement('a');
-            editBtn.className = 'px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600';
-            editBtn.href = `/core/appointment/${event.extendedProps.appointment_id}/edit/`;
-            editBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer">
-                    <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5">
-                        <path d="m11.05077641 2.9999988-6.84374726 7.2421846c-.25781156.2734374-.5078123.81640551-.5585931 1.1914062l-.30468739 2.69921725c-.10937495.9765621.5898431 1.64062434 1.55468688 1.4765619l2.68359226-.4609373c.37500068-.06640665.9023438-.33984404 1.1601562-.62499976l6.83984143-7.23827794c1.18359286-1.2499995 1.71874932-2.6757806-.12500078-4.4179674-1.8320301-1.7265618-3.22265454-1.11718705-4.40624824.13281245Zm0 0" />
-                        <path d="M9.90624604 4.20702915c.35937485 2.30078075 2.2265616 4.05859254 4.54296735 4.29296745M2.499999 18.3320235h14.999994" />
-                    </g>
-                </svg>
-            `;
-            modalActions.appendChild(editBtn);
-
-            // Delete Button
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600';
-            deleteBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer">
-                    <path fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
-                </svg>
-            `;
-            deleteBtn.onclick = function() {
-                confirmDelete(
-                    event.extendedProps.appointment_id,
-                    event.extendedProps.patient_name,
-                    event.start.toISOString().split('T')[0],
-                    event.start.toLocaleTimeString()
-                );
-            };
-            modalActions.appendChild(deleteBtn);
-
-            document.getElementById('appointmentModal').classList.remove('hidden');
+            modal.classList.remove('hidden');
         }
 
         function closeAppointmentModal() {
             document.getElementById('appointmentModal').classList.add('hidden');
         }
 
-        function confirmDelete(appointmentId, appointmentPatient, appointmentDate, appointmentTime) {
+        function confirmDelete(id, patient, date, time) {
             Swal.fire({
                 title: 'Are you sure?',
-                text: "This action will permanently delete the appointment for " + appointmentPatient + " on " + appointmentDate + " at " + appointmentTime + ".",
+                text: `This action will permanently delete the appointment for ${patient} on ${date} at ${time}.`,
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Delete',
                 cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'bg-dangerRed text-white hover:bg-darkerDangerRed py-2 w-32',
-                    cancelButton: 'bg-[#444444] text-white hover:bg-gray-400 py-2 w-32',
-                }
-            }).then((result) => {
+                customClass: { confirmButton: 'bg-dangerRed text-white hover:bg-darkerDangerRed py-2 w-32', cancelButton: 'bg-[#444444] text-white hover:bg-gray-400 py-2 w-32' }
+            }).then(result => {
                 if (result.isConfirmed) {
-                    const deleteForm = document.createElement('form');
-                    deleteForm.method = 'POST';
-                    deleteForm.action = "{% url 'core:appointment' %}";
-                    deleteForm.className = 'hidden';
-                    deleteForm.innerHTML = `
-                        {% csrf_token %}
-                        <input type="hidden" name="delete_appointment_id" value="${appointmentId}">
-                    `;
-                    document.body.appendChild(deleteForm);
-                    deleteForm.submit();
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = "{% url 'core:appointment' %}";
+                    form.className = 'hidden';
+                    form.innerHTML = `{% csrf_token %}<input type="hidden" name="delete_appointment_id" value="${id}">`;
+                    document.body.appendChild(form);
+                    form.submit();
                 }
             });
         }
