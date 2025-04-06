@@ -860,8 +860,6 @@ def generate_patient_pdf(request, patient_id):
         parent=styles['Heading2'],
         spaceAfter=10,
         fontSize=14,
-        underline=True,
-        underlineColor=colors.HexColor('#000000'),
     )
     sub_section_style = ParagraphStyle(
         'SubSection',
@@ -881,7 +879,7 @@ def generate_patient_pdf(request, patient_id):
     elements = []
 
     logo_path = None
-    logo_relative_path = 'images/logo/logo.png'
+    logo_relative_path = 'images/logo/logo2.png'
 
     if hasattr(settings, 'STATIC_ROOT') and settings.STATIC_ROOT:
         logo_path = os.path.join(settings.STATIC_ROOT, logo_relative_path)
@@ -904,7 +902,7 @@ def generate_patient_pdf(request, patient_id):
 
     header_data = [
         [
-            Image(logo_path, width=100, height=100) if logo_path and os.path.exists(
+            Image(logo_path, width=150, height=100) if logo_path and os.path.exists(
                 logo_path) else Paragraph("Logo not found", styles['Normal']),
             [
                 Paragraph(f"{clinic_details['name']}", styles['Heading1']),
@@ -921,19 +919,22 @@ def generate_patient_pdf(request, patient_id):
         ('BACKGROUND', (0, 0), (-1, -1), colors.white),
         ('GRID', (0, 0), (-1, -1), 0, colors.white)
     ]))
+
     elements.append(header_table)
 
     # Solid line after header
     elements.append(Spacer(1, 6))
     elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
                     style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
-    elements.append(Spacer(1, 12))
+    elements.append(Spacer(1, 18))
 
     # Patient Name (Highlighted)
-    elements.append(Paragraph(f"{patient.name}", style=styles['Heading1']))
+    elements.append(
+        Paragraph(f"Patient Name: {patient.name}", style=styles['Heading1']))
+    elements.append(Spacer(1, 6))
 
     # Patient Information (Grid)
-    elements.append(Paragraph("Patient Information", section_style))
+    elements.append(Paragraph("<u>Patient Information</u>", section_style))
     patient_data = [
         ["ID:", str(patient.id), "Contact:", patient.contact],
         ["Address:", patient.address or "N/A", "Gender:", patient.gender],
@@ -944,11 +945,11 @@ def generate_patient_pdf(request, patient_id):
             "Nationality:", patient.nationality or "N/A"],
         ["Marital Status:", patient.marital_status,
             "Referred By:", patient.reffered_by or "N/A"],
-        ["Date Created:", patient.date_created.strftime(
+        ["Date Added:", patient.date_created.strftime(
             '%Y-%m-%d') if patient.date_created else "N/A", "", ""]
     ]
     patient_grid = Table(patient_data, colWidths=[
-                         1.5*inch, 1.5*inch, 1.5*inch, 1.5*inch])
+                         1.25*inch, 2*inch, 1.25*inch, 2*inch])
     patient_grid.setStyle(TableStyle([
         ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
         ('FONTNAME', (2, 0), (2, -1), 'Helvetica-Bold'),
@@ -965,7 +966,7 @@ def generate_patient_pdf(request, patient_id):
     elements.append(Spacer(1, 12))
 
     # Emergency Contact
-    elements.append(Paragraph("Emergency Contact", section_style))
+    elements.append(Paragraph("<u>Emergency Contact</u>", section_style))
     elements.append(
         Paragraph(f"Name: {patient.emergency_contact_name}", normal_colored_style))
     elements.append(Paragraph(
@@ -981,7 +982,10 @@ def generate_patient_pdf(request, patient_id):
 
     # Medical History
     elements.append(FrameBreak())
-    elements.append(Paragraph("Medical History", section_style))
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                    style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
+    elements.append(Spacer(1, 6))
+    elements.append(Paragraph("<u>Medical History</u>", section_style))
     for section, data in medical_history_data.items():
         elements.append(Paragraph(section, sub_section_style))
         for key, value in data.items():
@@ -994,7 +998,7 @@ def generate_patient_pdf(request, patient_id):
     elements.append(Spacer(1, 12))
 
     # Dental Chart
-    elements.append(Paragraph("Dental Chart", section_style))
+    elements.append(Paragraph("<u>Dental Chart</u>", section_style))
     if tooth_records:
         tooth_data = [["Tooth No", "Condition", "Description"]] + [
             [record.tooth_no, record.condition or "N/A", record.description or "N/A"]
@@ -1023,7 +1027,10 @@ def generate_patient_pdf(request, patient_id):
 
     # Treatment Plan
     elements.append(FrameBreak())
-    elements.append(Paragraph("Treatment Plan", section_style))
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                    style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
+    elements.append(Spacer(1, 6))
+    elements.append(Paragraph("<u>Treatment Plan</u>", section_style))
     elements.append(Paragraph(
         treatment_plan.treatment_plan if treatment_plan and treatment_plan.treatment_plan else "No treatment plan specified",
         normal_colored_style
@@ -1035,7 +1042,7 @@ def generate_patient_pdf(request, patient_id):
     elements.append(Spacer(1, 12))
 
     # Treatment History
-    elements.append(Paragraph("Treatment History", section_style))
+    elements.append(Paragraph("<u>Treatment History</u>", section_style))
     if treatment_history:
         treatment_data = [["Appt. ID", "Date", "Treatment Type", "T.Cost"]] + [
             [
