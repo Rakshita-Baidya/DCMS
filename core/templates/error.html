@@ -9,18 +9,32 @@
         <meta name="description" content="Error page" />
         <meta name="keywords" content="error, DCMS" />
         <link href="{% static '/css/output.css' %}" rel="stylesheet">
-        {% comment %} Include SweetAlert2 CSS {% endcomment %}
         <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.css"
               rel="stylesheet" />
-        {% comment %} Include SweetAlert2 JS {% endcomment %}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.js"></script>
+        <style>
+            .error{
+                text-shadow: 
+                    1px 1px 1px #018181,    
+                    2px 2px 1px #018181,
+                    3px 3px 1px #018181,
+                    4px 4px 1px #018181,
+                    5px 5px 1px #018181,
+                    6px 6px 1px #018181,
+                    7px 7px 1px #018181,
+                    8px 8px 1px #018181,
+                    25px 25px 8px rgba(0,0,0, 0.2);
+            }
+        </style>
     </head>
-    <body class="bg-[radial-gradient(ellipse_at_center,_#f0f0f0_35%,_#91DEDE_50%,_#00B2B2_100%)] flex justify-center items-center h-screen">
-        <div class="px-12 py-8 lg:w-1/2 md:w-2/4 text-center space-y-16">
-            <p class="text-9xl font-bold text-darkerPrimary">404 page</p>
-            <p class="text-3xl text-secondaryLogo font-semibold pb-8">Looks like you lost your way.</p>
+    <body class="bg-[#d4f4f4] min-h-screen text-center flex items-center justify-center">
+        <div>
+            <p class="error text-[150px] text-[#00b2b2] font-bold">404</p>
+            <div class="my-8 text-2xl font-semibold text-[#444]">Oops! The page you are looking for cannot be found.</div>
             <a href="{% url 'core:dashboard' %}"
-               class="bg-primaryLogo hover:bg-darkerPrimary py-2 px-4 text-white rounded-md text-2xl font-bold">Return to Dashboard</a>
+               class="inline-block border-2 border-[#00b2b2] bg-[#00b2b2] text-white uppercase font-semibold py-3 px-4 rounded-md shadow-[0_15px_15px_-11px_rgba(0,0,0,0.4)] transition-all duration-200 hover:bg-[#018181] hover:text-[#ddd]">
+                Back to dashboard
+            </a>
         </div>
         {% comment %} SweetAlert2 Toast Notifications {% endcomment %}
         {% if messages %}
