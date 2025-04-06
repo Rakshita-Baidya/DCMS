@@ -781,8 +781,8 @@ video {
   margin-top: 2rem;
 }
 
-.mt-\[49\.75px\] {
-  margin-top: 49.75px;
+.mt-\[13\.75px\] {
+  margin-top: 13.75px;
 }
 
 .mt-auto {
@@ -951,6 +951,10 @@ video {
   width: 12.5%;
 }
 
+.w-\[35rem\] {
+  width: 35rem;
+}
+
 .w-\[87\.5\%\] {
   width: 87.5%;
 }
@@ -1057,6 +1061,10 @@ video {
 
 .justify-between {
   justify-content: space-between;
+}
+
+.gap-3 {
+  gap: 0.75rem;
 }
 
 .gap-4 {
@@ -1206,6 +1214,11 @@ video {
   border-right-width: 2px;
 }
 
+.border-y-2 {
+  border-top-width: 2px;
+  border-bottom-width: 2px;
+}
+
 .border-b {
   border-bottom-width: 1px;
 }
@@ -1230,6 +1243,11 @@ video {
 .border-\[\#00b2b2\] {
   --tw-border-opacity: 1;
   border-color: rgb(0 178 178 / var(--tw-border-opacity, 1));
+}
+
+.border-black {
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity, 1));
 }
 
 .border-darkText {
@@ -1352,9 +1370,9 @@ video {
   background-color: rgb(74 222 128 / var(--tw-bg-opacity, 1));
 }
 
-.bg-lime-500 {
+.bg-lime-600 {
   --tw-bg-opacity: 1;
-  background-color: rgb(132 204 22 / var(--tw-bg-opacity, 1));
+  background-color: rgb(101 163 13 / var(--tw-bg-opacity, 1));
 }
 
 .bg-primaryLogo {
@@ -1559,9 +1577,8 @@ video {
   line-height: 2.25rem;
 }
 
-.text-8xl {
-  font-size: 6rem;
-  line-height: 1;
+.text-\[150px\] {
+  font-size: 150px;
 }
 
 .text-lg {
@@ -1577,15 +1594,6 @@ video {
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
-}
-
-.text-9xl {
-  font-size: 8rem;
-  line-height: 1;
-}
-
-.text-\[150px\] {
-  font-size: 150px;
 }
 
 .font-bold {
@@ -1815,9 +1823,9 @@ video {
   background-color: rgb(75 85 99 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-lime-600:hover {
+.hover\:bg-lime-700:hover {
   --tw-bg-opacity: 1;
-  background-color: rgb(101 163 13 / var(--tw-bg-opacity, 1));
+  background-color: rgb(77 124 15 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-red-600:hover {
@@ -1828,6 +1836,11 @@ video {
 .hover\:bg-teal-600:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(13 148 136 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-lime-800:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(63 98 18 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-opacity-90:hover {

@@ -1841,7 +1841,6 @@ def view_transaction(request):
         'expense_transactions': expense_queryset,
         'total_income': sum([income.amount for income in income_queryset]),
         'total_expense': sum([expense.amount for expense in expense_queryset]),
-        'net_profit': sum([income.amount for income in income_queryset]) - sum([expense.amount for expense in expense_queryset]),
         'search_query': search_query,
         'date_range': date_range,
     }
@@ -2005,6 +2004,7 @@ def statistics(request):
         'top_treatments': top_treatments_dict,
         'gender_data': json.dumps(gender_dict),
         'transactions': transactions,
+        'net_profit': sum([income.amount for income in transactions.filter(type='Income')]) - sum([expense.amount for expense in transactions.filter(type='Expense')]),
         'treatments': treatments,
         'payments': payments,
         'purchased_products': purchased_products,

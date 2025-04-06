@@ -100,7 +100,7 @@
                     {{ form.position|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.position.errors %}<div class="text-dangerRed text-sm">{{ form.position.errors }}</div>{% endif %}
                 </div>
-                <div id="doctor_fields">
+                <div id="doctor_fields" class="col-start-1">
                     <label for="{{ form.specialization.id_for_label }}"
                            class="block text-sm font-medium text-secondaryLogo form-label">
                         {{ form.specialization.label_tag }}
@@ -126,11 +126,11 @@
                     {{ form.nmc_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.nmc_no.errors %}<div class="text-dangerRed text-sm">{{ form.nmc_no.errors }}</div>{% endif %}
                 </div>
-                <div class="w-full flex space-x-6 col-start-3">
+                <div class="flex space-x-3 col-span-full justify-end">
+                    <p onclick="history.back()"
+                       class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</p>
                     <button type="submit"
-                            class="w-full text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                        Add User
-                    </button>
+                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">Add User</button>
                 </div>
             </div>
         </form>

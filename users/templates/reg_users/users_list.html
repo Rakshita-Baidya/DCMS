@@ -2,24 +2,24 @@
 {% load static %}
 {% block content %}
     {% load widget_tweaks %}
-    <div class="p-8">
+    <div class="p-6">
         {% comment %} Header Section {% endcomment %}
-        <div class="flex justify-between items-center mb-6 ">
+        <div class="flex justify-between items-center mb-4 ">
             <div>
                 <p class="text-gray-700 text-2xl font-medium">{{ total_user }} Total Users</p>
             </div>
-            <div class="flex items-center space-x-4">
-                <form method="get">
+            <div class="flex items-center space-x-2">
+                <form method="get" class="flex items-center space-x-2">
                     {% comment %} Search Bar {% endcomment %}
                     <input type="text"
                            name="search"
                            value="{{ search_query }}"
                            placeholder="Search..."
-                           class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                           class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
                     {% comment %} Role Filter {% endcomment %}
                     <select name="role"
                             onchange="this.form.submit()"
-                            class="px-3 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                            class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
                         <option value="">All Roles</option>
                         {% for role in roles %}
                             <option value="{{ role }}" {% if role_filter == role %}selected{% endif %}>{{ role }}</option>
@@ -35,7 +35,7 @@
                 </div> {% endcomment %}
                 <div>
                     <a href="{% url 'add_user' %}"
-                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
+                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">
                         + Add Users
                     </a>
                 </div>

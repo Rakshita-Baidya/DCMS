@@ -1,11 +1,11 @@
 {% extends "index.html" %}
 {% load static widget_tweaks %}
 {% block content %}
-    <div class="p-8">
+    <div class="p-6">
         {% comment %} Header Section {% endcomment %}
-        <header class="flex justify-between items-center mb-6">
+        <header class="flex justify-between items-center mb-4">
             <p class="text-gray-700 text-2xl font-medium">{{ total_appointment }} Total Appointments</p>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
                 <div class="flex items-center space-x-2">
                     <button id="list-view-btn"
                             class="p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo bg-gray-200 hover:bg-gray-300">
@@ -29,8 +29,10 @@
                         </svg>
                     </button>
                 </div>
-                <a href="{% url 'core:add_appointment' %}"
-                   class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">+ Add Appointment</a>
+                {% if request.user.role != 'Doctor' %}
+                    <a href="{% url 'core:add_appointment' %}"
+                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">+ Add Appointment</a>
+                {% endif %}
             </div>
         </header>
         {% comment %} Filter Section {% endcomment %}
@@ -40,15 +42,15 @@
                        name="search"
                        value="{{ search_query }}"
                        placeholder="Search..."
-                       class="px-4 py-1 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                       class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
                 <input type="text"
                        name="date_range"
                        id="date-range-picker"
                        value="{{ date_range }}"
                        placeholder="Select date range"
-                       class="px-4 py-1 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                       class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
                 <select name="status"
-                        class="px-3 py-1 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                        class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
                     <option value="">All Status</option>
                     {% for stat in status %}
                         <option value="{{ stat }}" {% if status_filter == stat %}selected{% endif %}>{{ stat }}</option>
@@ -253,8 +255,16 @@
 
         // View toggle logic
         const views = {
-            list: { btn: document.getElementById('list-view-btn'), view: document.getElementById('list-view'), svg: document.querySelector('.list-svg path') },
-            schedule: { btn: document.getElementById('schedule-view-btn'), view: document.getElementById('schedule-view'), svg: document.querySelector('.schedule-svg path') }
+            list: { 
+                btn: document.getElementById('list-view-btn'), 
+                view: document.getElementById('list-view'), 
+                svg: document.querySelector('.list-svg path') 
+            },
+            schedule: {
+                btn: document.getElementById('schedule-view-btn'), 
+                view: document.getElementById('schedule-view'), 
+                svg: document.querySelector('.schedule-svg path') 
+            }
         };
 
         function toggleView(activeView) {

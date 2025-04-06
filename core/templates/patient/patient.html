@@ -2,23 +2,22 @@
 {% load static %}
 {% block content %}
     {% load widget_tweaks %}
-    <div class="p-8">
-        <div class="flex justify-between items-center mb-6 ">
+    <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
             <div>
                 <p class="text-gray-700 text-2xl font-medium">{{ total_patient }} Total Patients</p>
             </div>
-            <div class="flex items-center space-x-4">
-                {% comment %} Search Bar {% endcomment %}
-                <form method="get">
+            <div class="flex items-center space-x-3">
+                {% comment %} filter {% endcomment %}
+                <form method="get" class="flex items-center space-x-3">
                     <input type="text"
                            name="search"
                            value="{{ search_query }}"
                            placeholder="Search..."
-                           class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                    {% comment %} Blood Groups Filter {% endcomment %}
+                           class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
                     <select name="blood_group"
                             onchange="this.form.submit()"
-                            class="px-3 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                            class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
                         <option value="">All Blood Groups</option>
                         {% for blood_group in blood_groups %}
                             <option value="{{ blood_group }}"
@@ -29,13 +28,10 @@
                     </select>
                     <button type="submit" class="hidden"></button>
                 </form>
-                {% comment %} Add Patient Button {% endcomment %}
-                <div>
-                    <a href="{% url 'core:add_patient' %}"
-                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
-                        + Add Patient
-                    </a>
-                </div>
+                <a href="{% url 'core:add_patient' %}"
+                   class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">
+                    + Add Patient
+                </a>
             </div>
         </div>
         <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2]">

@@ -2,33 +2,6 @@
 {% load static %}
 {% block content %}
     <div class="p-6">
-        <div class="flex justify-between">
-            <div class="text-2xl mb-4">
-                <span class="font-bold">Net Balance:</span> Rs. {{ net_profit }}
-            </div>
-            <div class="flex pr-2 space-x-4 h-max items-center">
-                <form method="get" id="filter-form">
-                    <div class="flex items-center space-x-4">
-                        <input type="text"
-                               name="search"
-                               value="{{ search_query }}"
-                               placeholder="Search..."
-                               class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                        <input type="text"
-                               name="date_range"
-                               id="date-range-picker"
-                               value="{{ date_range }}"
-                               placeholder="Select date or range"
-                               class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                        <button type="submit" class="hidden"></button>
-                    </div>
-                </form>
-                <a href="{% url 'core:add_transaction' %}"
-                   class="px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
-                    + Add transaction
-                </a>
-            </div>
-        </div>
         <nav class="flex bg-white rounded-t-lg border-t-2 border-x-2 border-primaryLogo z-50 absolute">
             <button data-tab="income"
                     class="tab-button px-6 py-3 font-medium border-b-2 border-primaryLogo text-primaryLogo">
@@ -37,18 +10,39 @@
             <button data-tab="expense"
                     class="tab-button px-6 py-3 font-medium text-gray-500 hover:text-gray-700">Expense</button>
         </nav>
-        <div class="bg-white rounded-b-lg rounded-r-lg shadow-sm border-2 border-primaryLogo p-6 relative mt-[49.75px]">
+        <div class="flex justify-end space-x-2 w-full">
+            <form method="get" id="filter-form" class="flex items-center space-x-2">
+                <input type="text"
+                       name="search"
+                       value="{{ search_query }}"
+                       placeholder="Search..."
+                       class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                <input type="text"
+                       name="date_range"
+                       id="date-range-picker"
+                       value="{{ date_range }}"
+                       placeholder="Select date or range"
+                       class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                <button type="submit"
+                        class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                <button type="button"
+                        onclick="resetFilters()"
+                        class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</button>
+            </form>
+            <a href="{% url 'core:add_transaction' %}"
+               class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                + Add transaction
+            </a>
+        </div>
+        <div class="bg-white rounded-b-lg rounded-r-lg shadow-sm border-2 border-primaryLogo p-6 relative mt-[13.75px]">
             <div id="income-tab" class="tab-content">
                 {% if income_transaction %}
-                    <div class=" text-xl mb-4">
-                        <span class="font-medium">Total income :</span> {{ total_income }}
-                    </div>
-                    <table class="min-w-full table-auto">
+                    <table class="min-w-full table-auto mb-4">
                         <thead>
                             <tr class="border-b-2 border-primaryLogo text-center pb-4">
                                 <th class="pb-2">ID</th>
                                 <th class="pb-2">Title</th>
-                                <th class="pb-2">Description</th>
+                                <th class="pb-2 ">Description</th>
                                 <th class="pb-2">Amount</th>
                                 <th class="pb-2">Date</th>
                                 <th class="pb-2">User</th>
@@ -60,7 +54,7 @@
                                 <tr class="border-b text-center">
                                     <td class="py-2">{{ transaction.id }}</td>
                                     <td>{{ transaction.title }}</td>
-                                    <td class="w-82">{{ transaction.description|default:"-" }}</td>
+                                    <td class="w-[35rem]">{{ transaction.description|default:"-" }}</td>
                                     <td>Rs. {{ transaction.amount }}</td>
                                     <td>{{ transaction.date }}</td>
                                     <td>{{ transaction.user.username }}</td>
@@ -97,11 +91,15 @@
                                     </td>
                                 </tr>
                             {% endfor %}
+                            <tr class="border-y-2 border-black text-lg">
+                                <td colspan="3" class="py-2 font-bold text-right pr-4">Total Income:</td>
+                                <td class="py-2 text-center">Rs. {{ total_income }}</td>
+                            </tr>
                         </tbody>
                     </table>
                     {% comment %} Pagination {% endcomment %}
                     {% if income_transaction.has_other_pages %}
-                        <div class="flex justify-center mt-8">
+                        <div class="flex justify-center mt-4">
                             <div class="flex items-center space-x-2">
                                 {% if income_transaction.has_previous %}
                                     <a href="?income_page={{ income_transaction.previous_page_number }}&expense_page={{ expense_transaction.number }}&search={{ search_query }}&date_range={{ date_range }}">
@@ -141,10 +139,7 @@
             </div>
             <div id="expense-tab" class="tab-content hidden">
                 {% if expense_transaction %}
-                    <div class=" text-xl mb-4">
-                        <span class="font-medium">Total expense :</span> {{ total_expense }}
-                    </div>
-                    <table class="min-w-full table-auto">
+                    <table class="min-w-full table-auto mb-4">
                         <thead>
                             <tr class="border-b-2 border-primaryLogo text-center pb-4">
                                 <th class="pb-2">ID</th>
@@ -161,7 +156,7 @@
                                 <tr class="border-b text-center">
                                     <td class="py-2">{{ transaction.id }}</td>
                                     <td>{{ transaction.title }}</td>
-                                    <td class="w-82">{{ transaction.description|default:"-" }}</td>
+                                    <td class="w-[35rem]">{{ transaction.description|default:"-" }}</td>
                                     <td>Rs. {{ transaction.amount }}</td>
                                     <td>{{ transaction.date }}</td>
                                     <td>{{ transaction.user.username }}</td>
@@ -198,11 +193,15 @@
                                     </td>
                                 </tr>
                             {% endfor %}
+                            <tr class="border-y-2 border-black text-lg">
+                                <td colspan="3" class="py-2 font-bold text-right pr-4">Total Expense:</td>
+                                <td class="py-2 text-center">Rs. {{ total_expense }}</td>
+                            </tr>
                         </tbody>
                     </table>
                     {% comment %} Pagination {% endcomment %}
                     {% if expense_transaction.has_other_pages %}
-                        <div class="flex justify-center mt-8">
+                        <div class="flex justify-center mt-4">
                             <div class="flex items-center space-x-2">
                                 {% if expense_transaction.has_previous %}
                                     <a href="?income_page={{ income_transaction.number }}&expense_page={{ expense_transaction.previous_page_number }}&search={{ search_query }}&date_range={{ date_range }}">
@@ -276,35 +275,19 @@
             flatpickr("#date-range-picker", {
                 mode: "range",
                 dateFormat: "Y-m-d",
-                
-                onClose: function(selectedDates, dateStr, instance) {
-                    if (selectedDates.length === 1) {
-                        instance.element.value = selectedDates[0].toISOString().split('T')[0];
-                    }
-                    document.getElementById('filter-form').submit();
-                },
-                onChange: function(selectedDates, dateStr, instance) {
-                    if (selectedDates.length === 1) {
-                        instance.element.value = selectedDates[0].toISOString().split('T')[0];
-                    }
-                }
-            });
-    
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    filterForm.submit();
-                }
-            });
-
-            dateRangePicker.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    filterForm.submit();
+                maxDate: "today",
+                onChange: (selectedDates, dateStr, instance) => {
+                    if (selectedDates.length === 1) instance.element.value = selectedDates[0].toISOString().split('T')[0];
                 }
             });
         });
-
+    
+        function resetFilters() {
+            const form = document.getElementById('filter-form');
+            form.querySelector('input[name="search"]').value = '';
+            form.querySelector('input[name="date_range"]').value = '';
+            form.submit();
+        }
         // Delete Confirmation
         function confirmDelete(transactionId, transactionTitle) {
             Swal.fire({

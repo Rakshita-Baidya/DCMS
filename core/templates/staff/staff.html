@@ -1,41 +1,39 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-    <div class="p-8">
+    <div class="p-6">
         {% comment %} Header Section {% endcomment %}
-        <div class="flex justify-between items-center mb-8">
+        <div class="flex justify-between items-center mb-6">
             <div>
                 <p class="text-gray-700 text-2xl font-medium">{{ total_staff }} Total Staff Members</p>
             </div>
-            <div class="flex items-center space-x-4">
-                <form method="get">
-                    {% comment %} Search Bar {% endcomment %}
-                    <input type="text"
-                           name="search"
-                           value="{{ search_query }}"
-                           placeholder="Search..."
-                           class="px-4 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                    {% comment %} Position Filter {% endcomment %}
-                    <select name="position"
-                            onchange="this.form.submit()"
-                            class="px-3 py-1 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryLogo">
-                        <option value="">All Positions</option>
-                        {% for pos in positions %}
-                            <option value="{{ pos }}" {% if position_filter == pos %}selected{% endif %}>{{ pos }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit" class="hidden"></button>
-                </form>
-                {% comment %} Add Staff Button {% endcomment %}
-                {% comment %} <div>
+            <form method="get" class="flex items-center space-x-3">
+                {% comment %} Search Bar {% endcomment %}
+                <input type="text"
+                       name="search"
+                       value="{{ search_query }}"
+                       placeholder="Search..."
+                       class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                {% comment %} Position Filter {% endcomment %}
+                <select name="position"
+                        onchange="this.form.submit()"
+                        class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                    <option value="">All Positions</option>
+                    {% for pos in positions %}
+                        <option value="{{ pos }}" {% if position_filter == pos %}selected{% endif %}>{{ pos }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="hidden"></button>
+            </form>
+            {% comment %} Add Staff Button {% endcomment %}
+            {% comment %} <div>
                     <a href="#" class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
                         + Add Staff
                     </a>
-                </div> {% endcomment %}
-            </div>
+            </div> {% endcomment %}
         </div>
         {% comment %} Staff Grid {% endcomment %}
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {% for staff_member in staff %}
                 <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-primaryLogo">
                     <div class="flex flex-col items-center text-center">
