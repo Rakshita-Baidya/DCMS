@@ -2009,7 +2009,7 @@ def statistics(request):
     return render(request, 'statistics/statistics.html', context)
 
 
-def error(request):
+def error(request, exception):
     return render(request, 'error.html')
 
 
