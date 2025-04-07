@@ -14,7 +14,7 @@
                 <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
             </svg>
             <p class="text-gray-700 text-2xl font-medium">
-                {% if is_editing %}
+                {% if is_editing or is_editing_all %}
                     Edit
                 {% else %}
                     Add
@@ -22,7 +22,7 @@
                 Appointment / Payment Details
             </p>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
+        <div class="bg-white p-6 rounded-lg shadow-md border-2 border-primaryLogo">
             <form method="post"
                   enctype="multipart/form-data"
                   id="paymentForm"
@@ -30,46 +30,29 @@
                 {% csrf_token %}
                 {{ wizard.management_form }}
                 {% comment %} debuggggggggg {% endcomment %}
-                <div class="col-span-4 grid grid-cols-5 gap-x-6 gap-y-3 bg-gray-100 p-4 border border-primaryLogo">
-                    <label class="col-span-5 text-red-700 text-sm text-center">
+                <div class="col-span-full grid grid-cols-5 gap-4 bg-gray-100 p-4 border border-primaryLogo rounded">
+                    <label class="col-span-full text-red-700 text-sm text-center">
                         **The following text have been displayed for reference only, and cannot be altered.**
                     </label>
                     <div>
-                        <label class="block font-medium text-gray-700">Treatment Cost</label>
-                        <input type="text"
-                               value="{{ treatment_cost }}"
-                               class="mt-1 block w-full px-2 py-1 bg-white rounded"
-                               disabled>
+                        <label class="font-medium text-gray-700">Treatment Cost: Rs.</label>
+                        {{ treatment_cost }}
                     </div>
                     <div>
-                        <label class="block font-medium text-gray-700">Lab Cost</label>
-                        <input type="text"
-                               disabled
-                               value="{{ lab_cost }}"
-                               class="mt-1 block w-full px-2 py-1 bg-white rounded">
+                        <label class="font-medium text-gray-700">Lab Cost: Rs.</label>
+                        {{ lab_cost }}
                     </div>
                     <div>
-                        <label class="block font-medium text-gray-700">X-Ray Cost</label>
-                        <input type="text"
-                               disabled
-                               value="{{ x_ray_cost }}"
-                               class="mt-1 block w-full px-2 py-1 bg-white rounded">
+                        <label class="font-medium text-gray-700">X-Ray Cost: Rs.</label>
+                        {{ x_ray_cost }}
                     </div>
                     <div>
-                        <label class="block font-medium text-gray-700">Products Total</label>
-                        <input type="text"
-                               disabled
-                               value="{{ products_total }}"
-                               class="mt-1 block w-full px-2 py-1 bg-white rounded">
+                        <label class="font-medium text-gray-700">Products Total: Rs.</label>
+                        {{ products_total }}
                     </div>
                     <div>
-                        <label class="block font-medium text-gray-700">Total Amount</label>
-                        <input type="text"
-                               id="final_total"
-                               name="final_total"
-                               disabled
-                               class="mt-1 block w-full px-2 py-1 bg-white rounded"
-                               value="{{ treatment_cost|add:lab_cost|add:x_ray_cost|add:products_total }}">
+                        <label class="font-medium text-gray-700">Total Amount: Rs.</label>
+                        {{ treatment_cost|add:lab_cost|add:x_ray_cost|add:products_total }}
                     </div>
                 </div>
                 {% comment %} end debugggg {% endcomment %}
@@ -87,6 +70,11 @@
                         <div class="text-dangerRed text-sm">{{ wizard.form.discount_amount.errors }}</div>
                     {% endif %}
                 </div>
+                <div class="col-start-1 text-lg">
+                    <label class="font-medium">Final Amount:</label>
+                    Rs. <span id="finalAmount">{{ treatment_cost|add:lab_cost|add:x_ray_cost|add:products_total }}</span>
+                </div>
+                <hr class="col-span-full border-2 border-darkerPrimary rounded-lg">
                 <div class="col-start-1">
                     <label class="block font-medium text-secondaryLogo">{{ wizard.form.paid_amount.label_tag }}</label>
                     {{ wizard.form.paid_amount|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
@@ -115,15 +103,38 @@
                         <div class="text-dangerRed text-sm">{{ wizard.form.payment_notes.errors }}</div>
                     {% endif %}
                 </div>
-                <p onclick="history.back()"
-                   class="col-start-3 text-center text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
-                    Previous
-                </p>
-                <button type="submit"
-                        class="text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                    Save Changes
-                </button>
+                <div class="flex space-x-4 justify-end col-span-full">
+                    {% if not is_editing %}
+                        <div onclick="history.back()"
+                             class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Previous</div>
+                    {% endif %}
+                    <button type="submit"
+                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
+                        Save Changes
+                    </button>
+                </div>
             </form>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const additionalCostInput = document.querySelector('input[name="additional_cost"]');
+            const discountAmountInput = document.querySelector('input[name="discount_amount"]');
+            const finalAmountSpan = document.getElementById("finalAmount");
+
+            const baseTotal = {{ treatment_cost|add:lab_cost|add:x_ray_cost|add:products_total|floatformat:2 }};
+
+            function updateFinalAmount() {
+                const additionalCost = parseFloat(additionalCostInput.value) || 0;
+                const discountAmount = parseFloat(discountAmountInput.value) || 0;
+                const finalAmount = baseTotal + additionalCost - discountAmount;
+                finalAmountSpan.textContent = finalAmount.toFixed(2);
+            }
+
+            updateFinalAmount();
+
+            additionalCostInput.addEventListener("input", updateFinalAmount);
+            discountAmountInput.addEventListener("input", updateFinalAmount);
+        });
+    </script>
 {% endblock content %}

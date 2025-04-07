@@ -1552,7 +1552,7 @@ class EditAppointmentWizard(SessionWizardView):
         context.update({
             'page_title': 'Appointment Management',
             'active_page': 'appointment',
-            'is_editing': True,
+            'is_editing_all': True,
             'appointment_id': appointment_id,
             'doctors': User.objects.filter(role='Doctor'),
             'patients': Patient.objects.all(),
