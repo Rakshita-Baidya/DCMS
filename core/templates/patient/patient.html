@@ -58,7 +58,7 @@
                                 <td>{{ patient.email|default:"-" }}</td>
                                 <td>{{ patient.blood_group }}</td>
                                 <td>
-                                    <div class="flex items-center justify-center space-x-3">
+                                    <div class="flex align-middle justify-center space-x-3">
                                         {% comment %} edit {% endcomment %}
                                         <a href="{% url 'core:edit_patient_profile' patient.id %}">
                                             <svg xmlns="http://www.w3.org/2000/svg"

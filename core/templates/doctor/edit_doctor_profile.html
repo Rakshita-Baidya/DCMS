@@ -18,7 +18,7 @@
         <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
             <form method="post"
                   enctype="multipart/form-data"
-                  class="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-6">
+                  class="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-4">
                 {% csrf_token %}
                 {% comment %} User Form Fields {% endcomment %}
                 <div>
@@ -42,7 +42,7 @@
                            class="hidden"
                            accept="image/*">
                     <label for="id_profile_image"
-                           class="mt-4 flex items-center mx-auto w-36 justify-center bg-primaryLogo text-white px-4 py-2 rounded-md cursor-pointer hover:bg-darkerPrimary">
+                           class="mt-4 flex items-center mx-auto w-36 justify-center bg-primaryLogo text-white px-4 py-2 rounded cursor-pointer hover:bg-darkerPrimary">
                         Choose File
                     </label>
                     {% comment %} {{ user_form.profile_image|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }} {% endcomment %}
@@ -99,17 +99,13 @@
                     {% if user_form.nmc_no.errors %}<div class="text-dangerRed text-sm">{{ user_form.nmc_no.errors }}</div>{% endif %}
                 </div>
                 {% comment %} Submit Button {% endcomment %}
-                <div class="w-full grid grid-cols-4 gap-6 col-start-1 col-span-2">
-                    <div class="w-full flex space-x-6 col-start-3 col-span-2">
-                        <p onclick="history.back()"
-                           class="col-span-1 w-1/2  text-center text-xl font-semibold text-white py-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
-                            Cancel
-                        </p>
-                        <button type="submit"
-                                class="col-span-1 w-1/2 text-xl bg-primaryLogo text-white py-2 rounded-md hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                            Save Changes
-                        </button>
-                    </div>
+                <div class="flex space-x-4 justify-end col-span-full">
+                    <div onclick="history.back()"
+                         class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</div>
+                    <button type="submit"
+                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
+                        Save Changes
+                    </button>
                 </div>
             </form>
         </div>

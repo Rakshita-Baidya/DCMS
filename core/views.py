@@ -31,7 +31,7 @@ import json
 from formtools.wizard.views import SessionWizardView
 
 from users.models import User
-from users.forms import UserEditForm
+from users.forms import DoctorEditForm, StaffEditForm, UserEditForm
 from users.serializers import UserSerializer
 from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
 
@@ -263,7 +263,7 @@ def edit_doctor_profile(request, user_id):
             return redirect('core:doctor')
 
     if request.method == 'POST':
-        user_form = UserEditForm(
+        user_form = DoctorEditForm(
             request.POST, request.FILES, instance=user_queryset)
 
         if user_form.is_valid():
@@ -383,15 +383,18 @@ def edit_staff_profile(request, user_id):
             return redirect('core:staff')
 
     if request.method == 'POST':
-        user_form = UserEditForm(
+        user_form = StaffEditForm(
             request.POST, request.FILES, instance=staff_queryset)
 
         if user_form.is_valid():
             user_form.save()
-
             messages.success(
                 request, 'The staff profile has been updated successfully!')
             return redirect('core:view_staff_profile', user_id=staff_queryset.id)
+        else:
+            # Log errors for debugging
+            print("Form errors:", user_form.errors)  # Check server logs
+            messages.error(request, "Please correct the errors below.")
     else:
         user_form = UserEditForm(instance=staff_queryset)
 

@@ -87,7 +87,7 @@
                                     <td>{{ appointment.patient.name }}</td>
                                     <td>{{ appointment.date }}</td>
                                     <td>{{ appointment.time }}</td>
-                                    <td>{{ appointment.description|default:"-" }}</td>
+                                    <td class="text-nowrap text-ellipsis overflow-hidden max-w-44">{{ appointment.description|default:"-" }}</td>
                                     <td class="py-2 text-nowrap {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
                                         {{ appointment.status }}
                                     </td>
@@ -95,7 +95,7 @@
                                         {{ appointment.payment.payment_status }}
                                     </td>
                                     <td>
-                                        <div class="flex items-center justify-center space-x-3">
+                                        <div class="flex align-middle justify-center space-x-3">
                                             <a href="{% url 'core:edit_appointment' appointment.id %}"
                                                aria-label="Edit Appointment">
                                                 <svg xmlns="http://www.w3.org/2000/svg"

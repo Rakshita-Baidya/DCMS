@@ -54,3 +54,17 @@ class UserEditForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email',
                   'profile_image', 'role', 'specialization', 'qualification', 'nmc_no', 'position']
+
+
+class StaffEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email',
+                  'profile_image', 'position']
+
+
+class DoctorEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email',
+                  'profile_image', 'specialization', 'qualification', 'nmc_no']
