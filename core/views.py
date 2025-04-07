@@ -661,7 +661,7 @@ class EditPatientFormWizard(SessionWizardView):
         context.update({
             'page_title': 'Patient Management',
             'active_page': 'patient',
-            'is_editing': bool(patient_id),
+            'is_editing_all': bool(patient_id),
         })
         if self.steps.current == '2':  # Dental Chart step
             dental_chart = self.get_form_instance('2')

@@ -14,7 +14,7 @@
                 <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
             </svg>
             <p class="text-gray-700 text-2xl font-medium">
-                {% if is_editing %}
+                {% if is_editing or is_editing_all %}
                     Edit
                 {% else %}
                     Add
@@ -587,20 +587,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="px-4 my-4"></div>
-                {% comment %} buttons {% endcomment %}
-                <p onclick="history.back()"
-                   class="col-start-3 text-center text-xl font-semibold text-white py-2 m-2 rounded-md focus:outline-none bg-secondaryLogo cursor-pointer">
-                    Previous
-                </p>
-                <button type="submit"
-                        class="text-xl bg-primaryLogo text-white py-2 rounded-md m-2 hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo font-semibold">
-                    {% if is_editing %}
-                        Save Changes
-                    {% else %}
-                        Next
+                <div class="flex space-x-4 justify-end col-span-full">
+                    {% if not is_editing %}
+                        <div onclick="history.back()"
+                             class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Previous</div>
                     {% endif %}
-                </button>
+                    <button type="submit"
+                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
+                        {% if is_editing %}
+                            Save Changes
+                        {% else %}
+                            Next
+                        {% endif %}
+                    </button>
+                </div>
             </form>
         </div>
     </div>
