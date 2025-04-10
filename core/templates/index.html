@@ -1,35 +1,33 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Base page" />
-    <meta name="keywords" content="DCMS" />
-    <title>{{ page_title|default:"Dashboard" }}</title>
-    <link href="{% static '/css/output.css' %}" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  </head>
-  <body class="bg-[#ECF4F4] min-h-screen">
-    {% comment %} sidebar section {% endcomment %}
-    {% include "./sidebar.html" %}
-    <div class="ml-48">
-      {% comment %} header section {% endcomment %}
-      {% include "./header.html" %}
-      <main class="pt-16">
-        {% block content %}
-        {% endblock content %}
-      </main>
-    </div>
-    {% comment %} SweetAlert2 Toast Notifications {% endcomment %}
-    {% if messages %}
-      <script>
-    {% for message in messages %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Base page" />
+        <meta name="keywords" content="DCMS" />
+        <title>{{ page_title|default:"Dashboard" }}</title>
+        <link href="{% static '/css/output.css' %}" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    </head>
+    <body class="bg-[#ECF4F4] min-h-screen">
+        {% comment %} sidebar section {% endcomment %}
+        {% include "./sidebar.html" %}
+        <div class="ml-48">
+            {% comment %} header section {% endcomment %}
+            {% include "./header.html" %}
+            <main class="pt-16">
+                {% block content %}
+                {% endblock content %}
+            </main>
+        </div>
+        <script>
+			{% for message in messages %}
         Swal.fire({
             toast: true,
             position: 'top-end',
@@ -49,7 +47,98 @@
             }
         });
     {% endfor %}
-      </script>
-    {% endif %}
-  </body>
+			document.addEventListener("DOMContentLoaded", function () {
+				let hasUnsavedChanges = false;
+	
+				// Function to mark form as changed
+				function markFormAsChanged() {
+					hasUnsavedChanges = true;
+				}
+	
+				const forms = document.querySelectorAll('form');
+				forms.forEach(form => {
+					const initialData = new FormData(form);
+					form.dataset.initialData = JSON.stringify([...initialData.entries()]);
+	
+					const inputs = form.querySelectorAll('input, select, textarea');
+					inputs.forEach(input => {
+						input.addEventListener('input', markFormAsChanged);
+						input.addEventListener('change', markFormAsChanged);
+					});
+				});
+	
+				forms.forEach(form => {
+					form.addEventListener('submit', function () {
+						hasUnsavedChanges = false; 
+					});
+				});
+	
+				// Handle sidebar navigation with SweetAlert2
+				const sidebarLinks = document.querySelectorAll('.sidebar-link');
+				sidebarLinks.forEach(link => {
+					link.addEventListener('click', function (e) {
+						if (hasUnsavedChanges) {
+							e.preventDefault(); // Prevent navigation
+							Swal.fire({
+								title: 'Unsaved Changes',
+								text: 'You have unsaved changes. Are you sure you want to leave this page?',
+								showCancelButton: true,
+								confirmButtonColor: '#B20003',
+								cancelButtonColor: '#7c7c7c',
+								confirmButtonText: 'Leave',
+								cancelButtonText: 'Cancel'
+							}).then((result) => {
+								if (result.isConfirmed) {
+									// Navigate to the link's href
+									window.location.href = link.href;
+								}
+							});
+						}
+					});
+				});
+	/*
+				window.addEventListener('beforeunload', function (e) {
+					if (hasUnsavedChanges) {
+						e.preventDefault();
+						e.returnValue = ''; 
+						return '';
+					}
+				});*/
+	
+				// Special handling for dynamic forms (tooth-record-form, purchased-product-form, treatment-doctor-form)
+				const observer = new MutationObserver(function (mutations) {
+					mutations.forEach(function (mutation) {
+						if (mutation.addedNodes.length) {
+							mutation.addedNodes.forEach(node => {
+								if (node.nodeType === 1 && (
+									node.classList.contains('tooth-record-form') ||
+									node.classList.contains('purchased-product-form') ||
+									node.classList.contains('treatment-doctor-form')
+								)) {
+									const inputs = node.querySelectorAll('input, select, textarea');
+									inputs.forEach(input => {
+										input.addEventListener('input', markFormAsChanged);
+										input.addEventListener('change', markFormAsChanged);
+									});
+								}
+							});
+						}
+					});
+				});
+	
+				// Observe containers for dynamic forms
+				const containers = [
+					document.getElementById('tooth-records-container'),
+					document.getElementById('purchased-products-container'),
+					document.getElementById('treatment-doctors-container')
+				];
+	
+				containers.forEach(container => {
+					if (container) {
+						observer.observe(container, { childList: true, subtree: true });
+					}
+				});
+			});
+        </script>
+    </body>
 </html>
