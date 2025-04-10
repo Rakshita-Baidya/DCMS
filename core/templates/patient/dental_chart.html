@@ -532,6 +532,21 @@
             let formCount = parseInt(totalForms.value);
         
             const mainSvg = document.querySelector('svg[width="289.61084"]');
+
+            const TOOTH_NUMBERS = Array.from(
+                new Set([
+                    ...Array.from({ length: 8 }, (_, i) => (11 + i).toString()), // 11-18
+                    ...Array.from({ length: 8 }, (_, i) => (21 + i).toString()), // 21-28
+                    ...Array.from({ length: 8 }, (_, i) => (31 + i).toString()), // 31-38
+                    ...Array.from({ length: 8 }, (_, i) => (41 + i).toString()), // 41-48
+                    ...Array.from({ length: 5 }, (_, i) => (51 + i).toString()), // 51-55
+                    ...Array.from({ length: 5 }, (_, i) => (61 + i).toString()), // 61-65
+                    ...Array.from({ length: 5 }, (_, i) => (71 + i).toString()), // 71-75
+                    ...Array.from({ length: 5 }, (_, i) => (81 + i).toString()), // 81-85
+                ])
+            ).sort();
+
+            const toothNumberOptions = TOOTH_NUMBERS.map(num => `<option value="${num}">${num}</option>`).join('');
         
             mainSvg.addEventListener('click', function (e) {
                 const target = e.target;
@@ -545,7 +560,7 @@
                 }
             });
         
-            // Add tooth record function (unchanged)
+            // Add tooth record function
             function addToothRecord(toothNumber) {
                 const existingForm = Array.from(container.querySelectorAll('.tooth-record-form')).find(form => form.dataset.toothNo === toothNumber);
                 if (existingForm) {
@@ -566,7 +581,10 @@
                     <input type="hidden" name="tooth_records-${formCount}-id" id="id_tooth_records-${formCount}-id">
                     <input type="checkbox" name="tooth_records-${formCount}-DELETE" id="id_tooth_records-${formCount}-DELETE" class="hidden">
                     <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-tooth_no">Tooth Number:*</label>
-                    <input type="text" name="tooth_records-${formCount}-tooth_no" id="id_tooth_records-${formCount}-tooth_no" value="${toothNumber}" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo tooth-no-input" readonly>
+                    <select name="tooth_records-${formCount}-tooth_no" id="id_tooth_records-${formCount}-tooth_no" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo tooth-no-input">
+                        <option value="">Select a tooth number</option>
+                        ${toothNumberOptions}
+                    </select>
                     <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-condition">Condition:</label>
                     <select name="tooth_records-${formCount}-condition" id="id_tooth_records-${formCount}-condition" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo condition-input">
                         <option value="">---------</option>
@@ -580,7 +598,10 @@
                 container.appendChild(newForm);
                 formCount++;
                 totalForms.value = formCount;
-        
+                
+                const toothNoSelect = newForm.querySelector('.tooth-no-input');
+                toothNoSelect.value = toothNumber;
+
                 newForm.querySelector('.delete-tooth-record').addEventListener('click', deleteToothRecord);
                 attachConditionChangeListener(newForm);
                 applyConditionColor(newForm);
@@ -588,7 +609,7 @@
                 newForm.scrollIntoView({ behavior: 'smooth' });
                 highlightTooth(toothNumber);
             }
-            // Apply condition-based coloring (simplified)
+            // Apply condition-based coloring
             function applyConditionColor(formDiv) {
                 const toothNo = formDiv.querySelector('.tooth-no-input').value;
                 const condition = formDiv.querySelector('.condition-input').value;
@@ -611,7 +632,10 @@
                     <input type="hidden" name="tooth_records-${formCount}-id" id="id_tooth_records-${formCount}-id">
                     <input type="checkbox" name="tooth_records-${formCount}-DELETE" id="id_tooth_records-${formCount}-DELETE" class="hidden">
                     <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-tooth_no">Tooth Number:*</label>
-                    <input type="text" name="tooth_records-${formCount}-tooth_no" id="id_tooth_records-${formCount}-tooth_no" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo tooth-no-input">
+                    <select name="tooth_records-${formCount}-tooth_no" id="id_tooth_records-${formCount}-tooth_no" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo tooth-no-input">
+                        <option value="">Select a tooth number</option>
+                        ${toothNumberOptions}
+                    </select>
                     <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-condition">Condition:</label>
                     <select name="tooth_records-${formCount}-condition" id="id_tooth_records-${formCount}-condition" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo condition-input">
                         <option value="">---------</option>

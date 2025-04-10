@@ -24,6 +24,11 @@ class DentalChartForm(forms.ModelForm):
 
 
 class ToothRecordForm(forms.ModelForm):
+    TOOTH_NUMBERS = [str(i) for r in [range(11, 19), range(21, 29), range(31, 39), range(41, 49),
+                                      range(51, 56), range(61, 66), range(71, 76), range(81, 86)]
+                     for i in r]
+    tooth_no = forms.ChoiceField(choices=[(num, num) for num in TOOTH_NUMBERS])
+
     class Meta:
         model = ToothRecord
         fields = '__all__'

@@ -588,10 +588,6 @@ video {
   }
 }
 
-.visible {
-  visibility: visible;
-}
-
 .static {
   position: static;
 }
@@ -1471,6 +1467,18 @@ video {
   --tw-gradient-to: #00B2B2 var(--tw-gradient-to-position);
 }
 
+.fill-none {
+  fill: none;
+}
+
+.stroke-black {
+  stroke: #000;
+}
+
+.stroke-\[1\] {
+  stroke-width: 1;
+}
+
 .object-contain {
   -o-object-fit: contain;
      object-fit: contain;
@@ -1809,6 +1817,26 @@ video {
 
 .duration-200 {
   transition-duration: 200ms;
+}
+
+.\[stroke-dasharray\:none\] {
+  stroke-dasharray: none;
+}
+
+.\[stroke-linecap\:round\] {
+  stroke-linecap: round;
+}
+
+.\[stroke-linejoin\:miter\] {
+  stroke-linejoin: miter;
+}
+
+.\[stroke-miterlimit\:4\] {
+  stroke-miterlimit: 4;
+}
+
+.\[stroke-opacity\:1\] {
+  stroke-opacity: 1;
 }
 
 .no-scrollbar::-webkit-scrollbar {
