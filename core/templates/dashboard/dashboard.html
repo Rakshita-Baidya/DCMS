@@ -76,32 +76,32 @@
             </div>
             <div class="col-span-1 md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-lg shadow-sm p-4 border-2 border-primaryLogo min-h-[24rem] overflow-y-auto no-scrollbar">
-                    <h3 class="text-xl font-semibold">Pending Appointments</h3>
+                    <h3 class="text-xl font-semibold mb-3">Pending Appointments</h3>
                     {% if pending_appointments %}
                         <div class="relative overflow-x-auto">
-                            <table class="min-w-full my-3 table-fixed">
+                            <table class="min-w-full my-3 table-fixed text-sm">
                                 <thead class="sticky top-0 bg-white border-b-2 border-primaryLogo">
-                                    <tr class="text-center table w-full table-fixed">
-                                        <th class="w-2/5 pb-2 px-2">P. Name</th>
-                                        <th class="w-2/5 pb-2 px-2">Date</th>
-                                        <th class="w-2/5 pb-2 px-2">Time</th>
-                                        <th class="w-1/5 pb-2 px-2">Status</th>
-                                        <th class="w-1/5 pb-2 px-2">Actions</th>
+                                    <tr class="text-center">
+                                        <th class="w-1/4 py-2 px-2">Patient Name</th>
+                                        <th class="w-1/5 py-2 px-2">Date</th>
+                                        <th class="w-1/5 py-2 px-2">Time</th>
+                                        <th class="w-1/5 py-2 px-2">Status</th>
+                                        <th class="w-1/5 py-2 px-2">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="block max-h-64 overflow-y-auto">
+                                <tbody class="max-h-64 overflow-y-auto ">
                                     {% for appointment in pending_appointments %}
-                                        <tr class="border-b text-center table w-full table-fixed">
-                                            <td class="w-2/5 py-2 px-2 text-nowrap overflow-hidden text-ellipsis">{{ appointment.patient.name }}</td>
-                                            <td class="w-2/5 py-2 px-2">{{ appointment.date }}</td>
-                                            <td class="w-2/5 py-2 px-2">{{ appointment.time }}</td>
+                                        <tr class="border-b text-center last:border-b-0">
+                                            <td class="w-1/4 py-2 px-2 text-ellipsis overflow-hidden whitespace-nowrap">{{ appointment.patient.name }}</td>
+                                            <td class="w-1/5 py-2 px-2">{{ appointment.date }}</td>
+                                            <td class="w-1/5 py-2 px-2">{{ appointment.time }}</td>
                                             <td class="w-1/5 py-2 px-2 {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
                                                 {{ appointment.status }}
                                             </td>
-                                            <td>
-                                                <div class="flex align-middle justify-center space-x-3">
+                                            <td class="w-1/5 py-2 px-2">
+                                                <div class="flex justify-center space-x-3">
                                                     <a href="{% url 'core:view_appointment' appointment.id %}"
-                                                       class="inline-flex align-middle">
+                                                       class="inline-flex items-center">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                              width="20"
                                                              height="20"
@@ -122,20 +122,36 @@
                     {% endif %}
                 </div>
                 <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo">
-                    <h3 class="text-xl font-semibold text-center">Follow Up Appointments</h3>
-                    <hr class="bg-[#00B2B0] h-1 my-2 rounded-sm">
-                    <div class="max-h-72 overflow-y-auto pr-2 space-y-4">
+                    <h3 class="text-xl font-semibold text-center mb-4">Follow-Ups</h3>
+                    <div class="max-h-72 overflow-y-auto pr-2 space-y-1">
                         {% if follow_ups %}
                             {% for follow_up in follow_ups %}
-                                <div class="px-2">
-                                    <p class="text-secondary text-justify mb-2">
-                                        Follow-up for appointment of <span class="font-bold">{{ follow_up.patient.name }}</span> [Contact: {{ follow_up.patient.contact }}] on for: {{ follow_up.description|default:"No description" }}
-                                    </p>
-                                    <p class="text-secondary text-right">
-                                        <span class="font-semibold">Follow-up Date:</span> {{ follow_up.get_follow_up_date|date:"l, F j, Y" }}
-                                    </p>
+                                <div class="block mx-1 px-1 space-y-1 py-2 border-b-2 border-primaryLogo last:border-b-0">
+                                    <div class="flex justify-between">
+                                        <div class="w-4/5">
+                                            <p class="text-lg font-bold text-secondaryLogo">{{ follow_up.patient.name }}</p>
+                                            <p class="text-sm text-gray-600">
+                                                <span class="font-medium">Contact:</span> {{ follow_up.patient.contact|default:"N/A" }}
+                                            </p>
+                                            <p class=" text-gray-600">
+                                                <span class="font-medium">Last appointment description:</span> {{ follow_up.description|default:"No description provided" }}
+                                            </p>
+                                        </div>
+                                        <div class="text-right w-1/5 space-y-1">
+                                            <p class="text-lg font-semibold text-primaryLogo">{{ follow_up.get_follow_up_date|date:"M j, Y" }}</p>
+                                            <p class="text-xs text-gray-500">{{ follow_up.get_follow_up_date|date:"l" }}</p>
+                                            {% if follow_up.get_follow_up_date == today %}
+                                                <span class="inline-block px-2 py-1 text-xs font-medium text-white bg-primaryLogo rounded-full">Today</span>
+                                            {% elif follow_up.get_follow_up_date < today %}
+                                                <span class="inline-block px-2 py-1 text-xs font-medium text-white bg-red-500 rounded-full">Overdue</span>
+                                            {% elif follow_up.get_follow_up_date <= today_plus_2 and follow_up.get_follow_up_date > today %}
+                                                <span class="inline-block px-2 py-1 text-xs font-medium text-white bg-yellow-500 rounded-full">Soon</span>
+                                            {% else %}
+                                                <span class="inline-block px-2 py-1 text-xs font-medium text-white bg-green-500 rounded-full">Later</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 </div>
-                                {% if not forloop.last %}<hr class="bg-[#00B2B0] h-0.5 my-2 rounded-sm">{% endif %}
                             {% endfor %}
                         {% else %}
                             <p class="text-center text-gray-500 py-4">No upcoming follow-ups within the next week.</p>

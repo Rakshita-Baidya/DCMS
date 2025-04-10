@@ -115,14 +115,15 @@ def dashboard(request):
 
     # Follow-ups
     two_weeks_later = today + timedelta(days=14)
-    two_weeks_earlier = today - timedelta(days=14)
+    one_weeks_earlier = today - timedelta(days=7)
     follow_ups = []
     for appointment in Appointment.objects.filter(follow_up_days__isnull=False, status="Completed"):
         follow_up_date = appointment.get_follow_up_date()
-        if follow_up_date and two_weeks_earlier <= follow_up_date <= two_weeks_later:
+        if follow_up_date <= two_weeks_later and follow_up_date >= one_weeks_earlier:
             follow_ups.append(appointment)
 
     follow_ups.sort(key=lambda x: x.get_follow_up_date() or today)
+    today_plus_2 = today + timedelta(days=2)
 
     context = {
         'page_title': 'Dashboard',
@@ -132,6 +133,8 @@ def dashboard(request):
         'total_appointment': appointments.count(),
         'pending_appointments': pending_appointments,
         'appointment_data': json.dumps(status_counts),
+        'today': today,
+        'today_plus_2': today_plus_2,
         'follow_ups': follow_ups,
         'treatments': treatment_queryset,
         'treatment_data': json.dumps(treatment_counts),
