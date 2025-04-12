@@ -9,14 +9,13 @@
             </div>
             <div class="flex items-center space-x-3">
                 {% comment %} filter {% endcomment %}
-                <form method="get" class="flex items-center space-x-3">
+                <form method="get" id="filter-form" class="flex items-center space-x-3">
                     <input type="text"
                            name="search"
                            value="{{ search_query }}"
                            placeholder="Search..."
                            class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
                     <select name="blood_group"
-                            onchange="this.form.submit()"
                             class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
                         <option value="">All Blood Groups</option>
                         {% for blood_group in blood_groups %}
@@ -26,7 +25,10 @@
                             </option>
                         {% endfor %}
                     </select>
-                    <button type="submit" class="hidden"></button>
+                    <button type="submit"
+                            class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                    <a href="{% url 'core:patient' %}"
+                       class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
                 </form>
                 <a href="{% url 'core:add_patient' %}"
                    class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">

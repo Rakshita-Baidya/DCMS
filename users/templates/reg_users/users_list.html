@@ -18,21 +18,17 @@
                            class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
                     {% comment %} Role Filter {% endcomment %}
                     <select name="role"
-                            onchange="this.form.submit()"
                             class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
                         <option value="">All Roles</option>
                         {% for role in roles %}
                             <option value="{{ role }}" {% if role_filter == role %}selected{% endif %}>{{ role }}</option>
                         {% endfor %}
                     </select>
-                    <button type="submit" class="hidden"></button>
+                    <button type="submit"
+                            class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                    <a href="{% url 'list' %}"
+                       class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
                 </form>
-                {% comment %} Add User Button {% endcomment %}
-                {% comment %} <div>
-                    <a href="#" class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
-                        + Add User
-                    </a>
-                </div> {% endcomment %}
                 <div>
                     <a href="{% url 'add_user' %}"
                        class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">

@@ -57,10 +57,9 @@
                     {% endfor %}
                 </select>
                 <button type="submit"
-                        class="px-4 py-1 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
-                <button type="button"
-                        onclick="resetFilters()"
-                        class="px-4 py-1 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</button>
+                        class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                <a href="{% url 'core:appointment' %}"
+                   class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
             </form>
         </section>
         {% comment %} List View {% endcomment %}
@@ -245,15 +244,6 @@
                 if (selectedDates.length === 1) instance.element.value = selectedDates[0].toISOString().split('T')[0];
             }
         });
-
-        // Filter reset function
-        function resetFilters() {
-            const form = document.getElementById('filter-form');
-            form.querySelector('input[name="search"]').value = '';
-            form.querySelector('input[name="date_range"]').value = '';
-            form.querySelector('select[name="status"]').value = '';
-            form.submit();
-        }
 
         // View toggle logic
         const views = {

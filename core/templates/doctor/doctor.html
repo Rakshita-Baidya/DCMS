@@ -2,21 +2,18 @@
 {% load static %}
 {% block content %}
     <div class="p-6">
-        {% comment %} Header Section {% endcomment %}
         <div class="flex justify-between items-center mb-4">
             <div>
                 <p class="text-gray-700 text-2xl font-medium">{{ total_doctor }} Total Doctor Members</p>
             </div>
+            {% comment %} filter {% endcomment %}
             <form method="get" class="flex items-center space-x-2">
-                {% comment %} Search Bar {% endcomment %}
                 <input type="text"
                        name="search"
                        value="{{ search_query }}"
                        placeholder="Search..."
                        class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                {% comment %} Specialization Filter {% endcomment %}
                 <select name="specialization"
-                        onchange="this.form.submit()"
                         class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
                     <option value="">All Specializations</option>
                     {% for spec in specializations %}
@@ -24,16 +21,12 @@
                                 {% if specialization_filter == spec %}selected{% endif %}>{{ spec }}</option>
                     {% endfor %}
                 </select>
-                <button type="submit" class="hidden"></button>
+                <button type="submit"
+                        class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                <a href="{% url 'core:doctor' %}"
+                   class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
             </form>
-            {% comment %} Add Doctor Button {% endcomment %}
-            {% comment %} <div>
-                    <a href="#" class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary">
-                        + Add Doctor
-                    </a>
-            </div> {% endcomment %}
         </div>
-        {% comment %} Doctor Grid {% endcomment %}
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {% for doctor_member in doctor %}
                 <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-primaryLogo">
@@ -45,7 +38,6 @@
                                  width="full"
                                  height="full" />
                         </div>
-                        {% comment %} Doctor Info {% endcomment %}
                         <h3 class="text-2xl font-semibold text-gray-800 mb-1">{{ doctor_member.get_full_name }}</h3>
                         <p class="text-md text-gray-600 mb-4">{{ doctor_member.specialization }}</p>
                         <div class="flex items-center justify-center w-full space-x-3">
@@ -75,7 +67,6 @@
                             {% comment %} delete {% endcomment %}
                             <div>
                                 <form id="delete-form-{{ user.id }}" method="post">
-                                    {% comment %} action="{% url 'core:doctor' %}"> {% endcomment %}
                                     {% csrf_token %}
                                     <input type="hidden" name="delete_user_id" value="{{ user.id }}">
                                 </form>
@@ -89,9 +80,6 @@
                                 </svg>
                             </div>
                         </div>
-                        {% comment %} <p class="text-gray-600 mb-1">Contact: {{ doctor_member.user.contact }}</p>
-                            <p class="text-gray-600 mb-1">Address: {{ doctor_member.user.address }}</p>
-                        <p class="text-gray-600 mb-1">Contact: {{ doctor_member.user.contact }}</p> {% endcomment %}
                     </div>
                 </div>
             {% empty %}

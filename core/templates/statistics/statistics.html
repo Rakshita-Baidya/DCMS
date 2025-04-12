@@ -25,10 +25,9 @@
                    class="px-3 py-1.5 border-2 border-primaryLogo rounded focus:outline-none focus:ring-1 focus:ring-primaryLogo"
                    {% if time_filter != 'custom' %}disabled{% endif %} />
             <button type="submit"
-                    class="px-4 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
-            <button type="button"
-                    onclick="resetFilters()"
-                    class="px-4 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</button>
+                    class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+            <a href="{% url 'core:statistics' %}"
+               class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
         </form>
         <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -125,227 +124,218 @@
         </div>
     </div>
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const timeFilter = document.getElementById("timeFilter");
-        const dateRangePicker = document.getElementById("date-range-picker");
+        document.addEventListener("DOMContentLoaded", function() {
+            const timeFilter = document.getElementById("timeFilter");
+            const dateRangePicker = document.getElementById("date-range-picker");
 
-        // Initialize Flatpickr
-        const flatpickrInstance = flatpickr("#date-range-picker", {
-            mode: "range",
-            dateFormat: "Y-m-d",
-            maxDate: "today",
-            onChange: (selectedDates, dateStr, instance) => {
-                if (selectedDates.length === 1) instance.element.value = selectedDates[0].toISOString().split('T')[0];
+            // Initialize Flatpickr
+            const flatpickrInstance = flatpickr("#date-range-picker", {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                maxDate: "today",
+                onChange: (selectedDates, dateStr, instance) => {
+                    if (selectedDates.length === 1) instance.element.value = selectedDates[0].toISOString().split('T')[0];
+                }
+            });
+
+            // Enable/disable date range based on filter selection
+            function toggleDateRange() {
+                const isCustom = timeFilter.value === "custom";
+                dateRangePicker.disabled = !isCustom;
+                if (!isCustom) dateRangePicker.value = ""; // Clear date range when not custom
+            }
+
+            // Initial state
+            toggleDateRange();
+            timeFilter.addEventListener("change", toggleDateRange);
+
+            function centerTotalAmount(chart, totalElementId) {
+                const totalElement = document.getElementById(totalElementId);
+                if (!chart || !totalElement) return;
+
+                const chartArea = chart.chartArea;
+                const centerX = (chartArea.left + chartArea.right) / 2;
+                const centerY = (chartArea.top + chartArea.bottom) / 2;
+
+                totalElement.style.left = `${centerX}px`;
+                totalElement.style.top = `${centerY}px`;
+                totalElement.style.transform = 'translate(-50%, -50%)';
+            }
+
+            const incomeData = JSON.parse("{{ income_data|escapejs }}");
+            const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+            const noIncomeMessage = document.getElementById('no-income-message');
+            const hasIncome = Object.values(incomeData).some(value => value > 0);
+            let incomeChart = null;
+
+            if (!hasIncome) {
+                noIncomeMessage.classList.remove('hidden');
+            } else {
+                noIncomeMessage.classList.add('hidden');
+                incomeChart = new Chart(incomeCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(incomeData),
+                        datasets: [{ 
+                            label: 'Income', 
+                            data: Object.values(incomeData), 
+                            backgroundColor: ['#00B2B2', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3'], 
+                            borderWidth: 1 
+                        }]
+                    },
+                    options: { 
+                        cutout: 70, 
+                        responsive: true, 
+                        aspectRatio: 2.5, 
+                        plugins: { 
+                            legend: { 
+                                position: 'right', 
+                                labels: { 
+                                    boxWidth: 20, 
+                                    padding: 15, 
+                                    font: { size: 14 } 
+                                } 
+                            }, 
+                            tooltip: { 
+                                callbacks: { 
+                                    label: function(tooltipItem) { return ` Rs. ${tooltipItem.raw.toFixed(2)}`; } 
+                                } 
+                            } 
+                        } 
+                    }
+                });
+
+                centerTotalAmount(incomeChart, 'income-total');
+            }
+
+            const expenseData = JSON.parse("{{ expense_data|escapejs }}");
+            const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+            const noExpenseMessage = document.getElementById('no-expense-message');
+            const hasExpense = Object.values(expenseData).some(value => value > 0);
+            let expenseChart = null;
+
+            if (!hasExpense) {
+                noExpenseMessage.classList.remove('hidden');
+            } else {
+                noExpenseMessage.classList.add('hidden');
+                expenseChart = new Chart(expenseCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(expenseData),
+                        datasets: [{ 
+                            label: 'Expenses', 
+                            data: Object.values(expenseData), 
+                            backgroundColor: ['#B20003', '#F44336', '#FF5722', '#E91E63', '#D81B60'], 
+                            borderWidth: 1 
+                        }]
+                    },
+                    options: { 
+                        cutout: 70, 
+                        responsive: true, 
+                        aspectRatio: 2.5, 
+                        plugins: { 
+                            legend: { 
+                                position: 'right', 
+                                labels: { 
+                                    boxWidth: 20, 
+                                    padding: 15, 
+                                    font: { size: 14 } 
+                                } 
+                            }, 
+                            tooltip: { 
+                                callbacks: { 
+                                    label: function(tooltipItem) { return ` Rs. ${tooltipItem.raw.toFixed(2)}`; } 
+                                } 
+                            } 
+                        } 
+                    }
+                });
+
+                centerTotalAmount(expenseChart, 'expense-total');
+            }
+
+            const treatmentData = JSON.parse("{{ treatment_data|escapejs }}");
+            const treatmentCtx = document.getElementById('treatmentSummary').getContext('2d');
+            const noTreatmentMessage = document.getElementById('no-treatment-message');
+            const hasTreatment = Object.values(treatmentData).some(value => value > 0);
+            if (!hasTreatment) {
+                noTreatmentMessage.classList.remove('hidden');
+            } else {
+                noTreatmentMessage.classList.add('hidden');
+                new Chart(treatmentCtx, {
+                    type: 'line',
+                    data: {
+                        labels: Object.keys(treatmentData),
+                        datasets: [{ 
+                            label: 'Treatment Types', 
+                            data: Object.values(treatmentData), 
+                            backgroundColor: 'rgba(0, 178, 178, 0.2)', 
+                            borderColor: '#00B2B2', 
+                            borderWidth: 2, 
+                            fill: true 
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        scales: { 
+                            y: { 
+                                beginAtZero: true, 
+                                max: 8 
+                            } 
+                        }, 
+                        plugins: { 
+                            legend: { 
+                                display: false 
+                            }, 
+                            tooltip: { 
+                                callbacks: { 
+                                    label: function(tooltipItem) { return ` ${tooltipItem.raw} treatments`; } 
+                                } 
+                            } 
+                        } 
+                    }
+                });
+            }
+
+            const genderData = JSON.parse("{{ gender_data|escapejs }}");
+            const genderCtx = document.getElementById('genderChart').getContext('2d');
+            const noGenderMessage = document.getElementById('no-gender-message');
+            const hasGender = Object.values(genderData).some(value => value > 0);
+            if (!hasGender) {
+                noGenderMessage.classList.remove('hidden');
+            } else {
+                noGenderMessage.classList.add('hidden');
+                new Chart(genderCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(genderData),
+                        datasets: [{ 
+                            label: 'Patients',
+                            data: Object.values(genderData), 
+                            backgroundColor: ['#2196F3', '#F06292', '#9E9E9E', '#4CAF50'], 
+                            borderWidth: 1 
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        scales: { 
+                            y: { 
+                                beginAtZero: true, 
+                                max: 6 
+                            } 
+                        }, 
+                        aspectRatio: 2.5, 
+                        plugins: { 
+                            legend: false, 
+                            tooltip: { 
+                                callbacks: { 
+                                    label: function(tooltipItem) { return ` ${tooltipItem.raw} patients`; } 
+                                } 
+                            } 
+                        } 
+                    }
+                });
             }
         });
-
-        // Enable/disable date range based on filter selection
-        function toggleDateRange() {
-            const isCustom = timeFilter.value === "custom";
-            dateRangePicker.disabled = !isCustom;
-            if (!isCustom) dateRangePicker.value = ""; // Clear date range when not custom
-        }
-
-        // Initial state
-        toggleDateRange();
-        timeFilter.addEventListener("change", toggleDateRange);
-
-        function centerTotalAmount(chart, totalElementId) {
-            const totalElement = document.getElementById(totalElementId);
-            if (!chart || !totalElement) return;
-
-            const chartArea = chart.chartArea;
-            const centerX = (chartArea.left + chartArea.right) / 2;
-            const centerY = (chartArea.top + chartArea.bottom) / 2;
-
-            totalElement.style.left = `${centerX}px`;
-            totalElement.style.top = `${centerY}px`;
-            totalElement.style.transform = 'translate(-50%, -50%)';
-        }
-
-        const incomeData = JSON.parse("{{ income_data|escapejs }}");
-        const incomeCtx = document.getElementById('incomeChart').getContext('2d');
-        const noIncomeMessage = document.getElementById('no-income-message');
-        const hasIncome = Object.values(incomeData).some(value => value > 0);
-        let incomeChart = null;
-
-        if (!hasIncome) {
-            noIncomeMessage.classList.remove('hidden');
-        } else {
-            noIncomeMessage.classList.add('hidden');
-            incomeChart = new Chart(incomeCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(incomeData),
-                    datasets: [{ 
-                        label: 'Income', 
-                        data: Object.values(incomeData), 
-                        backgroundColor: ['#00B2B2', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3'], 
-                        borderWidth: 1 
-                    }]
-                },
-                options: { 
-                    cutout: 70, 
-                    responsive: true, 
-                    aspectRatio: 2.5, 
-                    plugins: { 
-                        legend: { 
-                            position: 'right', 
-                            labels: { 
-                                boxWidth: 20, 
-                                padding: 15, 
-                                font: { size: 14 } 
-                            } 
-                        }, 
-                        tooltip: { 
-                            callbacks: { 
-                                label: function(tooltipItem) { return ` Rs. ${tooltipItem.raw.toFixed(2)}`; } 
-                            } 
-                        } 
-                    } 
-                }
-            });
-
-            centerTotalAmount(incomeChart, 'income-total');
-        }
-
-        const expenseData = JSON.parse("{{ expense_data|escapejs }}");
-        const expenseCtx = document.getElementById('expenseChart').getContext('2d');
-        const noExpenseMessage = document.getElementById('no-expense-message');
-        const hasExpense = Object.values(expenseData).some(value => value > 0);
-        let expenseChart = null;
-
-        if (!hasExpense) {
-            noExpenseMessage.classList.remove('hidden');
-        } else {
-            noExpenseMessage.classList.add('hidden');
-            expenseChart = new Chart(expenseCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(expenseData),
-                    datasets: [{ 
-                        label: 'Expenses', 
-                        data: Object.values(expenseData), 
-                        backgroundColor: ['#B20003', '#F44336', '#FF5722', '#E91E63', '#D81B60'], 
-                        borderWidth: 1 
-                    }]
-                },
-                options: { 
-                    cutout: 70, 
-                    responsive: true, 
-                    aspectRatio: 2.5, 
-                    plugins: { 
-                        legend: { 
-                            position: 'right', 
-                            labels: { 
-                                boxWidth: 20, 
-                                padding: 15, 
-                                font: { size: 14 } 
-                            } 
-                        }, 
-                        tooltip: { 
-                            callbacks: { 
-                                label: function(tooltipItem) { return ` Rs. ${tooltipItem.raw.toFixed(2)}`; } 
-                            } 
-                        } 
-                    } 
-                }
-            });
-
-            centerTotalAmount(expenseChart, 'expense-total');
-        }
-
-        const treatmentData = JSON.parse("{{ treatment_data|escapejs }}");
-        const treatmentCtx = document.getElementById('treatmentSummary').getContext('2d');
-        const noTreatmentMessage = document.getElementById('no-treatment-message');
-        const hasTreatment = Object.values(treatmentData).some(value => value > 0);
-        if (!hasTreatment) {
-            noTreatmentMessage.classList.remove('hidden');
-        } else {
-            noTreatmentMessage.classList.add('hidden');
-            new Chart(treatmentCtx, {
-                type: 'line',
-                data: {
-                    labels: Object.keys(treatmentData),
-                    datasets: [{ 
-                        label: 'Treatment Types', 
-                        data: Object.values(treatmentData), 
-                        backgroundColor: 'rgba(0, 178, 178, 0.2)', 
-                        borderColor: '#00B2B2', 
-                        borderWidth: 2, 
-                        fill: true 
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    scales: { 
-                        y: { 
-                            beginAtZero: true, 
-                            max: 8 
-                        } 
-                    }, 
-                    plugins: { 
-                        legend: { 
-                            display: false 
-                        }, 
-                        tooltip: { 
-                            callbacks: { 
-                                label: function(tooltipItem) { return ` ${tooltipItem.raw} treatments`; } 
-                            } 
-                        } 
-                    } 
-                }
-            });
-        }
-
-        const genderData = JSON.parse("{{ gender_data|escapejs }}");
-        const genderCtx = document.getElementById('genderChart').getContext('2d');
-        const noGenderMessage = document.getElementById('no-gender-message');
-        const hasGender = Object.values(genderData).some(value => value > 0);
-        if (!hasGender) {
-            noGenderMessage.classList.remove('hidden');
-        } else {
-            noGenderMessage.classList.add('hidden');
-            new Chart(genderCtx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(genderData),
-                    datasets: [{ 
-                        label: 'Patients',
-                        data: Object.values(genderData), 
-                        backgroundColor: ['#2196F3', '#F06292', '#9E9E9E', '#4CAF50'], 
-                        borderWidth: 1 
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    scales: { 
-                        y: { 
-                            beginAtZero: true, 
-                            max: 6 
-                        } 
-                    }, 
-                    aspectRatio: 2.5, 
-                    plugins: { 
-                        legend: false, 
-                        tooltip: { 
-                            callbacks: { 
-                                label: function(tooltipItem) { return ` ${tooltipItem.raw} patients`; } 
-                            } 
-                        } 
-                    } 
-                }
-            });
-        }
-    });
-
-    function resetFilters() {
-        const form = document.getElementById('filter-form');
-        form.querySelector('#timeFilter').value = 'monthly';
-        const dateRangePicker = form.querySelector('#date-range-picker');
-        dateRangePicker.value = '';
-        dateRangePicker.disabled = true;
-        form.submit();
-    }
     </script>
 {% endblock content %}
