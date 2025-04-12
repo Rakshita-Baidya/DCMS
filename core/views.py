@@ -2027,7 +2027,8 @@ def statistics(request):
     return render(request, 'statistics/statistics.html', context)
 
 
-def error(request, exception):
+@login_required(login_url='login')
+def error(request, exception=None):
     return render(request, 'error.html')
 
 

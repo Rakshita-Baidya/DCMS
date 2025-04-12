@@ -32,9 +32,14 @@
             <p class="error text-[150px] text-[#00b2b2] font-bold">404</p>
             <div class="my-8 text-2xl font-semibold text-[#444]">Oops! The page you are looking for cannot be found.</div>
             <a href="{% url 'core:dashboard' %}"
-               class="inline-block border-2 border-[#00b2b2] bg-[#00b2b2] text-white uppercase font-semibold py-3 px-4 rounded-md shadow-[0_15px_15px_-11px_rgba(0,0,0,0.4)] transition-all duration-200 hover:bg-[#018181] hover:text-[#ddd]">
+               class="inline-block border-2 mb-2 border-[#00b2b2] bg-[#00b2b2] text-white uppercase font-semibold py-3 px-4 rounded-md shadow-[0_15px_15px_-11px_rgba(0,0,0,0.4)] transition-all duration-200 hover:bg-[#018181] hover:text-[#ddd]">
                 Back to dashboard
             </a>
+            <p>
+                Have an authorized access?
+                <a href="{% url 'logout' %}"
+                   class=" text-primaryLogo hover:text-darkerPrimary">Login Here</a>
+            </p>
         </div>
         {% comment %} SweetAlert2 Toast Notifications {% endcomment %}
         {% if messages %}

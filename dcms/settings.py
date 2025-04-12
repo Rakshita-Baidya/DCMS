@@ -30,6 +30,7 @@ SECRET_KEY = 'django-insecure-zg9jcr_ap6@ffdn5vp8w(t0=1!d-b_%obxsv9-v492djogl8y-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ALLOWED_HOSTS = []
 
 # DEBUG = False
 # ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # user created apps
     'core.apps.CoreConfig',
@@ -61,6 +63,8 @@ INSTALLED_APPS = [
     # Schema import and Schema App
     'drf_spectacular',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -191,6 +195,7 @@ USE_TZ = False
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "core/static"),
+    os.path.join(BASE_DIR, "users/static"),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
