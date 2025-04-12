@@ -26,28 +26,28 @@
             <form method="post" class="grid grid-cols-3 md:grid-cols-2 gap-6">
                 {% csrf_token %}
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.title.label_tag }}</label>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.title.label_tag }}*</label>
                     {{ form.title|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.title.errors %}<p class="text-red-500 text-sm">{{ form.title.errors }}</p>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.amount.label_tag }}</label>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.amount.label_tag }}*</label>
                     {{ form.amount|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.amount.errors %}<p class="text-red-500 text-sm">{{ form.amount.errors }}</p>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.type.label_tag }}</label>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.type.label_tag }}*</label>
                     {{ form.type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if form.type.errors %}<p class="text-red-500 text-sm">{{ form.type.errors }}</p>{% endif %}
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-secondaryLogo">{{ form.date.label_tag }}</label>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ form.date.label_tag }}*</label>
                         {{ form.date|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                         {% if form.date.errors %}<p class="text-red-500 text-sm">{{ form.date.errors }}</p>{% endif %}
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-secondaryLogo">{{ form.time.label_tag }}</label>
+                        <label class="block text-sm font-medium text-secondaryLogo">{{ form.time.label_tag }}*</label>
                         {{ form.time|attr:"type:time"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                         {% if form.time.errors %}<p class="text-red-500 text-sm">{{ form.time.errors }}</p>{% endif %}
                     </div>

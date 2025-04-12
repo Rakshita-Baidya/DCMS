@@ -1983,6 +1983,9 @@ def statistics(request):
     expense_dict = {item['title']: float(
         item['total']) for item in expense_data}
 
+    total_income = sum(income_dict.values())
+    total_expense = sum(expense_dict.values())
+
     # Treatment Counts
     treatment_types = [
         "Root Canals", "Dental Crowns", "Fillings", "Cleaning", "General Checkup",
@@ -2006,6 +2009,8 @@ def statistics(request):
         'date_range': date_range,
         'income_data': json.dumps(income_dict),
         'expense_data': json.dumps(expense_dict),
+        'total_income': total_income,
+        'total_expense': total_expense,
         'treatment_data': json.dumps(treatment_counts),
         'top_treatments': top_treatments_dict,
         'gender_data': json.dumps(gender_dict),

@@ -88,18 +88,20 @@
             </div>
             <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
                 <p class="mb-6 text-xl text-center font-semibold">Top 5 Income Sources</p>
-                <div class="w-full relative">
+                <div class="w-full relative flex justify-center items-center">
                     <canvas id="incomeChart"></canvas>
                     <div id="no-income-message"
                          class="absolute text-center inset-0 text-gray-500 font-semibold hidden">No Income Data</div>
+                    <div id="income-total" class="absolute text-2xl font-medium z-10">Rs. {{ total_income }}</div>
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
                 <p class="mb-6 text-xl text-center font-semibold">Top 5 Expenses</p>
-                <div class="w-full relative">
+                <div class="w-full relative flex justify-center items-center">
                     <canvas id="expenseChart"></canvas>
                     <div id="no-expense-message"
                          class="absolute text-center inset-0 text-gray-500 font-semibold hidden">No Expense Data</div>
+                    <div id="expense-total" class="absolute text-2xl font-medium z-10">Rs. {{ total_expense }}</div>
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
@@ -148,41 +150,109 @@
         toggleDateRange();
         timeFilter.addEventListener("change", toggleDateRange);
 
-        // Chart initialization (unchanged)
+        function centerTotalAmount(chart, totalElementId) {
+            const totalElement = document.getElementById(totalElementId);
+            if (!chart || !totalElement) return;
+
+            const chartArea = chart.chartArea;
+            const centerX = (chartArea.left + chartArea.right) / 2;
+            const centerY = (chartArea.top + chartArea.bottom) / 2;
+
+            totalElement.style.left = `${centerX}px`;
+            totalElement.style.top = `${centerY}px`;
+            totalElement.style.transform = 'translate(-50%, -50%)';
+        }
+
         const incomeData = JSON.parse("{{ income_data|escapejs }}");
         const incomeCtx = document.getElementById('incomeChart').getContext('2d');
         const noIncomeMessage = document.getElementById('no-income-message');
         const hasIncome = Object.values(incomeData).some(value => value > 0);
+        let incomeChart = null;
+
         if (!hasIncome) {
             noIncomeMessage.classList.remove('hidden');
         } else {
             noIncomeMessage.classList.add('hidden');
-            new Chart(incomeCtx, {
+            incomeChart = new Chart(incomeCtx, {
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(incomeData),
-                    datasets: [{ label: 'Income', data: Object.values(incomeData), backgroundColor: ['#00B2B2', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3'], borderWidth: 1 }]
+                    datasets: [{ 
+                        label: 'Income', 
+                        data: Object.values(incomeData), 
+                        backgroundColor: ['#00B2B2', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3'], 
+                        borderWidth: 1 
+                    }]
                 },
-                options: { cutout: 40, responsive: true, aspectRatio: 2.5, plugins: { legend: { position: 'right', labels: { boxWidth: 20, padding: 15, font: { size: 14 } } }, tooltip: { callbacks: { label: function(tooltipItem) { return ` Rs. ${tooltipItem.raw.toFixed(2)}`; } } } } }
+                options: { 
+                    cutout: 70, 
+                    responsive: true, 
+                    aspectRatio: 2.5, 
+                    plugins: { 
+                        legend: { 
+                            position: 'right', 
+                            labels: { 
+                                boxWidth: 20, 
+                                padding: 15, 
+                                font: { size: 14 } 
+                            } 
+                        }, 
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(tooltipItem) { return ` Rs. ${tooltipItem.raw.toFixed(2)}`; } 
+                            } 
+                        } 
+                    } 
+                }
             });
+
+            centerTotalAmount(incomeChart, 'income-total');
         }
 
         const expenseData = JSON.parse("{{ expense_data|escapejs }}");
         const expenseCtx = document.getElementById('expenseChart').getContext('2d');
         const noExpenseMessage = document.getElementById('no-expense-message');
         const hasExpense = Object.values(expenseData).some(value => value > 0);
+        let expenseChart = null;
+
         if (!hasExpense) {
             noExpenseMessage.classList.remove('hidden');
         } else {
             noExpenseMessage.classList.add('hidden');
-            new Chart(expenseCtx, {
+            expenseChart = new Chart(expenseCtx, {
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(expenseData),
-                    datasets: [{ label: 'Expenses', data: Object.values(expenseData), backgroundColor: ['#B20003', '#F44336', '#FF5722', '#E91E63', '#D81B60'], borderWidth: 1 }]
+                    datasets: [{ 
+                        label: 'Expenses', 
+                        data: Object.values(expenseData), 
+                        backgroundColor: ['#B20003', '#F44336', '#FF5722', '#E91E63', '#D81B60'], 
+                        borderWidth: 1 
+                    }]
                 },
-                options: { cutout: 40, responsive: true, aspectRatio: 2.5, plugins: { legend: { position: 'right', labels: { boxWidth: 20, padding: 15, font: { size: 14 } } }, tooltip: { callbacks: { label: function(tooltipItem) { return ` Rs. ${tooltipItem.raw.toFixed(2)}`; } } } } }
+                options: { 
+                    cutout: 70, 
+                    responsive: true, 
+                    aspectRatio: 2.5, 
+                    plugins: { 
+                        legend: { 
+                            position: 'right', 
+                            labels: { 
+                                boxWidth: 20, 
+                                padding: 15, 
+                                font: { size: 14 } 
+                            } 
+                        }, 
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(tooltipItem) { return ` Rs. ${tooltipItem.raw.toFixed(2)}`; } 
+                            } 
+                        } 
+                    } 
+                }
             });
+
+            centerTotalAmount(expenseChart, 'expense-total');
         }
 
         const treatmentData = JSON.parse("{{ treatment_data|escapejs }}");
