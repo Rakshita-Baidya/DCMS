@@ -186,8 +186,16 @@
                                 <path d="M 0,225 H 450" class="fill-none stroke-black stroke-[1] [stroke-linejoin:miter] [stroke-miterlimit:4] [stroke-opacity:1] [stroke-dasharray:none]" />
                                 <text xml:space="preserve" x="0" y="215" class="text-[16px] font-bold">UPPER</text>
                                 <text xml:space="preserve" x="0" y="245" class="text-[16px] font-bold">LOWER</text>
-                                <text xml:space="preserve" x="120" y="215" class="text-sm font-bold">RIGHT</text>
-                                <text xml:space="preserve" x="300" y="215" class="text-sm font-bold">LEFT</text>
+                                <text xml:space="preserve" x="120" y="16" class="text-sm font-bold">LABIAL</text>
+                                <text xml:space="preserve" x="280" y="16" class="text-sm font-bold">LABIAL</text>
+                                <text xml:space="preserve" x="20" y="120" class="text-sm font-bold">RIGHT</text>
+                                <text xml:space="preserve" x="400" y="120" class="text-sm font-bold">LEFT</text>
+                                <text xml:space="preserve" x="120" y="215" class="text-sm font-bold">LINGUAL</text>
+                                <text xml:space="preserve" x="300" y="215" class="text-sm font-bold">LINGUAL</text>
+                                <text xml:space="preserve" x="20" y="320" class="text-sm font-bold">RIGHT</text>
+                                <text xml:space="preserve" x="400" y="320" class="text-sm font-bold">LEFT</text>
+                                <text xml:space="preserve" x="120" y="440" class="text-sm font-bold">LABIAL</text>
+                                <text xml:space="preserve" x="280" y="440" class="text-sm font-bold">LABIAL</text>
                                 <path class="tooth-11 tooth-11-parent fill-none stroke-black stroke-[1] [stroke-linecap:round] [stroke-linejoin:miter] [stroke-miterlimit:4] [stroke-opacity:1] [stroke-dasharray:none]" d="M 195,32 C 195.1,32.4 198.1,36.9 198.8,38.9 199.9,41.1 201.7,43.2 206,44.2 209.6,43.8 213.2,43.7 216.2,40.1 L 223.6,30.7 225,27.7 C 226,25.5 223.9,23.5 222,22.6 L 216.6,21.4 C 213.5,21.2 211.4,20.4 205.3,22 L 199.6,23 C 197.5,23.8 194.7,23.5 194.6,27.4 194.7,28.9 194,30.2 195.2,31.8 M 200,38 L 198.7,28.8 C 199.4,28.8 197.9,27 200.6,26.2 210.3,23 216,25.3 217.6,26 219.2,26.7 220.6,28.6 220.3,30.6 220,32.6 219.3,33 218.8,34" />
                                 <path class="tooth-12 tooth-12-parent fill-none stroke-black stroke-[1] [stroke-linecap:round] [stroke-linejoin:miter] [stroke-miterlimit:4] [stroke-opacity:1] [stroke-dasharray:none]" d="M172.4 35.6c11.5-6.3 9.1-4.4 14-5.8 1.7-0.5 3.1-0.6 3.8 0.3l2.6 2.2c1.8 1.9 1.6 2.3 1.9 2.9 0.8 5.9-0.1 5.8-0.3 8.3-1.3 2.1-2.9 4-5.5 5-1.6 1-4 0.9-6.3 0.5l-4-0.8c-1.5 0.1-2.9-0.6-4.3-1.4-2.9-1.7-3.6-4.1-4.6-6.4-0.2-1.5 0.3-2.8 1.4-4M175.6 46.3c-1.5-2-4-3.6-1-7.5 2.7-1.8 4.9-2.3 7.2-3.4 2-0.8 4.1-1.7 5.5-1.6 6.1-0.4 3.6 0.7 5.2 1.1M188.5 37.2c0.5 2.3 1 4.6 2.5 5.3M182 46.8c0.2-1.9-3.2-2.8-6-3.8" />
                                 <path class="tooth-13 tooth-13-parent fill-none stroke-black stroke-[1] [stroke-linecap:round] [stroke-linejoin:miter] [stroke-miterlimit:4] [stroke-opacity:1] [stroke-dasharray:none]" d="M156.9 61.2c-4.6-1.3-6.8-3.6-7.3-6.8-0.5-3 0-6 2.2-8.9 1.9-4.4 3.8-4.2 5.7-4.5 1.7 0.1 3.2 0.1 4.7-0.1 4.5-0.1 6.2 1.5 7.3 2.6 3.8 4.3 3.4 6.8 4.3 9.9 0.4 3.4 0.2 6.3-1.8 7.9-6.3 4-7.3 2-10 1.8-4.9-1.7-3.6-1.4-5.2-2M153 56.8c0.2-4.2 0.6-8.2 3-10.1 2.3-2 5.3-3.5 9.4-4.1M165.4 46.3c2.7 9.1 4 11.2-3.2 5.6M160.9 55.1c6.1 6.2 2 5.3-4.5 2.6" />
@@ -302,9 +310,34 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-semibold mb-2">Tooth Conditions</h3>
-                            {% for tooth in tooth_records %}
-                                <p>Tooth {{ tooth.tooth_no }} - {{ tooth.description }} ({{ tooth.condition }})</p>
-                            {% endfor %}
+                            {% if tooth_records %}
+                                <div class="overflow-x-auto border-2 border-primaryLogo">
+                                    <table class="min-w-full text-sm">
+                                        <thead class="bg-gray-100 border-b-2 border-primaryLogo">
+                                            <tr class="text-center">
+                                                <th class="py-2 px-4">Tooth No</th>
+                                                <th class="py-2 px-4">Description</th>
+                                                <th class="py-2 px-4">Condition</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for tooth in tooth_records %}
+                                                <tr class="border-b last:border-b-0 text-center">
+                                                    <td class="py-2 px-4 font-medium">{{ tooth.tooth_no }}</td>
+                                                    <td class="py-2 px-4 text-gray-700">{{ tooth.description|default:"No description" }}</td>
+                                                    <td class="py-2 px-4">
+                                                        <span class="{% if tooth.condition == 'Severe' %}text-red-600{% elif tooth.condition == 'Moderate' %}text-orange-600{% elif tooth.condition == 'Mild' %}text-yellow-600{% else %}text-gray-500{% endif %} font-medium">
+                                                            {{ tooth.condition|default:"Not specified" }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <p class="text-center text-gray-500 py-4">No tooth conditions recorded.</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

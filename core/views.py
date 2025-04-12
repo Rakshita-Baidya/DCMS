@@ -816,7 +816,7 @@ def get_patient_data(patient_id):
         'treatment_plan': treatment_plan,
         'treatment_history': treatment_history,
         'medical_history_data': medical_history_data,
-        'tooth_records': dental_chart.tooth_records.all() if dental_chart else None
+        'tooth_records': dental_chart.tooth_records.all().order_by('tooth_no') if dental_chart else None
     }
 
 

@@ -28,25 +28,25 @@
         </div>
         <script>
 			{% for message in messages %}
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: '{{ message.tags }}',
-            title: '{{ message }}',
-            showConfirmButton: false,
-            showCloseButton: true,
-            timer: 3000,
-            timerProgressBar: true,
-            background: '#F5F5F5',
-            iconColor: '{% if "success" in message.tags %}green{% elif "error" in message.tags %}red{% else %}yellow{% endif %}',
-            showClass: {
-                popup: 'animate__animated animate__fadeInRight'
-            },
-            hideClass: {
-                popup: 'animate__animated animate__fadeOutRight'
-            }
-        });
-    {% endfor %}
+				Swal.fire({
+					toast: true,
+					position: 'top-end',
+					icon: '{{ message.tags }}',
+					title: '{{ message }}',
+					showConfirmButton: false,
+					showCloseButton: true,
+					timer: 3000,
+					timerProgressBar: true,
+					background: '#F5F5F5',
+					iconColor: '{% if "success" in message.tags %}green{% elif "error" in message.tags %}red{% else %}yellow{% endif %}',
+					showClass: {
+						popup: 'animate__animated animate__fadeInRight'
+					},
+					hideClass: {
+						popup: 'animate__animated animate__fadeOutRight'
+					}
+				});
+			{% endfor %}
 			document.addEventListener("DOMContentLoaded", function () {
 				let hasUnsavedChanges = false;
 	
@@ -96,7 +96,7 @@
 						}
 					});
 				});
-	/*
+				/*
 				window.addEventListener('beforeunload', function (e) {
 					if (hasUnsavedChanges) {
 						e.preventDefault();
