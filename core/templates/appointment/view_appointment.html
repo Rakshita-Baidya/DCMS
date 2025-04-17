@@ -179,13 +179,17 @@
                                             <p class="text-gray-600">Doctor</p>
                                             <p class="font-medium">{{ td.doctor.get_full_name }}</p>
                                         </div>
-                                        <div>
+                                        {% comment %} <div>
                                             <p class="text-gray-600">Percentage</p>
                                             <p class="font-medium">{{ td.percent }}%</p>
                                         </div>
                                         <div>
                                             <p class="text-gray-600">Amount</p>
                                             <p class="font-medium">Rs. {{ td.amount|default:"0.00"|floatformat:2 }}</p>
+                                        </div> {% endcomment %}
+                                        <div class="col-span-2">
+                                            <p class="text-gray-600">Work Description</p>
+                                            <p class="font-medium">{{ td.work_description|default:"Not specified" }}</p>
                                         </div>
                                     </div>
                                 </div>

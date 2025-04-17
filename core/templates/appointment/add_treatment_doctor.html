@@ -41,9 +41,11 @@
                                     {% if form.doctor.errors %}<div class="text-dangerRed text-sm">{{ form.doctor.errors }}</div>{% endif %}
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.percent.label_tag }}</label>
-                                    {{ form.percent|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                                    {% if form.percent.errors %}<div class="text-dangerRed text-sm">{{ form.percent.errors }}</div>{% endif %}
+                                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.work_description.label_tag }}</label>
+                                    {{ form.work_description|attr:"rows:1"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                                    {% if form.work_description.errors %}
+                                        <div class="text-dangerRed text-sm">{{ form.work_description.errors }}</div>
+                                    {% endif %}
                                 </div>
                                 <button type="button"
                                         class="delete-treatment-doctor absolute top-2 right-2 text-dangerRed hover:text-red-700">
@@ -95,9 +97,9 @@
             </select>
         </div>
         <div>
-            <label class="block text-sm font-medium text-secondaryLogo">Percent</label>
-            <input type="number"
-                   name="treatment_doctors-__prefix__-percent"
+            <label class="block text-sm font-medium text-secondaryLogo">Work Description</label>
+            <input type="text"
+                   name="treatment_doctors-__prefix__-work_description"
                    class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
         </div>
         <input type="hidden" name="treatment_doctors-__prefix__-id">

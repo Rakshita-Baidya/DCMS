@@ -1146,13 +1146,27 @@ def appointment(request):
     appointments_data = [
         {
             'id': app.id,
-            'title': f"Appointment - {app.patient.name}",
+            'title': (
+                f"{app.patient.name}"
+                + (f" - Dr. {TreatmentDoctor.objects.filter(treatment_record__appointment=app).first().doctor.get_full_name() or TreatmentDoctor.objects.filter(treatment_record__appointment=app).first().doctor.username}"
+                   if TreatmentDoctor.objects.filter(treatment_record__appointment=app).first() and TreatmentDoctor.objects.filter(treatment_record__appointment=app).first().doctor else "")
+                + (f" for {app.treatment_records.first().treatment_type}"
+                   if app.treatment_records.first() and app.treatment_records.first().treatment_type else "")
+            ),
             'start': f"{app.date.isoformat()}T{app.time}",
             'extendedProps': {
                 'patient_name': app.patient.name,
                 'description': app.description or 'No description provided',
                 'status': app.status,
                 'appointment_id': app.id,
+                'doctor': (
+                    TreatmentDoctor.objects.filter(treatment_record__appointment=app).first().doctor.get_full_name() or
+                    TreatmentDoctor.objects.filter(
+                        treatment_record__appointment=app).first().doctor.username
+                    if TreatmentDoctor.objects.filter(treatment_record__appointment=app).first() and TreatmentDoctor.objects.filter(treatment_record__appointment=app).first().doctor
+                    else 'N/A'
+                ),
+                'treatment_type': app.treatment_records.first().treatment_type if app.treatment_records.first() else 'N/A',
             }
         }
         for app in appointment_queryset
@@ -1166,7 +1180,7 @@ def appointment(request):
         'search_query': search_query,
         'status_filter': status_filter,
         'status': status,
-        'appointments_schedule': appointments_data,
+        'appointments_schedule': json.dumps(appointments_data),
         'date_range': date_range,
     }
 
@@ -1727,6 +1741,7 @@ def view_appointment(request, appointment_id):
         tr.x_ray_cost or 0 for tr in appointment.treatment_records.all() if tr.x_ray)
     products_total = sum(
         pp.total_amt or 0 for pp in appointment.purchased_products.all())
+
     # Handle deletion
     if request.method == 'POST' and 'delete_appointment_id' in request.POST:
         if not request.user.is_superuser and request.user.role != 'Administrator':

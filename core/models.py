@@ -319,21 +319,23 @@ class TreatmentDoctor(models.Model):
         TreatmentRecord, on_delete=models.CASCADE, related_name='doctors')
     doctor = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='treatment_assignments')
-    percent = models.DecimalField(decimal_places=2, max_digits=5,
-                                  validators=[MinValueValidator(0), MaxValueValidator(100)])
-    amount = models.DecimalField(
-        decimal_places=2, max_digits=10, blank=True, null=True)
+    # percent = models.DecimalField(decimal_places=2, max_digits=5,
+    #                               validators=[MinValueValidator(0), MaxValueValidator(100)])
+    # amount = models.DecimalField(
+    #     decimal_places=2, max_digits=10, blank=True, null=True)
+    work_description = models.TextField(
+        max_length=255, blank=True, null=True)
     date_created = models.DateTimeField(
         default=timezone.now, blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-        if self.treatment_record.treatment_cost and self.percent:
-            self.amount = (self.treatment_record.treatment_cost *
-                           self.percent) / 100
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.treatment_record.treatment_cost and self.percent:
+    #         self.amount = (self.treatment_record.treatment_cost *
+    #                        self.percent) / 100
+    #     super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Dr. {self.doctor.username} - {self.treatment_record.appointment.patient.name} ({self.percent}%)"
+        return f"Dr. {self.doctor.username} - {self.treatment_record.appointment.patient.name}"
 
 
 class PurchasedProduct(models.Model):

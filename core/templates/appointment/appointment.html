@@ -76,6 +76,7 @@
                                 <th class="pb-2">Description</th>
                                 <th class="pb-2">Status</th>
                                 <th class="pb-2">Payment Status</th>
+                                <th class="pb-2">Amount</th>
                                 <th class="pb-2">Actions</th>
                             </tr>
                         </thead>
@@ -93,6 +94,7 @@
                                     <td class="py-2 text-nowrap {% if appointment.payment.payment_status == 'Paid' %}text-green-700{% elif appointment.payment.payment_status == 'Pending' %}text-red-700{% endif %}">
                                         {{ appointment.payment.payment_status }}
                                     </td>
+                                    <td class="py-2 text-nowrap">Rs. {{ appointment.payment.remaining_balance }}</td>
                                     <td>
                                         <div class="flex align-middle justify-center space-x-3">
                                             <a href="{% url 'core:edit_appointment' appointment.id %}"
@@ -308,7 +310,7 @@
                     timeEl.className = 'text-gray-700 mr-1 whitespace-nowrap overflow-hidden text-ellipsis flex-shrink-0';
                     const titleEl = document.createElement('div');
                     titleEl.textContent = info.event.title;
-                    titleEl.className = 'text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis flex-grow';
+                    titleEl.className = 'text-gray-700 text-sm whitespace-nowrap overflow-hidden text-ellipsis flex-grow';
                     const content = document.createElement('div');
                     content.className = 'flex items-center w-full';
                     [statusDot, timeEl, titleEl].forEach(el => content.appendChild(el));
@@ -316,7 +318,7 @@
                 },
                 eventClick: info => showAppointmentDetails(info.event),
                 height: 'calc(100vh - 240px)',
-                businessHours: { daysOfWeek: [0, 1, 2, 3, 4, 5], startTime: '08:00', endTime: '18:00' }
+                businessHours: { daysOfWeek: [0, 1, 2, 3, 4, 5], startTime: '10:00', endTime: '17:00' }
             });
             calendar.render();
             calendarInitialized = true;
