@@ -80,6 +80,11 @@
                     {% if user_form.contact.errors %}<div class="text-dangerRed text-sm">{{ user_form.contact.errors }}</div>{% endif %}
                 </div>
                 <div>
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.type.label_tag }}</label>
+                    {{ user_form.type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.type.errors %}<div class="text-dangerRed text-sm">{{ user_form.type.errors }}</div>{% endif %}
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.specialization.label_tag }}</label>
                     {{ user_form.specialization|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.specialization.errors %}
@@ -97,6 +102,13 @@
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.nmc_no.label_tag }}</label>
                     {{ user_form.nmc_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.nmc_no.errors %}<div class="text-dangerRed text-sm">{{ user_form.nmc_no.errors }}</div>{% endif %}
+                </div>
+                <div class="col-start-1 col-span-full">
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.biography.label_tag }}</label>
+                    {{ user_form.biography|attr:"rows:2"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.biography.errors %}
+                        <div class="text-dangerRed text-sm">{{ user_form.biography.errors }}</div>
+                    {% endif %}
                 </div>
                 {% comment %} Submit Button {% endcomment %}
                 <div class="flex space-x-4 justify-end col-span-full">

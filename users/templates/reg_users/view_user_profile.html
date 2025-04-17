@@ -45,47 +45,68 @@
                 </div>
             </div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 items-center">
-            <div class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 my-6">
-                <div class="text-xl font-semibold text-gray-800 space-y-3 mx-auto ">
-                    <p>Identification Number</p>
-                    <p>Username</p>
-                    <p>Full Name</p>
-                    <p>Email Address</p>
-                    <p>Address</p>
-                    <p>Contact Number</p>
-                    <p>Role</p>
-                    {% if user.role == 'Staff' %}
-                        <p>Position</p>
-                    {% elif user.role == 'Doctor' %}
-                        <p>Specialization</p>
-                        <p>Qualification</p>
-                        <p>NMC Number</p>
-                    {% endif %}
-                </div>
-                <div class="text-lg space-y-3 mx-auto ">
-                    <p>{{ user.id }}</p>
-                    <p>{{ user.username }}</p>
-                    <p>{{ user.get_full_name }}</p>
-                    <p>{{ user.email }}</p>
-                    <p>{{ user.address }}</p>
-                    <p>{{ user.contact }}</p>
-                    <p>{{ user.role|capfirst }}</p>
-                    {% if user.role == 'Staff' %}
-                        <p>{{ user.position }}</p>
-                    {% elif user.role == 'Doctor' %}
-                        <p>{{ user.specialization }}</p>
-                        <p>{{ user.qualification }}</p>
-                        <p>{{ user.nmc_no }}</p>
-                    {% endif %}
-                </div>
+        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-4 sm:grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Id Number</p>
+                <p class="text-lg">{{ user.id }}</p>
             </div>
-            <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Full Name</p>
+                <p class="text-lg">{{ user.get_full_name }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Email Address</p>
+                <p class="text-lg">{{ user.email }}</p>
+            </div>
+            <div class="row-span-4 col-start-4 relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full mr-6">
                 <img src="{{ user.profile_image.url }}"
                      alt="{{ user.get_full_name }}"
                      class="object-fill absolute scale-110"
                      width="full"
                      height="full" />
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Username</p>
+                <p class="text-lg">{{ user.username }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Address</p>
+                <p class="text-lg">{{ user.address }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Contact Number</p>
+                <p class="text-lg">{{ user.contact }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Role</p>
+                <p class="text-lg">{{ user.role|capfirst }}</p>
+            </div>
+            {% if user.role == 'Staff' %}
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">Position</p>
+                    <p class="text-lg">{{ user.position }}</p>
+                </div>
+            {% elif user.role == 'Doctor' %}
+                <div class="col-start-1">
+                    <p class="text-xl font-semibold text-gray-800">Type</p>
+                    <p class="text-lg">{{ user.type }}</p>
+                </div>
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">Specialization</p>
+                    <p class="text-lg">{{ user.specialization }}</p>
+                </div>
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">Qualification</p>
+                    <p class="text-lg">{{ user.qualification }}</p>
+                </div>
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">NMC Number</p>
+                    <p class="text-lg">{{ user.nmc_no }}</p>
+                </div>
+            {% endif %}
+            <div class="col-span-full">
+                <p class="text-xl font-semibold text-gray-800">Biography</p>
+                <p class="text-lg">{{ user.biography }}</p>
             </div>
         </div>
     </div>

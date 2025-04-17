@@ -94,6 +94,14 @@
                     {% if user_form.position.errors %}<div class="text-dangerRed text-sm">{{ user_form.position.errors }}</div>{% endif %}
                 </div>
                 <div id="doctor_fields">
+                    <label for="{{ user_form.type.id_for_label }}"
+                           class="block text-sm font-medium text-secondaryLogo form-label">
+                        {{ user_form.type.label_tag }}
+                    </label>
+                    {{ user_form.type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.type.errors %}<div class="text-dangerRed text-sm">{{ user_form.type.errors }}</div>{% endif %}
+                </div>
+                <div id="doctor_fields">
                     <label for="{{ user_form.specialization.id_for_label }}"
                            class="block text-sm font-medium text-secondaryLogo form-label">
                         {{ user_form.specialization.label_tag }}
@@ -120,6 +128,14 @@
                     </label>
                     {{ user_form.nmc_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.nmc_no.errors %}<div class="text-dangerRed text-sm">{{ user_form.nmc_no.errors }}</div>{% endif %}
+                </div>
+                <div class="col-start-1 col-span-full">
+                    <label class="block text-sm font-medium text-secondaryLogo"
+                           for="{{ user_form.biography.id_for_label }}">{{ user_form.biography.label_tag }}</label>
+                    {{ user_form.biography|attr:"rows:2"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.biography.errors %}
+                        <div class="text-dangerRed text-sm">{{ user_form.biography.errors }}</div>
+                    {% endif %}
                 </div>
                 {% comment %} Submit Button {% endcomment %}
                 <div class="flex space-x-3 col-span-full justify-end">

@@ -14,6 +14,12 @@ ROLE_CHOICES = [
 #     ('Rejected', 'Rejected'),
 # ]
 
+DOCTOR_TYPE = [
+    ('On-Call', 'On-Call'),
+    ('Regular', 'Regular'),
+    ('Other', 'Other'),
+]
+
 
 class User(AbstractUser):
     first_name = models.CharField(max_length=150)
@@ -29,6 +35,7 @@ class User(AbstractUser):
     # is_approved = models.CharField(
     #     choices=APPROVAL_STATUS, default="Pending"
     # )
+    biography = models.TextField(max_length=255, blank=True, null=True)
     profile_image = models.ImageField(
         upload_to='images/profile/',
         default='images/profile/default.jpg',
@@ -43,6 +50,8 @@ class User(AbstractUser):
     specialization = models.CharField(max_length=100, blank=True, null=True)
     qualification = models.CharField(max_length=100, blank=True, null=True)
     nmc_no = models.CharField(max_length=5, unique=True, blank=True, null=True)
+    type = models.CharField(blank=True, null=True,
+                            max_length=10, choices=DOCTOR_TYPE)
 
     def __str__(self):
         return f"{self.username} ({self.role})"

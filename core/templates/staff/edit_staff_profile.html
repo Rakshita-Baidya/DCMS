@@ -79,11 +79,17 @@
                     {{ user_form.contact|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.contact.errors %}<div class="text-dangerRed text-sm">{{ user_form.contact.errors }}</div>{% endif %}
                 </div>
-                {% comment %} Staff Form Fields {% endcomment %}
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.position.label_tag }}</label>
                     {{ user_form.position|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.position.errors %}<div class="text-dangerRed text-sm">{{ user_form.position.errors }}</div>{% endif %}
+                </div>
+                <div class="col-start-1 col-span-full">
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.biography.label_tag }}</label>
+                    {{ user_form.biography|attr:"rows:2"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if user_form.biography.errors %}
+                        <div class="text-dangerRed text-sm">{{ user_form.biography.errors }}</div>
+                    {% endif %}
                 </div>
                 {% comment %} Submit Button {% endcomment %}
                 <div class="flex space-x-4 justify-end col-span-full">

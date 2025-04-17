@@ -8,8 +8,8 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password', 'address', 'contact',
-                  'role', 'profile_image', 'position', 'specialization', 'qualification', 'nmc_no']
+        fields = ['username', 'first_name', 'last_name', 'email', 'password', 'address', 'contact', 'biography',
+                  'role', 'profile_image', 'position', 'specialization', 'qualification', 'nmc_no', 'type']
         widgets = {
             'role': forms.Select(choices=ROLE_CHOICES),
         }
@@ -52,19 +52,19 @@ class LoginForm(forms.Form):
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email',
-                  'profile_image', 'role', 'specialization', 'qualification', 'nmc_no', 'position']
+        fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email', 'biography',
+                  'profile_image', 'role', 'specialization', 'qualification', 'nmc_no', 'position', 'type']
 
 
 class StaffEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email',
+        fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email', 'biography',
                   'profile_image', 'position']
 
 
 class DoctorEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email',
-                  'profile_image', 'specialization', 'qualification', 'nmc_no']
+        fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email', 'biography',
+                  'profile_image', 'specialization', 'qualification', 'nmc_no', 'type']

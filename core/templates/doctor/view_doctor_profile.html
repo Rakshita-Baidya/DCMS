@@ -45,39 +45,53 @@
                 </div>
             </div>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 items-center">
-            <div class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2">
-                <div class="text-xl font-semibold text-gray-800 space-y-3 mx-auto ">
-                    <p>Identification Number</p>
-                    <p>Username</p>
-                    <p>Full Name</p>
-                    <p>Email Address</p>
-                    <p>Address</p>
-                    <p>Contact Number</p>
-                    <p>Role</p>
-                    <p>Specialization</p>
-                    <p>Qualification</p>
-                    <p>NMC Number</p>
-                </div>
-                <div class="text-lg space-y-3 mx-auto ">
-                    <p>{{ doctor.id }}</p>
-                    <p>{{ doctor.username }}</p>
-                    <p>{{ doctor.get_full_name }}</p>
-                    <p>{{ doctor.email }}</p>
-                    <p>{{ doctor.address }}</p>
-                    <p>{{ doctor.contact }}</p>
-                    <p>{{ doctor.role|capfirst }}</p>
-                    <p>{{ doctor.specialization }}</p>
-                    <p>{{ doctor.qualification }}</p>
-                    <p>{{ doctor.nmc_no }}</p>
-                </div>
+        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-4 sm:grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Full Name</p>
+                <p class="text-lg">{{ doctor.get_full_name }}</p>
             </div>
-            <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Email Address</p>
+                <p class="text-lg">{{ doctor.email }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Username</p>
+                <p class="text-lg">{{ doctor.username }}</p>
+            </div>
+            <div class="row-span-4 col-start-4 relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full mr-6">
                 <img src="{{ doctor.profile_image.url }}"
                      alt="{{ doctor.get_full_name }}"
                      class="object-fill absolute scale-110"
                      width="full"
                      height="full" />
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Address</p>
+                <p class="text-lg">{{ doctor.address }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Contact Number</p>
+                <p class="text-lg">{{ doctor.contact }}</p>
+            </div>
+            <div class="col-start-1">
+                <p class="text-xl font-semibold text-gray-800">Type</p>
+                <p class="text-lg">{{ doctor.type }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Specialization</p>
+                <p class="text-lg">{{ doctor.specialization }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Qualification</p>
+                <p class="text-lg">{{ doctor.qualification }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">NMC Number</p>
+                <p class="text-lg">{{ doctor.nmc_no }}</p>
+            </div>
+            <div class="col-span-full">
+                <p class="text-xl font-semibold text-gray-800">Biography</p>
+                <p class="text-lg">{{ doctor.biography|default:"None" }}</p>
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
