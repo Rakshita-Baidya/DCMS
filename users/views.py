@@ -21,9 +21,13 @@ from .decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
 
 
 def delete_user(request, user_to_delete, redirect_url):
-    if not request.user.is_superuser and 'Administrator' not in request.user.groups.values_list('name', flat=True):
+    if not request.user.is_superuser and request.user.role != 'Administrator':
         messages.error(request, "You do not have permission to delete.")
         return None
+    if user_to_delete.role == 'Administrator':
+        messages.error(request, "You cannot delete an Administrator.")
+        return None
+
     user_to_delete.delete()
     messages.success(
         request, f"User {user_to_delete.username} has been deleted.")
@@ -101,7 +105,7 @@ def user_logout(request):
 @login_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator'])
 def users_list(request):
-    user_queryset = User.objects.all().order_by('date_joined')
+    user_queryset = User.objects.all().order_by('role')
     serializer = UserSerializer
 
     # user needs to be deleted

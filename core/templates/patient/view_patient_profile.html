@@ -6,16 +6,15 @@
         {% comment %} Header Section {% endcomment %}
         <div class="flex justify-between items-center mb-4 ">
             <div class="space-x-1 flex items-center">
-                <a href="{% url 'core:patient' %}">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         xmlns:xlink="http://www.w3.org/1999/xlink"
-                         width="24px"
-                         fill="none"
-                         height="24px"
-                         viewBox="0 0 20 20">
-                        <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
-                    </svg>
-                </a>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                     width="24px"
+                     fill="none"
+                     height="24px"
+                     viewBox="0 0 20 20"
+                     onclick="history.back()">
+                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                </svg>
                 <p class="text-2xl font-semibold">{{ patient.name }}'s Profile</p>
             </div>
             <div class="space-x-2 flex items-center">
@@ -24,6 +23,18 @@
                     {% csrf_token %}
                     <input type="hidden" name="delete_patient_id" value="{{ patient.id }}">
                 </form>
+                <a href="{% url 'core:generate_patient_pdf' patient.id %}"
+                   class="inline-flex items-center px-4 py-1.5 bg-lime-600 text-white rounded hover:bg-lime-800 space-x-2 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="20"
+                         height="20"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="white">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Generate PDF</span>
+                </a>
                 <a href="{% url 'core:edit_patient_profile' patient.id %}"
                    class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary space-x-2 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -46,18 +57,6 @@
                         <span>Delete Profile</span>
                     </div>
                 {% endif %}
-                <a href="{% url 'core:generate_patient_pdf' patient.id %}"
-                   class="inline-flex items-center px-4 py-1.5 bg-lime-600 text-white rounded hover:bg-lime-800 space-x-2 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         width="20"
-                         height="20"
-                         fill="none"
-                         viewBox="0 0 24 24"
-                         stroke="white">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <span>Generate PDF</span>
-                </a>
             </div>
         </div>
         {% comment %}Patient Info Card {% endcomment %}
@@ -326,7 +325,7 @@
                                                     <td class="py-2 px-4 font-medium">{{ tooth.tooth_no }}</td>
                                                     <td class="py-2 px-4 text-gray-700">{{ tooth.description|default:"No description" }}</td>
                                                     <td class="py-2 px-4">
-                                                        <span class="{% if tooth.condition == 'Severe' %}text-red-600{% elif tooth.condition == 'Moderate' %}text-orange-600{% elif tooth.condition == 'Mild' %}text-yellow-600{% else %}text-gray-500{% endif %} font-medium">
+                                                        <span class="{% if tooth.condition == 'Severe' %}text-red-600{% elif tooth.condition == 'Moderate' %}text-orange-600{% elif tooth.condition == 'Mild' %}text-lime-600{% else %}text-gray-500{% endif %} font-medium">
                                                             {{ tooth.condition|default:"Not specified" }}
                                                         </span>
                                                     </td>

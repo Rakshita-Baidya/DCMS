@@ -78,10 +78,10 @@
                     {% endif %}
                     <button type="submit"
                             class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
-                        {% if is_editing %}
+                        {% if is_editing or is_editing_all %}
                             Save Changes
                         {% else %}
-                            Next
+                            Add Appointment
                         {% endif %}
                     </button>
                 </div>

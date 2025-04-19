@@ -41,9 +41,8 @@ urlpatterns = [
 
     path('list/', users_list, name='list'),
     #     path('approve/', user_approve, name='approve'),
-    path('profile/', user_profile, name='profile'),
+    path('profile/', user_profile, name='profile'),  # logged in user profile
     path('profile/edit/', edit_profile, name='edit_profile'),
-
     path('profile/<int:user_id>/', view_user_profile, name='view_user_profile'),
     path('profile/<int:user_id>/edit/',
          edit_user_profile, name='edit_user_profile'),

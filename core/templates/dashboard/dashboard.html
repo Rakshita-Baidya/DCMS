@@ -134,6 +134,9 @@
                                                 <span class="font-medium">Contact:</span> {{ follow_up.patient.contact|default:"N/A" }}
                                             </p>
                                             <p class=" text-gray-600">
+                                                <span class="font-medium">Last appointment date:</span> {{ follow_up.date }}
+                                            </p>
+                                            <p class=" text-gray-600">
                                                 <span class="font-medium">Last appointment description:</span> {{ follow_up.description|default:"No description provided" }}
                                             </p>
                                         </div>

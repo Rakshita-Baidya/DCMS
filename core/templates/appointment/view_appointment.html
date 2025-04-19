@@ -4,16 +4,15 @@
     <div class="p-6">
         <div class="flex justify-between items-center mb-4">
             <div class="space-x-1 flex items-center">
-                <a href="{% url 'core:appointment' %}">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         xmlns:xlink="http://www.w3.org/1999/xlink"
-                         width="24px"
-                         fill="none"
-                         height="24px"
-                         viewBox="0 0 20 20">
-                        <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" stroke-miterlimit="10" d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
-                    </svg>
-                </a>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                     width="24px"
+                     fill="none"
+                     height="24px"
+                     viewBox="0 0 20 20"
+                     onclick="history.back()">
+                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" stroke-miterlimit="10" d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                </svg>
                 <p class="text-2xl font-semibold">{{ appointment.patient.name }}'s Appointment</p>
             </div>
             <div class="space-x-2 flex items-center">
@@ -25,6 +24,17 @@
                            name="delete_appointment_id"
                            value="{{ appointment.id }}">
                 </form>
+                <a href="{% url 'core:view_patient_profile' appointment.patient.id %}"
+                   class="inline-flex items-center px-3 py-1.5 bg-lime-700 text-white rounded hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="20"
+                         height="20"
+                         viewBox="0 0 20 20"
+                         class="cursor-pointer">
+                        <path fill="none" stroke="white" stroke-width="1.5" d="M9.999996 17.499993c-4.1679675 0-9.1679655-4.1679675-9.1679655-7.499997s4.999998-7.499997 9.1679655-7.499997c4.16796667 0 9.16796467 4.1679675 9.16796467 7.499997s-4.999998 7.499997-9.16796467 7.499997Zm0-11.6679645c-2.30078075 0-4.1679675 1.86718675-4.1679675 4.1679675 0 2.30077991 1.86718675 4.16796667 4.1679675 4.16796667 2.30077991 0 4.16796667-1.86718676 4.16796667-4.16796667 0-2.30078075-1.86718676-4.1679675-4.16796667-4.1679675Zm0 0" />
+                    </svg>
+                    <p>View Patient Profile</p>
+                </a>
                 <a href="{% url 'core:edit_appointment' appointment.id %}"
                    class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary space-x-2 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -246,48 +256,50 @@
                                 <p class="text-gray-600">Lab Cost</p>
                                 <p class="font-medium">Rs. {{ lab_cost|default:"0.00"|floatformat:2 }}</p>
                             </div>
-                            <div>
-                                <p class="text-gray-600">Products Total</p>
-                                <p class="font-medium">Rs. {{ products_total|floatformat:2 }}</p>
-                            </div>
-                            <div class="col-start-1">
-                                <p class="text-gray-600">Additional Cost</p>
-                                <p class="font-medium">Rs. {{ payment.additional_cost|floatformat:2 }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-600">Discount Amount</p>
-                                <p class="font-medium">Rs. {{ payment.discount_amount|floatformat:2 }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-600">Final Amount</p>
-                                <p class="font-medium">Rs. {{ payment.final_amount|floatformat:2 }}</p>
-                            </div>
-                            <hr class="bg-primaryLogo col-start-1 col-span-4 h-0.5 my-2 rounded-sm">
-                            <div class="col-start-1">
-                                <p class="text-gray-600">Paid Amount</p>
-                                <p class="font-medium">Rs. {{ payment.paid_amount|floatformat:2 }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-600">Payment Date</p>
-                                <p class="font-medium">{{ payment.payment_date|default:"Not specified" }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-600">Payment Method</p>
-                                <p class="font-medium">{{ payment.payment_method|default:"Not specified" }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-600">Payment Notes</p>
-                                <p class="font-medium">{{ payment.payment_notes|default:"None" }}</p>
-                            </div>
-                            <hr class="bg-primaryLogo col-start-1 col-span-4 h-0.5 my-2 rounded-sm">
-                            <div class="col-start-1">
-                                <p class="text-gray-600">Remaining Balance</p>
-                                <p class="font-medium">Rs. {{ payment.remaining_balance|floatformat:2 }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-600">Payment Status</p>
-                                <p class="font-medium">{{ payment.payment_status }}</p>
-                            </div>
+                            {% if request.user.role != 'Doctor' %}
+                                <div>
+                                    <p class="text-gray-600">Products Total</p>
+                                    <p class="font-medium">Rs. {{ products_total|floatformat:2 }}</p>
+                                </div>
+                                <div class="col-start-1">
+                                    <p class="text-gray-600">Additional Cost</p>
+                                    <p class="font-medium">Rs. {{ payment.additional_cost|floatformat:2 }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Discount Amount</p>
+                                    <p class="font-medium">Rs. {{ payment.discount_amount|floatformat:2 }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Final Amount</p>
+                                    <p class="font-medium">Rs. {{ payment.final_amount|floatformat:2 }}</p>
+                                </div>
+                                <hr class="bg-primaryLogo col-start-1 col-span-4 h-0.5 my-2 rounded-sm">
+                                <div class="col-start-1">
+                                    <p class="text-gray-600">Paid Amount</p>
+                                    <p class="font-medium">Rs. {{ payment.paid_amount|floatformat:2 }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Payment Date</p>
+                                    <p class="font-medium">{{ payment.payment_date|default:"Not specified" }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Payment Method</p>
+                                    <p class="font-medium">{{ payment.payment_method|default:"Not specified" }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Payment Notes</p>
+                                    <p class="font-medium">{{ payment.payment_notes|default:"None" }}</p>
+                                </div>
+                                <hr class="bg-primaryLogo col-start-1 col-span-4 h-0.5 my-2 rounded-sm">
+                                <div class="col-start-1">
+                                    <p class="text-gray-600">Remaining Payment Amount</p>
+                                    <p class="font-medium">Rs. {{ payment.remaining_balance|floatformat:2 }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Payment Status</p>
+                                    <p class="font-medium">{{ payment.payment_status }}</p>
+                                </div>
+                            {% endif %}
                         </div>
                     {% else %}
                         <p class="text-center text-gray-500 py-4">
