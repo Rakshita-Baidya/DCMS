@@ -1,19 +1,24 @@
-from datetime import timedelta
-from django.db.models import Count, Sum
+from datetime import date, datetime, timedelta
 from decimal import Decimal
-
-from django.http import FileResponse
 import io
+import os
+import json
+from formtools.wizard.views import SessionWizardView
+
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import AllowAny
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, FrameBreak
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from django.conf import settings
 
+from django.http import FileResponse
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render, redirect
 from django.shortcuts import render
@@ -25,26 +30,19 @@ from django.urls import reverse
 from django.forms import formset_factory
 from django.utils import timezone
 
-import os
-from datetime import date, datetime, timedelta
-import json
-from formtools.wizard.views import SessionWizardView
-
 from users.models import User
 from users.forms import DoctorEditForm, StaffEditForm, UserEditForm
 from users.serializers import UserSerializer
 from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
 
+
 from .models import (Patient, MedicalHistory, DentalChart, Payment, ToothRecord, Appointment,
                      TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction)
 from .forms import (AppointmentForm, PatientForm,  MedicalHistoryForm,
                     DentalChartForm, PaymentForm, PurchasedProductFormSet, ToothRecordFormSet, TransactionForm, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentPlanForm, TreatmentRecordForm)
-
 from .serializers import (PatientSerializer, MedicalHistorySerializer,  AppointmentSerializer, ToothRecordSerializer, DentalChartSerializer,
                           PaymentSerializer, TransactionSerializer, TreatmentPlanSerializer, TreatmentDoctorSerializer, TreatmentRecordSerializer, PurchasedProductSerializer)
 
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import AllowAny
 
 # Create your views here.
 
@@ -91,12 +89,6 @@ def dashboard(request):
     pending_appointments = appointments.filter(status="Pending")
     lab_orders = treatment_queryset.filter(lab=True).count()
     x_rays_taken = treatment_queryset.filter(x_ray=True).count()
-
-    # Serialize data
-    serialized_appointments = AppointmentSerializer(
-        appointments, many=True).data
-    serialized_treatments = TreatmentRecordSerializer(
-        treatment_queryset, many=True).data
 
     # Appointment status counts
     status_counts = {
