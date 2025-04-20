@@ -499,7 +499,7 @@ class PatientFormWizard(SessionWizardView):
 
     def get_form_instance(self, step):
         if step == '0':  # Patient Form
-            return Patient()
+            return self.get_patient_instance()
         elif step == '1':  # Medical History Form
             return MedicalHistory()
         elif step == '2':  # Dental Chart Form
@@ -542,31 +542,28 @@ class PatientFormWizard(SessionWizardView):
         return super().post(*args, **kwargs)
 
     def get_patient_instance(self):
-
         patient_id = self.storage.extra_data.get('patient_id')
         if patient_id:
-            return Patient.objects.get(id=patient_id)
-        patient_data = self.get_cleaned_data_for_step('0')
-        if patient_data:
-            patient = Patient(**patient_data)
-            patient.save()
-            self.storage.extra_data['patient_id'] = patient.id
-            return patient
+            try:
+                return Patient.objects.get(id=patient_id)
+            except Patient.DoesNotExist:
+                return None
         return None
 
     def done(self, form_list, **kwargs):
         request = self.request
 
         patient = self.get_patient_instance()
+
         if not patient:
-            patient = form_list[0].save()
+            messages.error(
+                request, 'Something went wrong — patient data missing.')
+            return redirect('core:patient')
 
         # Save medical history
         medical_history = form_list[1].save(commit=False)
         medical_history.patient = patient
         medical_history.save()
-
-        dental_chart = DentalChart.objects.filter(patient=patient).first()
 
         # Save treatment plan
         treatment_plan = form_list[3].save(commit=False)
