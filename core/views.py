@@ -1760,9 +1760,7 @@ def add_transaction(request):
 @login_required(login_url='login')
 @AdminOnly
 def edit_transaction(request, transaction_id):
-    transaction = get_object_or_404(
-        Transaction, id=transaction_id, user=request.user
-    )
+    transaction = get_object_or_404(Transaction, id=transaction_id)
 
     if request.method == 'POST':
         form = TransactionForm(request.POST, instance=transaction)

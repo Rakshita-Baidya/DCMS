@@ -432,7 +432,7 @@ class Transaction(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=150, null=True, blank=True)
     amount = models.DecimalField(
-        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(1)])
     date = models.DateField(default=now)
     time = models.TimeField()
     type = models.CharField(choices=TRANSACTION_TYPE, default="Income")
