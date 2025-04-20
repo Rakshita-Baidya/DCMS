@@ -39,7 +39,7 @@
                     <table class="min-w-full table-auto mb-4">
                         <thead>
                             <tr class="border-b-2 border-primaryLogo text-center pb-4">
-                                <th class="pb-2">ID</th>
+                                <th class="pb-2 px-4">ID</th>
                                 <th class="pb-2">Title</th>
                                 <th class="pb-2 ">Description</th>
                                 <th class="pb-2">Amount</th>
@@ -51,9 +51,9 @@
                         <tbody>
                             {% for transaction in income_transaction %}
                                 <tr class="border-b text-center">
-                                    <td class="py-2">{{ transaction.id }}</td>
-                                    <td>{{ transaction.title }}</td>
-                                    <td class="w-[35rem]">{{ transaction.description|default:"-" }}</td>
+                                    <td class="py-2 px-4">{{ transaction.id }}</td>
+                                    <td class="max-w-28 text-ellipsis overflow-hidden whitespace-nowrap">{{ transaction.title }}</td>
+                                    <td class="max-w-96 text-ellipsis overflow-hidden whitespace-nowrap">{{ transaction.description|default:"-" }}</td>
                                     <td>Rs. {{ transaction.amount }}</td>
                                     <td>{{ transaction.date }}</td>
                                     <td>{{ transaction.user.username }}</td>
@@ -143,7 +143,7 @@
                     <table class="min-w-full table-auto mb-4">
                         <thead>
                             <tr class="border-b-2 border-primaryLogo text-center pb-4">
-                                <th class="pb-2">ID</th>
+                                <th class="pb-2 px-6">ID</th>
                                 <th class="pb-2">Title</th>
                                 <th class="pb-2">Description</th>
                                 <th class="pb-2">Amount</th>
@@ -155,9 +155,9 @@
                         <tbody>
                             {% for transaction in expense_transaction %}
                                 <tr class="border-b text-center">
-                                    <td class="py-2">{{ transaction.id }}</td>
-                                    <td>{{ transaction.title }}</td>
-                                    <td class="w-[35rem]">{{ transaction.description|default:"-" }}</td>
+                                    <td class="py-2 px-6">{{ transaction.id }}</td>
+                                    <td class="max-w-28 text-ellipsis overflow-hidden whitespace-nowrap">{{ transaction.title }}</td>
+                                    <td class="max-w-96 text-ellipsis overflow-hidden whitespace-nowrap">{{ transaction.description|default:"-" }}</td>
                                     <td>Rs. {{ transaction.amount }}</td>
                                     <td>{{ transaction.date }}</td>
                                     <td>{{ transaction.user.username }}</td>

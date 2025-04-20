@@ -16,129 +16,162 @@
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     </head>
     <body class="bg-[#ECF4F4] min-h-screen">
-        {% comment %} sidebar section {% endcomment %}
-        {% include "./sidebar.html" %}
-        <div class="ml-48">
-            {% comment %} header section {% endcomment %}
-            {% include "./header.html" %}
-            <main class="pt-16">
-                {% block content %}
-                {% endblock content %}
-            </main>
+        <div class="flex">
+            {% include "./sidebar.html" %}
+            <div id="main-content" class="flex-1 transition-all duration-300 ml-14">
+                {% include "./header.html" %}
+                <main class="pt-[50px]">
+                    {% block content %}
+                    {% endblock content %}
+                </main>
+            </div>
         </div>
         <script>
-			{% for message in messages %}
-				Swal.fire({
-					toast: true,
-					position: 'top-end',
-					icon: '{{ message.tags }}',
-					title: '{{ message }}',
-					showConfirmButton: false,
-					showCloseButton: true,
-					timer: 3000,
-					timerProgressBar: true,
-					background: '#F5F5F5',
-					iconColor: '{% if "success" in message.tags %}green{% elif "error" in message.tags %}red{% else %}yellow{% endif %}',
-					showClass: {
-						popup: 'animate__animated animate__fadeInRight'
-					},
-					hideClass: {
-						popup: 'animate__animated animate__fadeOutRight'
-					}
-				});
-			{% endfor %}
-			document.addEventListener("DOMContentLoaded", function () {
-				let hasUnsavedChanges = false;
-	
-				// Function to mark form as changed
-				function markFormAsChanged() {
-					hasUnsavedChanges = true;
-				}
-	
-				const forms = document.querySelectorAll('form');
-				forms.forEach(form => {
-					const initialData = new FormData(form);
-					form.dataset.initialData = JSON.stringify([...initialData.entries()]);
-	
-					const inputs = form.querySelectorAll('input, select, textarea');
-					inputs.forEach(input => {
-						input.addEventListener('input', markFormAsChanged);
-						input.addEventListener('change', markFormAsChanged);
-					});
-				});
-	
-				forms.forEach(form => {
-					form.addEventListener('submit', function () {
-						hasUnsavedChanges = false; 
-					});
-				});
-	
-				// Handle sidebar navigation with SweetAlert2
-				const sidebarLinks = document.querySelectorAll('.sidebar-link');
-				sidebarLinks.forEach(link => {
-					link.addEventListener('click', function (e) {
-						if (hasUnsavedChanges) {
-							e.preventDefault(); // Prevent navigation
-							Swal.fire({
-								title: 'Unsaved Changes',
-								text: 'You have unsaved changes. Are you sure you want to leave this page?',
-								showCancelButton: true,
-								confirmButtonColor: '#B20003',
-								cancelButtonColor: '#7c7c7c',
-								confirmButtonText: 'Leave',
-								cancelButtonText: 'Cancel'
-							}).then((result) => {
-								if (result.isConfirmed) {
-									// Navigate to the link's href
-									window.location.href = link.href;
-								}
-							});
-						}
-					});
-				});
-				/*
-				window.addEventListener('beforeunload', function (e) {
-					if (hasUnsavedChanges) {
-						e.preventDefault();
-						e.returnValue = ''; 
-						return '';
-					}
-				});*/
-	
-				// Special handling for dynamic forms (tooth-record-form, purchased-product-form, treatment-doctor-form)
-				const observer = new MutationObserver(function (mutations) {
-					mutations.forEach(function (mutation) {
-						if (mutation.addedNodes.length) {
-							mutation.addedNodes.forEach(node => {
-								if (node.nodeType === 1 && (
-									node.classList.contains('tooth-record-form') ||
-									node.classList.contains('purchased-product-form') ||
-									node.classList.contains('treatment-doctor-form')
-								)) {
-									const inputs = node.querySelectorAll('input, select, textarea');
-									inputs.forEach(input => {
-										input.addEventListener('input', markFormAsChanged);
-										input.addEventListener('change', markFormAsChanged);
-									});
-								}
-							});
-						}
-					});
-				});
-	
-				// Observe containers for dynamic forms
-				const containers = [
-					document.getElementById('tooth-records-container'),
-					document.getElementById('purchased-products-container'),
-					document.getElementById('treatment-doctors-container')
-				];
-	
-				containers.forEach(container => {
-					if (container) {
-						observer.observe(container, { childList: true, subtree: true });
-					}
-				});
-			});
+            function confirmLogout() {
+                Swal.fire({
+                    title: 'Logout?',
+                    text: "You will be logged out of the account. Do you want to continue?",
+                    showCancelButton: true,
+                    confirmButtonText: 'Logout',
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                      confirmButton: 'bg-dangerRed text-white hover:bg-darkerDangerRed py-2 w-32',
+                      cancelButton: 'bg-[#444444] text-white hover:bg-gray-400 py-2 w-32',
+                  }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('logout-form').submit();
+                    }
+                });
+            }
+
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('main-content');
+				const header = document.getElementById('header');
+                const toggleButton = document.getElementById('toggle-sidebar');
+        		const sidebarLogo = document.getElementById('sidebar-logo');
+                const sidebarTexts = document.querySelectorAll('.sidebar-text');
+
+				// Sidebar toggle functionality
+                toggleButton.addEventListener('click', function() {
+					header.classList.toggle('left-14');
+            		header.classList.toggle('left-48');
+                    sidebar.classList.toggle('w-14');
+                    sidebar.classList.toggle('w-48');
+                    mainContent.classList.toggle('ml-14');
+                    mainContent.classList.toggle('ml-48');
+					sidebarLogo.setAttribute('width', sidebar.classList.contains('w-14') ? '48' : '96');
+            		sidebarLogo.setAttribute('height', sidebar.classList.contains('w-14') ? '48' : '96');
+					toggleButton.classList.toggle('-right-10');
+					toggleButton.classList.toggle('-right-44');
+
+
+                    sidebarTexts.forEach(text => {
+                        text.classList.toggle('hidden');
+                    });
+                });
+
+                {% for message in messages %}
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: '{{ message.tags }}',
+                        title: '{{ message }}',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: '#F5F5F5',
+                        iconColor: '{% if "success" in message.tags %}green{% elif "error" in message.tags %}red{% else %}yellow{% endif %}',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInRight'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutRight'
+                        }
+                    });
+                {% endfor %}
+
+                let hasUnsavedChanges = false;
+
+                function markFormAsChanged() {
+                    hasUnsavedChanges = true;
+                }
+
+                const forms = document.querySelectorAll('form');
+                forms.forEach(form => {
+                    const initialData = new FormData(form);
+                    form.dataset.initialData = JSON.stringify([...initialData.entries()]);
+
+                    const inputs = form.querySelectorAll('input, select, textarea');
+                    inputs.forEach(input => {
+                        input.addEventListener('input', markFormAsChanged);
+                        input.addEventListener('change', markFormAsChanged);
+                    });
+                });
+
+                forms.forEach(form => {
+                    form.addEventListener('submit', function () {
+                        hasUnsavedChanges = false; 
+                    });
+                });
+
+                const sidebarLinks = document.querySelectorAll('.sidebar-link');
+                sidebarLinks.forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        if (hasUnsavedChanges) {
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Unsaved Changes',
+                                text: 'You have unsaved changes. Are you sure you want to leave this page?',
+                                showCancelButton: true,
+                                confirmButtonColor: '#B20003',
+                                cancelButtonColor: '#7c7c7c',
+                                confirmButtonText: 'Leave',
+                                cancelButtonText: 'Cancel'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = link.href;
+                                }
+                            });
+                        }
+                    });
+                });
+
+                const observer = new MutationObserver(function (mutations) {
+                    mutations.forEach(function (mutation) {
+                        if (mutation.addedNodes.length) {
+                            mutation.addedNodes.forEach(node => {
+                                if (node.nodeType === 1 && (
+                                    node.classList.contains('tooth-record-form') ||
+                                    node.classList.contains('purchased-product-form') ||
+                                    node.classList.contains('treatment-doctor-form')
+                                )) {
+                                    const inputs = node.querySelectorAll('input, select, textarea');
+                                    inputs.forEach(input => {
+                                        input.addEventListener('input', markFormAsChanged);
+                                        input.addEventListener('change', markFormAsChanged);
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+
+                const containers = [
+                    document.getElementById('tooth-records-container'),
+                    document.getElementById('purchased-products-container'),
+                    document.getElementById('treatment-doctors-container')
+                ];
+
+                containers.forEach(container => {
+                    if (container) {
+                        observer.observe(container, { childList: true, subtree: true });
+                    }
+                });
+            });
         </script>
     </body>
 </html>

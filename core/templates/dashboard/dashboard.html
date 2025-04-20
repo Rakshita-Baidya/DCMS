@@ -82,23 +82,23 @@
                             <table class="min-w-full my-3 table-fixed">
                                 <thead class="sticky top-0 bg-white border-b-2 border-primaryLogo">
                                     <tr class="text-center">
-                                        <th class="w-1/4 py-2 px-2">Patient Name</th>
-                                        <th class="w-1/5 py-2 px-2">Date</th>
-                                        <th class="w-1/5 py-2 px-2">Time</th>
-                                        <th class="w-1/5 py-2 px-2">Status</th>
-                                        <th class="w-1/5 py-2 px-2">Actions</th>
+                                        <th class="max-w-[150px] py-2 px-2">Patient Name</th>
+                                        <th class="py-2 px-2">Date</th>
+                                        <th class="py-2 px-2">Time</th>
+                                        <th class="py-2 px-2">Status</th>
+                                        <th class="py-2 px-2">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="max-h-64 overflow-y-auto ">
                                     {% for appointment in pending_appointments %}
                                         <tr class="border-b text-center last:border-b-0">
-                                            <td class="w-1/4 py-2 px-2 text-ellipsis overflow-hidden whitespace-nowrap">{{ appointment.patient.name }}</td>
-                                            <td class="w-1/5 py-2 px-2">{{ appointment.date }}</td>
-                                            <td class="w-1/5 py-2 px-2">{{ appointment.time }}</td>
-                                            <td class="w-1/5 py-2 px-2 {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
+                                            <td class="max-w-[150px] py-2 px-2 text-ellipsis overflow-hidden whitespace-nowrap">{{ appointment.patient.name }}</td>
+                                            <td class="py-2 px-2">{{ appointment.date }}</td>
+                                            <td class="py-2 px-2">{{ appointment.time }}</td>
+                                            <td class="py-2 px-2 {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
                                                 {{ appointment.status }}
                                             </td>
-                                            <td class="w-1/5 py-2 px-2">
+                                            <td class="py-2 px-2">
                                                 <div class="flex justify-center space-x-3">
                                                     <a href="{% url 'core:view_appointment' appointment.id %}"
                                                        class="inline-flex items-center">
@@ -128,8 +128,10 @@
                             {% for follow_up in follow_ups %}
                                 <div class="block mx-1 px-1 space-y-1 py-2 border-b-2 border-primaryLogo last:border-b-0">
                                     <div class="flex justify-between">
-                                        <div class="w-4/5">
-                                            <p class="text-lg font-bold text-secondaryLogo">{{ follow_up.patient.name }}</p>
+                                        <div class="max-w-4/5">
+                                            <p class="text-lg font-bold text-secondaryLogo max-w-[430px] text-ellipsis overflow-hidden whitespace-nowrap">
+                                                {{ follow_up.patient.name }}
+                                            </p>
                                             <p class="text-sm text-gray-600">
                                                 <span class="font-medium">Contact:</span> {{ follow_up.patient.contact|default:"N/A" }}
                                             </p>
@@ -166,7 +168,7 @@
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            function updateGreetingAndTime() {
+            function updateGreeting() {
                 const now = new Date();
                 const hours = now.getHours();
                 const username = "{{ request.user.username }}"; 
@@ -183,15 +185,12 @@
                 }
 
                 document.getElementById("greeting").textContent = `${greeting}, ${username}!`;
-
-                const timeString = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
-                document.getElementById("current-time").textContent = `The time is currently ${timeString}`;
             }
 
-            updateGreetingAndTime();
+            updateGreeting();
 
 
-            setInterval(updateGreetingAndTime, 60000);
+            setInterval(updateGreeting, 60000);
             });
     </script>
     {% comment %} for charts {% endcomment %}
