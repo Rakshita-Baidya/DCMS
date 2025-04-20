@@ -1241,21 +1241,29 @@ class AppointmentFormWizard(SessionWizardView):
             context['purchased_product_formset'] = purchased_product_formset
         return context
 
-    def get_form_instance(self, step):
-        if step == '0':
-            return Appointment()
-        elif step == '1':
-            return TreatmentRecord()
-        elif step == '2':
-            return TreatmentDoctor()
-        elif step == '3':
-            return PurchasedProduct()
+    def get_appointment_instance(self):
+        appointment_id = self.storage.extra_data.get('appointment_id')
+        if appointment_id:
+            try:
+                return Appointment.objects.get(id=appointment_id)
+            except Appointment.DoesNotExist:
+                return None
+        return None
+
+    def get_appointment_instance(self):
+        appointment_id = self.storage.extra_data.get('appointment_id')
+        if appointment_id:
+            try:
+                return Appointment.objects.get(id=appointment_id)
+            except Appointment.DoesNotExist:
+                return None
         return None
 
     def done(self, form_list, **kwargs):
         request = self.request
 
         appointment = form_list[0].save()
+        self.storage.extra_data['appointment_id'] = appointment.id
 
         treatment = form_list[1].save(commit=False)
         treatment.appointment = appointment
