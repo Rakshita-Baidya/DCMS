@@ -116,10 +116,14 @@
           {% csrf_token %}
           <button type="button"
                   onclick="confirmLogout()"
-                  class="flex mx-auto w-full bg-white text-primaryLogo p-2 hover:bg-[#B20000] hover:text-white rounded justify-center"
+                  class="group flex mx-auto w-full bg-white text-primaryLogo space-x-2 p-2 hover:bg-[#B20000] hover:text-white rounded justify-center"
                   title="Logout">
-               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
-                    <path stroke="#00b2b2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H11" />
+               <svg xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    class="stroke-primaryLogo group-hover:stroke-white">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H11" />
                </svg>
                <span class="sidebar-text hidden">Logout</span>
           </button>

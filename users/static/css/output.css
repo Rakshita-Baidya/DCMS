@@ -612,8 +612,16 @@ video {
   inset: 0px;
 }
 
-.-right-3 {
-  right: -0.75rem;
+.-right-10 {
+  right: -2.5rem;
+}
+
+.-right-44 {
+  right: -11rem;
+}
+
+.-top-1 {
+  top: -0.25rem;
 }
 
 .left-0 {
@@ -642,70 +650,6 @@ video {
 
 .top-2 {
   top: 0.5rem;
-}
-
-.-right-10 {
-  right: -2.5rem;
-}
-
-.right-10 {
-  right: 2.5rem;
-}
-
-.left-10 {
-  left: 2.5rem;
-}
-
-.top-10 {
-  top: 2.5rem;
-}
-
-.top-48 {
-  top: 12rem;
-}
-
-.left-4 {
-  left: 1rem;
-}
-
-.left-44 {
-  left: 11rem;
-}
-
-.left-\[11rem\] {
-  left: 11rem;
-}
-
-.left-\[3\.5rem\] {
-  left: 3.5rem;
-}
-
-.left-\[rem\] {
-  left: rem;
-}
-
-.left-\[5rem\] {
-  left: 5rem;
-}
-
-.-right-48 {
-  right: -12rem;
-}
-
-.-right-44 {
-  right: -11rem;
-}
-
-.-top-0 {
-  top: -0px;
-}
-
-.-top-1 {
-  top: -0.25rem;
-}
-
-.-top-2 {
-  top: -0.5rem;
 }
 
 .z-10 {
@@ -918,8 +862,8 @@ video {
   height: 3rem;
 }
 
-.h-16 {
-  height: 4rem;
+.h-14 {
+  height: 3.5rem;
 }
 
 .h-2 {
@@ -970,26 +914,6 @@ video {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-\[28px\] {
-  height: 28px;
-}
-
-.h-\[2px\] {
-  height: 2px;
-}
-
-.h-\[24px\] {
-  height: 24px;
-}
-
-.h-1 {
-  height: 0.25rem;
-}
-
-.h-14 {
-  height: 3.5rem;
 }
 
 .max-h-64 {
@@ -1606,6 +1530,10 @@ video {
   stroke: #000;
 }
 
+.stroke-primaryLogo {
+  stroke: #00B2B2;
+}
+
 .stroke-\[1\] {
   stroke-width: 1;
 }
@@ -1961,40 +1889,12 @@ video {
   transition-duration: 150ms;
 }
 
-.transition-transform {
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-.transition-\[left\] {
-  transition-property: left;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
 .duration-200 {
   transition-duration: 200ms;
 }
 
 .duration-300 {
   transition-duration: 300ms;
-}
-
-.duration-500 {
-  transition-duration: 500ms;
-}
-
-.duration-150 {
-  transition-duration: 150ms;
-}
-
-.duration-0 {
-  transition-duration: 0s;
-}
-
-.duration-1000 {
-  transition-duration: 1000ms;
 }
 
 .\[stroke-dasharray\:none\] {
@@ -2104,6 +2004,10 @@ video {
   --tw-bg-opacity: 0.9;
 }
 
+.hover\:stroke-white:hover {
+  stroke: #fff;
+}
+
 .hover\:text-\[\#ddd\]:hover {
   --tw-text-opacity: 1;
   color: rgb(221 221 221 / var(--tw-text-opacity, 1));
@@ -2174,6 +2078,10 @@ video {
 .focus\:ring-primaryLogo:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(0 178 178 / var(--tw-ring-opacity, 1));
+}
+
+.group:hover .group-hover\:stroke-white {
+  stroke: #fff;
 }
 
 @media (min-width: 640px) {

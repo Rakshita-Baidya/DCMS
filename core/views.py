@@ -1637,30 +1637,6 @@ def view_appointment(request, appointment_id):
     return render(request, 'appointment/view_appointment.html', context)
 
 
-# @login_required(login_url='login')
-# def schedule(request):
-#     appointments = Appointment.objects.all()
-#     appointments_data = [
-#         {
-#             'title': f"Appointment - {app.patient.name}",
-#             'start': f"{app.date.isoformat()}T{app.time}",
-#             'extendedProps': {
-#                 'patient_name': app.patient.name,
-#                 'description': app.description or 'No description provided',
-#                 'status': app.status,
-#             }
-#         }
-#         for app in appointments
-#     ]
-
-#     context = {
-#         'page_title': 'Schedule Management',
-#         'active_page': 'schedule',
-#         'appointments': appointments_data,
-#     }
-#     return render(request, 'schedule/schedule.html', context)
-
-
 @login_required(login_url='login')
 @AdminOnly
 def view_transaction(request):
