@@ -114,10 +114,10 @@
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
-                <p class="mb-12 text-xl text-center font-semibold">Patient Gender Distribution</p>
+                <p class="mb-12 text-xl text-center font-semibold">Patient Age Distribution</p>
                 <div class="w-full relative">
-                    <canvas id="genderChart"></canvas>
-                    <div id="no-gender-message"
+                    <canvas id="ageChart"></canvas>
+                    <div id="no-age-message"
                          class="absolute text-center inset-0 text-gray-500 font-semibold hidden">No Patient Data</div>
                 </div>
             </div>
@@ -280,7 +280,10 @@
                         scales: { 
                             y: { 
                                 beginAtZero: true, 
-                                max: 8 
+                                ticks: { 
+                                    stepSize: 1 
+                                },
+                                max:8
                             } 
                         }, 
                         plugins: { 
@@ -297,21 +300,21 @@
                 });
             }
 
-            const genderData = JSON.parse("{{ gender_data|escapejs }}");
-            const genderCtx = document.getElementById('genderChart').getContext('2d');
-            const noGenderMessage = document.getElementById('no-gender-message');
-            const hasGender = Object.values(genderData).some(value => value > 0);
-            if (!hasGender) {
-                noGenderMessage.classList.remove('hidden');
+            const ageData = JSON.parse("{{ age_data|escapejs }}");
+            const ageCtx = document.getElementById('ageChart').getContext('2d');
+            const noAgeMessage = document.getElementById('no-age-message');
+            const hasAge = Object.values(ageData).some(value => value > 0);
+            if (!hasAge) {
+                noAgeMessage.classList.remove('hidden');
             } else {
-                noGenderMessage.classList.add('hidden');
-                new Chart(genderCtx, {
+                noAgeMessage.classList.add('hidden');
+                new Chart(ageCtx, {
                     type: 'bar',
                     data: {
-                        labels: Object.keys(genderData),
+                        labels: Object.keys(ageData),
                         datasets: [{ 
                             label: 'Patients',
-                            data: Object.values(genderData), 
+                            data: Object.values(ageData), 
                             backgroundColor: ['#2196F3', '#F06292', '#9E9E9E', '#4CAF50'], 
                             borderWidth: 1 
                         }]
@@ -321,12 +324,19 @@
                         scales: { 
                             y: { 
                                 beginAtZero: true, 
-                                max: 6 
-                            } 
+                                title: { display: true, text: 'Number of Patients' },
+                                ticks:{
+                                    stepSize: 1
+                                },
+                                max: 8
+                            },
+                            x: { 
+                                title: { display: true, text: 'Age Group' }
+                            }
                         }, 
                         aspectRatio: 2.5, 
                         plugins: { 
-                            legend: false, 
+                            legend: { display: false },
                             tooltip: { 
                                 callbacks: { 
                                     label: function(tooltipItem) { return ` ${tooltipItem.raw} patients`; } 

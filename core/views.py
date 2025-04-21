@@ -1,3 +1,5 @@
+from django.db.models import F, ExpressionWrapper, IntegerField
+from django.db.models.functions import ExtractYear
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 import io
@@ -36,7 +38,7 @@ from users.serializers import UserSerializer
 from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
 
 
-from .models import (Patient, MedicalHistory, DentalChart, Payment, ToothRecord, Appointment,
+from .models import (TREATMENT_CHOICES, Patient, MedicalHistory, DentalChart, Payment, ToothRecord, Appointment,
                      TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction)
 from .forms import (AppointmentForm, PatientForm,  MedicalHistoryForm,
                     DentalChartForm, PaymentForm, PurchasedProductFormSet, ToothRecordFormSet, TransactionForm, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentPlanForm, TreatmentRecordForm)
@@ -97,14 +99,6 @@ def dashboard(request):
         "Cancelled": appointments.filter(status="Cancelled").count(),
     }
 
-    # Treatment counts
-    treatment_types = [
-        "Root Canals", "Dental Crowns", "Fillings", "Cleaning", "General Checkup",
-        "Extractions", "Prosthetics", "Dental Implants", "Other"
-    ]
-    treatment_counts = {ttype: treatment_queryset.filter(
-        treatment_type=ttype).count() for ttype in treatment_types}
-
     # Follow-ups
     two_weeks_later = today + timedelta(days=14)
     one_weeks_earlier = today - timedelta(days=7)
@@ -129,7 +123,6 @@ def dashboard(request):
         'today_plus_2': today_plus_2,
         'follow_ups': follow_ups,
         'treatments': treatment_queryset,
-        'treatment_data': json.dumps(treatment_counts),
         'lab_orders': lab_orders,
         'x_rays_taken': x_rays_taken,
         'time_filter': time_filter,
@@ -203,45 +196,54 @@ def doctor(request):
 @AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 @login_required(login_url='login')
 def view_doctor_profile(request, user_id):
-    doctor_queryset = User.objects.get(pk=user_id)
+    doctor = User.objects.get(pk=user_id)
 
     appointments = Appointment.objects.filter(
-        treatment_records__doctors__doctor=doctor_queryset).distinct().order_by('-date', '-time')[:5]
-    treatment_queryset = TreatmentRecord.objects.filter(
-        doctors__doctor=doctor_queryset
+        treatment_records__doctors__doctor=doctor
+    ).distinct().order_by('-date', '-time')
+
+    treatments = TreatmentRecord.objects.filter(
+        doctors__doctor=doctor
     )
 
-    # Define treatment counts similar to dashboard
-    treatment_counts = {
-        "Root Canals": treatment_queryset.filter(treatment_type="Root Canals").count(),
-        "Dental Crowns": treatment_queryset.filter(treatment_type="Dental Crowns").count(),
-        "Fillings": treatment_queryset.filter(treatment_type="Fillings").count(),
-        "Cleaning": treatment_queryset.filter(treatment_type="Cleaning").count(),
-        "General Checkup": treatment_queryset.filter(treatment_type="General Checkup").count(),
-        "Extractions": treatment_queryset.filter(treatment_type="Extractions").count(),
-        "Prosthetics": treatment_queryset.filter(treatment_type="Prosthetics").count(),
-        "Dental Implants": treatment_queryset.filter(treatment_type="Dental Implants").count(),
-        "Other": treatment_queryset.filter(treatment_type="Other").count(),
-    }
+    # Count each treatment type
+    treatment_counts_qs = treatments.values(
+        'treatment_type').annotate(count=Count('id'))
+    treatment_counts = {t['treatment_type']: t['count']
+                        for t in treatment_counts_qs}
 
-    # user needs to be deleted
+    # Include all treatment types with default count 0
+    for treatment_type, _ in TREATMENT_CHOICES:
+        treatment_counts.setdefault(treatment_type, 0)
+
+    # Sort treatments by count descending
+    sorted_treatment_counts = dict(
+        sorted(treatment_counts.items(), key=lambda x: x[1], reverse=True)
+    )
+
+    # Check if all treatment counts are 0
+    no_treatments_done = all(
+        count == 0 for count in sorted_treatment_counts.values())
+
+    # Handle delete
     if request.method == 'POST' and 'delete_user_id' in request.POST:
         if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
         else:
-            user_id_to_delete = request.POST['delete_user_id']
-            user_to_delete = User.objects.get(id=user_id_to_delete)
+            user_to_delete = get_object_or_404(
+                User, pk=request.POST['delete_user_id'])
             user_to_delete.delete()
-            messages.success(request, f"User {
-                user_to_delete.username} has been deleted.")
+            messages.success(
+                request, f"Doctor {user_to_delete.username} has been deleted.")
             return redirect('core:doctor')
 
     context = {
         'page_title': 'Doctor Management',
         'active_page': 'doctor',
-        'doctor': doctor_queryset,
+        'doctor': doctor,
         'appointments': appointments,
-        'treatment_data': json.dumps(treatment_counts),
+        'treatment_counts': sorted_treatment_counts,
+        'no_treatments_done': no_treatments_done,
     }
 
     return render(request, 'doctor/view_doctor_profile.html', context)
@@ -423,14 +425,26 @@ def patient(request):
         )
 
     # Add filter
-    blood_group_filter = request.GET.get('blood_group', '')
-    if blood_group_filter:
-        patient_queryset = patient_queryset.filter(
-            blood_group__iexact=blood_group_filter)
+    current_year = datetime.now().year
+    patient_queryset = patient_queryset.annotate(
+        age=ExpressionWrapper(
+            current_year - ExtractYear('dob'),
+            output_field=IntegerField()
+        )
+    )
 
-    # Get unique blood_groups for the filter dropdown
-    blood_groups = Patient.objects.all().values_list(
-        'blood_group', flat=True).distinct()
+    # Apply filter by age group
+    age_group_filter = request.GET.get('age_group', '')
+    if age_group_filter == '0-18':
+        patient_queryset = patient_queryset.filter(age__lte=18)
+    elif age_group_filter == '19-30':
+        patient_queryset = patient_queryset.filter(age__range=(19, 30))
+    elif age_group_filter == '31-50':
+        patient_queryset = patient_queryset.filter(age__range=(31, 50))
+    elif age_group_filter == '51+':
+        patient_queryset = patient_queryset.filter(age__gte=51)
+
+    age_groups = ['0-18', '19-30', '31-50', '51+']
 
     # Pagination
     paginator = Paginator(patient_queryset, 8)
@@ -451,8 +465,8 @@ def patient(request):
         'patients': patient_list,
         'total_patient': patient_queryset.count(),
         'search_query': search_query,
-        'blood_group_filter': blood_group_filter,
-        'blood_groups': blood_groups,
+        'age_group_filter': age_group_filter,
+        'age_groups': age_groups,
     }
 
     return render(request, 'patient/patient.html', context)
@@ -941,7 +955,7 @@ def generate_patient_pdf(request, patient_id):
         ["ID:", str(patient.id), "Contact:", patient.contact],
         ["Address:", patient.address or "N/A", "Gender:", patient.gender],
         ["Blood Group:", patient.blood_group, "Age:",
-            str(patient.age) if patient.age else "N/A"],
+            str(patient.dob) if patient.dob else "N/A"],
         ["Email:", patient.email or "N/A", "Telephone:", patient.telephone or "N/A"],
         ["Occupation:", patient.occupation or "N/A",
             "Nationality:", patient.nationality or "N/A"],
@@ -1821,6 +1835,8 @@ def statistics(request):
                              start_date or (today - timedelta(days=90)), end_date])
         products = products.filter(appointment__date__range=[
                                    start_date or (today - timedelta(days=90)), end_date])
+        patients = patients.filter(date_created__date__range=[
+                                   start_date or (today - timedelta(days=90)), end_date])
 
     # Aggregations
     total_products_sold = purchased_products.aggregate(
@@ -1840,12 +1856,15 @@ def statistics(request):
     total_expense = sum(expense_dict.values())
 
     # Treatment Counts
-    treatment_types = [
-        "Root Canals", "Dental Crowns", "Fillings", "Cleaning", "General Checkup",
-        "Extractions", "Prosthetics", "Dental Implants", "Other"
-    ]
-    treatment_counts = {ttype: treatments.filter(
-        treatment_type=ttype).count() for ttype in treatment_types}
+    treatment_counts_qs = treatments.exclude(treatment_type__isnull=True).values(
+        'treatment_type').annotate(count=Count('id'))
+    treatment_counts = {t['treatment_type']: t['count']
+                        for t in treatment_counts_qs}
+
+    # Include all treatment types with default count 0
+    for treatment_type, _ in TREATMENT_CHOICES:
+        treatment_counts.setdefault(treatment_type, 0)
+
     top_treatments = sorted(treatment_counts.items(),
                             key=lambda x: x[1], reverse=True)[:3]
     top_treatments_dict = dict(top_treatments)
@@ -1854,6 +1873,20 @@ def statistics(request):
     gender_counts = patients.values('gender').annotate(count=Count('id'))
     gender_dict = {item['gender'] or 'Unknown': item['count']
                    for item in gender_counts}
+
+    current_year = datetime.now().year
+    patients = patients.annotate(
+        age=ExpressionWrapper(
+            current_year - ExtractYear('dob'),
+            output_field=IntegerField()
+        )
+    )
+    age_data = {
+        '0-18': patients.filter(age__lte=18).count(),
+        '19-30': patients.filter(age__range=(19, 30)).count(),
+        '31-50': patients.filter(age__range=(31, 50)).count(),
+        '51+': patients.filter(age__gte=51).count(),
+    }
 
     context = {
         'page_title': 'Statistics',
@@ -1876,6 +1909,7 @@ def statistics(request):
         'users': users,
         'products': products,
         'total_products_sold': total_products_sold,
+        'age_data': json.dumps(age_data),
     }
     return render(request, 'statistics/statistics.html', context)
 

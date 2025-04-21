@@ -65,9 +65,9 @@
                     {% if wizard.form.dob.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.dob.errors }}</div>{% endif %}
                 </div> {% endcomment %}
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.age.label_tag }}</label>
-                    {{ wizard.form.age|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.age.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.age.errors }}</div>{% endif %}
+                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.dob.label_tag }}*</label>
+                    {{ wizard.form.dob|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {% if wizard.form.dob.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.dob.errors }}</div>{% endif %}
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.email.label_tag }}</label>
