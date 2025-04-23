@@ -18,7 +18,7 @@
         <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
             <form method="post"
                   enctype="multipart/form-data"
-                  class="grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-4">
+                  class="grid grid-cols-1 lg:grid-cols-2 lg:gap-4 gap-3">
                 {% csrf_token %}
                 {% comment %} User Form Fields {% endcomment %}
                 <div>
@@ -26,7 +26,7 @@
                     {{ user_form.username|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.username.errors %}<div class="text-dangerRed text-sm">{{ user_form.username.errors }}</div>{% endif %}
                 </div>
-                <div class="row-span-4">
+                <div class="row-span-5">
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.profile_image.label_tag }}</label>
                     <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
                         <img id="profileImagePreview"
@@ -105,19 +105,19 @@
                 </div>
                 <div class="col-start-1 col-span-full">
                     <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.biography.label_tag }}</label>
-                    {{ user_form.biography|attr:"rows:2"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    {{ user_form.biography|attr:"rows:3"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
                     {% if user_form.biography.errors %}
                         <div class="text-dangerRed text-sm">{{ user_form.biography.errors }}</div>
                     {% endif %}
                 </div>
                 {% comment %} Submit Button {% endcomment %}
                 <div class="flex space-x-4 justify-end col-span-full">
-                    <div onclick="history.back()"
-                         class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</div>
                     <button type="submit"
                             class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
-                        Save Changes
+                        Update Profile
                     </button>
+                    <a href="{% url 'core:doctor' %}"
+                       class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</a>
                 </div>
             </form>
         </div>

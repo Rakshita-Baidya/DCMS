@@ -389,8 +389,6 @@ def edit_staff_profile(request, user_id):
                 request, 'The staff profile has been updated successfully!')
             return redirect('core:view_staff_profile', user_id=staff_queryset.id)
         else:
-            # Log errors for debugging
-            print("Form errors:", user_form.errors)  # Check server logs
             messages.error(request, "Please correct the errors below.")
     else:
         user_form = UserEditForm(instance=staff_queryset)

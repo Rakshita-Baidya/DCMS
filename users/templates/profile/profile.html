@@ -18,76 +18,69 @@
                 </svg>
                 <p>Edit Profile</p>
             </a>
-            {% comment %} <div class="inline-flex items-center px-4 py-1.5 bg-dangerRed text-white rounded-lg hover:bg-darkerDangerRed space-x-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                    <path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.249995" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
-                </svg>
-                <span>Delete Profile</span>
-            </div> {% endcomment %}
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 items-center">
-            <div class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 my-6">
-                <div class="text-xl font-semibold text-gray-800 space-y-6 mx-auto ">
-                    <p>Identification Number</p>
-                    <p>Username</p>
-                    <p>Full Name</p>
-                    <p>Email Address</p>
-                    <p>Address</p>
-                    <p>Contact Number</p>
-                    <p>Role</p>
-                    {% if user.role == 'Staff' %}
-                        <p>Position</p>
-                    {% elif user.role == 'Doctor' %}
-                        <p>Specialization</p>
-                        <p>Qualification</p>
-                        <p>NMC Number</p>
-                    {% endif %}
-                </div>
-                <div class="text-lg space-y-6 mx-auto ">
-                    <p>{{ user.id }}</p>
-                    <p>{{ user.username }}</p>
-                    <p>{{ user.get_full_name }}</p>
-                    <p>{{ user.email }}</p>
-                    <p>{{ user.address }}</p>
-                    <p>{{ user.contact }}</p>
-                    <p>{{ user.role|capfirst }}</p>
-                    {% if user.role == 'Staff' %}
-                        <p>{{ user.position }}</p>
-                    {% elif user.role == 'Doctor' %}
-                        <p>{{ user.specialization }}</p>
-                        <p>{{ user.qualification }}</p>
-                        <p>{{ user.nmc_no }}</p>
-                    {% endif %}
-                    {% comment %} <form method="post" class="flex items-center justify-center space-x-2 py-2">
-                        {% csrf_token %}
-                        <select name="role" class="border px-2 py-1 rounded-sm">
-                            <option value="Administrator" {% if user.role == 'Administrator' %}selected{% endif %}>Admin</option>
-                            <option value="Staff" {% if user.role == 'Staff' %}selected{% endif %}>Staff</option>
-                            <option value="Doctor" {% if user.role == 'Doctor' %}selected{% endif %}>Doctor</option>
-                        </select>
-                        <button type="submit" name="action" value="approve">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 20 20" class="cursor-pointer">
-                                                <g fill="none" stroke="#00b2b2" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-                                                <path d="M9.999996 18.3320235c4.582029 0 8.3320275-3.7499985 8.3320275-8.3320275 0-4.58202983-3.7499985-8.33202833-8.3320275-8.33202833-4.58202983 0-8.33202833 3.7499985-8.33202833 8.33202833 0 4.582029 3.7499985 8.3320275 8.33202833 8.3320275Zm0 0" />
-                                                <path d="m6.45702825 9.999996 2.35937489 2.35937406 4.72655978-4.71874812" />
-                                                </g>
-                                            </svg>
-                        </button>
-                        <button type="submit" name="action" value="deny">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="cursor-pointer">
-  <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.999996 18.3320235c4.582029 0 8.3320275-3.7499985 8.3320275-8.3320275 0-4.58202983-3.7499985-8.33202833-8.3320275-8.33202833-4.58202983 0-8.33202833 3.7499985-8.33202833 8.33202833 0 4.582029 3.7499985 8.3320275 8.33202833 8.3320275Zm-2.35937406-5.97265344 4.71874812-4.71874812m0 4.71874812L7.64062194 7.64062194" />
-</svg>
-                        </button>
-                        <input type="hidden" name="user_id" value="{{ user.id }}">
-                    </form> {% endcomment %}
-                </div>
+        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-4 sm:grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Id Number</p>
+                <p class="text-lg">{{ user.id }}</p>
             </div>
-            <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Full Name</p>
+                <p class="text-lg">{{ user.get_full_name }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Email Address</p>
+                <p class="text-lg">{{ user.email }}</p>
+            </div>
+            <div class="row-span-4 col-start-4 relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full mr-6">
                 <img src="{{ user.profile_image.url }}"
                      alt="{{ user.get_full_name }}"
                      class="object-fill absolute scale-110"
                      width="full"
                      height="full" />
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Username</p>
+                <p class="text-lg">{{ user.username }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Address</p>
+                <p class="text-lg">{{ user.address }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Contact Number</p>
+                <p class="text-lg">{{ user.contact }}</p>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-gray-800">Role</p>
+                <p class="text-lg">{{ user.role|capfirst }}</p>
+            </div>
+            {% if user.role == 'Staff' %}
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">Position</p>
+                    <p class="text-lg">{{ user.position }}</p>
+                </div>
+            {% elif user.role == 'Doctor' %}
+                <div class="col-start-1">
+                    <p class="text-xl font-semibold text-gray-800">Type</p>
+                    <p class="text-lg">{{ user.type }}</p>
+                </div>
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">Specialization</p>
+                    <p class="text-lg">{{ user.specialization }}</p>
+                </div>
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">Qualification</p>
+                    <p class="text-lg">{{ user.qualification }}</p>
+                </div>
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">NMC Number</p>
+                    <p class="text-lg">{{ user.nmc_no }}</p>
+                </div>
+            {% endif %}
+            <div class="col-span-full">
+                <p class="text-xl font-semibold text-gray-800">Biography</p>
+                <p class="text-lg">{{ user.biography }}</p>
             </div>
         </div>
     </div>

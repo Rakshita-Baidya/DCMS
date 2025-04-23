@@ -79,11 +79,8 @@ class AllowedUsers:
                 messages.error(request, 'Not authenticated.')
                 return redirect('core:error')
 
-            if request.user.groups.exists():
-                user_groups = request.user.groups.values_list(
-                    'name', flat=True)
-                if any(group in self.allowed_roles for group in user_groups):
-                    return view_func(request, *args, **kwargs)
+            if request.user.role in self.allowed_roles:
+                return view_func(request, *args, **kwargs)
             messages.error(request, 'You are not authorized to view this page')
             return redirect('core:error')
         return wrapper
@@ -98,9 +95,7 @@ class AdminOnly:
             messages.error(request, 'Not authenticated.')
             return redirect('core:error')
 
-        if request.user.groups.exists():
-            user_groups = request.user.groups.values_list('name', flat=True)
-            if 'Administrator' in user_groups:
-                return self.view_func(request, *args, **kwargs)
+        if request.user.role == 'Administrator':
+            return self.view_func(request, *args, **kwargs)
         messages.error(request, 'You are not authorized to view this page')
         return redirect('core:error')

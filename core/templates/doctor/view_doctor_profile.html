@@ -5,16 +5,15 @@
         {% comment %} Header Section {% endcomment %}
         <div class="flex justify-between items-center mb-4 ">
             <div class="space-x-1 flex items-center">
-                <div onclick="history.back()">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         xmlns:xlink="http://www.w3.org/1999/xlink"
-                         width="24px"
-                         fill="none"
-                         height="24px"
-                         viewBox="0 0 20 20">
-                        <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
-                    </svg>
-                </div>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                     width="24px"
+                     fill="none"
+                     height="24px"
+                     viewBox="0 0 20 20"
+                     onclick="history.back()">
+                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                </svg>
                 <p class="text-2xl font-semibold">{{ doctor.get_full_name }}'s Profile</p>
             </div>
             {% if request.user.role == 'Administrator' %}

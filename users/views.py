@@ -13,7 +13,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from datetime import datetime
 
-from .forms import UserCreationForm, LoginForm, UserEditForm
+from .forms import AdministratorEditForm, DoctorEditForm, StaffEditForm, UserCreationForm, LoginForm, UserEditForm
 from .models import User
 from .serializers import UserSerializer
 from .decorators import AllowedUsers, UnauthenticatedUser, jwt_required
@@ -197,12 +197,29 @@ def user_profile(request):
 @jwt_required(login_url='login')
 def edit_profile(request):
     user = request.user
-    form = UserEditForm(request.POST or None,
-                        request.FILES or None, instance=user)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        messages.success(request, 'Profile updated successfully!')
+    # Select form based on user role
+    if user.role == 'Administrator':
+        form_class = AdministratorEditForm
+    elif user.role == 'Staff':
+        form_class = StaffEditForm
+    elif user.role == 'Doctor':
+        form_class = DoctorEditForm
+    else:
+        messages.error(request, 'Invalid user role.')
         return redirect('profile')
+
+    # Instantiate form with POST data or None
+    form = form_class(request.POST or None,
+                      request.FILES or None, instance=user)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+
     context = {
         'page_title': 'User Profile',
         'user_form': form,
