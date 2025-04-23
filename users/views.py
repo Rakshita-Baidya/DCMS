@@ -80,7 +80,7 @@ def user_login(request):
     return render(request, 'login.html', {'form': form})
 
 
-@jwt_required()
+@jwt_required(login_url='login')
 def user_logout(request):
     # Extract tokens from cookies (already validated by jwt_required)
     access_token = request.COOKIES.get('access_token')

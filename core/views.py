@@ -1,4 +1,5 @@
 
+from dateutil.relativedelta import relativedelta
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 import io
@@ -61,15 +62,21 @@ def dashboard(request):
         apply_date_filter = False
     elif time_filter == 'daily':
         start_date = today
+        end_date = today
     elif time_filter == 'weekly':
         days_since_sunday = (today.weekday() + 1) % 7
         start_date = today - timedelta(days=days_since_sunday)
+        end_date = start_date + timedelta(days=6)
     elif time_filter == 'monthly':
         start_date = today.replace(day=1)
+        end_date = (start_date + relativedelta(months=1) -
+                    timedelta(days=1))
     elif time_filter == 'quarterly':
         start_date = today - timedelta(days=90)
+        end_date = today
     elif time_filter == 'yearly':
         start_date = today.replace(month=1, day=1)
+        end_date = today.replace(month=12, day=31)
 
     # Apply date filters only if needed
     if apply_date_filter and start_date:
@@ -123,8 +130,8 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard.html', context)
 
 
-@AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 @jwt_required(login_url='login')
+@AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 def doctor(request):
     doctor_queryset = User.objects.filter(
         role='Doctor').order_by('first_name')
@@ -186,8 +193,8 @@ def doctor(request):
     return render(request, 'doctor/doctor.html', context)
 
 
-@AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 @jwt_required(login_url='login')
+@AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 def view_doctor_profile(request, user_id):
     doctor = User.objects.get(pk=user_id)
 
@@ -282,8 +289,8 @@ def edit_doctor_profile(request, user_id):
     return render(request, 'doctor/edit_doctor_profile.html', context)
 
 
-@AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 @jwt_required(login_url='login')
+@AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 def staff(request):
     staff_queryset = User.objects.filter(role='Staff').order_by('first_name')
 
@@ -777,6 +784,7 @@ def get_patient_data(patient_id):
     ]
 
     medical_history_sections = {
+        "Chief Dental Complaint": ["chief_dental_complaint"],
         "General": ["marked_weight_change"],
         "Heart": ["chest_pain", "hypertention", "ankle_edema", "rheumatic_fever", "rheumatic_fever_age", "stroke_history", "stroke_date"],
         "Arthritis": ["joint_pain", "joint_swelling"],
