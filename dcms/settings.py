@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'widget_tweaks',
     'formtools',
 
@@ -76,6 +77,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'users.middleware.TokenRefreshMiddleware',
 ]
 
 
@@ -100,7 +102,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
-    'SERVE_INCLUDE_SCHEMA': False,  # Test purpose remove later if unnecessary.
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 

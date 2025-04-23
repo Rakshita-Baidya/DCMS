@@ -1,5 +1,4 @@
-from django.db.models import F, ExpressionWrapper, IntegerField
-from django.db.models.functions import ExtractYear
+
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 import io
@@ -20,22 +19,16 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from django.http import FileResponse
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Count, Sum
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, render, redirect
-from django.shortcuts import render
+from django.db.models import Count, Sum, ExpressionWrapper, IntegerField, Q
+from django.db.models.functions import ExtractYear
 from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.urls import reverse
-from django.forms import formset_factory
 from django.utils import timezone
 
 from users.models import User
 from users.forms import DoctorEditForm, StaffEditForm, UserEditForm
-from users.serializers import UserSerializer
-from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
+from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser, jwt_required
 
 
 from .models import (TREATMENT_CHOICES, Patient, MedicalHistory, DentalChart, Payment, ToothRecord, Appointment,
@@ -49,7 +42,7 @@ from .serializers import (PatientSerializer, MedicalHistorySerializer,  Appointm
 # Create your views here.
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def dashboard(request):
     time_filter = request.GET.get('filter', 'monthly')
     today = timezone.now().date()
@@ -131,7 +124,7 @@ def dashboard(request):
 
 
 @AllowedUsers(allowed_roles=['Administrator', 'Staff'])
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def doctor(request):
     doctor_queryset = User.objects.filter(
         role='Doctor').order_by('first_name')
@@ -194,7 +187,7 @@ def doctor(request):
 
 
 @AllowedUsers(allowed_roles=['Administrator', 'Staff'])
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def view_doctor_profile(request, user_id):
     doctor = User.objects.get(pk=user_id)
 
@@ -249,7 +242,7 @@ def view_doctor_profile(request, user_id):
     return render(request, 'doctor/view_doctor_profile.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator'])
 def edit_doctor_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
@@ -290,7 +283,7 @@ def edit_doctor_profile(request, user_id):
 
 
 @AllowedUsers(allowed_roles=['Administrator', 'Staff'])
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def staff(request):
     staff_queryset = User.objects.filter(role='Staff').order_by('first_name')
 
@@ -343,7 +336,7 @@ def staff(request):
     return render(request, 'staff/staff.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 def view_staff_profile(request, user_id):
     staff_queryset = User.objects.get(pk=user_id)
@@ -369,7 +362,7 @@ def view_staff_profile(request, user_id):
     return render(request, 'staff/view_staff_profile.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator'])
 def edit_staff_profile(request, user_id):
     staff_queryset = User.objects.get(pk=user_id)
@@ -412,7 +405,7 @@ def edit_staff_profile(request, user_id):
     return render(request, 'staff/edit_staff_profile.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def patient(request):
     patient_queryset = Patient.objects.all().order_by('-date_created')
 
@@ -580,7 +573,7 @@ class PatientFormWizard(SessionWizardView):
         return redirect('core:patient')
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def edit_patient_profile(request, patient_id, step=0):
     patient = get_object_or_404(Patient, id=patient_id)
     step = str(step)
@@ -830,7 +823,7 @@ def get_patient_data(patient_id):
     }
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def view_patient_profile(request, patient_id):
     data = get_patient_data(patient_id)
 
@@ -1098,7 +1091,7 @@ def generate_patient_pdf(request, patient_id):
     return FileResponse(buffer, as_attachment=True, filename=f"{patient.name}_Report_{timezone.now().date()}.pdf")
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def appointment(request):
     appointment_queryset = Appointment.objects.all().order_by('-date', '-time')
 
@@ -1304,7 +1297,7 @@ class AppointmentFormWizard(SessionWizardView):
         return redirect('core:appointment')
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def edit_appointment(request, appointment_id, step=0):
     appointment = get_object_or_404(Appointment, id=appointment_id)
     step = str(step)
@@ -1597,7 +1590,7 @@ class EditAppointmentWizard(SessionWizardView):
         return redirect('core:view_appointment', appointment_id=appointment_id)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def view_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, pk=appointment_id)
 
@@ -1651,7 +1644,7 @@ def view_appointment(request, appointment_id):
     return render(request, 'appointment/view_appointment.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AdminOnly
 def view_transaction(request):
     transaction_queryset = Transaction.objects.all().order_by('-date', '-time')
@@ -1722,7 +1715,7 @@ def view_transaction(request):
     return render(request, 'transaction/view_transaction.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AdminOnly
 def add_transaction(request):
     if request.method == 'POST':
@@ -1744,7 +1737,7 @@ def add_transaction(request):
     return render(request, 'transaction/add_transaction.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AdminOnly
 def edit_transaction(request, transaction_id):
     transaction = get_object_or_404(Transaction, id=transaction_id)
@@ -1768,7 +1761,7 @@ def edit_transaction(request, transaction_id):
     return render(request, 'transaction/add_transaction.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AdminOnly
 def statistics(request):
     time_filter = request.GET.get('filter', 'monthly')
@@ -1914,7 +1907,7 @@ def statistics(request):
     return render(request, 'statistics/statistics.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def error(request, exception=None):
     return render(request, 'error.html')
 

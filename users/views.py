@@ -1,21 +1,22 @@
-from django.core.cache import cache
+
 from django.db.models import Q
 from django.shortcuts import redirect, render, get_object_or_404
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import authenticate
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.contrib.auth.models import Group
+from django.utils.timezone import make_aware
 
-from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
+from datetime import datetime
 
 from .forms import UserCreationForm, LoginForm, UserEditForm
 from .models import User
 from .serializers import UserSerializer
-from .decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
+from .decorators import AllowedUsers, UnauthenticatedUser, jwt_required
 
 # function for user deletion
 
@@ -54,12 +55,19 @@ def user_login(request):
             user = authenticate(
                 request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user:
-                login(request, user)
+                # Generate JWT tokens
                 refresh = RefreshToken.for_user(user)
                 response = redirect('core:dashboard')
                 response.set_cookie(
-                    key='jwt',
+                    key='access_token',
                     value=str(refresh.access_token),
+                    httponly=True,
+                    secure=True,
+                    samesite='Lax'
+                )
+                response.set_cookie(
+                    key='refresh_token',
+                    value=str(refresh),
                     httponly=True,
                     secure=True,
                     samesite='Lax'
@@ -72,6 +80,38 @@ def user_login(request):
     return render(request, 'login.html', {'form': form})
 
 
+@jwt_required()
+def user_logout(request):
+    # Extract tokens from cookies (already validated by jwt_required)
+    access_token = request.COOKIES.get('access_token')
+    refresh_token = request.COOKIES.get('refresh_token')
+
+    # Blacklist access token
+    token = AccessToken(access_token)
+    outstanding_token, _ = OutstandingToken.objects.get_or_create(
+        token=access_token,
+        defaults={
+            'user': request.user,
+            'jti': token['jti'],
+            'expires_at': make_aware(datetime.fromtimestamp(token['exp'])),
+        }
+    )
+    BlacklistedToken.objects.get_or_create(token=outstanding_token)
+
+    # Blacklist refresh token (if present)
+    if refresh_token:
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+
+    # Delete cookies and redirect
+    messages.success(request, 'Logged out successfully.')
+    response = redirect('login')
+    response.delete_cookie('access_token')
+    response.delete_cookie('refresh_token')
+    return response
+
+
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator'])
 def add_user(request):
     form = UserCreationForm(request.POST or None, request.FILES or None)
@@ -94,15 +134,7 @@ def add_user(request):
     return render(request, 'add_user.html', context)
 
 
-@login_required
-def user_logout(request):
-    logout(request)
-    response = redirect('login')
-    response.delete_cookie('jwt')
-    return response
-
-
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator'])
 def users_list(request):
     user_queryset = User.objects.all().order_by('role')
@@ -152,7 +184,7 @@ def users_list(request):
     return render(request, 'reg_users/users_list.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def user_profile(request):
     user = request.user
     context = {
@@ -162,7 +194,7 @@ def user_profile(request):
     return render(request, 'profile/profile.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def edit_profile(request):
     user = request.user
     form = UserEditForm(request.POST or None,
@@ -179,7 +211,7 @@ def edit_profile(request):
     return render(request, 'profile/edit_profile.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def view_user_profile(request, user_id):
     user = get_object_or_404(User, pk=user_id)
 
@@ -196,7 +228,7 @@ def view_user_profile(request, user_id):
     return render(request, 'reg_users/view_user_profile.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def edit_user_profile(request, user_id):
     user = get_object_or_404(User, pk=user_id)
 
