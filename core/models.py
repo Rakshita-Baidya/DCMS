@@ -46,7 +46,7 @@ class Patient(models.Model):
     contact = models.CharField(
         validators=[phone_regex], max_length=17)
     address = models.CharField(max_length=150, blank=True, null=True)
-    dob = models.DateField(default='2000/01/01')
+    dob = models.DateField(default='2000-01-01')
     gender = models.CharField(max_length=17, null=True, blank=True,
                               default="Prefer not to say", choices=GENDER_CHOICES)
     blood_group = models.CharField(choices=BLOOD_GROUP_CHOICES)
