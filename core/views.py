@@ -1,55 +1,49 @@
-from datetime import timedelta
-from django.db.models import Count, Sum
-from decimal import Decimal
 
-from django.http import FileResponse
+from dateutil.relativedelta import relativedelta
+from datetime import date, datetime, timedelta
+from decimal import Decimal
 import io
+import os
+import json
+from formtools.wizard.views import SessionWizardView
+
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import AllowAny
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, FrameBreak
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from django.conf import settings
 
+from django.http import FileResponse
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Count
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, render, redirect
-from django.shortcuts import render
+from django.db.models import Count, Sum, ExpressionWrapper, IntegerField, Q
+from django.db.models.functions import ExtractYear
 from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.urls import reverse
-from django.forms import formset_factory
 from django.utils import timezone
-
-import os
-from datetime import date, datetime, timedelta
-import json
-from formtools.wizard.views import SessionWizardView
 
 from users.models import User
 from users.forms import DoctorEditForm, StaffEditForm, UserEditForm
-from users.serializers import UserSerializer
-from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser
+from users.decorators import AdminOnly, AllowedUsers, UnauthenticatedUser, jwt_required
 
-from .models import (Patient, MedicalHistory, DentalChart, Payment, ToothRecord, Appointment,
+
+from .models import (TREATMENT_CHOICES, Patient, MedicalHistory, DentalChart, Payment, ToothRecord, Appointment,
                      TreatmentPlan, TreatmentRecord, TreatmentDoctor, PurchasedProduct, Transaction)
 from .forms import (AppointmentForm, PatientForm,  MedicalHistoryForm,
                     DentalChartForm, PaymentForm, PurchasedProductFormSet, ToothRecordFormSet, TransactionForm, TreatmentDoctorForm, TreatmentDoctorFormSet, TreatmentPlanForm, TreatmentRecordForm)
-
 from .serializers import (PatientSerializer, MedicalHistorySerializer,  AppointmentSerializer, ToothRecordSerializer, DentalChartSerializer,
                           PaymentSerializer, TransactionSerializer, TreatmentPlanSerializer, TreatmentDoctorSerializer, TreatmentRecordSerializer, PurchasedProductSerializer)
 
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import AllowAny
 
 # Create your views here.
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def dashboard(request):
     time_filter = request.GET.get('filter', 'monthly')
     today = timezone.now().date()
@@ -68,15 +62,21 @@ def dashboard(request):
         apply_date_filter = False
     elif time_filter == 'daily':
         start_date = today
+        end_date = today
     elif time_filter == 'weekly':
         days_since_sunday = (today.weekday() + 1) % 7
         start_date = today - timedelta(days=days_since_sunday)
+        end_date = start_date + timedelta(days=6)
     elif time_filter == 'monthly':
         start_date = today.replace(day=1)
+        end_date = (start_date + relativedelta(months=1) -
+                    timedelta(days=1))
     elif time_filter == 'quarterly':
         start_date = today - timedelta(days=90)
+        end_date = today
     elif time_filter == 'yearly':
         start_date = today.replace(month=1, day=1)
+        end_date = today.replace(month=12, day=31)
 
     # Apply date filters only if needed
     if apply_date_filter and start_date:
@@ -92,26 +92,12 @@ def dashboard(request):
     lab_orders = treatment_queryset.filter(lab=True).count()
     x_rays_taken = treatment_queryset.filter(x_ray=True).count()
 
-    # Serialize data
-    serialized_appointments = AppointmentSerializer(
-        appointments, many=True).data
-    serialized_treatments = TreatmentRecordSerializer(
-        treatment_queryset, many=True).data
-
     # Appointment status counts
     status_counts = {
         "Completed": appointments.filter(status="Completed").count(),
         "Pending": pending_appointments.count(),
         "Cancelled": appointments.filter(status="Cancelled").count(),
     }
-
-    # Treatment counts
-    treatment_types = [
-        "Root Canals", "Dental Crowns", "Fillings", "Cleaning", "General Checkup",
-        "Extractions", "Prosthetics", "Dental Implants", "Other"
-    ]
-    treatment_counts = {ttype: treatment_queryset.filter(
-        treatment_type=ttype).count() for ttype in treatment_types}
 
     # Follow-ups
     two_weeks_later = today + timedelta(days=14)
@@ -137,7 +123,6 @@ def dashboard(request):
         'today_plus_2': today_plus_2,
         'follow_ups': follow_ups,
         'treatments': treatment_queryset,
-        'treatment_data': json.dumps(treatment_counts),
         'lab_orders': lab_orders,
         'x_rays_taken': x_rays_taken,
         'time_filter': time_filter,
@@ -145,8 +130,8 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard.html', context)
 
 
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator', 'Staff'])
-@login_required(login_url='login')
 def doctor(request):
     doctor_queryset = User.objects.filter(
         role='Doctor').order_by('first_name')
@@ -208,54 +193,63 @@ def doctor(request):
     return render(request, 'doctor/doctor.html', context)
 
 
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator', 'Staff'])
-@login_required(login_url='login')
 def view_doctor_profile(request, user_id):
-    doctor_queryset = User.objects.get(pk=user_id)
+    doctor = User.objects.get(pk=user_id)
 
     appointments = Appointment.objects.filter(
-        treatment_records__doctors__doctor=doctor_queryset).distinct().order_by('-date', '-time')[:5]
-    treatment_queryset = TreatmentRecord.objects.filter(
-        doctors__doctor=doctor_queryset
+        treatment_records__doctors__doctor=doctor
+    ).distinct().order_by('-date', '-time')
+
+    treatments = TreatmentRecord.objects.filter(
+        doctors__doctor=doctor
     )
 
-    # Define treatment counts similar to dashboard
-    treatment_counts = {
-        "Root Canals": treatment_queryset.filter(treatment_type="Root Canals").count(),
-        "Dental Crowns": treatment_queryset.filter(treatment_type="Dental Crowns").count(),
-        "Fillings": treatment_queryset.filter(treatment_type="Fillings").count(),
-        "Cleaning": treatment_queryset.filter(treatment_type="Cleaning").count(),
-        "General Checkup": treatment_queryset.filter(treatment_type="General Checkup").count(),
-        "Extractions": treatment_queryset.filter(treatment_type="Extractions").count(),
-        "Prosthetics": treatment_queryset.filter(treatment_type="Prosthetics").count(),
-        "Dental Implants": treatment_queryset.filter(treatment_type="Dental Implants").count(),
-        "Other": treatment_queryset.filter(treatment_type="Other").count(),
-    }
+    # Count each treatment type
+    treatment_counts_qs = treatments.values(
+        'treatment_type').annotate(count=Count('id'))
+    treatment_counts = {t['treatment_type']: t['count']
+                        for t in treatment_counts_qs}
 
-    # user needs to be deleted
+    # Include all treatment types with default count 0
+    for treatment_type, _ in TREATMENT_CHOICES:
+        treatment_counts.setdefault(treatment_type, 0)
+
+    # Sort treatments by count descending
+    sorted_treatment_counts = dict(
+        sorted(treatment_counts.items(), key=lambda x: x[1], reverse=True)
+    )
+
+    # Check if all treatment counts are 0
+    no_treatments_done = all(
+        count == 0 for count in sorted_treatment_counts.values())
+
+    # Handle delete
     if request.method == 'POST' and 'delete_user_id' in request.POST:
         if not request.user.is_superuser and request.user.role != 'Administrator':
             messages.error(request, "You do not have permission to delete.")
         else:
-            user_id_to_delete = request.POST['delete_user_id']
-            user_to_delete = User.objects.get(id=user_id_to_delete)
+            user_to_delete = get_object_or_404(
+                User, pk=request.POST['delete_user_id'])
             user_to_delete.delete()
-            messages.success(request, f"User {
-                user_to_delete.username} has been deleted.")
+            messages.success(
+                request, f"Doctor {user_to_delete.username} has been deleted.")
             return redirect('core:doctor')
 
     context = {
         'page_title': 'Doctor Management',
         'active_page': 'doctor',
-        'doctor': doctor_queryset,
+        'doctor': doctor,
         'appointments': appointments,
-        'treatment_data': json.dumps(treatment_counts),
+        'treatment_counts': sorted_treatment_counts,
+        'no_treatments_done': no_treatments_done,
     }
 
     return render(request, 'doctor/view_doctor_profile.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator'])
 def edit_doctor_profile(request, user_id):
     user_queryset = User.objects.get(pk=user_id)
@@ -295,8 +289,8 @@ def edit_doctor_profile(request, user_id):
     return render(request, 'doctor/edit_doctor_profile.html', context)
 
 
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator', 'Staff'])
-@login_required(login_url='login')
 def staff(request):
     staff_queryset = User.objects.filter(role='Staff').order_by('first_name')
 
@@ -349,7 +343,7 @@ def staff(request):
     return render(request, 'staff/staff.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator', 'Staff'])
 def view_staff_profile(request, user_id):
     staff_queryset = User.objects.get(pk=user_id)
@@ -375,7 +369,7 @@ def view_staff_profile(request, user_id):
     return render(request, 'staff/view_staff_profile.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AllowedUsers(allowed_roles=['Administrator'])
 def edit_staff_profile(request, user_id):
     staff_queryset = User.objects.get(pk=user_id)
@@ -402,8 +396,6 @@ def edit_staff_profile(request, user_id):
                 request, 'The staff profile has been updated successfully!')
             return redirect('core:view_staff_profile', user_id=staff_queryset.id)
         else:
-            # Log errors for debugging
-            print("Form errors:", user_form.errors)  # Check server logs
             messages.error(request, "Please correct the errors below.")
     else:
         user_form = UserEditForm(instance=staff_queryset)
@@ -418,7 +410,7 @@ def edit_staff_profile(request, user_id):
     return render(request, 'staff/edit_staff_profile.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def patient(request):
     patient_queryset = Patient.objects.all().order_by('-date_created')
 
@@ -431,14 +423,26 @@ def patient(request):
         )
 
     # Add filter
-    blood_group_filter = request.GET.get('blood_group', '')
-    if blood_group_filter:
-        patient_queryset = patient_queryset.filter(
-            blood_group__iexact=blood_group_filter)
+    current_year = datetime.now().year
+    patient_queryset = patient_queryset.annotate(
+        age=ExpressionWrapper(
+            current_year - ExtractYear('dob'),
+            output_field=IntegerField()
+        )
+    )
 
-    # Get unique blood_groups for the filter dropdown
-    blood_groups = Patient.objects.all().values_list(
-        'blood_group', flat=True).distinct()
+    # Apply filter by age group
+    age_group_filter = request.GET.get('age_group', '')
+    if age_group_filter == '0-18':
+        patient_queryset = patient_queryset.filter(age__lte=18)
+    elif age_group_filter == '19-30':
+        patient_queryset = patient_queryset.filter(age__range=(19, 30))
+    elif age_group_filter == '31-50':
+        patient_queryset = patient_queryset.filter(age__range=(31, 50))
+    elif age_group_filter == '51+':
+        patient_queryset = patient_queryset.filter(age__gte=51)
+
+    age_groups = ['0-18', '19-30', '31-50', '51+']
 
     # Pagination
     paginator = Paginator(patient_queryset, 8)
@@ -459,8 +463,8 @@ def patient(request):
         'patients': patient_list,
         'total_patient': patient_queryset.count(),
         'search_query': search_query,
-        'blood_group_filter': blood_group_filter,
-        'blood_groups': blood_groups,
+        'age_group_filter': age_group_filter,
+        'age_groups': age_groups,
     }
 
     return render(request, 'patient/patient.html', context)
@@ -574,7 +578,7 @@ class PatientFormWizard(SessionWizardView):
         return redirect('core:patient')
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def edit_patient_profile(request, patient_id, step=0):
     patient = get_object_or_404(Patient, id=patient_id)
     step = str(step)
@@ -780,6 +784,7 @@ def get_patient_data(patient_id):
     ]
 
     medical_history_sections = {
+        "Chief Dental Complaint": ["chief_dental_complaint"],
         "General": ["marked_weight_change"],
         "Heart": ["chest_pain", "hypertention", "ankle_edema", "rheumatic_fever", "rheumatic_fever_age", "stroke_history", "stroke_date"],
         "Arthritis": ["joint_pain", "joint_swelling"],
@@ -824,7 +829,7 @@ def get_patient_data(patient_id):
     }
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def view_patient_profile(request, patient_id):
     data = get_patient_data(patient_id)
 
@@ -949,7 +954,7 @@ def generate_patient_pdf(request, patient_id):
         ["ID:", str(patient.id), "Contact:", patient.contact],
         ["Address:", patient.address or "N/A", "Gender:", patient.gender],
         ["Blood Group:", patient.blood_group, "Age:",
-            str(patient.age) if patient.age else "N/A"],
+            str(patient.dob) if patient.dob else "N/A"],
         ["Email:", patient.email or "N/A", "Telephone:", patient.telephone or "N/A"],
         ["Occupation:", patient.occupation or "N/A",
             "Nationality:", patient.nationality or "N/A"],
@@ -1092,7 +1097,7 @@ def generate_patient_pdf(request, patient_id):
     return FileResponse(buffer, as_attachment=True, filename=f"{patient.name}_Report_{timezone.now().date()}.pdf")
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def appointment(request):
     appointment_queryset = Appointment.objects.all().order_by('-date', '-time')
 
@@ -1193,13 +1198,15 @@ def appointment(request):
 
 class AppointmentFormWizard(SessionWizardView):
     form_list = [AppointmentForm, TreatmentRecordForm,
-                 TreatmentDoctorFormSet, PurchasedProductFormSet]
+                 TreatmentDoctorFormSet
+                 #  , PurchasedProductFormSet
+                 ]
 
     TEMPLATES = {
         '0': 'appointment/add_appointment.html',
         '1': 'appointment/add_treatment.html',
         '2': 'appointment/add_treatment_doctor.html',
-        '3': 'appointment/add_purchased_product.html',
+        # '3': 'appointment/add_purchased_product.html',
         # '4': 'appointment/add_payment.html',
     }
 
@@ -1227,18 +1234,18 @@ class AppointmentFormWizard(SessionWizardView):
                     instance=TreatmentRecord()
                 )
             context['treatment_doctor_formset'] = treatment_doctor_formset
-        if self.steps.current == '3':
-            if self.storage.get_step_data('3'):
-                purchased_product_formset = PurchasedProductFormSet(
-                    self.storage.get_step_data('3'),
-                    prefix='purchased_products'
-                )
-            else:
-                purchased_product_formset = PurchasedProductFormSet(
-                    prefix='purchased_products',
-                    instance=Appointment()
-                )
-            context['purchased_product_formset'] = purchased_product_formset
+        # if self.steps.current == '3':
+        #     if self.storage.get_step_data('3'):
+        #         purchased_product_formset = PurchasedProductFormSet(
+        #             self.storage.get_step_data('3'),
+        #             prefix='purchased_products'
+        #         )
+        #     else:
+        #         purchased_product_formset = PurchasedProductFormSet(
+        #             prefix='purchased_products',
+        #             instance=Appointment()
+        #         )
+        #     context['purchased_product_formset'] = purchased_product_formset
         return context
 
     def get_appointment_instance(self):
@@ -1279,15 +1286,15 @@ class AppointmentFormWizard(SessionWizardView):
             if treatment_doctor_formset.is_valid():
                 treatment_doctor_formset.save()
 
-        purchased_product_data = self.storage.get_step_data('3')
-        if purchased_product_data:
-            purchased_product_formset = PurchasedProductFormSet(
-                purchased_product_data,
-                instance=appointment,
-                prefix='purchased_products'
-            )
-            if purchased_product_formset.is_valid():
-                purchased_product_formset.save()
+        # purchased_product_data = self.storage.get_step_data('3')
+        # if purchased_product_data:
+        #     purchased_product_formset = PurchasedProductFormSet(
+        #         purchased_product_data,
+        #         instance=appointment,
+        #         prefix='purchased_products'
+        #     )
+        #     if purchased_product_formset.is_valid():
+        #         purchased_product_formset.save()
 
         payment, created = Payment.objects.get_or_create(
             appointment=appointment)
@@ -1298,7 +1305,7 @@ class AppointmentFormWizard(SessionWizardView):
         return redirect('core:appointment')
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def edit_appointment(request, appointment_id, step=0):
     appointment = get_object_or_404(Appointment, id=appointment_id)
     step = str(step)
@@ -1591,7 +1598,7 @@ class EditAppointmentWizard(SessionWizardView):
         return redirect('core:view_appointment', appointment_id=appointment_id)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def view_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, pk=appointment_id)
 
@@ -1645,31 +1652,7 @@ def view_appointment(request, appointment_id):
     return render(request, 'appointment/view_appointment.html', context)
 
 
-# @login_required(login_url='login')
-# def schedule(request):
-#     appointments = Appointment.objects.all()
-#     appointments_data = [
-#         {
-#             'title': f"Appointment - {app.patient.name}",
-#             'start': f"{app.date.isoformat()}T{app.time}",
-#             'extendedProps': {
-#                 'patient_name': app.patient.name,
-#                 'description': app.description or 'No description provided',
-#                 'status': app.status,
-#             }
-#         }
-#         for app in appointments
-#     ]
-
-#     context = {
-#         'page_title': 'Schedule Management',
-#         'active_page': 'schedule',
-#         'appointments': appointments_data,
-#     }
-#     return render(request, 'schedule/schedule.html', context)
-
-
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AdminOnly
 def view_transaction(request):
     transaction_queryset = Transaction.objects.all().order_by('-date', '-time')
@@ -1740,7 +1723,7 @@ def view_transaction(request):
     return render(request, 'transaction/view_transaction.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AdminOnly
 def add_transaction(request):
     if request.method == 'POST':
@@ -1762,7 +1745,7 @@ def add_transaction(request):
     return render(request, 'transaction/add_transaction.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AdminOnly
 def edit_transaction(request, transaction_id):
     transaction = get_object_or_404(Transaction, id=transaction_id)
@@ -1786,7 +1769,7 @@ def edit_transaction(request, transaction_id):
     return render(request, 'transaction/add_transaction.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 @AdminOnly
 def statistics(request):
     time_filter = request.GET.get('filter', 'monthly')
@@ -1853,6 +1836,8 @@ def statistics(request):
                              start_date or (today - timedelta(days=90)), end_date])
         products = products.filter(appointment__date__range=[
                                    start_date or (today - timedelta(days=90)), end_date])
+        patients = patients.filter(date_created__date__range=[
+                                   start_date or (today - timedelta(days=90)), end_date])
 
     # Aggregations
     total_products_sold = purchased_products.aggregate(
@@ -1872,12 +1857,15 @@ def statistics(request):
     total_expense = sum(expense_dict.values())
 
     # Treatment Counts
-    treatment_types = [
-        "Root Canals", "Dental Crowns", "Fillings", "Cleaning", "General Checkup",
-        "Extractions", "Prosthetics", "Dental Implants", "Other"
-    ]
-    treatment_counts = {ttype: treatments.filter(
-        treatment_type=ttype).count() for ttype in treatment_types}
+    treatment_counts_qs = treatments.exclude(treatment_type__isnull=True).values(
+        'treatment_type').annotate(count=Count('id'))
+    treatment_counts = {t['treatment_type']: t['count']
+                        for t in treatment_counts_qs}
+
+    # Include all treatment types with default count 0
+    for treatment_type, _ in TREATMENT_CHOICES:
+        treatment_counts.setdefault(treatment_type, 0)
+
     top_treatments = sorted(treatment_counts.items(),
                             key=lambda x: x[1], reverse=True)[:3]
     top_treatments_dict = dict(top_treatments)
@@ -1886,6 +1874,20 @@ def statistics(request):
     gender_counts = patients.values('gender').annotate(count=Count('id'))
     gender_dict = {item['gender'] or 'Unknown': item['count']
                    for item in gender_counts}
+
+    current_year = datetime.now().year
+    patients = patients.annotate(
+        age=ExpressionWrapper(
+            current_year - ExtractYear('dob'),
+            output_field=IntegerField()
+        )
+    )
+    age_data = {
+        '0-18': patients.filter(age__lte=18).count(),
+        '19-30': patients.filter(age__range=(19, 30)).count(),
+        '31-50': patients.filter(age__range=(31, 50)).count(),
+        '51+': patients.filter(age__gte=51).count(),
+    }
 
     context = {
         'page_title': 'Statistics',
@@ -1908,11 +1910,12 @@ def statistics(request):
         'users': users,
         'products': products,
         'total_products_sold': total_products_sold,
+        'age_data': json.dumps(age_data),
     }
     return render(request, 'statistics/statistics.html', context)
 
 
-@login_required(login_url='login')
+@jwt_required(login_url='login')
 def error(request, exception=None):
     return render(request, 'error.html')
 

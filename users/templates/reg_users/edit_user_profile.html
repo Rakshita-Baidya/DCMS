@@ -138,13 +138,13 @@
                     {% endif %}
                 </div>
                 {% comment %} Submit Button {% endcomment %}
-                <div class="flex space-x-3 col-span-full justify-end">
-                    <p onclick="history.back()"
-                       class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</p>
+                <div class="flex space-x-4 justify-end col-span-full">
                     <button type="submit"
                             class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
-                        Save Changes
+                        Update Profile
                     </button>
+                    <a href="{% url 'list' %}"
+                       class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</a>
                 </div>
             </form>
         </div>

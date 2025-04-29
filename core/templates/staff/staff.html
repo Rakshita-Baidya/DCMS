@@ -37,7 +37,9 @@
                                  width="full"
                                  height="full" />
                         </div>
-                        <h3 class="text-2xl font-semibold text-gray-800 mb-2">{{ staff_member.get_full_name }}</h3>
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-2 max-w-52 text-ellipsis overflow-hidden whitespace-nowrap">
+                            {{ staff_member.get_full_name }}
+                        </h3>
                         <p class="text-md text-gray-600 mb-4">{{ staff_member.position }}</p>
                         <div class="flex items-center justify-center w-full space-x-3">
                             {% if request.user.role == 'Administrator' %}
@@ -68,16 +70,16 @@
                             {% if request.user.role == 'Administrator' %}
                                 {% comment %} delete {% endcomment %}
                                 <div>
-                                    <form id="delete-form-{{ staff.id }}" method="post">
+                                    <form id="delete-form-{{ staff_member.id }}" method="post">
                                         {% csrf_token %}
-                                        <input type="hidden" name="delete_user_id" value="{{ staff.id }}">
+                                        <input type="hidden" name="delete_user_id" value="{{ staff_member.id }}">
                                     </form>
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
                                          height="20"
                                          viewBox="0 0 20 20"
                                          class="cursor-pointer"
-                                         onclick="confirmDelete('{{ staff.id }}', '{{ staff.username }}')">
+                                         onclick="confirmDelete('{{ staff_member.id }}', '{{ staff_member.username }}')">
                                         <path fill="none" stroke="#b20003" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
                                     </svg>
                                 </div>

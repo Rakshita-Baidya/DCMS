@@ -5,16 +5,15 @@
         {% comment %} Header Section {% endcomment %}
         <div class="flex justify-between items-center mb-4 ">
             <div class="space-x-1 flex items-center">
-                <div onclick="history.back()">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         xmlns:xlink="http://www.w3.org/1999/xlink"
-                         width="24px"
-                         fill="none"
-                         height="24px"
-                         viewBox="0 0 20 20">
-                        <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
-                    </svg>
-                </div>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                     width="24px"
+                     fill="none"
+                     height="24px"
+                     viewBox="0 0 20 20"
+                     onclick="history.back()">
+                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                </svg>
                 <p class="text-2xl font-semibold">{{ doctor.get_full_name }}'s Profile</p>
             </div>
             {% if request.user.role == 'Administrator' %}
@@ -47,11 +46,7 @@
                 </div>
             {% endif %}
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-4 sm:grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-                <p class="text-xl font-semibold text-gray-800">Full Name</p>
-                <p class="text-lg">{{ doctor.get_full_name }}</p>
-            </div>
+        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-1 lg:grid-cols-5 sm:grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <p class="text-xl font-semibold text-gray-800">Email Address</p>
                 <p class="text-lg">{{ doctor.email }}</p>
@@ -60,13 +55,6 @@
                 <p class="text-xl font-semibold text-gray-800">Username</p>
                 <p class="text-lg">{{ doctor.username }}</p>
             </div>
-            <div class="row-span-4 col-start-4 relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full mr-6">
-                <img src="{{ doctor.profile_image.url }}"
-                     alt="{{ doctor.get_full_name }}"
-                     class="object-fill absolute scale-110"
-                     width="full"
-                     height="full" />
-            </div>
             <div>
                 <p class="text-xl font-semibold text-gray-800">Address</p>
                 <p class="text-lg">{{ doctor.address }}</p>
@@ -74,6 +62,13 @@
             <div>
                 <p class="text-xl font-semibold text-gray-800">Contact Number</p>
                 <p class="text-lg">{{ doctor.contact }}</p>
+            </div>
+            <div class="row-span-3 relative h-52 w-52 border-2 border-primaryLogo overflow-hidden flex items-center rounded-full">
+                <img src="{{ doctor.profile_image.url }}"
+                     alt="{{ doctor.get_full_name }}"
+                     class="object-fill absolute scale-110"
+                     width="full"
+                     height="full" />
             </div>
             <div class="col-start-1">
                 <p class="text-xl font-semibold text-gray-800">Type</p>
@@ -91,19 +86,19 @@
                 <p class="text-xl font-semibold text-gray-800">NMC Number</p>
                 <p class="text-lg">{{ doctor.nmc_no }}</p>
             </div>
-            <div class="col-span-full">
+            <div class="col-start-1">
                 <p class="text-xl font-semibold text-gray-800">Biography</p>
                 <p class="text-lg">{{ doctor.biography|default:"None" }}</p>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            <div class="bg-white rounded-lg shadow-sm p-6 my-6 border-2 border-primaryLogo ">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="col-span-3 bg-white rounded-lg shadow-sm p-6 my-6 border-2 border-primaryLogo min-h-[16rem] max-h-[20rem] overflow-y-auto">
                 <div>
-                    <h3 class="text-xl font-semibold">Last Appointments</h3>
+                    <h3 class="text-xl font-semibold">Related Appointments</h3>
                 </div>
                 {% if appointments %}
                     <table class="min-w-full table-auto my-3">
-                        <thead>
+                        <thead class="sticky top-0 bg-white">
                             <tr class="border-b-2 border-primaryLogo text-center pb-4">
                                 <th class="pb-2">P. Name</th>
                                 <th class="pb-2">Date</th>
@@ -116,10 +111,10 @@
                         <tbody>
                             {% for appointment in appointments %}
                                 <tr class="border-b text-center py-4">
-                                    <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-4">{{ appointment.patient.name }}</td>
+                                    <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-24">{{ appointment.patient.name }}</td>
                                     <td class="py-2 text-nowrap">{{ appointment.date }}</td>
                                     <td class="py-2 text-nowrap">{{ appointment.time }}</td>
-                                    <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-4">{{ appointment.description }}</td>
+                                    <td class="py-2 text-nowrap overflow-hidden text-ellipsis max-w-36">{{ appointment.description }}</td>
                                     <td class="py-2 text-nowrap {% if appointment.status == 'Completed' %}text-green-700{% elif appointment.status == 'Pending' %}text-yellow-700{% else %}text-red-700{% endif %}">
                                         {{ appointment.status }}
                                     </td>
@@ -176,11 +171,25 @@
                     <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
                 {% endif %}
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-6 my-6 border-2 border-primaryLogo">
+            <div class="bg-white rounded-lg shadow-sm p-6 my-6 border-2 border-primaryLogo min-h-[16rem] max-h-[24rem] overflow-y-auto">
                 <div class="text-center">
-                    <h3 class="text-xl font-semibold">Treatment Summary</h3>
+                    <h3 class="text-xl font-semibold mb-4">Treatment Summary</h3>
+                    {% if no_treatments_done %}
+                        <p class="text-gray-500">No treatments done.</p>
+                    {% else %}
+                        <ul class="space-y-2">
+                            {% for treatment, count in treatment_counts.items %}
+                                {% if count != 0 %}
+                                    <li class="flex justify-between">
+                                        <span class="text-gray-700">{{ treatment }}</span>
+                                        <span class="text-primaryLogo font-medium">{{ count }}</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
-                <canvas id="treatmentSummary" class="my-4"></canvas>
+                {% comment %} <canvas id="treatmentSummary" class="my-4"></canvas> {% endcomment %}
             </div>
         </div>
     </div>
@@ -202,47 +211,8 @@
                 }
             });
         }
-    </script>
-    {% comment %} <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const treatmentData = JSON.parse("{{ treatment_data|escapejs }}");
-            const ctx = document.getElementById('treatmentSummary').getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(treatmentData),
-                    datasets: [{
-                        label: 'Treatment Count',
-                        data: Object.values(treatmentData),
-                        backgroundColor: [
-                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                            '#FF9F40', '#C9CBCF', '#7BC225', '#F7464A'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    aspectRatio: 2.4,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(tooltipItem) {
-                                    let value = tooltipItem.raw;
-                                    return ` ${value} treatments`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script> {% endcomment %}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        
+        {% comment %} document.addEventListener("DOMContentLoaded", function() {
             const treatmentData = JSON.parse("{{ treatment_data|escapejs }}");
             const ctx = document.getElementById('treatmentSummary').getContext('2d');
             new Chart(ctx, {
@@ -289,6 +259,6 @@
                     }
                 }
             });
-        });
+}); {% endcomment %}
     </script>
 {% endblock content %}

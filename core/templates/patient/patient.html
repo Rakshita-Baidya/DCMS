@@ -15,14 +15,12 @@
                            value="{{ search_query }}"
                            placeholder="Search..."
                            class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                    <select name="blood_group"
+                    <select name="age_group"
                             class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
-                        <option value="">All Blood Groups</option>
-                        {% for blood_group in blood_groups %}
-                            <option value="{{ blood_group }}"
-                                    {% if blood_group_filter == blood_group %}selected{% endif %}>
-                                {{ blood_group }}
-                            </option>
+                        <option value="">All Age Groups</option>
+                        {% for group in age_groups %}
+                            <option value="{{ group }}"
+                                    {% if age_group_filter == group %}selected{% endif %}>{{ group }}</option>
                         {% endfor %}
                     </select>
                     <button type="submit"
@@ -41,7 +39,7 @@
                 <table class="min-w-full table-auto">
                     <thead>
                         <tr class="border-b-2 border-primaryLogo text-center pb-4">
-                            <th class="pb-2">Patient ID</th>
+                            <th class="pb-2 px-6">ID</th>
                             <th class="pb-2">Full Name</th>
                             <th class="pb-2">Contact</th>
                             <th class="pb-2">Address</th>
@@ -54,10 +52,10 @@
                         {% for patient in patients %}
                             <tr class="border-b text-center">
                                 <td class="py-3">{{ patient.id }}</td>
-                                <td>{{ patient.name }}</td>
+                                <td class="max-w-52 py-2 px-2 text-ellipsis overflow-hidden whitespace-nowrap">{{ patient.name }}</td>
                                 <td>{{ patient.contact }}</td>
-                                <td>{{ patient.address|default:"-" }}</td>
-                                <td>{{ patient.email|default:"-" }}</td>
+                                <td class="max-w-52 py-2 px-2 text-ellipsis overflow-hidden whitespace-nowrap">{{ patient.address|default:"-" }}</td>
+                                <td class="max-w-52 py-2 px-2 text-ellipsis overflow-hidden whitespace-nowrap">{{ patient.email|default:"-" }}</td>
                                 <td>{{ patient.blood_group }}</td>
                                 <td>
                                     <div class="flex align-middle justify-center space-x-3">

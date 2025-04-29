@@ -24,7 +24,7 @@ DOCTOR_TYPE = [
 class User(AbstractUser):
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, blank=False, null=False)
     username = models.CharField(max_length=50, unique=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     contact = models.CharField(

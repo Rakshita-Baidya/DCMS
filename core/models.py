@@ -46,13 +46,12 @@ class Patient(models.Model):
     contact = models.CharField(
         validators=[phone_regex], max_length=17)
     address = models.CharField(max_length=150, blank=True, null=True)
-    # dob = models.DateField(default=now,
-    #                        blank=True, null=True)
+    dob = models.DateField(default='2000-01-01')
     gender = models.CharField(max_length=17, null=True, blank=True,
                               default="Prefer not to say", choices=GENDER_CHOICES)
     blood_group = models.CharField(choices=BLOOD_GROUP_CHOICES)
-    age = models.PositiveIntegerField(
-        blank=True, null=True, validators=[MaxValueValidator(150)])
+    # age = models.PositiveIntegerField(
+    #     validators=[MinValueValidator(1), MaxValueValidator(150)])
     email = models.EmailField(unique=True, null=True, blank=True)
     telephone = models.CharField(max_length=10, blank=True, null=True)
     occupation = models.CharField(blank=True, null=True)
@@ -265,14 +264,21 @@ LAB_CHOICES = [
 
 TREATMENT_CHOICES = [
     ('General Checkup', 'General Checkup'),
-    ('Cleaning', 'Cleaning'),
+    ('Dental Cleaning', 'Dental Cleaning'),
     ('Fillings', 'Fillings'),
-    ('Extractions', 'Extractions'),
-    ('Prosthetics', 'Prosthetics'),
-    ('Dental Implants', 'Dental Implants'),
-    ('Root Canals', 'Root Canals'),
+    ('Tooth Extraction', 'Tooth Extraction'),
+    ('Root Canal', 'Root Canal'),
     ('Dental Crowns', 'Dental Crowns'),
-    ('Other', 'Other')]
+    ('Braces', 'Braces'),
+    ('Invisalign / Aligners', 'Invisalign / Aligners'),
+    ('Dental Implants', 'Dental Implants'),
+    ('Dentures', 'Dentures'),
+    ('Veneers', 'Veneers'),
+    ('Teeth Whitening', 'Teeth Whitening'),
+    ('Periodontal Treatment', 'Periodontal Treatment'),
+    ('Oral Surgery', 'Oral Surgery'),
+    ('Other', 'Other'),
+]
 
 
 class TreatmentPlan(models.Model):

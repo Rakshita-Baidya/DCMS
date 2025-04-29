@@ -56,11 +56,24 @@ class UserEditForm(forms.ModelForm):
                   'profile_image', 'role', 'specialization', 'qualification', 'nmc_no', 'position', 'type']
 
 
+class AdministratorEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email', 'biography',
+                  'profile_image']
+
+
 class StaffEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email', 'biography',
                   'profile_image', 'position']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if not cleaned_data.get('position'):
+            self.add_error('position', "Position is required for Staff.")
+        return cleaned_data
 
 
 class DoctorEditForm(forms.ModelForm):
@@ -68,3 +81,15 @@ class DoctorEditForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'address', 'contact', 'username', 'email', 'biography',
                   'profile_image', 'specialization', 'qualification', 'nmc_no', 'type']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if not cleaned_data.get('specialization'):
+            self.add_error('specialization',
+                           "Specialization is required for Doctors.")
+        if not cleaned_data.get('nmc_no'):
+            self.add_error('nmc_no', "NMC number is required for Doctors.")
+        if not cleaned_data.get('qualification'):
+            self.add_error('qualification',
+                           "Qualification is required for Doctors.")
+        return cleaned_data

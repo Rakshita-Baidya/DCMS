@@ -12,12 +12,7 @@ from .models import (
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
-        fields = [
-            'id', 'name', 'contact', 'address', 'gender', 'blood_group', 'age', 'email',
-            'telephone', 'occupation', 'nationality', 'marital_status', 'reffered_by',
-            'emergency_contact_name', 'emergency_contact_contact', 'emergency_contact_address',
-            'emergency_contact_relation', 'date_created'
-        ]
+        fields = '__all__'
         read_only_fields = ['date_created']
 
     def validate_age(self, value):
@@ -38,23 +33,7 @@ class MedicalHistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MedicalHistory
-        fields = [
-            'id', 'patient', 'chief_dental_complaint', 'marked_weight_change',
-            'chest_pain', 'hypertention', 'ankle_edema', 'rheumatic_fever', 'rheumatic_fever_age',
-            'stroke_history', 'stroke_date', 'joint_pain', 'joint_swelling', 'headaches',
-            'convulsions_or_epilepsy', 'numbness_or_tingles', 'dizziness_or_fainting',
-            'jaundice', 'history_of_liver_disease', 'liver_disease_specifics', 'pregnancy',
-            'pregnancy_month', 'breast_feed', 'persistant_cough', 'breathing_difficulty',
-            'shortness_of_breath', 'asthma', 'hearing_loss', 'ringing_of_ears', 'bruise_easy',
-            'anemia', 'perspire_easy', 'apprehension', 'palpitation', 'goiter', 'bulging_eyes',
-            'delayed_healing', 'increased_appetite', 'family_history', 'radiography_therapy',
-            'increased_frequency', 'burning', 'prev_extraction', 'date_of_last_extraction', 'untoward_reaction',
-            'untoward_reaction_specifics', 'local_anesthesia_use', 'hospitalized', 'admission_date',
-            'hospitalization_specifics', 'sleeping_pills', 'aspirin', 'food', 'penicilin',
-            'antibiotics', 'sulfa_drugs', 'local_anesthesia', 'others', 'specifics', 'smoking',
-            'tobacco_chewing', 'alcohol', 'betel_nuts', 'paan_chewing', 'stain', 'calculus',
-            'halitosis'
-        ]
+        fields = '__all__'
 
     def validate_rheumatic_fever_age(self, value):
         if value and value > 100:
@@ -69,7 +48,7 @@ class MedicalHistorySerializer(serializers.ModelSerializer):
 class ToothRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ToothRecord
-        fields = ['id', 'tooth_no', 'description', 'condition']
+        fields = '__all__'
 
 
 class DentalChartSerializer(serializers.ModelSerializer):
@@ -78,7 +57,7 @@ class DentalChartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DentalChart
-        fields = ['id', 'patient', 'tooth_records']
+        fields = '__all__'
 
 # Appointment Serializer
 
@@ -88,8 +67,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Appointment
-        fields = ['id', 'patient', 'date', 'time',
-                  'description', 'status', 'date_created']
+        fields = '__all__'
         read_only_fields = ['date_created']
 
 # Treatment Plan Serializer
@@ -100,7 +78,7 @@ class TreatmentPlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TreatmentPlan
-        fields = ['id', 'patient', 'treatment_plan']
+        fields = '__all__'
 
 # Treatment Record Serializer
 
@@ -110,10 +88,7 @@ class TreatmentRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TreatmentRecord
-        fields = [
-            'id', 'appointment', 'treatment_type', 'x_ray', 'x_ray_cost', 'lab', 'lab_sent',
-            'lab_order_date', 'lab_cost', 'treatment_cost', 'date_created'
-        ]
+        fields = '__all__'
         read_only_fields = ['date_created']
 
 # Treatment Doctor Serializer
@@ -125,8 +100,7 @@ class TreatmentDoctorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TreatmentDoctor
-        fields = ['id', 'treatment_record', 'doctor',
-                  'percent', 'amount', 'date_created']
+        fields = '__all__'
         read_only_fields = ['date_created']
 
     def validate_percent(self, value):
@@ -143,8 +117,7 @@ class PurchasedProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PurchasedProduct
-        fields = ['id', 'appointment', 'name', 'rate',
-                  'quantity', 'total_amt', 'date_created']
+        fields = '__all__'
         read_only_fields = ['total_amt', 'date_created']
 
     def validate(self, data):
@@ -160,11 +133,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = [
-            'id', 'appointment', 'additional_cost', 'discount_amount', 'paid_amount',
-            'final_amount', 'remaining_balance', 'payment_status', 'payment_method',
-            'payment_date', 'payment_notes', 'date_created'
-        ]
+        fields = '__all__'
         read_only_fields = ['remaining_balance',
                             'payment_status', 'date_created']
 
@@ -188,8 +157,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ['id', 'user', 'title',
-                  'description', 'amount', 'date', 'type']
+        fields = '__all__'
         read_only_fields = ['date_created']
 
     def validate_amount(self, value):
