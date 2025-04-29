@@ -1198,13 +1198,15 @@ def appointment(request):
 
 class AppointmentFormWizard(SessionWizardView):
     form_list = [AppointmentForm, TreatmentRecordForm,
-                 TreatmentDoctorFormSet, PurchasedProductFormSet]
+                 TreatmentDoctorFormSet
+                 #  , PurchasedProductFormSet
+                 ]
 
     TEMPLATES = {
         '0': 'appointment/add_appointment.html',
         '1': 'appointment/add_treatment.html',
         '2': 'appointment/add_treatment_doctor.html',
-        '3': 'appointment/add_purchased_product.html',
+        # '3': 'appointment/add_purchased_product.html',
         # '4': 'appointment/add_payment.html',
     }
 
@@ -1232,18 +1234,18 @@ class AppointmentFormWizard(SessionWizardView):
                     instance=TreatmentRecord()
                 )
             context['treatment_doctor_formset'] = treatment_doctor_formset
-        if self.steps.current == '3':
-            if self.storage.get_step_data('3'):
-                purchased_product_formset = PurchasedProductFormSet(
-                    self.storage.get_step_data('3'),
-                    prefix='purchased_products'
-                )
-            else:
-                purchased_product_formset = PurchasedProductFormSet(
-                    prefix='purchased_products',
-                    instance=Appointment()
-                )
-            context['purchased_product_formset'] = purchased_product_formset
+        # if self.steps.current == '3':
+        #     if self.storage.get_step_data('3'):
+        #         purchased_product_formset = PurchasedProductFormSet(
+        #             self.storage.get_step_data('3'),
+        #             prefix='purchased_products'
+        #         )
+        #     else:
+        #         purchased_product_formset = PurchasedProductFormSet(
+        #             prefix='purchased_products',
+        #             instance=Appointment()
+        #         )
+        #     context['purchased_product_formset'] = purchased_product_formset
         return context
 
     def get_appointment_instance(self):
@@ -1284,15 +1286,15 @@ class AppointmentFormWizard(SessionWizardView):
             if treatment_doctor_formset.is_valid():
                 treatment_doctor_formset.save()
 
-        purchased_product_data = self.storage.get_step_data('3')
-        if purchased_product_data:
-            purchased_product_formset = PurchasedProductFormSet(
-                purchased_product_data,
-                instance=appointment,
-                prefix='purchased_products'
-            )
-            if purchased_product_formset.is_valid():
-                purchased_product_formset.save()
+        # purchased_product_data = self.storage.get_step_data('3')
+        # if purchased_product_data:
+        #     purchased_product_formset = PurchasedProductFormSet(
+        #         purchased_product_data,
+        #         instance=appointment,
+        #         prefix='purchased_products'
+        #     )
+        #     if purchased_product_formset.is_valid():
+        #         purchased_product_formset.save()
 
         payment, created = Payment.objects.get_or_create(
             appointment=appointment)
