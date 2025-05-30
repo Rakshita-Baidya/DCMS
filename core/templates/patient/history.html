@@ -5,13 +5,11 @@
     <div class="p-6">
         <div class="flex items-center mb-6 space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink"
-                 width="24px"
-                 fill="none"
-                 height="24px"
+                 class="back-icon"
                  viewBox="0 0 20 20"
-                 onclick="history.back()">
-                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                 onclick="history.back()"
+                 fill="none">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17l-7-7 7-7" />
             </svg>
             <p class="text-gray-700 text-2xl font-medium">
                 {% if is_editing or is_editing_all %}
@@ -22,17 +20,17 @@
                 Patient / Medical History
             </p>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
+        <div class="card">
             <form method="post"
                   enctype="multipart/form-data"
                   class="grid grid-cols-3 lg:grid-cols-4 md:grid-cols-3 text-md">
                 {% csrf_token %}
                 {{ wizard.management_form }}
                 <div class="col-span-4">
-                    <label class="block font-medium text-secondaryLogo">{{ wizard.form.chief_dental_complaint.label_tag }}</label>
-                    {{ wizard.form.chief_dental_complaint|attr:"rows:2"|add_class:"my-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    <label class="form-label">{{ wizard.form.chief_dental_complaint.label_tag }}</label>
+                    {{ wizard.form.chief_dental_complaint|attr:"rows:2"|add_class:"form-input" }}
                     {% if wizard.form.chief_dental_complaint.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.chief_dental_complaint.errors }}</div>
+                        <div class="form-error">{{ wizard.form.chief_dental_complaint.errors }}</div>
                     {% endif %}
                 </div>
                 {% comment %} first {% endcomment %}
@@ -40,10 +38,10 @@
                     <div class="col-start-1">
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">General</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.marked_weight_change.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.marked_weight_change.label_tag }}</label>
                             {{ wizard.form.marked_weight_change }}
                             {% if wizard.form.marked_weight_change.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.marked_weight_change.errors }}</div>
+                                <div class="form-error">{{ wizard.form.marked_weight_change.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -51,17 +49,15 @@
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Ear</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.hearing_loss.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.hearing_loss.label_tag }}</label>
                             {{ wizard.form.hearing_loss }}
-                            {% if wizard.form.hearing_loss.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.hearing_loss.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.hearing_loss.errors %}<div class="form-error">{{ wizard.form.hearing_loss.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.ringing_of_ears.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.ringing_of_ears.label_tag }}</label>
                             {{ wizard.form.ringing_of_ears }}
                             {% if wizard.form.ringing_of_ears.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.ringing_of_ears.errors }}</div>
+                                <div class="form-error">{{ wizard.form.ringing_of_ears.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -69,31 +65,29 @@
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Nervous System</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.headaches.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.headaches.label_tag }}</label>
                             {{ wizard.form.headaches }}
-                            {% if wizard.form.headaches.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.headaches.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.headaches.errors %}<div class="form-error">{{ wizard.form.headaches.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.convulsions_or_epilepsy.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.convulsions_or_epilepsy.label_tag }}</label>
                             {{ wizard.form.convulsions_or_epilepsy }}
                             {% if wizard.form.convulsions_or_epilepsy.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.convulsions_or_epilepsy.errors }}</div>
+                                <div class="form-error">{{ wizard.form.convulsions_or_epilepsy.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.numbness_or_tingles.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.numbness_or_tingles.label_tag }}</label>
                             {{ wizard.form.numbness_or_tingles }}
                             {% if wizard.form.numbness_or_tingles.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.numbness_or_tingles.errors }}</div>
+                                <div class="form-error">{{ wizard.form.numbness_or_tingles.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.dizziness_or_fainting.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.dizziness_or_fainting.label_tag }}</label>
                             {{ wizard.form.dizziness_or_fainting }}
                             {% if wizard.form.dizziness_or_fainting.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.dizziness_or_fainting.errors }}</div>
+                                <div class="form-error">{{ wizard.form.dizziness_or_fainting.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -101,63 +95,59 @@
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Blood</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.bruise_easy.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.bruise_easy.label_tag }}</label>
                             {{ wizard.form.bruise_easy }}
-                            {% if wizard.form.bruise_easy.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.bruise_easy.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.bruise_easy.errors %}<div class="form-error">{{ wizard.form.bruise_easy.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.anemia.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.anemia.label_tag }}</label>
                             {{ wizard.form.anemia }}
-                            {% if wizard.form.anemia.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.anemia.errors }}</div>{% endif %}
+                            {% if wizard.form.anemia.errors %}<div class="form-error">{{ wizard.form.anemia.errors }}</div>{% endif %}
                         </div>
                     </div>
                     <hr class="border border-darkText rounded-sm col-span-1 col-start-1 my-4">
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Respiratory System</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.persistant_cough.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.persistant_cough.label_tag }}</label>
                             {{ wizard.form.persistant_cough }}
                             {% if wizard.form.persistant_cough.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.persistant_cough.errors }}</div>
+                                <div class="form-error">{{ wizard.form.persistant_cough.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.breathing_difficulty.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.breathing_difficulty.label_tag }}</label>
                             {{ wizard.form.breathing_difficulty }}
                             {% if wizard.form.breathing_difficulty.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.breathing_difficulty.errors }}</div>
+                                <div class="form-error">{{ wizard.form.breathing_difficulty.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.shortness_of_breath.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.shortness_of_breath.label_tag }}</label>
                             {{ wizard.form.shortness_of_breath }}
                             {% if wizard.form.shortness_of_breath.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.shortness_of_breath.errors }}</div>
+                                <div class="form-error">{{ wizard.form.shortness_of_breath.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.asthma.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.asthma.label_tag }}</label>
                             {{ wizard.form.asthma }}
-                            {% if wizard.form.asthma.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.asthma.errors }}</div>{% endif %}
+                            {% if wizard.form.asthma.errors %}<div class="form-error">{{ wizard.form.asthma.errors }}</div>{% endif %}
                         </div>
                     </div>
                     <hr class="border border-darkText rounded-sm col-span-1 col-start-1 my-4">
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Arthritis</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.joint_pain.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.joint_pain.label_tag }}</label>
                             {{ wizard.form.joint_pain }}
-                            {% if wizard.form.joint_pain.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.joint_pain.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.joint_pain.errors %}<div class="form-error">{{ wizard.form.joint_pain.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.joint_swelling.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.joint_swelling.label_tag }}</label>
                             {{ wizard.form.joint_swelling }}
                             {% if wizard.form.joint_swelling.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.joint_swelling.errors }}</div>
+                                <div class="form-error">{{ wizard.form.joint_swelling.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -167,85 +157,77 @@
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Heart</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.chest_pain.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.chest_pain.label_tag }}</label>
                             {{ wizard.form.chest_pain }}
-                            {% if wizard.form.chest_pain.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.chest_pain.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.chest_pain.errors %}<div class="form-error">{{ wizard.form.chest_pain.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.hypertention.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.hypertention.label_tag }}</label>
                             {{ wizard.form.hypertention }}
-                            {% if wizard.form.hypertention.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.hypertention.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.hypertention.errors %}<div class="form-error">{{ wizard.form.hypertention.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.ankle_edema.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.ankle_edema.label_tag }}</label>
                             {{ wizard.form.ankle_edema }}
-                            {% if wizard.form.ankle_edema.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.ankle_edema.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.ankle_edema.errors %}<div class="form-error">{{ wizard.form.ankle_edema.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.rheumatic_fever.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.rheumatic_fever.label_tag }}</label>
                             {{ wizard.form.rheumatic_fever |attr:"id:rheumatic_fever" }}
                             {% if wizard.form.rheumatic_fever.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.rheumatic_fever.errors }}</div>
+                                <div class="form-error">{{ wizard.form.rheumatic_fever.errors }}</div>
                             {% endif %}
                         </div>
                         <div>
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.rheumatic_fever_age.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.rheumatic_fever_age.label_tag }}</label>
                             <input type="number"
                                    id="rheumatic_fever_age"
                                    name="{{ wizard.form.rheumatic_fever_age.html_name }}"
-                                   class="my-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                                   class="form-input"
                                    value="{{ wizard.form.rheumatic_fever_age.value|default_if_none:'' }}">
                             {% if wizard.form.rheumatic_fever_age.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.rheumatic_fever_age.errors }}</div>
+                                <div class="form-error">{{ wizard.form.rheumatic_fever_age.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.stroke_history.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.stroke_history.label_tag }}</label>
                             {{ wizard.form.stroke_history |attr:"id:stroke_history" }}
                             {% if wizard.form.stroke_history.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.stroke_history.errors }}</div>
+                                <div class="form-error">{{ wizard.form.stroke_history.errors }}</div>
                             {% endif %}
                         </div>
                         <div>
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.stroke_date.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.stroke_date.label_tag }}</label>
                             <input type="date"
                                    id="stroke_date"
                                    name="{{ wizard.form.stroke_date.html_name }}"
-                                   class="my-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                                   class="form-input"
                                    value="{{ wizard.form.stroke_date.value|date:'Y-m-d'|default_if_none:'' }}">
-                            {% if wizard.form.stroke_date.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.stroke_date.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.stroke_date.errors %}<div class="form-error">{{ wizard.form.stroke_date.errors }}</div>{% endif %}
                         </div>
                     </div>
                     <hr class="border border-darkText rounded-sm col-span-1 col-start-1 my-4">
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Diabetes</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.delayed_healing.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.delayed_healing.label_tag }}</label>
                             {{ wizard.form.delayed_healing }}
                             {% if wizard.form.delayed_healing.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.delayed_healing.errors }}</div>
+                                <div class="form-error">{{ wizard.form.delayed_healing.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.increased_appetite.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.increased_appetite.label_tag }}</label>
                             {{ wizard.form.increased_appetite }}
                             {% if wizard.form.increased_appetite.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.increased_appetite.errors }}</div>
+                                <div class="form-error">{{ wizard.form.increased_appetite.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.family_history.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.family_history.label_tag }}</label>
                             {{ wizard.form.family_history }}
                             {% if wizard.form.family_history.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.family_history.errors }}</div>
+                                <div class="form-error">{{ wizard.form.family_history.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -253,28 +235,26 @@
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Liver</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.jaundice.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.jaundice.label_tag }}</label>
                             {{ wizard.form.jaundice }}
-                            {% if wizard.form.jaundice.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.jaundice.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.jaundice.errors %}<div class="form-error">{{ wizard.form.jaundice.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.history_of_liver_disease.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.history_of_liver_disease.label_tag }}</label>
                             {{ wizard.form.history_of_liver_disease |attr:"id:history_of_liver_disease" }}
                             {% if wizard.form.history_of_liver_disease.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.history_of_liver_disease.errors }}</div>
+                                <div class="form-error">{{ wizard.form.history_of_liver_disease.errors }}</div>
                             {% endif %}
                         </div>
                         <div>
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.liver_disease_specifics.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.liver_disease_specifics.label_tag }}</label>
                             <input type="text"
                                    id="liver_disease_specifics"
                                    name="{{ wizard.form.liver_disease_specifics.html_name }}"
-                                   class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                                   class="form-input"
                                    value="{{ wizard.form.liver_disease_specifics.value|default_if_none:'' }}">
                             {% if wizard.form.liver_disease_specifics.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.liver_disease_specifics.errors }}</div>
+                                <div class="form-error">{{ wizard.form.liver_disease_specifics.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -282,37 +262,31 @@
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Thyroid</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.perspire_easy.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.perspire_easy.label_tag }}</label>
                             {{ wizard.form.perspire_easy }}
                             {% if wizard.form.perspire_easy.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.perspire_easy.errors }}</div>
+                                <div class="form-error">{{ wizard.form.perspire_easy.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.apprehension.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.apprehension.label_tag }}</label>
                             {{ wizard.form.apprehension }}
-                            {% if wizard.form.apprehension.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.apprehension.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.apprehension.errors %}<div class="form-error">{{ wizard.form.apprehension.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.palpitation.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.palpitation.label_tag }}</label>
                             {{ wizard.form.palpitation }}
-                            {% if wizard.form.palpitation.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.palpitation.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.palpitation.errors %}<div class="form-error">{{ wizard.form.palpitation.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.goiter.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.goiter.label_tag }}</label>
                             {{ wizard.form.goiter }}
-                            {% if wizard.form.goiter.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.goiter.errors }}</div>{% endif %}
+                            {% if wizard.form.goiter.errors %}<div class="form-error">{{ wizard.form.goiter.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.bulging_eyes.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.bulging_eyes.label_tag }}</label>
                             {{ wizard.form.bulging_eyes }}
-                            {% if wizard.form.bulging_eyes.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.bulging_eyes.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.bulging_eyes.errors %}<div class="form-error">{{ wizard.form.bulging_eyes.errors }}</div>{% endif %}
                         </div>
                     </div>
                 </div>
@@ -321,57 +295,51 @@
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Urinary</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.increased_frequency.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.increased_frequency.label_tag }}</label>
                             {{ wizard.form.increased_frequency }}
                             {% if wizard.form.increased_frequency.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.increased_frequency.errors }}</div>
+                                <div class="form-error">{{ wizard.form.increased_frequency.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.burning.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.burning.label_tag }}</label>
                             {{ wizard.form.burning }}
-                            {% if wizard.form.burning.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.burning.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.burning.errors %}<div class="form-error">{{ wizard.form.burning.errors }}</div>{% endif %}
                         </div>
                     </div>
                     <hr class="border border-darkText rounded-sm col-span-1 col-start-1 my-4">
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Women</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.pregnancy.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.pregnancy.label_tag }}</label>
                             {{ wizard.form.pregnancy |attr:"id:pregnancy" }}
-                            {% if wizard.form.pregnancy.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.pregnancy.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.pregnancy.errors %}<div class="form-error">{{ wizard.form.pregnancy.errors }}</div>{% endif %}
                         </div>
                         <div>
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.pregnancy_month.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.pregnancy_month.label_tag }}</label>
                             <input type="text"
                                    id="pregnancy_month"
                                    name="{{ wizard.form.pregnancy_month.html_name }}"
-                                   class="my-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                                   class="form-input"
                                    value="{{ wizard.form.pregnancy_month.value|default_if_none:'' }}">
                             {% if wizard.form.pregnancy_month.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.pregnancy_month.errors }}</div>
+                                <div class="form-error">{{ wizard.form.pregnancy_month.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.breast_feed.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.breast_feed.label_tag }}</label>
                             {{ wizard.form.breast_feed }}
-                            {% if wizard.form.breast_feed.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.breast_feed.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.breast_feed.errors %}<div class="form-error">{{ wizard.form.breast_feed.errors }}</div>{% endif %}
                         </div>
                     </div>
                     <hr class="border border-darkText rounded-sm col-span-1 col-start-1 my-4">
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline mb-2">Radiography</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.radiography_therapy.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.radiography_therapy.label_tag }}</label>
                             {{ wizard.form.radiography_therapy }}
                             {% if wizard.form.radiography_therapy.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.radiography_therapy.errors }}</div>
+                                <div class="form-error">{{ wizard.form.radiography_therapy.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -381,37 +349,29 @@
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.smoking.label_tag }}</label>
                             {{ wizard.form.smoking }}
-                            {% if wizard.form.smoking.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.smoking.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.smoking.errors %}<div class="form-error">{{ wizard.form.smoking.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.tobacco_chewing.label_tag }}</label>
                             {{ wizard.form.tobacco_chewing }}
                             {% if wizard.form.tobacco_chewing.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.tobacco_chewing.errors }}</div>
+                                <div class="form-error">{{ wizard.form.tobacco_chewing.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.alcohol.label_tag }}</label>
                             {{ wizard.form.alcohol }}
-                            {% if wizard.form.alcohol.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.alcohol.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.alcohol.errors %}<div class="form-error">{{ wizard.form.alcohol.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.betel_nuts.label_tag }}</label>
                             {{ wizard.form.betel_nuts }}
-                            {% if wizard.form.betel_nuts.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.betel_nuts.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.betel_nuts.errors %}<div class="form-error">{{ wizard.form.betel_nuts.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.paan_chewing.label_tag }}</label>
                             {{ wizard.form.paan_chewing }}
-                            {% if wizard.form.paan_chewing.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.paan_chewing.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.paan_chewing.errors %}<div class="form-error">{{ wizard.form.paan_chewing.errors }}</div>{% endif %}
                         </div>
                     </div>
                     <hr class="border border-darkText rounded-sm col-span-1 col-start-1 my-4">
@@ -420,21 +380,17 @@
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.stain.label_tag }}</label>
                             {{ wizard.form.stain }}
-                            {% if wizard.form.stain.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.stain.errors }}</div>{% endif %}
+                            {% if wizard.form.stain.errors %}<div class="form-error">{{ wizard.form.stain.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.calculus.label_tag }}</label>
                             {{ wizard.form.calculus }}
-                            {% if wizard.form.calculus.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.calculus.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.calculus.errors %}<div class="form-error">{{ wizard.form.calculus.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.halitosis.label_tag }}</label>
                             {{ wizard.form.halitosis }}
-                            {% if wizard.form.halitosis.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.halitosis.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.halitosis.errors %}<div class="form-error">{{ wizard.form.halitosis.errors }}</div>{% endif %}
                         </div>
                     </div>
                 </div>
@@ -443,32 +399,30 @@
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline  mb-2">Hospitalization</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.hospitalized.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.hospitalized.label_tag }}</label>
                             {{ wizard.form.hospitalized |attr:"id:hospitalized" }}
-                            {% if wizard.form.hospitalized.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.hospitalized.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.hospitalized.errors %}<div class="form-error">{{ wizard.form.hospitalized.errors }}</div>{% endif %}
                         </div>
                         <div>
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.admission_date.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.admission_date.label_tag }}</label>
                             <input type="date"
                                    id="admission_date"
                                    name="{{ wizard.form.admission_date.html_name }}"
                                    value="{{ wizard.form.admission_date.value|date:'Y-m-d'|default_if_none:'' }}"
-                                   class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                                   class="form-input">
                             {% if wizard.form.admission_date.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.admission_date.errors }}</div>
+                                <div class="form-error">{{ wizard.form.admission_date.errors }}</div>
                             {% endif %}
                         </div>
                         <div>
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.hospitalization_specifics.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.hospitalization_specifics.label_tag }}</label>
                             <input type="text"
                                    id="hospitalization_specifics"
                                    name="{{ wizard.form.hospitalization_specifics.html_name }}"
-                                   class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                                   class="form-input"
                                    value="{{ wizard.form.hospitalization_specifics.value|default_if_none:'' }}">
                             {% if wizard.form.hospitalization_specifics.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.hospitalization_specifics.errors }}</div>
+                                <div class="form-error">{{ wizard.form.hospitalization_specifics.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -476,46 +430,46 @@
                     <div>
                         <p class="font-bold text-xl text-darkText text-center underline  mb-2">Extraction</p>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.prev_extraction.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.prev_extraction.label_tag }}</label>
                             {{ wizard.form.prev_extraction |attr:"id:prev_extraction" }}
                             {% if wizard.form.prev_extraction.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.prev_extraction.errors }}</div>
+                                <div class="form-error">{{ wizard.form.prev_extraction.errors }}</div>
                             {% endif %}
                         </div>
                         <div>
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.date_of_last_extraction.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.date_of_last_extraction.label_tag }}</label>
                             <input type="date"
                                    id="date_of_last_extraction"
                                    name="{{ wizard.form.date_of_last_extraction.html_name }}"
-                                   class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                                   class="form-input"
                                    value="{{ wizard.form.date_of_last_extraction.value|date:'Y-m-d'|default_if_none:'' }}" />
                             {% if wizard.form.date_of_last_extraction.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.date_of_last_extraction.errors }}</div>
+                                <div class="form-error">{{ wizard.form.date_of_last_extraction.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.untoward_reaction.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.untoward_reaction.label_tag }}</label>
                             {{ wizard.form.untoward_reaction |attr:"id:untoward_reaction" }}
                             {% if wizard.form.untoward_reaction.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.untoward_reaction.errors }}</div>
+                                <div class="form-error">{{ wizard.form.untoward_reaction.errors }}</div>
                             {% endif %}
                         </div>
                         <div>
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.untoward_reaction_specifics.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.untoward_reaction_specifics.label_tag }}</label>
                             <input type="text"
                                    id="untoward_reaction_specifics"
                                    name="{{ wizard.form.untoward_reaction_specifics.html_name }}"
-                                   class="mt-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                                   class="form-input"
                                    value="{{ wizard.form.untoward_reaction_specifics.value|default_if_none:'' }}">
                             {% if wizard.form.untoward_reaction_specifics.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.untoward_reaction_specifics.errors }}</div>
+                                <div class="form-error">{{ wizard.form.untoward_reaction_specifics.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="block font-medium text-secondaryLogo">{{ wizard.form.local_anesthesia_use.label_tag }}</label>
+                            <label class="form-label">{{ wizard.form.local_anesthesia_use.label_tag }}</label>
                             {{ wizard.form.local_anesthesia_use }}
                             {% if wizard.form.local_anesthesia_use.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.local_anesthesia_use.errors }}</div>
+                                <div class="form-error">{{ wizard.form.local_anesthesia_use.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -526,74 +480,64 @@
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.sleeping_pills.label_tag }}</label>
                             {{ wizard.form.sleeping_pills }}
                             {% if wizard.form.sleeping_pills.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.sleeping_pills.errors }}</div>
+                                <div class="form-error">{{ wizard.form.sleeping_pills.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.aspirin.label_tag }}</label>
                             {{ wizard.form.aspirin }}
-                            {% if wizard.form.aspirin.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.aspirin.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.aspirin.errors %}<div class="form-error">{{ wizard.form.aspirin.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.sulfa_drugs.label_tag }}</label>
                             {{ wizard.form.sulfa_drugs }}
-                            {% if wizard.form.sulfa_drugs.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.sulfa_drugs.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.sulfa_drugs.errors %}<div class="form-error">{{ wizard.form.sulfa_drugs.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.food.label_tag }}</label>
                             {{ wizard.form.food }}
-                            {% if wizard.form.food.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.food.errors }}</div>{% endif %}
+                            {% if wizard.form.food.errors %}<div class="form-error">{{ wizard.form.food.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.penicilin.label_tag }}</label>
                             {{ wizard.form.penicilin }}
-                            {% if wizard.form.penicilin.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.penicilin.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.penicilin.errors %}<div class="form-error">{{ wizard.form.penicilin.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.antibiotics.label_tag }}</label>
                             {{ wizard.form.antibiotics }}
-                            {% if wizard.form.antibiotics.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.antibiotics.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.antibiotics.errors %}<div class="form-error">{{ wizard.form.antibiotics.errors }}</div>{% endif %}
                         </div>
                         <div class="flex items-center justify-between">
                             <label class="w-44 font-medium text-secondaryLogo">{{ wizard.form.local_anesthesia.label_tag }}</label>
                             {{ wizard.form.local_anesthesia }}
                             {% if wizard.form.local_anesthesia.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.local_anesthesia.errors }}</div>
+                                <div class="form-error">{{ wizard.form.local_anesthesia.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="flex items-center justify-between">
-                            <label class="w-44 block font-medium text-secondaryLogo">{{ wizard.form.others.label_tag }}</label>
+                            <label class="w-44 form-label">{{ wizard.form.others.label_tag }}</label>
                             {{ wizard.form.others |attr:"id:others" }}
-                            {% if wizard.form.others.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.others.errors }}</div>{% endif %}
+                            {% if wizard.form.others.errors %}<div class="form-error">{{ wizard.form.others.errors }}</div>{% endif %}
                         </div>
                         <div>
-                            <label class="w-44 block font-medium text-secondaryLogo">{{ wizard.form.specifics.label_tag }}</label>
+                            <label class="w-44 form-label">{{ wizard.form.specifics.label_tag }}</label>
                             <input type="text"
                                    id="specifics"
                                    name="{{ wizard.form.specifics.html_name }}"
-                                   class="my-1 block w-full px-3 py-1.5 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                                   class="form-input"
                                    value="{{ wizard.form.specifics.value|default_if_none:'' }}">
-                            {% if wizard.form.specifics.errors %}
-                                <div class="text-dangerRed text-sm">{{ wizard.form.specifics.errors }}</div>
-                            {% endif %}
+                            {% if wizard.form.specifics.errors %}<div class="form-error">{{ wizard.form.specifics.errors }}</div>{% endif %}
                         </div>
                     </div>
                 </div>
                 <div class="flex space-x-4 justify-end col-span-full">
-                    {% if not is_editing %}
-                        <div onclick="history.back()"
-                             class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Previous</div>
+                    {% if is_editing %}
+                        <div onclick="history.back()" class="btn-secondary">Cancel</div>
+                    {% else %}
+                        <div onclick="history.back()" class="btn-secondary">Previous</div>
                     {% endif %}
-                    <button type="submit"
-                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
+                    <button type="submit" class="btn-primary">
                         {% if is_editing %}
                             Save Changes
                         {% else %}

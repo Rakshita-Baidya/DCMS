@@ -14,31 +14,26 @@
                            name="search"
                            value="{{ search_query }}"
                            placeholder="Search..."
-                           class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                    <select name="age_group"
-                            class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                           class="filter-input" />
+                    <select name="age_group" class="filter-input">
                         <option value="">All Age Groups</option>
                         {% for group in age_groups %}
                             <option value="{{ group }}"
                                     {% if age_group_filter == group %}selected{% endif %}>{{ group }}</option>
                         {% endfor %}
                     </select>
-                    <button type="submit"
-                            class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                    <button type="submit" class="btn-primary py-1.5">Apply</button>
                     <a href="{% url 'core:patient' %}"
-                       class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
+                       class="py-1.5 bg-gray-500 btn-secondary hover:bg-gray-600">Reset</a>
                 </form>
-                <a href="{% url 'core:add_patient' %}"
-                   class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">
-                    + Add Patient
-                </a>
+                <a href="{% url 'core:add_patient' %}" class="btn-primary">+ Add Patient</a>
             </div>
         </div>
         <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2]">
             {% if patients %}
                 <table class="min-w-full table-auto">
                     <thead>
-                        <tr class="border-b-2 border-primaryLogo text-center pb-4">
+                        <tr class="table-header">
                             <th class="pb-2 px-6">ID</th>
                             <th class="pb-2">Full Name</th>
                             <th class="pb-2">Contact</th>
@@ -50,7 +45,7 @@
                     </thead>
                     <tbody>
                         {% for patient in patients %}
-                            <tr class="border-b text-center">
+                            <tr class="table-row">
                                 <td class="py-3">{{ patient.id }}</td>
                                 <td class="max-w-52 py-2 px-2 text-ellipsis overflow-hidden whitespace-nowrap">{{ patient.name }}</td>
                                 <td>{{ patient.contact }}</td>
@@ -108,16 +103,16 @@
                 </table>
                 {% comment %} Pagination {% endcomment %}
                 {% if patients.has_other_pages %}
-                    <div class="flex justify-center mt-8">
-                        <div class="flex items-center space-x-2">
+                    <div class="flex justify-center mt-4">
+                        <div class="flex items-center space-x-1">
                             {% if patients.has_previous %}
                                 <a href="?page={{ patients.previous_page_number }}&search={{ search_query }}&blood_group={{ blood_group_filter }}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
                                          height="20"
                                          viewBox="0 0 20 20"
-                                         class="cursor-pointer">
-                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                         class="pagination-icon">
+                                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                         <path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0" />
                                         <path d="M11.05 12.941 8.118 10l2.934-2.941" />
                                         </g>
@@ -131,8 +126,8 @@
                                          width="20"
                                          height="20"
                                          viewBox="0 0 20 20"
-                                         class="cursor-pointer">
-                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                         class="pagination-icon">
+                                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                         <path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0" />
                                         <path d="M8.95 12.941 11.882 10 8.949 7.059" />
                                         </g>

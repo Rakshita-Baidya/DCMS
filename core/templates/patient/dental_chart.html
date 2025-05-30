@@ -5,12 +5,11 @@
     <div class="p-6">
         <div class="flex items-center mb-6 space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg"
-                 width="24px"
-                 fill="none"
-                 height="24px"
+                 class="back-icon"
                  viewBox="0 0 20 20"
-                 onclick="history.back()">
-                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" stroke-miterlimit="10" d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                 onclick="history.back()"
+                 fill="none">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17l-7-7 7-7" />
             </svg>
             <p class="text-gray-700 text-2xl font-medium">
                 {% if is_editing or is_editing_all %}
@@ -21,7 +20,7 @@
                 Patient / Dental Chart
             </p>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo grid grid-cols-2 gap-4 h-4/5">
+        <div class="card grid grid-cols-2 gap-4 h-4/5">
             <div class="w-full flex justify-center sticky top-0 h-fit my-8">
                 <svg xmlns:svg="http://www.w3.org/2000/svg"
                      xmlns="http://www.w3.org/2000/svg"
@@ -161,7 +160,7 @@
                     {{ wizard.form.as_p }}
                     <h3 class="font-bold text-xl text-darkText text-center mb-4">Tooth Records</h3>
                     {{ tooth_record_formset.management_form }}
-                    <div id="tooth-records-container" class="max-h-[38vh] overflow-y-auto">
+                    <div id="tooth-records-container" class="max-h-[46vh] overflow-y-auto">
                         {% for form in tooth_record_formset %}
                             <div class="tooth-record-form mb-4 p-4 border border-darkerPrimary rounded-md relative"
                                  data-tooth-no="{{ form.tooth_no.value }}">
@@ -179,30 +178,26 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
-                                <label class="block text-sm font-medium text-secondaryLogo">{{ form.tooth_no.label_tag }}*</label>
-                                {{ form.tooth_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo tooth-no-input" }}
-                                {% if form.tooth_no.errors %}<div class="text-dangerRed text-sm">{{ form.tooth_no.errors }}</div>{% endif %}
-                                <label class="block text-sm font-medium text-secondaryLogo">{{ form.condition.label_tag }}</label>
-                                {{ form.condition|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo condition-input" }}
-                                {% if form.condition.errors %}<div class="text-dangerRed text-sm">{{ form.condition.errors }}</div>{% endif %}
-                                <label class="block text-sm font-medium text-secondaryLogo">{{ form.description.label_tag }}</label>
-                                {{ form.description|attr:"rows:2"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo description-input" }}
-                                {% if form.description.errors %}<div class="text-dangerRed text-sm">{{ form.description.errors }}</div>{% endif %}
+                                <label class="form-label">{{ form.tooth_no.label_tag }}*</label>
+                                {{ form.tooth_no|add_class:"form-input tooth-no-input" }}
+                                {% if form.tooth_no.errors %}<div class="form-error">{{ form.tooth_no.errors }}</div>{% endif %}
+                                <label class="form-label">{{ form.condition.label_tag }}</label>
+                                {{ form.condition|add_class:"form-input condition-input" }}
+                                {% if form.condition.errors %}<div class="form-error">{{ form.condition.errors }}</div>{% endif %}
+                                <label class="form-label">{{ form.description.label_tag }}</label>
+                                {{ form.description|attr:"rows:2"|add_class:"form-input description-input" }}
+                                {% if form.description.errors %}<div class="form-error">{{ form.description.errors }}</div>{% endif %}
                             </div>
                         {% endfor %}
                     </div>
-                    <button type="button"
-                            id="add-tooth-record"
-                            class="bg-primaryLogo text-white px-4 py-2 mt-2 rounded hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo">
-                        Add Tooth Record
-                    </button>
+                    <button type="button" id="add-tooth-record" class="btn-primary">Add Tooth Record</button>
                     <div class="flex space-x-4 justify-end col-span-full">
-                        {% if not is_editing %}
-                            <div onclick="history.back()"
-                                 class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Previous</div>
+                        {% if is_editing %}
+                            <div onclick="history.back()" class="btn-secondary">Cancel</div>
+                        {% else %}
+                            <div onclick="history.back()" class="btn-secondary">Previous</div>
                         {% endif %}
-                        <button type="submit"
-                                class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
+                        <button type="submit" class="btn-primary">
                             {% if is_editing %}
                                 Save Changes
                             {% else %}
@@ -286,20 +281,20 @@
                     </button>
                     <input type="hidden" name="tooth_records-${formCount}-id" id="id_tooth_records-${formCount}-id">
                     <input type="checkbox" name="tooth_records-${formCount}-DELETE" id="id_tooth_records-${formCount}-DELETE" class="hidden">
-                    <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-tooth_no">Tooth Number:*</label>
-                    <select name="tooth_records-${formCount}-tooth_no" id="id_tooth_records-${formCount}-tooth_no" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo tooth-no-input">
+                    <label class="form-label" for="id_tooth_records-${formCount}-tooth_no">Tooth Number:*</label>
+                    <select name="tooth_records-${formCount}-tooth_no" id="id_tooth_records-${formCount}-tooth_no" class="form-input tooth-no-input">
                         <option value="">Select a tooth number</option>
                         ${toothNumberOptions}
                     </select>
-                    <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-condition">Condition:</label>
-                    <select name="tooth_records-${formCount}-condition" id="id_tooth_records-${formCount}-condition" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo condition-input">
+                    <label class="form-label" for="id_tooth_records-${formCount}-condition">Condition:</label>
+                    <select name="tooth_records-${formCount}-condition" id="id_tooth_records-${formCount}-condition" class="form-input condition-input">
                         <option value="">---------</option>
                         <option value="Mild">Mild</option>
                         <option value="Moderate">Moderate</option>
                         <option value="Severe">Severe</option>
                     </select>
-                    <label class="block text-sm font-medium text-secondaryLogo" for="id_tooth_records-${formCount}-description">Description:</label>
-                    <textarea name="tooth_records-${formCount}-description" id="id_tooth_records-${formCount}-description" rows="2" class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo description-input"></textarea>
+                    <label class="form-label" for="id_tooth_records-${formCount}-description">Description:</label>
+                    <textarea name="tooth_records-${formCount}-description" id="id_tooth_records-${formCount}-description" rows="2" class="form-input description-input"></textarea>
                 `;
         
                 container.appendChild(newForm);

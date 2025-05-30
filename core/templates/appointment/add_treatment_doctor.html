@@ -61,7 +61,11 @@
                 {% endif %}
                 <button type="button" id="add-treatment-doctor" class="btn-primary">Add Treatment Doctor</button>
                 <div class="flex space-x-4 justify-end col-span-full">
-                    {% if not is_editing %}<div onclick="history.back()" class="btn-secondary">Previous</div>{% endif %}
+                    {% if is_editing %}
+                        <div onclick="history.back()" class="btn-secondary">Cancel</div>
+                    {% else %}
+                        <div onclick="history.back()" class="btn-secondary">Previous</div>
+                    {% endif %}
                     <button type="submit" class="btn-primary">
                         {% if is_editing_all %}
                             Next

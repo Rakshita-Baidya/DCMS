@@ -5,13 +5,11 @@
     <div class="p-6">
         <div class="flex items-center mb-6 space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink"
-                 width="24px"
-                 fill="none"
-                 height="24px"
+                 class="back-icon"
                  viewBox="0 0 20 20"
-                 onclick="history.back()">
-                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                 onclick="history.back()"
+                 fill="none">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17l-7-7 7-7" />
             </svg>
             <p class="text-gray-700 text-2xl font-medium">
                 {% if is_editing or is_editing_all %}
@@ -22,128 +20,115 @@
                 Patient / General Information
             </p>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
+        <div class="card">
             <form method="post"
                   enctype="multipart/form-data"
                   class="grid grid-cols-3 lg:grid-cols-4 md:grid-cols-3 lg:gap-4 gap-4">
                 {% csrf_token %}
                 {{ wizard.management_form }}
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.name.label_tag }}*</label>
-                    {{ wizard.form.name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.name.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.name.errors }}</div>{% endif %}
+                    <label class="form-label">{{ wizard.form.name.label_tag }}*</label>
+                    {{ wizard.form.name|add_class:"form-input" }}
+                    {% if wizard.form.name.errors %}<div class="form-error">{{ wizard.form.name.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.contact.label_tag }}*</label>
-                    {{ wizard.form.contact|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.contact.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.contact.errors }}</div>
-                    {% endif %}
+                    <label class="form-label">{{ wizard.form.contact.label_tag }}*</label>
+                    {{ wizard.form.contact|add_class:"form-input" }}
+                    {% if wizard.form.contact.errors %}<div class="form-error">{{ wizard.form.contact.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.address.label_tag }}</label>
-                    {{ wizard.form.address|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.address.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.address.errors }}</div>
-                    {% endif %}
+                    <label class="form-label">{{ wizard.form.address.label_tag }}</label>
+                    {{ wizard.form.address|add_class:"form-input" }}
+                    {% if wizard.form.address.errors %}<div class="form-error">{{ wizard.form.address.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.blood_group.label_tag }}*</label>
-                    {{ wizard.form.blood_group|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.blood_group.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.blood_group.errors }}</div>
-                    {% endif %}
+                    <label class="form-label">{{ wizard.form.blood_group.label_tag }}*</label>
+                    {{ wizard.form.blood_group|add_class:"form-input" }}
+                    {% if wizard.form.blood_group.errors %}<div class="form-error">{{ wizard.form.blood_group.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.gender.label_tag }}</label>
-                    {{ wizard.form.gender|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.gender.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.gender.errors }}</div>{% endif %}
+                    <label class="form-label">{{ wizard.form.gender.label_tag }}</label>
+                    {{ wizard.form.gender|add_class:"form-input" }}
+                    {% if wizard.form.gender.errors %}<div class="form-error">{{ wizard.form.gender.errors }}</div>{% endif %}
                 </div>
                 {% comment %} <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.dob.label_tag }}</label>
-                    {{ wizard.form.dob|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.dob.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.dob.errors }}</div>{% endif %}
+                    <label class="form-label">{{ wizard.form.dob.label_tag }}</label>
+                    {{ wizard.form.dob|attr:"type:date"|add_class:"form-input" }}
+                    {% if wizard.form.dob.errors %}<div class="form-error">{{ wizard.form.dob.errors }}</div>{% endif %}
                 </div> {% endcomment %}
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.dob.label_tag }}*</label>
-                    {{ wizard.form.dob|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.dob.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.dob.errors }}</div>{% endif %}
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.email.label_tag }}</label>
-                    {{ wizard.form.email|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.email.errors %}<div class="text-dangerRed text-sm">{{ wizard.form.email.errors }}</div>{% endif %}
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.telephone.label_tag }}</label>
-                    {{ wizard.form.telephone|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.telephone.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.telephone.errors }}</div>
+                    <label class="form-label">{{ wizard.form.dob.label_tag }}*</label>
+                    {{ wizard.form.dob|attr:"type:date"|add_class:"form-input" }}
+                    {% if wizard.form.dob.errors %}
+                        <div class="form-error">{{ wizard.form.dob.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.occupation.label_tag }}</label>
-                    {{ wizard.form.occupation|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.occupation.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.occupation.errors }}</div>
-                    {% endif %}
+                    <label class="form-label">{{ wizard.form.email.label_tag }}</label>
+                    {{ wizard.form.email|add_class:"form-input" }}
+                    {% if wizard.form.email.errors %}<div class="form-error">{{ wizard.form.email.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.nationality.label_tag }}</label>
-                    {{ wizard.form.nationality|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.nationality.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.nationality.errors }}</div>
-                    {% endif %}
+                    <label class="form-label">{{ wizard.form.telephone.label_tag }}</label>
+                    {{ wizard.form.telephone|add_class:"form-input" }}
+                    {% if wizard.form.telephone.errors %}<div class="form-error">{{ wizard.form.telephone.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.marital_status.label_tag }}</label>
-                    {{ wizard.form.marital_status|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    <label class="form-label">{{ wizard.form.occupation.label_tag }}</label>
+                    {{ wizard.form.occupation|add_class:"form-input" }}
+                    {% if wizard.form.occupation.errors %}<div class="form-error">{{ wizard.form.occupation.errors }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">{{ wizard.form.nationality.label_tag }}</label>
+                    {{ wizard.form.nationality|add_class:"form-input" }}
+                    {% if wizard.form.nationality.errors %}<div class="form-error">{{ wizard.form.nationality.errors }}</div>{% endif %}
+                </div>
+                <div>
+                    <label class="form-label">{{ wizard.form.marital_status.label_tag }}</label>
+                    {{ wizard.form.marital_status|add_class:"form-input" }}
                     {% if wizard.form.marital_status.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.marital_status.errors }}</div>
+                        <div class="form-error">{{ wizard.form.marital_status.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ wizard.form.reffered_by.label_tag }}</label>
-                    {{ wizard.form.reffered_by|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if wizard.form.reffered_by.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.reffered_by.errors }}</div>
-                    {% endif %}
+                    <label class="form-label">{{ wizard.form.reffered_by.label_tag }}</label>
+                    {{ wizard.form.reffered_by|add_class:"form-input" }}
+                    {% if wizard.form.reffered_by.errors %}<div class="form-error">{{ wizard.form.reffered_by.errors }}</div>{% endif %}
                 </div>
                 <div class="col-start-1 col-span-4 mt-4 font-bold text-2xl text-darkText border-b border-darkText rounded-sm">
                     Emergency Contact:
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">Name:*</label>
-                    {{ wizard.form.emergency_contact_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    <label class="form-label">Name:*</label>
+                    {{ wizard.form.emergency_contact_name|add_class:"form-input" }}
                     {% if wizard.form.emergency_contact_name.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.emergency_contact_name.errors }}</div>
+                        <div class="form-error">{{ wizard.form.emergency_contact_name.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">Contact Number:*</label>
-                    {{ wizard.form.emergency_contact_contact|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    <label class="form-label">Contact Number:*</label>
+                    {{ wizard.form.emergency_contact_contact|add_class:"form-input" }}
                     {% if wizard.form.emergency_contact_contact.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.emergency_contact_contact.errors }}</div>
+                        <div class="form-error">{{ wizard.form.emergency_contact_contact.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">Address:</label>
-                    {{ wizard.form.emergency_contact_address|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    <label class="form-label">Address:</label>
+                    {{ wizard.form.emergency_contact_address|add_class:"form-input" }}
                     {% if wizard.form.emergency_contact_address.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.emergency_contact_address.errors }}</div>
+                        <div class="form-error">{{ wizard.form.emergency_contact_address.errors }}</div>
                     {% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">Relation with patient:</label>
-                    {{ wizard.form.emergency_contact_relation|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    <label class="form-label">Relation with patient:</label>
+                    {{ wizard.form.emergency_contact_relation|add_class:"form-input" }}
                     {% if wizard.form.emergency_contact_relation.errors %}
-                        <div class="text-dangerRed text-sm">{{ wizard.form.emergency_contact_relation.errors }}</div>
+                        <div class="form-error">{{ wizard.form.emergency_contact_relation.errors }}</div>
                     {% endif %}
                 </div>
                 <div class="flex space-x-4 justify-end col-span-full">
-                    {% comment %} <div onclick="history.back()" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</div> {% endcomment %}
-                    <button type="submit"
-                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
+                    <div onclick="history.back()" class="btn-secondary">Cancel</div>
+                    <button type="submit" class="btn-primary">
                         {% if is_editing %}
                             Save Changes
                         {% else %}

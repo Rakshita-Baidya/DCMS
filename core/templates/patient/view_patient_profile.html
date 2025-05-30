@@ -7,13 +7,11 @@
         <div class="flex justify-between items-center mb-4 ">
             <div class="space-x-1 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink"
-                     width="24px"
-                     fill="none"
-                     height="24px"
+                     class="back-icon"
                      viewBox="0 0 20 20"
-                     onclick="history.back()">
-                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                     onclick="history.back()"
+                     fill="none">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17l-7-7 7-7" />
                 </svg>
                 <p class="text-2xl font-semibold">{{ patient.name }}'s Profile</p>
             </div>
@@ -24,7 +22,7 @@
                     <input type="hidden" name="delete_patient_id" value="{{ patient.id }}">
                 </form>
                 <a href="{% url 'core:generate_patient_pdf' patient.id %}"
-                   class="inline-flex items-center px-4 py-1.5 bg-lime-600 text-white rounded hover:bg-lime-800 space-x-2 cursor-pointer">
+                   class=" bg-lime-500 hover:bg-lime-600 space-x-2 btn-primary">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          width="20"
                          height="20"
@@ -36,7 +34,7 @@
                     <span>Generate PDF</span>
                 </a>
                 <a href="{% url 'core:edit_patient_profile' patient.id %}"
-                   class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                   class="inline-flex items-center btn-primary py-1.5 space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          width="20"
                          height="20"
@@ -49,7 +47,7 @@
                     <p>Edit Profile</p>
                 </a>
                 {% if not request.user.role == 'Doctor' %}
-                    <div class="inline-flex items-center px-4 py-1.5 bg-dangerRed text-white rounded hover:bg-darkerDangerRed space-x-2 cursor-pointer"
+                    <div class="inline-flex items-center py-1.5 btn-secondary space-x-2"
                          onclick="confirmDelete('{{ patient.id }}', '{{ patient.name }}')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
                             <path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.249995" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
@@ -60,7 +58,7 @@
             </div>
         </div>
         {% comment %}Patient Info Card {% endcomment %}
-        <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo p-8 mb-6 grid grid-cols-4 gap-6">
+        <div class="card p-8 mb-6 grid grid-cols-4 gap-6">
             <div class="space-y-2">
                 <p class="text-3xl font-semibold">{{ patient.name }}</p>
                 <p class="text-gray-600">{{ patient.contact }}</p>
@@ -83,7 +81,7 @@
             </div>
         </div>
         {% comment %} Tabs Section {% endcomment %}
-        <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo overflow-hidden">
+        <div class="card p-0 overflow-hidden">
             <div class="border-b border-gray-200 flex justify-between items-center">
                 <nav class="flex">
                     <button data-tab="general"
@@ -113,7 +111,7 @@
                 <div class="pr-4">
                     <a id="edit-button"
                        href="{% url 'core:edit_patient_profile_step' patient.id 0 %}"
-                       class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                       class="inline-flex items-center btn-primary py-1.5 space-x-2">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="20"
                              height="20"
@@ -419,10 +417,6 @@
                     {% endif %}
                 </div>
             </div>
-            {% comment %}Attachments Tab {% endcomment %}
-            {% comment %} <div id="attachments-tab" class="tab-content hidden">
-                    <div class="text-center text-gray-500 py-8">Attachments content will be displayed here</div>
-            </div> {% endcomment %}
         </div>
     </div>
     <script>

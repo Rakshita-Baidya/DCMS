@@ -1139,6 +1139,22 @@ video {
   max-height: 38vh;
 }
 
+.max-h-\[40vh\] {
+  max-height: 40vh;
+}
+
+.max-h-\[44vh\] {
+  max-height: 44vh;
+}
+
+.max-h-\[42vh\] {
+  max-height: 42vh;
+}
+
+.max-h-\[46vh\] {
+  max-height: 46vh;
+}
+
 .min-h-\[16rem\] {
   min-height: 16rem;
 }
@@ -2206,6 +2222,11 @@ video {
 .hover\:bg-teal-600:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(13 148 136 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-lime-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(77 124 15 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:text-\[\#ddd\]:hover {
