@@ -10,3 +10,55 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@layer components {
+  .form-input {
+    @apply mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded text-gray-700 focus:outline-none focus:ring-1 focus:ring-primaryLogo;
+    /* disabled */
+    @apply disabled:bg-gray-200 disabled:border-secondaryLogo disabled:cursor-not-allowed;
+  }
+
+  .form-label {
+    @apply block font-medium text-gray-700;
+  }
+
+  .form-error {
+    @apply mt-1 text-sm text-dangerRed bg-red-50 p-2 rounded;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center px-6 py-2 bg-primaryLogo text-white rounded shadow-sm hover:bg-darkerPrimary transition cursor-pointer;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center px-6 py-2 bg-dangerRed text-white rounded shadow-sm hover:bg-darkerDangerRed transition cursor-pointer;
+  }
+
+  .form-container {
+    @apply max-w-7xl mx-auto p-6 sm:p-8;
+  }
+
+  .card {
+    @apply bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo;
+  }
+
+  .table-header {
+    @apply border-b-2 border-primaryLogo text-center pb-4;
+  }
+
+  .table-row {
+    @apply border-b text-center text-[17px] py-4 hover:bg-gray-50 transition;
+  }
+
+  .pagination-icon {
+    @apply w-5 h-5 cursor-pointer text-secondaryLogo hover:text-primaryLogo;
+  }
+
+  .filter-input {
+    @apply px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo;
+  }
+
+  .back-icon {
+    @apply w-6 h-6 text-gray-700 hover:text-primaryLogo cursor-pointer;
+  }
+}

@@ -24,10 +24,10 @@ from .decorators import AllowedUsers, UnauthenticatedUser, jwt_required
 def delete_user(request, user_to_delete, redirect_url):
     if not request.user.is_superuser and request.user.role != 'Administrator':
         messages.error(request, "You do not have permission to delete.")
-        return None
+        return redirect(redirect_url)
     if user_to_delete.role == 'Administrator':
         messages.error(request, "You cannot delete an Administrator.")
-        return None
+        return redirect(redirect_url)
 
     user_to_delete.delete()
     messages.success(
@@ -158,18 +158,18 @@ def users_list(request):
             Q(email__icontains=search_query)
         )
 
-    # Add filter
+    # Filter
     role_filter = request.GET.get('role', '')
     if role_filter:
-        user_queryset = user_queryset.filter(
-            role__iexact=role_filter)
-    roles = User.objects.all().values_list(
-        'role', flat=True).distinct()
+        user_queryset = user_queryset.filter(role__iexact=role_filter)
 
     # Pagination
     paginator = Paginator(user_queryset, 8)
     page = request.GET.get('page', 1)
     user_list = paginator.get_page(page)
+
+    # Roles for filter dropdown
+    roles = User.objects.values('role').distinct().order_by('role')
 
     context = {
         'page_title': 'User Management',
@@ -178,9 +178,8 @@ def users_list(request):
         'total_user': user_queryset.count(),
         'search_query': search_query,
         'role_filter': role_filter,
-        'roles': roles,
+        'roles': [r['role'] for r in roles],
     }
-
     return render(request, 'reg_users/users_list.html', context)
 
 

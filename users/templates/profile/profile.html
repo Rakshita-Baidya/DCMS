@@ -5,8 +5,7 @@
     <div class="p-8">
         <div class="flex justify-between items-center w-full mb-6">
             <p class="text-3xl font-bold">{{ user.get_full_name }}'s Profile</p>
-            <a href="{% url 'edit_profile' %}"
-               class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded-lg hover:bg-darkerPrimary space-x-2 cursor-pointer">
+            <a href="{% url 'edit_profile' %}" class="btn-primary">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      width="20"
                      height="20"
@@ -19,7 +18,7 @@
                 <p>Edit Profile</p>
             </a>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-4 sm:grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card grid grid-cols-4 sm:grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <p class="text-xl font-semibold text-gray-800">Full Name</p>
                 <p class="text-lg">{{ user.get_full_name }}</p>

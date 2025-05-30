@@ -5,39 +5,38 @@
     <div class="p-6">
         <div class="flex items-center mb-4 space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink"
-                 width="24px"
-                 fill="none"
-                 height="24px"
+                 class="back-icon"
                  viewBox="0 0 20 20"
-                 onclick="history.back()">
-                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                 onclick="history.back()"
+                 fill="none">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17l-7-7 7-7" />
             </svg>
             <p class="text-gray-700 text-2xl font-medium">{{ user.username }}'s Profile</p>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
+        <div class="card">
             <form method="post"
                   enctype="multipart/form-data"
-                  class="grid grid-cols-2 lg:grid-cols-3 lg:gap-3 gap-3">
+                  class="grid grid-cols-3 lg:grid-cols-4 lg:gap-4 gap-3">
                 {% csrf_token %}
                 {% comment %} User Form Fields {% endcomment %}
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.first_name.label_tag }}*</label>
-                    {{ user_form.first_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.first_name.errors %}
-                        <div class="text-dangerRed text-sm">{{ user_form.first_name.errors }}</div>
-                    {% endif %}
+                    <label class="form-label">{{ user_form.first_name.label_tag }}*</label>
+                    {{ user_form.first_name|add_class:"form-input" }}
+                    {% if user_form.first_name.errors %}<div class="form-error">{{ user_form.first_name.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.last_name.label_tag }}*</label>
-                    {{ user_form.last_name|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.last_name.errors %}
-                        <div class="text-dangerRed text-sm">{{ user_form.last_name.errors }}</div>
-                    {% endif %}
+                    <label class="form-label">{{ user_form.last_name.label_tag }}*</label>
+                    {{ user_form.last_name|add_class:"form-input" }}
+                    {% if user_form.last_name.errors %}<div class="form-error">{{ user_form.last_name.errors }}</div>{% endif %}
                 </div>
-                <div class="row-span-5">
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.profile_image.label_tag }}</label>
-                    <div class="relative h-72 w-72 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
+                <div>
+                    <label class="form-label">{{ user_form.address.label_tag }}</label>
+                    {{ user_form.address|add_class:"form-input" }}
+                    {% if user_form.address.errors %}<div class="form-error">{{ user_form.address.errors }}</div>{% endif %}
+                </div>
+                <div class="row-span-4">
+                    <label class="form-label">{{ user_form.profile_image.label_tag }}</label>
+                    <div class="relative h-56 w-56 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
                         <img id="profileImagePreview"
                              src="{{ user.profile_image.url }}"
                              alt="{{ user.get_full_name }}"
@@ -51,100 +50,68 @@
                            class="hidden"
                            accept="image/*">
                     <label for="id_profile_image"
-                           class="mt-4 flex items-center mx-auto w-36 justify-center bg-primaryLogo text-white py-2 rounded cursor-pointer hover:bg-darkerPrimary">
-                        Choose File
-                    </label>
-                    {% comment %} {{ user_form.profile_image|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }} {% endcomment %}
-                    {% if user_form.profile_image.errors %}
-                        <div class="text-dangerRed text-sm">{{ user_form.profile_image.errors }}</div>
-                    {% endif %}
+                           class="mt-4 mx-auto w-36 justify-center btn-primary flex">Choose File</label>
+                    {% comment %} {{ user_form.profile_image|add_class:"form-input" }} {% endcomment %}
+                    {% if user_form.profile_image.errors %}<div class="form-error">{{ user_form.profile_image.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.username.label_tag }}*</label>
-                    {{ user_form.username|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.username.errors %}<div class="text-dangerRed text-sm">{{ user_form.username.errors }}</div>{% endif %}
+                    <label class="form-label">{{ user_form.username.label_tag }}*</label>
+                    {{ user_form.username|add_class:"form-input" }}
+                    {% if user_form.username.errors %}<div class="form-error">{{ user_form.username.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.email.label_tag }}*</label>
-                    {{ user_form.email|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.email.errors %}<div class="text-dangerRed text-sm">{{ user_form.email.errors }}</div>{% endif %}
+                    <label class="form-label">{{ user_form.email.label_tag }}*</label>
+                    {{ user_form.email|add_class:"form-input" }}
+                    {% if user_form.email.errors %}<div class="form-error">{{ user_form.email.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.address.label_tag }}</label>
-                    {{ user_form.address|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.address.errors %}<div class="text-dangerRed text-sm">{{ user_form.address.errors }}</div>{% endif %}
+                    <label class="form-label">{{ user_form.contact.label_tag }}</label>
+                    {{ user_form.contact|add_class:"form-input" }}
+                    {% if user_form.contact.errors %}<div class="form-error">{{ user_form.contact.errors }}</div>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ user_form.contact.label_tag }}</label>
-                    {{ user_form.contact|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.contact.errors %}<div class="text-dangerRed text-sm">{{ user_form.contact.errors }}</div>{% endif %}
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-secondaryLogo"
-                           for="{{ user_form.role.id_for_label }}">{{ user_form.role.label_tag }}*</label>
-                    {{ user_form.role|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.role.errors %}<div class="text-dangerRed text-sm">{{ user_form.role.errors }}</div>{% endif %}
+                    <label class="form-label" for="{{ user_form.role.id_for_label }}">{{ user_form.role.label_tag }}*</label>
+                    {{ user_form.role|add_class:"form-input" }}
+                    {% if user_form.role.errors %}<div class="form-error">{{ user_form.role.errors }}</div>{% endif %}
                 </div>
                 <div id="staff_fields">
                     <label for="{{ user_form.position.id_for_label }}"
-                           class="block text-sm font-medium text-secondaryLogo form-label">
-                        {{ user_form.position.label_tag }}
-                    </label>
-                    {{ user_form.position|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.position.errors %}<div class="text-dangerRed text-sm">{{ user_form.position.errors }}</div>{% endif %}
+                           class="form-label form-label">{{ user_form.position.label_tag }}</label>
+                    {{ user_form.position|add_class:"form-input" }}
+                    {% if user_form.position.errors %}<div class="form-error">{{ user_form.position.errors }}</div>{% endif %}
                 </div>
                 <div id="doctor_fields">
-                    <label for="{{ user_form.type.id_for_label }}"
-                           class="block text-sm font-medium text-secondaryLogo form-label">
-                        {{ user_form.type.label_tag }}
-                    </label>
-                    {{ user_form.type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.type.errors %}<div class="text-dangerRed text-sm">{{ user_form.type.errors }}</div>{% endif %}
+                    <label for="{{ user_form.type.id_for_label }}" class="form-label form-label">{{ user_form.type.label_tag }}</label>
+                    {{ user_form.type|add_class:"form-input" }}
+                    {% if user_form.type.errors %}<div class="form-error">{{ user_form.type.errors }}</div>{% endif %}
                 </div>
                 <div id="doctor_fields">
                     <label for="{{ user_form.specialization.id_for_label }}"
-                           class="block text-sm font-medium text-secondaryLogo form-label">
-                        {{ user_form.specialization.label_tag }}
-                    </label>
-                    {{ user_form.specialization|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.specialization.errors %}
-                        <div class="text-dangerRed text-sm">{{ user_form.specialization.errors }}</div>
-                    {% endif %}
+                           class="form-label form-label">{{ user_form.specialization.label_tag }}</label>
+                    {{ user_form.specialization|add_class:"form-input" }}
+                    {% if user_form.specialization.errors %}<div class="form-error">{{ user_form.specialization.errors }}</div>{% endif %}
                 </div>
                 <div id="doctor_fields">
                     <label for="{{ user_form.qualification.id_for_label }}"
-                           class="block text-sm font-medium text-secondaryLogo form-label">
-                        {{ user_form.qualification.label_tag }}
-                    </label>
-                    {{ user_form.qualification|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.qualification.errors %}
-                        <div class="text-dangerRed text-sm">{{ user_form.qualification.errors }}</div>
-                    {% endif %}
+                           class="form-label form-label">{{ user_form.qualification.label_tag }}</label>
+                    {{ user_form.qualification|add_class:"form-input" }}
+                    {% if user_form.qualification.errors %}<div class="form-error">{{ user_form.qualification.errors }}</div>{% endif %}
                 </div>
                 <div id="doctor_fields">
                     <label for="{{ user_form.nmc_no.id_for_label }}"
-                           class="block text-sm font-medium text-secondaryLogo form-label">
-                        {{ user_form.nmc_no.label_tag }}
-                    </label>
-                    {{ user_form.nmc_no|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.nmc_no.errors %}<div class="text-dangerRed text-sm">{{ user_form.nmc_no.errors }}</div>{% endif %}
+                           class="form-label form-label">{{ user_form.nmc_no.label_tag }}</label>
+                    {{ user_form.nmc_no|add_class:"form-input" }}
+                    {% if user_form.nmc_no.errors %}<div class="form-error">{{ user_form.nmc_no.errors }}</div>{% endif %}
                 </div>
                 <div class="col-start-1 col-span-full">
-                    <label class="block text-sm font-medium text-secondaryLogo"
-                           for="{{ user_form.biography.id_for_label }}">{{ user_form.biography.label_tag }}</label>
-                    {{ user_form.biography|attr:"rows:2"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md text-secondaryLogo focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                    {% if user_form.biography.errors %}
-                        <div class="text-dangerRed text-sm">{{ user_form.biography.errors }}</div>
-                    {% endif %}
+                    <label class="form-label" for="{{ user_form.biography.id_for_label }}">{{ user_form.biography.label_tag }}</label>
+                    {{ user_form.biography|attr:"rows:2"|add_class:"form-input" }}
+                    {% if user_form.biography.errors %}<div class="form-error">{{ user_form.biography.errors }}</div>{% endif %}
                 </div>
                 {% comment %} Submit Button {% endcomment %}
                 <div class="flex space-x-4 justify-end col-span-full">
-                    <button type="submit"
-                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
-                        Update Profile
-                    </button>
-                    <a href="{% url 'list' %}"
-                       class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</a>
+                    <a href="{% url 'list' %}" class="btn-secondary">Cancel</a>
+                    <button type="submit" class="btn-primary">Update Profile</button>
                 </div>
             </form>
         </div>

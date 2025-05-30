@@ -14,35 +14,31 @@
                     <input type="text"
                            name="search"
                            value="{{ search_query }}"
-                           placeholder="Search..."
-                           class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                           placeholder="Search by name or email"
+                           class="filter-input" />
                     {% comment %} Role Filter {% endcomment %}
-                    <select name="role"
-                            class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                    <select name="role" class="filter-input">
                         <option value="">All Roles</option>
                         {% for role in roles %}
                             <option value="{{ role }}" {% if role_filter == role %}selected{% endif %}>{{ role }}</option>
                         {% endfor %}
                     </select>
-                    <button type="submit"
-                            class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                    <button type="submit" class="btn-primary py-1.5">Apply</button>
                     <a href="{% url 'list' %}"
-                       class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
+                       class="py-1.5 bg-gray-500 btn-secondary hover:bg-gray-600">Reset</a>
                 </form>
                 <div>
-                    <a href="{% url 'add_user' %}"
-                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">
-                        + Add Users
-                    </a>
+                    <a href="{% url 'add_user' %}" class="btn-primary py-1.5">+ Add Users</a>
                 </div>
             </div>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2]">
+        <div class="card">
             {% if users %}
                 <table class="min-w-full table-auto">
                     <thead>
-                        <tr class="border-b-2 border-primaryLogo text-center pb-4">
+                        <tr class="table-header">
                             <th class="pb-2">User ID</th>
+                            <th class="pb-2">User Image</th>
                             <th class="pb-2">Username</th>
                             <th class="pb-2">Full Name</th>
                             <th class="pb-2">Email</th>
@@ -52,12 +48,22 @@
                     </thead>
                     <tbody>
                         {% for user in users %}
-                            <tr class="border-b text-center py-4">
+                            <tr class="table-row">
                                 <td>{{ user.id }}</td>
+                                <td class="py-1.5">
+                                    <div class="relative h-12 w-12 border-2 border-primaryLogo overflow-hidden flex items-center justify-center mx-auto rounded-full ">
+                                        <img id="profileImagePreview"
+                                             src="{{ user.profile_image.url }}"
+                                             alt="{{ user.get_full_name }}"
+                                             class="object-fill absolute scale-110"
+                                             width="full"
+                                             height="full" />
+                                    </div>
+                                </td>
                                 <td>{{ user.username }}</td>
                                 <td>{{ user.first_name }} {{ user.last_name }}</td>
                                 <td>{{ user.email }}</td>
-                                <td class="py-3 capitalize">{{ user.role|default:"N/A" }}</td>
+                                <td class=" capitalize">{{ user.role|default:"N/A" }}</td>
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">
                                         {% comment %} edit {% endcomment %}
@@ -107,32 +113,32 @@
                     </tbody>
                 </table>
                 {% comment %} Pagination {% endcomment %}
-                {% if user.has_other_pages %}
-                    <div class="flex justify-center mt-8">
-                        <div class="flex items-center space-x-2">
-                            {% if user.has_previous %}
-                                <a href="?page={{ user.previous_page_number }}&search={{ search_query }}">
+                {% if users.has_other_pages %}
+                    <div class="flex justify-center mt-4">
+                        <div class="flex items-center space-x-1">
+                            {% if users.has_previous %}
+                                <a href="?page={{ users.previous_page_number }}&search={{ search_query }}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
                                          height="20"
                                          viewBox="0 0 20 20"
-                                         class="cursor-pointer">
-                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                         class="pagination-icon">
+                                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                         <path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0" />
                                         <path d="M11.05 12.941 8.118 10l2.934-2.941" />
                                         </g>
                                     </svg>
                                 </a>
                             {% endif %}
-                            <p class="px-3 py-2">Page {{ user.number }} of {{ user.paginator.num_pages }}</p>
-                            {% if user.has_next %}
-                                <a href="?page={{ user.next_page_number }}&search={{ search_query }}">
+                            <p class="px-3 py-2">Page {{ users.number }} of {{ users.paginator.num_pages }}</p>
+                            {% if users.has_next %}
+                                <a href="?page={{ users.next_page_number }}&search={{ search_query }}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="20"
                                          height="20"
                                          viewBox="0 0 20 20"
-                                         class="cursor-pointer">
-                                        <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                         class="pagination-icon">
+                                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                         <path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0" />
                                         <path d="M8.95 12.941 11.882 10 8.949 7.059" />
                                         </g>
