@@ -50,7 +50,7 @@
                            accept="image/*">
                     <label for="id_profile_image"
                            class="mt-4 mx-auto w-36 justify-center btn-primary flex">Choose File</label>
-                    {% comment %} {{ user_form.profile_image|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }} {% endcomment %}
+                    {% comment %} {{ user_form.profile_image|add_class:"form-input" }} {% endcomment %}
                     {% if user_form.profile_image.errors %}<div class="form-error">{{ user_form.profile_image.errors }}</div>{% endif %}
                 </div>
                 <div>

@@ -47,7 +47,7 @@
   }
 
   .table-row {
-    @apply border-b text-center text-[17px] py-4 hover:bg-gray-50 transition;
+    @apply border-b text-center text-[16px] py-4 hover:bg-gray-50 transition;
   }
 
   .pagination-icon {
@@ -55,7 +55,7 @@
   }
 
   .filter-input {
-    @apply px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo;
+    @apply px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo min-w-max;
   }
 
   .back-icon {

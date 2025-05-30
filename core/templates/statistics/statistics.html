@@ -5,9 +5,7 @@
         <form method="get"
               id="filter-form"
               class="flex flex-col sm:flex-row justify-end items-center gap-3 mb-3">
-            <select name="filter"
-                    id="timeFilter"
-                    class="px-3 py-1.5 border-2 border-primaryLogo rounded focus:outline-none focus:ring-1 cursor-pointer focus:ring-primaryLogo">
+            <select name="filter" id="timeFilter" class="filter-input">
                 <option value="daily" {% if time_filter == 'daily' %}selected{% endif %}>Daily</option>
                 <option value="weekly" {% if time_filter == 'weekly' %}selected{% endif %}>Weekly</option>
                 <option value="monthly" {% if time_filter == 'monthly' %}selected{% endif %}>Monthly</option>
@@ -22,16 +20,15 @@
                    id="date-range-picker"
                    value="{{ date_range }}"
                    placeholder="Select date or range"
-                   class="px-3 py-1.5 border-2 border-primaryLogo rounded focus:outline-none focus:ring-1 focus:ring-primaryLogo"
+                   class="filter-input"
                    {% if time_filter != 'custom' %}disabled{% endif %} />
-            <button type="submit"
-                    class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+            <button type="submit" class="btn-primary py-1.5">Apply</button>
             <a href="{% url 'core:statistics' %}"
-               class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
+               class="py-1.5 bg-gray-500 btn-secondary hover:bg-gray-600">Reset</a>
         </form>
         <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2">
+                <div class="card flex flex-col justify-center items-center text-center space-y-2">
                     <img src="{% static 'images/statistics/user.png' %}"
                          alt="user"
                          width="full"
@@ -40,7 +37,7 @@
                     <h3 class="text-xl font-semibold">{{ users.count }}</h3>
                     <p>Total Registered Users</p>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2">
+                <div class="card flex flex-col justify-center items-center text-center space-y-2">
                     <img src="{% static 'images/statistics/wallet.png' %}"
                          alt="transaction"
                          width="full"
@@ -49,7 +46,7 @@
                     <h3 class="text-xl font-semibold">{{ transactions.count }}</h3>
                     <p>Total Transactions</p>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2">
+                <div class="card flex flex-col justify-center items-center text-center space-y-2">
                     <img src="{% static 'images/statistics/net.png' %}"
                          alt="transaction"
                          width="full"
@@ -58,7 +55,7 @@
                     <h3 class="text-xl font-semibold">Rs. {{ net_profit }}</h3>
                     <p>Net Balance</p>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2">
+                <div class="card flex flex-col justify-center items-center text-center space-y-2">
                     <img src="{% static 'images/statistics/shop.png' %}"
                          alt="patient"
                          width="full"
@@ -67,7 +64,7 @@
                     <h3 class="text-xl font-semibold">{{ total_products_sold }}</h3>
                     <p>Products Sold</p>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo">
+                <div class="card">
                     <h3 class="text-xl font-semibold text-center mb-2">Top 3 Treatments</h3>
                     <ul class="space-y-1">
                         {% for treatment, count in top_treatments.items %}
@@ -85,7 +82,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+            <div class="card flex flex-col justify-center items-center h-full relative">
                 <p class="mb-6 text-xl text-center font-semibold">Top 5 Income Sources</p>
                 <div class="w-full relative flex justify-center items-center">
                     <canvas id="incomeChart"></canvas>
@@ -94,7 +91,7 @@
                     <div id="income-total" class="absolute text-2xl font-medium z-10">Rs. {{ total_income }}</div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+            <div class="card flex flex-col justify-center items-center h-full relative">
                 <p class="mb-6 text-xl text-center font-semibold">Top 5 Expenses</p>
                 <div class="w-full relative flex justify-center items-center">
                     <canvas id="expenseChart"></canvas>
@@ -103,7 +100,7 @@
                     <div id="expense-total" class="absolute text-2xl font-medium z-10">Rs. {{ total_expense }}</div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+            <div class="card flex flex-col justify-center items-center h-full relative">
                 <p class="mb-6 text-xl text-center font-semibold">Treatment Summary</p>
                 <div class="w-full relative">
                     <canvas id="treatmentSummary"></canvas>
@@ -113,7 +110,7 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-5 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+            <div class="card flex flex-col justify-center items-center h-full relative">
                 <p class="mb-12 text-xl text-center font-semibold">Patient Age Distribution</p>
                 <div class="w-full relative">
                     <canvas id="ageChart"></canvas>

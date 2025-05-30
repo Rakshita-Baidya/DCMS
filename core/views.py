@@ -142,7 +142,7 @@ def doctor(request):
         doctor_queryset = doctor_queryset.filter(
             Q(first_name__icontains=search_query) |
             Q(last_name__icontains=search_query) |
-            Q(specialization__icontains=search_query)
+            Q(nmc_no__icontains=search_query)
         )
 
     # Add specialization filter
@@ -1699,11 +1699,11 @@ def view_transaction(request):
     expense_queryset = transaction_queryset.filter(type="Expense")
 
     # Pagination
-    income_paginator = Paginator(income_queryset, 8)
+    income_paginator = Paginator(income_queryset, 10)
     income_page = request.GET.get('income_page', 1)
     income_transaction_list = income_paginator.get_page(income_page)
 
-    expense_paginator = Paginator(expense_queryset, 8)
+    expense_paginator = Paginator(expense_queryset, 10)
     expense_page = request.GET.get('expense_page', 1)
     expense_transaction_list = expense_paginator.get_page(expense_page)
 

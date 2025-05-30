@@ -26,40 +26,40 @@
             <form method="post" class="grid grid-cols-3 md:grid-cols-2 gap-6">
                 {% csrf_token %}
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.title.label_tag }}*</label>
-                    {{ form.title|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    <label class="form-label">{{ form.title.label_tag }}*</label>
+                    {{ form.title|add_class:"form-input" }}
                     {% if form.title.errors %}<p class="text-red-500 text-sm">{{ form.title.errors }}</p>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.amount.label_tag }}*</label>
-                    {{ form.amount|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    <label class="form-label">{{ form.amount.label_tag }}*</label>
+                    {{ form.amount|add_class:"form-input" }}
                     {% if form.amount.errors %}<p class="text-red-500 text-sm">{{ form.amount.errors }}</p>{% endif %}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.type.label_tag }}*</label>
-                    {{ form.type|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    <label class="form-label">{{ form.type.label_tag }}*</label>
+                    {{ form.type|add_class:"form-input" }}
                     {% if form.type.errors %}<p class="text-red-500 text-sm">{{ form.type.errors }}</p>{% endif %}
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-secondaryLogo">{{ form.date.label_tag }}*</label>
-                        {{ form.date|attr:"type:date"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        <label class="form-label">{{ form.date.label_tag }}*</label>
+                        {{ form.date|attr:"type:date"|add_class:"form-input" }}
                         {% if form.date.errors %}<p class="text-red-500 text-sm">{{ form.date.errors }}</p>{% endif %}
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-secondaryLogo">{{ form.time.label_tag }}*</label>
-                        {{ form.time|attr:"type:time"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                        <label class="form-label">{{ form.time.label_tag }}*</label>
+                        {{ form.time|attr:"type:time"|add_class:"form-input" }}
                         {% if form.time.errors %}<p class="text-red-500 text-sm">{{ form.time.errors }}</p>{% endif %}
                     </div>
                 </div>
                 <div class="col-span-2">
-                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.description.label_tag }}</label>
-                    {{ form.description|attr:"rows:2"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
+                    <label class="form-label">{{ form.description.label_tag }}</label>
+                    {{ form.description|attr:"rows:2"|add_class:"form-input" }}
                     {% if form.description.errors %}<p class="text-red-500 text-sm">{{ form.description.errors }}</p>{% endif %}
                 </div>
                 <div class="flex space-x-4 justify-end col-span-full">
-                    <button type="submit"
-                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
+                    <a href="{% url 'core:view_transaction' %}" class="btn-secondary">Cancel</a>
+                    <button type="submit" class="btn-primary">
                         {% if is_editing %}
                             Update
                         {% else %}
@@ -67,8 +67,6 @@
                         {% endif %}
                         Transaction
                     </button>
-                    <a href="{% url 'core:view_transaction' %}"
-                       class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</a>
                 </div>
             </form>
         </div>

@@ -15,30 +15,27 @@
                 <input type="text"
                        name="search"
                        value="{{ search_query }}"
-                       placeholder="Search..."
-                       class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                       placeholder="Search by title or description"
+                       class="filter-input" />
                 <input type="text"
                        name="date_range"
                        id="date-range-picker"
                        value="{{ date_range }}"
                        placeholder="Select date or range"
-                       class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                <button type="submit"
-                        class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                       class="filter-input" />
+                <button type="submit" class="btn-primary py-1.5">Apply</button>
                 <a href="{% url 'core:view_transaction' %}"
-                   class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
+                   class="py-1.5 bg-gray-500 btn-secondary hover:bg-gray-600">Reset</a>
             </form>
             <a href="{% url 'core:add_transaction' %}"
-               class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary space-x-2 cursor-pointer">
-                + Add transaction
-            </a>
+               class="btn-primary py-1.5 space-x-2 cursor-pointer">+ Add transaction</a>
         </div>
         <div class="bg-white rounded-b-lg rounded-r-lg shadow-sm border-2 border-primaryLogo p-6 relative mt-[13.75px]">
             <div id="income-tab" class="tab-content">
                 {% if income_transaction %}
                     <table class="min-w-full table-auto mb-4">
                         <thead>
-                            <tr class="border-b-2 border-primaryLogo text-center pb-4">
+                            <tr class="table-header">
                                 <th class="pb-2 px-4">ID</th>
                                 <th class="pb-2">Title</th>
                                 <th class="pb-2 ">Description</th>
@@ -50,7 +47,7 @@
                         </thead>
                         <tbody>
                             {% for transaction in income_transaction %}
-                                <tr class="border-b text-center">
+                                <tr class="table-row">
                                     <td class="py-2 px-4">{{ transaction.id }}</td>
                                     <td class="max-w-28 text-ellipsis overflow-hidden whitespace-nowrap">{{ transaction.title }}</td>
                                     <td class="max-w-96 text-ellipsis overflow-hidden whitespace-nowrap">{{ transaction.description|default:"-" }}</td>
@@ -101,15 +98,15 @@
                     {% comment %} Pagination {% endcomment %}
                     {% if income_transaction.has_other_pages %}
                         <div class="flex justify-center mt-4">
-                            <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-1">
                                 {% if income_transaction.has_previous %}
                                     <a href="?income_page={{ income_transaction.previous_page_number }}&expense_page={{ expense_transaction.number }}&search={{ search_query }}&date_range={{ date_range }}">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
                                              viewBox="0 0 20 20"
-                                             class="cursor-pointer">
-                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                             class="pagination-icon">
+                                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                             <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
                                             <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
                                             </g>
@@ -123,8 +120,8 @@
                                              width="20"
                                              height="20"
                                              viewBox="0 0 20 20"
-                                             class="cursor-pointer">
-                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                             class="pagination-icon">
+                                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                             <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
                                             <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
                                             </g>
@@ -142,7 +139,7 @@
                 {% if expense_transaction %}
                     <table class="min-w-full table-auto mb-4">
                         <thead>
-                            <tr class="border-b-2 border-primaryLogo text-center pb-4">
+                            <tr class="table-header">
                                 <th class="pb-2 px-6">ID</th>
                                 <th class="pb-2">Title</th>
                                 <th class="pb-2">Description</th>
@@ -154,7 +151,7 @@
                         </thead>
                         <tbody>
                             {% for transaction in expense_transaction %}
-                                <tr class="border-b text-center">
+                                <tr class="table-row">
                                     <td class="py-2 px-6">{{ transaction.id }}</td>
                                     <td class="max-w-28 text-ellipsis overflow-hidden whitespace-nowrap">{{ transaction.title }}</td>
                                     <td class="max-w-96 text-ellipsis overflow-hidden whitespace-nowrap">{{ transaction.description|default:"-" }}</td>
@@ -203,15 +200,15 @@
                     {% comment %} Pagination {% endcomment %}
                     {% if expense_transaction.has_other_pages %}
                         <div class="flex justify-center mt-4">
-                            <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-1">
                                 {% if expense_transaction.has_previous %}
                                     <a href="?income_page={{ income_transaction.number }}&expense_page={{ expense_transaction.previous_page_number }}&search={{ search_query }}&date_range={{ date_range }}">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
                                              viewBox="0 0 20 20"
-                                             class="cursor-pointer">
-                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                             class="pagination-icon">
+                                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                             <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
                                             <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
                                             </g>
@@ -225,8 +222,8 @@
                                              width="20"
                                              height="20"
                                              viewBox="0 0 20 20"
-                                             class="cursor-pointer">
-                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                             class="pagination-icon">
+                                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                             <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
                                             <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
                                             </g>

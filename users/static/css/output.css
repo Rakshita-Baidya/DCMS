@@ -727,7 +727,7 @@ video {
   padding-top: 1rem;
   padding-bottom: 1rem;
   text-align: center;
-  font-size: 17px;
+  font-size: 16px;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
@@ -754,6 +754,8 @@ video {
 }
 
 .filter-input {
+  min-width: -moz-max-content;
+  min-width: max-content;
   border-radius: 0.25rem;
   border-width: 2px;
   --tw-border-opacity: 1;
@@ -895,10 +897,6 @@ video {
   grid-row: span 4 / span 4;
 }
 
-.row-span-5 {
-  grid-row: span 5 / span 5;
-}
-
 .mx-1 {
   margin-left: 0.25rem;
   margin-right: 0.25rem;
@@ -937,11 +935,6 @@ video {
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
-}
-
-.my-6 {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
 }
 
 .my-8 {
@@ -1089,6 +1082,10 @@ video {
   height: 80%;
 }
 
+.h-40 {
+  height: 10rem;
+}
+
 .h-52 {
   height: 13rem;
 }
@@ -1120,14 +1117,6 @@ video {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-4 {
-  height: 1rem;
-}
-
-.h-40 {
-  height: 10rem;
 }
 
 .max-h-64 {
@@ -1551,11 +1540,6 @@ video {
   border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
 }
 
-.border-gray-300 {
-  --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
-}
-
 .border-green-200 {
   --tw-border-opacity: 1;
   border-color: rgb(187 247 208 / var(--tw-border-opacity, 1));
@@ -1849,10 +1833,6 @@ video {
 
 .pb-2 {
   padding-bottom: 0.5rem;
-}
-
-.pb-4 {
-  padding-bottom: 1rem;
 }
 
 .pr-2 {
@@ -2215,10 +2195,6 @@ video {
   background-color: rgb(13 148 136 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-opacity-90:hover {
-  --tw-bg-opacity: 0.9;
-}
-
 .hover\:text-\[\#ddd\]:hover {
   --tw-text-opacity: 1;
   color: rgb(221 221 221 / var(--tw-text-opacity, 1));
@@ -2279,11 +2255,6 @@ video {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.focus\:ring-darkerPrimary:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(0 128 128 / var(--tw-ring-opacity, 1));
 }
 
 .focus\:ring-primaryLogo:focus {
