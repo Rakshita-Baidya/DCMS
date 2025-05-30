@@ -25,7 +25,7 @@
                            value="{{ appointment.id }}">
                 </form>
                 <a href="{% url 'core:view_patient_profile' appointment.patient.id %}"
-                   class="inline-flex items-center px-3 py-1.5 bg-lime-500 text-white rounded hover:bg-lime-600 space-x-2 cursor-pointer">
+                   class=" bg-lime-500 hover:bg-lime-600 space-x-2 btn-primary">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          width="20"
                          height="20"
@@ -36,7 +36,7 @@
                     <p>View Patient Profile</p>
                 </a>
                 <a href="{% url 'core:edit_appointment' appointment.id %}"
-                   class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                   class="btn-primary space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          width="20"
                          height="20"
@@ -49,7 +49,7 @@
                     <p>Edit Appointment</p>
                 </a>
                 {% if not request.user.role == 'Doctor' %}
-                    <div class="inline-flex items-center px-4 py-1.5 bg-dangerRed text-white rounded hover:bg-darkerDangerRed space-x-2 cursor-pointer"
+                    <div class="btn-secondary space-x-2"
                          onclick="confirmDelete('{{ appointment.id }}', '{{ appointment.patient.name }}', '{{ appointment.date }}', '{{ appointment.time }}')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
                             <path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.249995" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
@@ -60,7 +60,7 @@
             </div>
         </div>
         {% comment %} Tabs Section {% endcomment %}
-        <div class="bg-white rounded-lg shadow-sm border-2 border-primaryLogo overflow-hidden">
+        <div class="card p-0 overflow-hidden">
             <div class="border-b border-gray-200 flex justify-between items-center">
                 <nav class="flex">
                     <button data-tab="appointment-info"
@@ -92,7 +92,7 @@
                 <div class="pr-4">
                     <a id="edit-button"
                        href="{% url 'core:edit_appointment' appointment.id 0 %}"
-                       class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                       class="inline-flex items-center btn-primary py-1.5 space-x-2 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="20"
                              height="20"
@@ -189,14 +189,6 @@
                                             <p class="text-gray-600">Doctor</p>
                                             <p class="font-medium">{{ td.doctor.get_full_name }}</p>
                                         </div>
-                                        {% comment %} <div>
-                                            <p class="text-gray-600">Percentage</p>
-                                            <p class="font-medium">{{ td.percent }}%</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-gray-600">Amount</p>
-                                            <p class="font-medium">Rs. {{ td.amount|default:"0.00"|floatformat:2 }}</p>
-                                        </div> {% endcomment %}
                                         <div class="col-span-2">
                                             <p class="text-gray-600">Work Description</p>
                                             <p class="font-medium">{{ td.work_description|default:"Not specified" }}</p>

@@ -30,8 +30,7 @@
                     </button>
                 </div>
                 {% if request.user.role != 'Doctor' %}
-                    <a href="{% url 'core:add_appointment' %}"
-                       class="inline-flex items-center px-4 py-1 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">+ Add Appointment</a>
+                    <a href="{% url 'core:add_appointment' %}" class="btn-primary py-1.5">+ Add Appointment</a>
                 {% endif %}
             </div>
         </header>
@@ -41,25 +40,23 @@
                 <input type="text"
                        name="search"
                        value="{{ search_query }}"
-                       placeholder="Search..."
-                       class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
+                       placeholder="Search by patient name"
+                       class="filter-input" />
                 <input type="text"
                        name="date_range"
                        id="date-range-picker"
                        value="{{ date_range }}"
                        placeholder="Select date range"
-                       class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                <select name="status"
-                        class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                       class="filter-input" />
+                <select name="status" class="filter-input">
                     <option value="">All Status</option>
                     {% for stat in status %}
                         <option value="{{ stat }}" {% if status_filter == stat %}selected{% endif %}>{{ stat }}</option>
                     {% endfor %}
                 </select>
-                <button type="submit"
-                        class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                <button type="submit" class="btn-primary py-1.5">Apply</button>
                 <a href="{% url 'core:appointment' %}"
-                   class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
+                   class="py-1.5 bg-gray-500 btn-secondary hover:bg-gray-600">Reset</a>
             </form>
         </section>
         {% comment %} List View {% endcomment %}
@@ -68,7 +65,7 @@
                 {% if appointments %}
                     <table class="min-w-full table-auto">
                         <thead>
-                            <tr class="border-b-2 border-primaryLogo text-center pb-4 gap-2">
+                            <tr class="table-header gap-2">
                                 <th class="px-6 pb-2">ID</th>
                                 <th class="pb-2">Patient Name</th>
                                 <th class="pb-2">Date</th>
@@ -82,7 +79,7 @@
                         </thead>
                         <tbody>
                             {% for appointment in appointments %}
-                                <tr class="border-b text-center py-4">
+                                <tr class="table-row">
                                     <td class="px-6 py-3">{{ appointment.id }}</td>
                                     <td class="max-w-52 text-ellipsis overflow-hidden whitespace-nowrap">{{ appointment.patient.name }}</td>
                                     <td>{{ appointment.date }}</td>
@@ -145,33 +142,33 @@
                         </tbody>
                     </table>
                     {% if appointments.has_other_pages %}
-                        <nav class="flex justify-center mt-8" aria-label="Pagination">
-                            <div class="flex items-center space-x-2">
+                        <nav class="flex justify-center mt-4">
+                            <div class="flex items-center space-x-1">
                                 {% if appointments.has_previous %}
-                                    <a href="?page={{ appointments.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_range %}&date_range={{ date_range }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}"
-                                       aria-label="Previous Page">
+                                    <a href="?page={{ appointments.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_range %}&date_range={{ date_range }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
-                                             viewBox="0 0 20 20">
-                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-                                            <path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0" />
-                                            <path d="M11.05 12.941 8.118 10l2.934-2.941" />
+                                             viewBox="0 0 20 20"
+                                             class="pagination-icon">
+                                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                            <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                            <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
                                             </g>
                                         </svg>
                                     </a>
                                 {% endif %}
                                 <p class="px-3 py-2">Page {{ appointments.number }} of {{ appointments.paginator.num_pages }}</p>
                                 {% if appointments.has_next %}
-                                    <a href="?page={{ appointments.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_range %}&date_range={{ date_range }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}"
-                                       aria-label="Next Page">
+                                    <a href="?page={{ appointments.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_range %}&date_range={{ date_range }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                              width="20"
                                              height="20"
-                                             viewBox="0 0 20 20">
-                                            <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-                                            <path d="M7.5 18.332h5c4.168 0 5.832-1.664 5.832-5.832v-5c0-4.168-1.664-5.832-5.832-5.832h-5c-4.168 0-5.832 1.664-5.832 5.832v5c0 4.168 1.664 5.832 5.832 5.832m0 0" />
-                                            <path d="M8.95 12.941 11.882 10 8.949 7.059" />
+                                             viewBox="0 0 20 20"
+                                             class="pagination-icon">
+                                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                            <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
+                                            <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
                                             </g>
                                         </svg>
                                     </a>

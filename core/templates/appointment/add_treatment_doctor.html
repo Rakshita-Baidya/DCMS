@@ -5,13 +5,11 @@
     <div class="p-6">
         <div class="flex items-center mb-6 space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink"
-                 width="24px"
-                 fill="none"
-                 height="24px"
+                 class="back-icon"
                  viewBox="0 0 20 20"
-                 onclick="history.back()">
-                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                 onclick="history.back()"
+                 fill="none">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17l-7-7 7-7" />
             </svg>
             <p class="text-gray-700 text-2xl font-medium">
                 {% if is_editing or is_editing_all %}
@@ -22,7 +20,7 @@
                 Appointment / Treatment Doctor
             </p>
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-md border-2 border-primaryLogo">
+        <div class="card">
             <form method="post" enctype="multipart/form-data" class="text-md">
                 {% csrf_token %}
                 {{ wizard.management_form }}
@@ -36,16 +34,14 @@
                             <div class="treatment-doctor-form mb-4 p-4 border border-darkerPrimary rounded-md grid grid-cols-2 gap-6 relative">
                                 {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
                                 <div>
-                                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.doctor.label_tag }}*</label>
-                                    {{ form.doctor|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                                    {% if form.doctor.errors %}<div class="text-dangerRed text-sm">{{ form.doctor.errors }}</div>{% endif %}
+                                    <label class="form-label">{{ form.doctor.label_tag }}*</label>
+                                    {{ form.doctor|add_class:"form-input" }}
+                                    {% if form.doctor.errors %}<div class="form-error">{{ form.doctor.errors }}</div>{% endif %}
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-secondaryLogo">{{ form.work_description.label_tag }}</label>
-                                    {{ form.work_description|attr:"rows:1"|add_class:"mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo" }}
-                                    {% if form.work_description.errors %}
-                                        <div class="text-dangerRed text-sm">{{ form.work_description.errors }}</div>
-                                    {% endif %}
+                                    <label class="form-label">{{ form.work_description.label_tag }}</label>
+                                    {{ form.work_description|attr:"rows:1"|add_class:"form-input" }}
+                                    {% if form.work_description.errors %}<div class="form-error">{{ form.work_description.errors }}</div>{% endif %}
                                 </div>
                                 <button type="button"
                                         class="delete-treatment-doctor absolute top-2 right-2 text-dangerRed hover:text-red-700">
@@ -63,19 +59,13 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-                <button type="button"
-                        id="add-treatment-doctor"
-                        class="bg-primaryLogo text-white px-4 py-2 rounded hover:bg-[#00A1A1] focus:outline-none focus:ring focus:ring-primaryLogo">
-                    Add Treatment Doctor
-                </button>
+                <button type="button" id="add-treatment-doctor" class="btn-primary">Add Treatment Doctor</button>
                 <div class="flex space-x-4 justify-end col-span-full">
-                    {% if not is_editing %}
-                        <div onclick="history.back()"
-                             class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Previous</div>
-                    {% endif %}
-                    <button type="submit"
-                            class="bg-primaryLogo text-white px-6 py-2 rounded hover:bg-opacity-90">
-                        {% if is_editing %}
+                    {% if not is_editing %}<div onclick="history.back()" class="btn-secondary">Previous</div>{% endif %}
+                    <button type="submit" class="btn-primary">
+                        {% if is_editing_all %}
+                            Next
+                        {% elif is_editing %}
                             Save Changes
                         {% else %}
                             Add Appointment
@@ -89,18 +79,17 @@
     <div id="empty-form-template"
          class="hidden treatment-doctor-form mb-4 p-4 border border-darkerPrimary rounded-md grid-cols-2 gap-6 relative">
         <div>
-            <label class="block text-sm font-medium text-secondaryLogo">Doctor*</label>
-            <select name="treatment_doctors-__prefix__-doctor"
-                    class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+            <label class="form-label">Doctor*</label>
+            <select name="treatment_doctors-__prefix__-doctor" class="form-input">
                 <option value="">---------</option>
                 {% for doctor in doctors %}<option value="{{ doctor.id }}">{{ doctor.get_full_name }}</option>{% endfor %}
             </select>
         </div>
         <div>
-            <label class="block text-sm font-medium text-secondaryLogo">Work Description</label>
+            <label class="form-label">Work Description</label>
             <input type="text"
                    name="treatment_doctors-__prefix__-work_description"
-                   class="mt-1 block w-full px-4 py-2 border border-darkerPrimary rounded-md focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                   class="form-input">
         </div>
         <input type="hidden" name="treatment_doctors-__prefix__-id">
         <input type="checkbox"

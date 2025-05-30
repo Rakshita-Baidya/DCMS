@@ -187,7 +187,6 @@
                         </ul>
                     {% endif %}
                 </div>
-                {% comment %} <canvas id="treatmentSummary" class="my-4"></canvas> {% endcomment %}
             </div>
         </div>
     </div>
@@ -209,54 +208,5 @@
                 }
             });
         }
-        
-        {% comment %} document.addEventListener("DOMContentLoaded", function() {
-            const treatmentData = JSON.parse("{{ treatment_data|escapejs }}");
-            const ctx = document.getElementById('treatmentSummary').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(treatmentData),
-                    datasets: [{
-                        data: Object.values(treatmentData),
-                        backgroundColor: '#00B2B2',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    aspectRatio: 2.4,
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Treatment Type'
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            max: 8,
-                            title: {
-                                display: true,
-                                text: 'Number of Treatments'
-                            },
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(tooltipItem) {
-                                    let value = tooltipItem.raw;
-                                    return ` ${value} treatments`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-}); {% endcomment %}
     </script>
 {% endblock content %}
