@@ -11,24 +11,22 @@
                 <input type="text"
                        name="search"
                        value="{{ search_query }}"
-                       placeholder="Search..."
-                       class="px-4 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo" />
-                <select name="position"
-                        class="px-3 py-1 border-2 border-primaryLogo rounded focus:outline-none focus:ring-2 focus:ring-primaryLogo">
+                       placeholder="Search by name or position"
+                       class="filter-input" />
+                <select name="position" class="filter-input">
                     <option value="">All Positions</option>
                     {% for pos in positions %}
                         <option value="{{ pos }}" {% if position_filter == pos %}selected{% endif %}>{{ pos }}</option>
                     {% endfor %}
                 </select>
-                <button type="submit"
-                        class="px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary">Apply</button>
+                <button type="submit" class="btn-primary py-1.5">Apply</button>
                 <a href="{% url 'core:staff' %}"
-                   class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600">Reset</a>
+                   class="py-1.5 bg-gray-500 btn-secondary hover:bg-gray-600">Reset</a>
             </form>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {% for staff_member in staff %}
-                <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-primaryLogo">
+                <div class="card">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-36 h-36 rounded-full border-2 border-primaryLogo overflow-hidden flex items-center justify-center  mb-4">
                             <img src="{{ staff_member.profile_image.url }}"
@@ -95,17 +93,16 @@
         </div>
         {% comment %} Pagination {% endcomment %}
         {% if staff.has_other_pages %}
-            <div class="flex justify-center mt-8">
-                <div class="flex items-center space-x-2">
+            <div class="flex justify-center mt-4">
+                <div class="flex items-center space-x-1">
                     {% if staff.has_previous %}
-                        <a href="?page={{ staff.previous_page_number }}&search={{ search_query }}"
-                           class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                        <a href="?page={{ staff.previous_page_number }}&search={{ search_query }}">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="20"
                                  height="20"
                                  viewBox="0 0 20 20"
-                                 class="cursor-pointer">
-                                <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                 class="pagination-icon">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                 <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
                                 <path d="M11.05077641 12.94140066 8.11718425 9.999996l2.93359216-2.94140466" />
                                 </g>
@@ -114,14 +111,13 @@
                     {% endif %}
                     <span class="px-3 py-2">Page {{ staff.number }} of {{ staff.paginator.num_pages }}</span>
                     {% if staff.has_next %}
-                        <a href="?page={{ staff.next_page_number }}&search={{ search_query }}"
-                           class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                        <a href="?page={{ staff.next_page_number }}&search={{ search_query }}">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="20"
                                  height="20"
                                  viewBox="0 0 20 20"
-                                 class="cursor-pointer">
-                                <g fill="none" stroke="#7c7c7c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                 class="pagination-icon">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
                                 <path d="M7.499997 18.3320235h4.999998c4.16796667 0 5.8320285-1.66406183 5.8320285-5.8320285V7.499997c0-4.1679675-1.66406183-5.83202933-5.8320285-5.83202933H7.499997c-4.1679675 0-5.83202933 1.66406183-5.83202933 5.83202933v4.999998c0 4.16796667 1.66406183 5.8320285 5.83202933 5.8320285Zm0 0" />
                                 <path d="m8.94921475 12.94140066 2.933593-2.94140466-2.933593-2.94140466" />
                                 </g>

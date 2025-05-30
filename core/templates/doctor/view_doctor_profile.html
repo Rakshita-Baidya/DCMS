@@ -6,13 +6,11 @@
         <div class="flex justify-between items-center mb-4 ">
             <div class="space-x-1 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink"
-                     width="24px"
-                     fill="none"
-                     height="24px"
+                     class="back-icon"
                      viewBox="0 0 20 20"
-                     onclick="history.back()">
-                    <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                     onclick="history.back()"
+                     fill="none">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17l-7-7 7-7" />
                 </svg>
                 <p class="text-2xl font-semibold">{{ doctor.get_full_name }}'s Profile</p>
             </div>
@@ -24,7 +22,7 @@
                         <input type="hidden" name="delete_user_id" value="{{ doctor.id }}">
                     </form>
                     <a href="{% url 'core:edit_doctor_profile' doctor.id %}"
-                       class="inline-flex items-center px-3 py-1.5 bg-primaryLogo text-white rounded hover:bg-darkerPrimary space-x-2 cursor-pointer">
+                       class="btn-primary">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="20"
                              height="20"
@@ -36,7 +34,7 @@
                         </svg>
                         <p>Edit Profile</p>
                     </a>
-                    <div class="inline-flex items-center px-4 py-1.5 bg-dangerRed text-white rounded hover:bg-darkerDangerRed space-x-2 cursor-pointer"
+                    <div class="btn-secondary"
                          onclick="confirmDelete('{{ doctor.id }}', '{{ doctor.username }}')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
                             <path fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.249995" d="M17.5 4.984375c-2.773438-.277344-5.566406-.417969-8.351562-.417969-1.648438 0-3.296876.085938-4.949219.25L2.5 4.984375m4.582031-.84375.183594-1.089844C7.398438 2.257812 7.5 1.667969 8.910156 1.667969h2.179688c1.410156 0 1.519531.625 1.644531 1.390625l.183594 1.082031m2.789062 3.476563-.539062 8.390624c-.09375 1.308594-.167969 2.324219-2.492188 2.324219H7.324219c-2.324219 0-2.398438-1.015625-2.492188-2.324219l-.539062-8.390624M8.609375 13.75h2.773437m-3.464843-3.332031h4.164062" />
@@ -46,7 +44,7 @@
                 </div>
             {% endif %}
         </div>
-        <div class="bg-white p-8 rounded-lg shadow-sm border-2 border-[#00B2B2] grid grid-cols-1 lg:grid-cols-5 sm:grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card grid grid-cols-1 lg:grid-cols-5 sm:grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <p class="text-xl font-semibold text-gray-800">Email Address</p>
                 <p class="text-lg">{{ doctor.email }}</p>
@@ -92,14 +90,14 @@
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="col-span-3 bg-white rounded-lg shadow-sm p-6 my-6 border-2 border-primaryLogo min-h-[16rem] max-h-[20rem] overflow-y-auto">
+            <div class="col-span-3 card mt-6 min-h-[16rem] max-h-[20rem] overflow-y-auto">
                 <div>
                     <h3 class="text-xl font-semibold">Related Appointments</h3>
                 </div>
                 {% if appointments %}
                     <table class="min-w-full table-auto my-3">
                         <thead class="sticky top-0 bg-white">
-                            <tr class="border-b-2 border-primaryLogo text-center pb-4">
+                            <tr class="table-header">
                                 <th class="pb-2">P. Name</th>
                                 <th class="pb-2">Date</th>
                                 <th class="pb-2">Time</th>
@@ -171,7 +169,7 @@
                     <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
                 {% endif %}
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-6 my-6 border-2 border-primaryLogo min-h-[16rem] max-h-[24rem] overflow-y-auto">
+            <div class="card mt-6 min-h-[16rem] max-h-[24rem] overflow-y-auto">
                 <div class="text-center">
                     <h3 class="text-xl font-semibold mb-4">Treatment Summary</h3>
                     {% if no_treatments_done %}
