@@ -5,13 +5,11 @@
     <div class="p-6">
         <div class="flex items-center mb-6 space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink"
-                 width="24px"
-                 fill="none"
-                 height="24px"
+                 class="back-icon"
                  viewBox="0 0 20 20"
-                 onclick="history.back()">
-                <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"  stroke-miterlimit="10"  d="M 30 39.84375 L 16.959375 26.803125 C 15.421875 25.25625 15.421875 22.74375 16.959375 21.196875 L 30 8.15625 " transform="matrix(0.416667,0,0,0.416667,0,0)" />
+                 onclick="history.back()"
+                 fill="none">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17l-7-7 7-7" />
             </svg>
             <p class="text-gray-700 text-2xl font-medium">
                 {% if is_editing %}
@@ -28,34 +26,34 @@
                 <div>
                     <label class="form-label">{{ form.title.label_tag }}*</label>
                     {{ form.title|add_class:"form-input" }}
-                    {% if form.title.errors %}<p class="text-red-500 text-sm">{{ form.title.errors }}</p>{% endif %}
+                    {% if form.title.errors %}<p class="form-error">{{ form.title.errors }}</p>{% endif %}
                 </div>
                 <div>
                     <label class="form-label">{{ form.amount.label_tag }}*</label>
                     {{ form.amount|add_class:"form-input" }}
-                    {% if form.amount.errors %}<p class="text-red-500 text-sm">{{ form.amount.errors }}</p>{% endif %}
+                    {% if form.amount.errors %}<p class="form-error">{{ form.amount.errors }}</p>{% endif %}
                 </div>
                 <div>
                     <label class="form-label">{{ form.type.label_tag }}*</label>
                     {{ form.type|add_class:"form-input" }}
-                    {% if form.type.errors %}<p class="text-red-500 text-sm">{{ form.type.errors }}</p>{% endif %}
+                    {% if form.type.errors %}<p class="form-error">{{ form.type.errors }}</p>{% endif %}
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
                     <div>
                         <label class="form-label">{{ form.date.label_tag }}*</label>
                         {{ form.date|attr:"type:date"|add_class:"form-input" }}
-                        {% if form.date.errors %}<p class="text-red-500 text-sm">{{ form.date.errors }}</p>{% endif %}
+                        {% if form.date.errors %}<p class="form-error">{{ form.date.errors }}</p>{% endif %}
                     </div>
                     <div>
                         <label class="form-label">{{ form.time.label_tag }}*</label>
                         {{ form.time|attr:"type:time"|add_class:"form-input" }}
-                        {% if form.time.errors %}<p class="text-red-500 text-sm">{{ form.time.errors }}</p>{% endif %}
+                        {% if form.time.errors %}<p class="form-error">{{ form.time.errors }}</p>{% endif %}
                     </div>
                 </div>
                 <div class="col-span-2">
                     <label class="form-label">{{ form.description.label_tag }}</label>
                     {{ form.description|attr:"rows:2"|add_class:"form-input" }}
-                    {% if form.description.errors %}<p class="text-red-500 text-sm">{{ form.description.errors }}</p>{% endif %}
+                    {% if form.description.errors %}<p class="form-error">{{ form.description.errors }}</p>{% endif %}
                 </div>
                 <div class="flex space-x-4 justify-end col-span-full">
                     <a href="{% url 'core:view_transaction' %}" class="btn-secondary">Cancel</a>

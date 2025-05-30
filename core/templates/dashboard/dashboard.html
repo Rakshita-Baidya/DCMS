@@ -8,9 +8,7 @@
                 <p class="my-2">Today is {% now "l, F j, Y" %}</p>
             </div>
             <form method="get" class="text-right mb-6">
-                <select name="filter"
-                        onchange="this.form.submit()"
-                        class="px-3 py-1.5 border-2 border-primaryLogo rounded focus:outline-none focus:ring-1 focus:ring-primaryLogo">
+                <select name="filter" onchange="this.form.submit()" class="filter-input">
                     <option value="daily" {% if time_filter == 'daily' %}selected{% endif %}>Daily</option>
                     <option value="weekly" {% if time_filter == 'weekly' %}selected{% endif %}>Weekly</option>
                     <option value="monthly" {% if time_filter == 'monthly' %}selected{% endif %}>Monthly</option>
@@ -23,7 +21,7 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2 h-full">
+                <div class="card flex flex-col justify-center items-center text-center space-y-2 h-full">
                     <img src="{% static 'images/dashboard/Lab.png' %}"
                          alt="lab"
                          width="full"
@@ -32,7 +30,7 @@
                     <h3 class="text-xl font-semibold">{{ lab_orders|default:"0" }}</h3>
                     <p>Lab Orders</p>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center space-y-2 text-center h-full">
+                <div class="card flex flex-col justify-center items-center space-y-2 text-center h-full">
                     <img src="{% static 'images/dashboard/Xray.png' %}"
                          alt="xray"
                          width="full"
@@ -42,7 +40,7 @@
                     <p>X-Rays Taken</p>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-4 border-2 border-primaryLogo flex flex-col justify-center items-center h-full relative">
+            <div class="card p-4 flex flex-col justify-center items-center h-full relative">
                 <p class="mb-3 text-xl text-center font-semibold">Appointment Status</p>
                 <div class="w-full relative">
                     <canvas id="appointmentCompletion"></canvas>
@@ -53,7 +51,7 @@
                 </div>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center text-center space-y-2">
+                <div class="card flex flex-col justify-center items-center text-center space-y-2">
                     <img src="{% static 'images/dashboard/Patients.png' %}"
                          alt="patient"
                          width="full"
@@ -62,7 +60,7 @@
                     <h3 class="text-xl font-semibold">{{ total_patient }}</h3>
                     <p>Registered Patients</p>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo flex flex-col justify-center items-center space-y-2 text-center">
+                <div class="card flex flex-col justify-center items-center space-y-2 text-center">
                     <img src="{% static 'images/dashboard/Schedule.png' %}"
                          alt="appointment"
                          width="full"
@@ -74,12 +72,12 @@
             </div>
         </div>
         <div class="col-span-1 md:col-span-2 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-lg shadow-sm p-4 border-2 border-primaryLogo min-h-[22rem] overflow-y-auto no-scrollbar">
+            <div class="card p-4 min-h-[22rem] overflow-y-auto no-scrollbar">
                 <h3 class="text-xl font-semibold mb-3">Pending Appointments</h3>
                 {% if pending_appointments %}
                     <div class="relative overflow-x-auto">
-                        <table class="min-w-full my-3 table-fixed">
-                            <thead class="sticky top-0 bg-white border-b-2 border-primaryLogo">
+                        <table class="min-w-full mb-3 table-fixed">
+                            <thead class="sticky top-0 table-header">
                                 <tr class="text-center">
                                     <th class="max-w-[150px] py-2 px-2">Patient Name</th>
                                     <th class="py-2 px-2">Date</th>
@@ -90,7 +88,7 @@
                             </thead>
                             <tbody class="max-h-64 overflow-y-auto ">
                                 {% for appointment in pending_appointments %}
-                                    <tr class="border-b text-center last:border-b-0">
+                                    <tr class="table-row last:border-b-0">
                                         <td class="max-w-[150px] py-2 px-2 text-ellipsis overflow-hidden whitespace-nowrap">{{ appointment.patient.name }}</td>
                                         <td class="py-2 px-2">{{ appointment.date }}</td>
                                         <td class="py-2 px-2">{{ appointment.time }}</td>
@@ -120,7 +118,7 @@
                     <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
                 {% endif %}
             </div>
-            <div class="bg-white rounded-lg shadow-sm p-6 border-2 border-primaryLogo">
+            <div class="card">
                 <h3 class="text-xl font-semibold text-center mb-4">Follow-Ups</h3>
                 <div class="max-h-72 overflow-y-auto pr-2 space-y-1">
                     {% if follow_ups %}
