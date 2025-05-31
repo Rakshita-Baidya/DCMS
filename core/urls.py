@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import (add_transaction, dashboard, doctor, edit_appointment, edit_transaction, generate_patient_pdf, view_doctor_profile, edit_doctor_profile, staff,
+from .views import (add_transaction, dashboard, doctor, edit_appointment, edit_transaction, generate_patient_pdf, view_doctor_profile, edit_doctor_profile, generate_doctor_appointments_report, staff,
                     view_staff_profile, edit_staff_profile, patient, view_patient_profile, appointment, view_appointment, view_transaction, statistics,  error, edit_patient_profile)
 from .views import (PatientFormWizard, EditPatientFormWizard,
                     AppointmentFormWizard, EditAppointmentWizard)
@@ -18,6 +18,8 @@ urlpatterns = [
     path('doctor/<int:user_id>/', view_doctor_profile, name='view_doctor_profile'),
     path('doctor/<int:user_id>/edit',
          edit_doctor_profile, name='edit_doctor_profile'),
+    path('doctor/<int:doctor_id>/report/', generate_doctor_appointments_report,
+         name='generate_doctor_appointments_report'),
 
     path('staff/', staff, name='staff'),
     path('staff/<int:user_id>/', view_staff_profile, name='view_staff_profile'),

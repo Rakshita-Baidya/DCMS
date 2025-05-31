@@ -17,7 +17,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, FrameBreak
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponseBadRequest
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count, Sum, ExpressionWrapper, IntegerField, Q
@@ -237,6 +237,14 @@ def view_doctor_profile(request, user_id):
                 request, f"Doctor {user_to_delete.username} has been deleted.")
             return redirect('core:doctor')
 
+    months = [
+        (1, 'January'), (2, 'February'), (3, 'March'), (4, 'April'),
+        (5, 'May'), (6, 'June'), (7, 'July'), (8, 'August'),
+        (9, 'September'), (10, 'October'), (11, 'November'), (12, 'December')
+    ]
+    current_year = timezone.now().year
+    years = list(range(2024, current_year + 1))
+
     context = {
         'page_title': 'Doctor Management',
         'active_page': 'doctor',
@@ -244,6 +252,8 @@ def view_doctor_profile(request, user_id):
         'appointments': appointments,
         'treatment_counts': sorted_treatment_counts,
         'no_treatments_done': no_treatments_done,
+        'months': months,
+        'years': years,
     }
 
     return render(request, 'doctor/view_doctor_profile.html', context)
@@ -942,12 +952,11 @@ def generate_patient_pdf(request, patient_id):
                     style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#000000'))])))
     elements.append(Spacer(1, 18))
 
-    # Patient Name (Highlighted)
     elements.append(
         Paragraph(f"Patient Name: {patient.name}", style=styles['Heading1']))
     elements.append(Spacer(1, 6))
 
-    # Patient Information (Grid)
+    # Patient Information
     elements.append(Paragraph("<u>Patient Information</u>", section_style))
     patient_data = [
         ["ID:", str(patient.id), "Contact:", patient.contact],
@@ -1094,6 +1103,246 @@ def generate_patient_pdf(request, patient_id):
     buffer.seek(0)
 
     return FileResponse(buffer, as_attachment=True, filename=f"{patient.name}_Report_{timezone.now().date()}.pdf")
+
+
+def generate_doctor_appointments_report(request, doctor_id):
+    month = request.POST.get('month')
+    year = request.POST.get('year')
+
+    # Validate month and year
+    try:
+        month = int(month)
+        year = int(year)
+        if not (1 <= month <= 12) or not (2000 <= year <= timezone.now().year):
+            raise ValueError
+    except (ValueError, TypeError):
+        return HttpResponseBadRequest("Invalid month or year")
+
+    # Fetch information
+    doctor = User.objects.get(id=doctor_id, role='Doctor')
+    appointments = Appointment.objects.filter(
+        status='Completed',
+        date__year=year,
+        date__month=month,
+        treatment_records__doctors__doctor=doctor
+    ).select_related('patient').prefetch_related(
+        'treatment_records__doctors'
+    ).distinct().order_by('date', 'time')
+
+    # Create a PDF buffer
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=0.5*inch)
+    styles = getSampleStyleSheet()
+
+    # Custom styles
+    normal_colored_style = ParagraphStyle(
+        'NormalColored', parent=styles['Normal'], textColor=colors.black, spaceAfter=6, fontSize=11)
+
+    card_header_style = ParagraphStyle(
+        'CardHeader', parent=styles['Heading3'],
+        fontSize=12, spaceAfter=6, textColor=colors.black, fontName='Helvetica-Bold')
+
+    card_content_style = ParagraphStyle(
+        'CardContent', parent=styles['Normal'],
+        fontSize=10, spaceAfter=4, leftIndent=12, textColor=colors.black)
+
+    elements = []
+
+    # Clinic Header
+    logo_path = None
+    logo_relative_path = 'images/logo/logo2.png'
+    if hasattr(settings, 'STATIC_ROOT') and settings.STATIC_ROOT:
+        logo_path = os.path.join(settings.STATIC_ROOT, logo_relative_path)
+    if not logo_path or not os.path.exists(logo_path):
+        for static_dir in settings.STATICFILES_DIRS:
+            potential_path = os.path.join(static_dir, logo_relative_path)
+            if os.path.exists(potential_path):
+                logo_path = potential_path
+                break
+
+    clinic_details = {
+        'name': 'Smile by Dr. Kareen',
+        'address': 'Pulchowk-3, Damkal Chowk, Lalitpur, Nepal',
+        'address2': '(Opposite to Sumeru Hospital)',
+        'tel': '1 5920775',
+        'contact': '+977 9851359775',
+        'email': 'smilebydrkareen@gmail.com'
+    }
+
+    header_data = [
+        [
+            Image(logo_path, width=150, height=100) if logo_path and os.path.exists(
+                logo_path) else Paragraph("Logo not found", styles['Normal']),
+            [
+                Paragraph(f"{clinic_details['name']}", styles['Heading1']),
+                Paragraph(
+                    f"{clinic_details['address']}<br/>{clinic_details['address2']}<br/>Tel: {clinic_details['tel']}<br/>Contact: {clinic_details['contact']}<br/>Email: {clinic_details['email']}", styles['Normal'])
+            ]
+        ]
+    ]
+    header_table = Table(header_data, colWidths=[3*inch])
+    header_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (0, 0), 'LEFT'),
+        ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('BACKGROUND', (0, 0), (-1, -1), colors.white),
+        ('GRID', (0, 0), (-1, -1), 0, colors.white)
+    ]))
+    elements.append(header_table)
+    elements.append(Spacer(1, 6))
+
+    # Header divider
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                          style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.black)])))
+    elements.append(Spacer(1, 18))
+
+    # Report Title
+    elements.append(Paragraph(
+        f"Completed Appointments for {doctor.get_full_name()} ({year}-{month:02d})", styles['Heading2']))
+    elements.append(Spacer(1, 12))
+
+    # Appointments Details
+    if appointments:
+        # Summary
+        total_appointments = appointments.count()
+        total_revenue = 0
+
+        elements.append(Paragraph(
+            f"<b>Total Appointments:</b> {total_appointments}", normal_colored_style))
+        elements.append(Spacer(1, 12))
+
+        # Main content divider
+        elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.02*inch],
+                              style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.black)])))
+        elements.append(Spacer(1, 12))
+
+        # Individual appointment cards
+        for i, appt in enumerate(appointments, 1):
+            treatment_records = appt.treatment_records.filter(
+                doctors__doctor=doctor)
+
+            appointment_total = 0
+            treatment_details = []
+
+            for record in treatment_records:
+                treatment_cost = record.treatment_cost or 0
+                x_ray_cost = record.x_ray_cost or 0
+                lab_cost = record.lab_cost or 0
+                record_total = treatment_cost + x_ray_cost + lab_cost
+                appointment_total += record_total
+
+                doctor_assignment = record.doctors.filter(
+                    doctor=doctor).first()
+                work_desc = doctor_assignment.work_description if doctor_assignment else "N/A"
+
+                treatment_details.append({
+                    'type': record.treatment_type or 'General Treatment',
+                    'cost': treatment_cost,
+                    'x_ray': record.x_ray,
+                    'x_ray_cost': x_ray_cost,
+                    'lab': record.lab,
+                    'lab_cost': lab_cost,
+                    'work_description': work_desc,
+                    'total': record_total
+                })
+
+            total_revenue += appointment_total
+
+            card_data = [
+                [Paragraph(
+                    f"<b>{i}. {appt.patient.name}</b> - {appt.date.strftime('%B %d, %Y')} at {appt.time.strftime('%I:%M %p')}", card_header_style)]
+            ]
+
+            # Appointment description
+            if appt.description:
+                card_data.append(
+                    [Paragraph(f"<b>Description:</b> {appt.description}", card_content_style)])
+
+            # Treatment details
+            if treatment_details:
+                for detail in treatment_details:
+                    treatment_info = f"<b>Treatment:</b> {detail['type']}"
+                    if detail['work_description'] and detail['work_description'] != "N/A":
+                        treatment_info += f"<br/><b>Work Description:</b> {detail['work_description']}"
+
+                    cost_info = f"<b>Treatment Cost:</b> Rs. {detail['cost']:.2f}"
+                    if detail['x_ray']:
+                        cost_info += f" | <b>X-Ray:</b> Rs. {detail['x_ray_cost']:.2f}"
+                    if detail['lab']:
+                        cost_info += f" | <b>Lab:</b> Rs. {detail['lab_cost']:.2f}"
+                    cost_info += f" | <b>Total:</b> Rs. {detail['total']:.2f}"
+
+                    card_data.append(
+                        [Paragraph(treatment_info, card_content_style)])
+                    card_data.append(
+                        [Paragraph(cost_info, card_content_style)])
+            else:
+                card_data.append(
+                    [Paragraph("<b>No treatment records found</b>", card_content_style)])
+
+            # Appointment total
+            card_data.append([Paragraph(
+                f"<b>Appointment Total: Rs. {appointment_total:.2f}</b>", card_content_style)])
+
+            card_table = Table(card_data, colWidths=[6.5*inch])
+            card_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, -1), colors.white),
+                ('BORDER', (0, 0), (-1, -1), 1, colors.black),
+                ('PADDING', (0, 0), (-1, -1), 8),
+                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                ('LEFTPADDING', (0, 0), (-1, -1), 12),
+                ('RIGHTPADDING', (0, 0), (-1, -1), 12),
+            ]))
+
+            elements.append(card_table)
+            elements.append(Spacer(1, 8))
+
+            if i < total_appointments:
+                elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.01*inch],
+                                      style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.lightgrey)])))
+                elements.append(Spacer(1, 8))
+
+        # Revenue summary section divider
+        elements.append(Spacer(1, 12))
+        elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.02*inch],
+                              style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.black)])))
+        elements.append(Spacer(1, 12))
+
+        summary_data = [
+            [Paragraph(f"<b>SUMMARY</b>", styles['Heading2'])],
+            [Paragraph(
+                f"<b>Total Appointments:</b> {total_appointments}", normal_colored_style)],
+            [Paragraph(
+                f"<b>Total Revenue:</b> Rs. {total_revenue:.2f}", normal_colored_style)],
+            [Paragraph(
+                f"<b>Average per Appointment:</b> Rs. {total_revenue/total_appointments:.2f}", normal_colored_style)]
+        ]
+
+        summary_table = Table(summary_data, colWidths=[6.5*inch])
+        summary_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.white),
+            ('BORDER', (0, 0), (-1, -1), 2, colors.black),
+            ('PADDING', (0, 0), (-1, -1), 12),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ]))
+
+        elements.append(summary_table)
+
+    else:
+        elements.append(Paragraph(
+            "No completed appointments found for the selected period.", normal_colored_style))
+
+    elements.append(Spacer(1, 12))
+
+    # Final divider
+    elements.append(Table([['']], colWidths=[6.5*inch], rowHeights=[0.05*inch],
+                          style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), colors.black)])))
+
+    # Build PDF
+    doc.build(elements)
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f"{doctor.get_full_name()}_Completed_Appointments_{year}-{month:02d}.pdf")
 
 
 @jwt_required(login_url='login')

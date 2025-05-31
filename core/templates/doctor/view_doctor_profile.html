@@ -90,9 +90,13 @@
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="col-span-3 card mt-6 min-h-[16rem] max-h-[20rem] overflow-y-auto">
-                <div>
+            <div class="col-span-3 card mt-6 min-h-[16rem] max-h-[20rem] p-4 overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold">Related Appointments</h3>
+                    <button class="btn-primary"
+                            onclick="document.getElementById('reportModal').classList.remove('hidden')">
+                        Generate Report
+                    </button>
                 </div>
                 {% if appointments %}
                     <table class="min-w-full table-auto my-3">
@@ -168,6 +172,38 @@
                 {% else %}
                     <p class="text-center text-gray-500 py-4">No registered appointments found.</p>
                 {% endif %}
+                <div id="reportModal"
+                     class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="card max-w-xl">
+                        <h3 class="text-xl font-semibold mb-4">Generate Completed Appointments Report</h3>
+                        <form method="post"
+                              action="{% url 'core:generate_doctor_appointments_report' doctor.id %}">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="month" class="form-label">Month</label>
+                                <select id="month" name="month" class="form-input" required>
+                                    <option value="" disabled selected>Select Month</option>
+                                    {% for month_num, month_name in months %}<option value="{{ month_num }}">{{ month_name }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="year" class="form-label">Year</label>
+                                <select id="year" name="year" class="form-input" required>
+                                    <option value="" disabled selected>Select Year</option>
+                                    {% for year in years %}<option value="{{ year }}">{{ year }}</option>{% endfor %}
+                                </select>
+                            </div>
+                            <div class="flex justify-end space-x-2">
+                                <button type="button"
+                                        class="btn-secondary"
+                                        onclick="document.getElementById('reportModal').classList.add('hidden')">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn-primary">Generate Report</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
             <div class="card mt-6 min-h-[16rem] max-h-[24rem] overflow-y-auto">
                 <div class="text-center">
