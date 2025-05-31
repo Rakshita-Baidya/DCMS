@@ -299,8 +299,7 @@ def staff(request):
     if search_query:
         staff_queryset = staff_queryset.filter(
             Q(first_name__icontains=search_query) |
-            Q(last_name__icontains=search_query) |
-            Q(position__icontains=search_query)
+            Q(last_name__icontains=search_query)
         )
 
     # Add filter
@@ -1218,7 +1217,7 @@ class AppointmentFormWizard(SessionWizardView):
         context.update({
             'page_title': 'Appointment Management',
             'active_page': 'appointment',
-            'patients': Patient.objects.all(),
+            'patients': Patient.objects.all().order_by('name'),
             'doctors': User.objects.filter(role='Doctor')
 
         })

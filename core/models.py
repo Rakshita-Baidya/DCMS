@@ -37,11 +37,13 @@ BLOOD_GROUP_CHOICES = [
     ('AB+', 'AB+'),
     ('AB-', 'AB-'),
     ('O+', 'O+'),
-    ('O-', 'O-')
+    ('O-', 'O-'),
+    ('Unknown', 'Unknown')
 ]
 
 
 class Patient(models.Model):
+    is_incomplete = models.BooleanField(default=False)
     name = models.CharField(max_length=100)
     contact = models.CharField(
         validators=[phone_regex], max_length=17)
@@ -49,7 +51,8 @@ class Patient(models.Model):
     dob = models.DateField(default='2000-01-01')
     gender = models.CharField(max_length=17, null=True, blank=True,
                               default="Prefer not to say", choices=GENDER_CHOICES)
-    blood_group = models.CharField(choices=BLOOD_GROUP_CHOICES)
+    blood_group = models.CharField(
+        choices=BLOOD_GROUP_CHOICES, default="Unknown")
     # age = models.PositiveIntegerField(
     #     validators=[MinValueValidator(1), MaxValueValidator(150)])
     email = models.EmailField(unique=True, null=True, blank=True)
@@ -227,7 +230,7 @@ APPOINTMENT_STATUS = [
 
 class Appointment(models.Model):
     patient = models.ForeignKey(
-        'Patient', on_delete=models.CASCADE, related_name='appointments')
+        'Patient', on_delete=models.CASCADE, related_name='appointments', null=True, blank=True)
     date = models.DateField(default=timezone.now)
     time = models.TimeField()
     description = models.TextField(max_length=255, blank=True, null=True)

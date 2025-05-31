@@ -21,19 +21,71 @@
             </p>
         </div>
         <div class="card">
+            {% if wizard.form.non_field_errors %}
+                <div class="form-error col-span-full">
+                    {% for error in wizard.form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+                </div>
+            {% endif %}
             <form method="post"
                   enctype="multipart/form-data"
                   class="grid grid-cols-4 lg:grid-cols-5 md:grid-cols-3 lg:gap-6 gap-4">
                 {% csrf_token %}
                 {{ wizard.management_form }}
-                <div>
-                    <label class="form-label">{{ wizard.form.patient.label_tag }}*</label>
-                    {% comment %} <select name="patient" class="form-input">
-                        <option value="">Select a Patient</option>
-                        {% for patient in patients %}<option value="{{ patient.id }}">{{ patient.name }}</option>{% endfor %}
-                    </select> {% endcomment %}
+                <div class="col-span-full flex space-x-3">
+                    <label class="form-label">Patient Type*</label>
+                    <div class="flex space-x-3">
+                        {% for radio in wizard.form.patient_type %}
+                            <div class="flex items-center space-x-2">
+                                {{ radio.tag }}
+                                <label for="{{ radio.id_for_label }}" class="form-label font-normal">{{ radio.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if wizard.form.patient_type.errors %}<div class="form-error">{{ wizard.form.patient_type.errors }}</div>{% endif %}
+                </div>
+                <div id="existing-patient">
+                    <label class="form-label">{{ wizard.form.patient.label }}*</label>
                     {{ wizard.form.patient|add_class:"form-input" }}
                     {% if wizard.form.patient.errors %}<div class="form-error">{{ wizard.form.patient.errors }}</div>{% endif %}
+                </div>
+                <div id="new-patient" class="col-span-full hidden">
+                    <div class="grid grid-cols-5 gap-4">
+                        <div>
+                            <label class="form-label">{{ wizard.form.new_patient_name.label }}*</label>
+                            {{ wizard.form.new_patient_name|add_class:"form-input" }}
+                            {% if wizard.form.new_patient_name.errors %}
+                                <div class="form-error">{{ wizard.form.new_patient_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="form-label">{{ wizard.form.new_patient_contact.label }}*</label>
+                            {{ wizard.form.new_patient_contact|add_class:"form-input" }}
+                            {% if wizard.form.new_patient_contact.errors %}
+                                <div class="form-error">{{ wizard.form.new_patient_contact.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="form-label">{{ wizard.form.new_patient_email.label }}*</label>
+                            {{ wizard.form.new_patient_email|add_class:"form-input" }}
+                            {% if wizard.form.new_patient_email.errors %}
+                                <div class="form-error">{{ wizard.form.new_patient_email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="form-label">{{ wizard.form.new_patient_em_name.label }}*</label>
+                            {{ wizard.form.new_patient_em_name|add_class:"form-input" }}
+                            {% if wizard.form.new_patient_em_name.errors %}
+                                <div class="form-error">{{ wizard.form.new_patient_em_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="form-label">{{ wizard.form.new_patient_em_contact.label }}*</label>
+                            {{ wizard.form.new_patient_em_contact|add_class:"form-input" }}
+                            {% if wizard.form.new_patient_em_contact.errors %}
+                                <div class="form-error">{{ wizard.form.new_patient_em_contact.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <label class="form-label">{{ wizard.form.date.label_tag }}*</label>
@@ -75,4 +127,46 @@
             </form>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const patientTypeRadios = document.querySelectorAll('input[name="0-patient_type"]');
+            const existingPatientDiv = document.getElementById('existing-patient');
+            const newPatientDiv = document.getElementById('new-patient');
+            const newPatientInputs = newPatientDiv.querySelectorAll('input');
+            const patientSelect = existingPatientDiv.querySelector('select');
+
+            function togglePatientFields() {
+                const selectedType = document.querySelector('input[name="0-patient_type"]:checked').value;
+                if (selectedType === 'existing') {
+                    existingPatientDiv.classList.remove('hidden');
+                    newPatientDiv.classList.add('hidden');
+                    // Remove required attribute and clear new patient fields
+                    newPatientInputs.forEach(input => {
+                        input.removeAttribute('required');
+                        input.value = '';
+                    });
+                } else {
+                    existingPatientDiv.classList.add('hidden');
+                    newPatientDiv.classList.remove('hidden');
+                    // Remove required attribute from patient select and clear it
+                    patientSelect.removeAttribute('required');
+                    patientSelect.selectedIndex = 0;
+                    // Add required attribute to name and contact
+                    newPatientDiv.querySelector('#id_0-new_patient_name').setAttribute('required', 'required');
+                    newPatientDiv.querySelector('#id_0-new_patient_contact').setAttribute('required', 'required');
+                    newPatientDiv.querySelector('#id_0-new_patient_email').setAttribute('required', 'required');
+                    newPatientDiv.querySelector('#id_0-new_patient_em_name').setAttribute('required', 'required');
+                    newPatientDiv.querySelector('#id_0-new_patient_em_contact').setAttribute('required', 'required');
+                }
+            }
+
+
+            patientTypeRadios.forEach(radio => {
+                radio.addEventListener('change', togglePatientFields);
+            });
+
+            // Initialize visibility
+            togglePatientFields();
+        });
+    </script>
 {% endblock content %}
